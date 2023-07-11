@@ -1,0 +1,5 @@
+Articles:
+
+1 Create page for user submissions for articles.
+2 Submisisons will be added to the database.
+3 Fetch submissions from database and display on Article component.

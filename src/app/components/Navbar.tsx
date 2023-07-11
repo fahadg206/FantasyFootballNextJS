@@ -2,28 +2,43 @@ import Link from "next/link";
 
 export default function Navbar() {
   return (
-    <div className="border-b-2 border-[white] border-opacity-5  ">
-      <ul className="flex flex-start">
-        <Link href="/" className="m-auto">
+    <div className="border-b-2 border-[white] border-opacity-5 text-[16px] ">
+      <ul className="flex">
+        <Link
+          className="mr-auto hover:underline hover:decoration-[#9750DD] hover:decoration-4"
+          href="/"
+        >
           <li>RainCity League</li>
         </Link>
         <Link href="/">
-          <li className="mr-2">Home</li>
+          <li className="mr-2 hover:underline hover:decoration-[#9750DD] hover:decoration-4">
+            Home
+          </li>
         </Link>
         <Link href="/articles">
-          <li className="mr-2">Articles</li>
+          <li className="mr-2 hover:underline hover:decoration-[#9750DD] hover:decoration-4">
+            Articles
+          </li>
         </Link>
-        <Link href="/schedule">
-          <li className="mr-2">Schedule</li>
+        <Link href="/matchups">
+          <li className="mr-2 hover:underline hover:decoration-[#9750DD] hover:decoration-4">
+            Matchups
+          </li>
         </Link>
         <Link href="/standings">
-          <li className="mr-2">Standings</li>
+          <li className="mr-2 hover:underline hover:decoration-[#9750DD] hover:decoration-4">
+            Standings
+          </li>
         </Link>
         <Link href="/powerrankings">
-          <li className="mr-2">Power Rankings</li>
+          <li className="mr-2 hover:underline hover:decoration-[#9750DD] hover:decoration-4">
+            Power Rankings
+          </li>
         </Link>
         <Link href="/more">
-          <li className="mr-2">More</li>
+          <li className="mr-2 hover:underline hover:decoration-[#9750DD] hover:decoration-4">
+            More
+          </li>
         </Link>
       </ul>
     </div>
