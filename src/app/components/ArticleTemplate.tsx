@@ -1,4 +1,6 @@
 import React from "react";
+import imran from "../images/scary_imran.png";
+import { StaticImageData } from "next/image";
 
 const ArticleTemplate = ({
   title,
@@ -12,9 +14,9 @@ const ArticleTemplate = ({
   p3,
 }: {
   title: string;
-  image: any;
+  image: StaticImageData;
   author: string;
-  authorImg: string;
+  authorImg: StaticImageData;
   jobtitle: string;
   date: string;
   p1: string;

@@ -1,6 +1,6 @@
 import React from "react";
 import ArticleTemplate from "../components/ArticleTemplate";
-import imran from "../images/scary_imran.jpg";
+import imran from "../images/scary_imran.png";
 
 const articles = () => {
   return (
@@ -9,7 +9,7 @@ const articles = () => {
         title="yo"
         image={imran}
         author={"imran"}
-        authorImg={"../images/scary_imran.jpg"}
+        authorImg={imran}
         jobtitle="RCL Insider"
         date="Sep 14th, 2023"
         p1="hgdsbsdkfbskj"
