@@ -24,7 +24,7 @@ const ArticleTemplate = ({
   p3: string;
 }) => {
   return (
-    <div className="flex flex-col items-center sm:grid grid-cols-2">
+    <div className="flex flex-col items-center sm:grid grid-cols-2 bg-[blue]">
       <div className="grid grid-cols-1 justify-items-center w-full sm:sticky top-20 self-start lg:top-5">
         <img className="rounded-[10px]" src={image} />
       </div>

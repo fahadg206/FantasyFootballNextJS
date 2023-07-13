@@ -1,3 +1,7 @@
 export default function Home() {
-  return <div className="text-3xl">Home Component</div>;
+  return (
+    <div className="h-screen text-3xl text-center ">
+      <div>Welcome to {"League Name"}</div>
+    </div>
+  );
 }
