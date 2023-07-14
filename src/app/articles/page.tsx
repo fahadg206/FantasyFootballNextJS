@@ -1,11 +1,11 @@
 import React from "react";
 import ArticleTemplate from "../components/ArticleTemplate";
 import imran from "../images/scary_imran.png";
-import { Link } from "react-scroll";
+import Image from "next/image";
 
 const articles = () => {
   return (
-    <div>
+    <div className="flex">
       <div>
         <div className="flex flex-col md:grid grid-cols-4 justify-items-center">
           {/* Use React Smooth Scroll for Headlines */}
@@ -15,7 +15,7 @@ const articles = () => {
             </h2>
             <ul className="text-[17px]">
               <li className="p-[5px]">
-                <Link
+                {/* <Link
                   className="cursor-pointer"
                   to=""
                   smooth={true}
@@ -23,10 +23,10 @@ const articles = () => {
                   delay={200}
                 >
                   WHO'S NERVOUS NOW?
-                </Link>
+                </Link> */}
               </li>
               <li className="p-[5px]">
-                <Link
+                {/* <Link
                   className="cursor-pointer text-center"
                   to=""
                   smooth={true}
@@ -34,10 +34,10 @@ const articles = () => {
                   delay={200}
                 >
                   RCL RECAP
-                </Link>
+                </Link> */}
               </li>
               <li className="p-[5px]">
-                <Link
+                {/* <Link
                   className="cursor-pointer"
                   to=""
                   smooth={true}
@@ -45,10 +45,10 @@ const articles = () => {
                   delay={200}
                 >
                   LEAGUE'S FIRST SPONSOR
-                </Link>
+                </Link> */}
               </li>
               <li className="p-[5px]">
-                <Link
+                {/* <Link
                   className="cursor-pointer"
                   to=""
                   smooth={true}
@@ -56,7 +56,7 @@ const articles = () => {
                   delay={200}
                 >
                   NEWCASTLE
-                </Link>
+                </Link> */}
               </li>
             </ul>
           </div>
