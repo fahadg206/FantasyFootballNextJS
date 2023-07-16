@@ -14,7 +14,7 @@ const Dropdown = () => {
             aria-expanded="true"
             aria-haspopup="true"
           >
-            Options
+            League Info
             <svg
               className="-mr-1 h-5 w-5"
               viewBox="0 0 20 20"
@@ -51,7 +51,7 @@ const Dropdown = () => {
                 role="menuitem"
                 id="menu-item-1"
               >
-                Join!
+                Managers
               </a>
               <a
                 href="#"
@@ -59,18 +59,8 @@ const Dropdown = () => {
                 role="menuitem"
                 id="menu-item-2"
               >
-                License
+                Join!
               </a>
-              <form method="POST" action="#" role="none">
-                <button
-                  type="submit"
-                  className="dark:text-[#E8EBEA] hover:text-[#E8EBEA] text-[#1a1a1c]  hover:bg-purple-900 block w-full px-4 py-2 text-left text-sm"
-                  role="menuitem"
-                  id="menu-item-3"
-                >
-                  Sign out
-                </button>
-              </form>
             </div>
           </div>
         ) : (

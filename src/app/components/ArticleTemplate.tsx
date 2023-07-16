@@ -26,16 +26,16 @@ const ArticleTemplate = ({
 }) => {
   return (
     <div className="flex flex-col items-center sm:grid grid-cols-2">
-      <div className="grid grid-cols-1 justify-items-center w-full sm:sticky top-20 self-start lg:top-5">
+      <div className="grid grid-cols-1 justify-items-center w-full sm:sticky top-20 self-start lg:top-5 mt-5">
         <Image
           className="rounded-[10px]"
           src={image}
           alt="whatever"
-          height={200}
-          width={200}
+          height={300}
+          width={300}
         />
       </div>
-      <div className="grid grid-cols-1 gap-y-3 justify-items-center mt-10 ml-5">
+      <div className="grid grid-cols-1 gap-y-3 justify-items-center mt-10 ml-5 self-start">
         <p className="text-5xl font-bold">{title}</p>
         <div className="flex w-[77vw] sm:flex sm:w-[35vw] md:flex items-center md:w-[25vw] justify-between border-b-2 border-black border-opacity-10">
           <div className="flex items-center">
