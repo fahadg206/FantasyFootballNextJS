@@ -1,5 +1,115 @@
-Articles:
+ <div className="">
+      <nav className="  w-full top-0 left-0 right-0 z-10">
+        <div className="justify-between px-4 mx-auto lg:max-w-7xl md:items-start md:flex md:px-8">
+          <div className="flex-items-center">
+            <div className=" flex items-center justify-between py-3 md:py-5 md:block ">
+              <button
+                className="md:hidden p-2 text-gray-700 rounded-md outline-none focus:border-gray-400 focus:border"
+                onClick={() => {
+                  setShowScore(!showScore);
+                  setNavbar(false);
+                }}
+              >
+                {showScore ? (
+                  <FaFootballBall size={30} />
+                ) : (
+                  <FaFootballBall
+                    size={30}
+                    className="focus:border-none active:border-none"
+                  />
+                )}
+              </button>
 
-1 Create page for user submissions for articles.
-2 Submisisons will be added to the database.
-3 Fetch submissions from database and display on Article component.
+              {/* HAMBURGER BUTTON FOR MOBILE */}
+              <div className="md:hidden">
+                <button
+                  className="p-2 text-gray-700 rounded-md outline-none focus:border-gray-400 focus:border"
+                  onClick={() => {
+                    setNavbar(!navbar);
+                    setShowScore(false);
+                  }}
+                >
+                  {navbar ? (
+                    <FaBars size={30} />
+                  ) : (
+                    <FaBars
+                      size={30}
+                      className="focus:border-none active:border-none"
+                    />
+                  )}
+                </button>
+              </div>
+            </div>
+          </div>
+          {/* {show scores on navbar} */}
+          <div>
+            <div className={showScore ? "p-12 md:p-0 block" : "hidden"}>
+              <ScoreboardNav />
+            </div>
+          </div>
+          <div>
+            <div
+              className={`flex-1 justify-self-center pb-3 mt-8 md:block md:pb-0 md:mt-0  ${
+                navbar ? "p-12 md:p-0 bg-[green]" : "hidden"
+              }`}
+            >
+              <ul className=" h-screen md:h-auto items-center justify-center md:flex  ">
+                <li className="pb-6 py-2 md:px-3 mx-auto">
+                  {/* LOGO */}
+                  <Link href="/">
+                    <div>
+                      <Image height={300} width={300} alt="logo" src={Logo} />
+                    </div>
+                  </Link>
+                </li>
+                <li className="pb-6 py-2 md:px-3 text-center border-b-2 md:border-b-0  hover:bg-[#AF1222]  border-[#AF1222]  md:hover:text-[#AF1222] md:hover:bg-transparent">
+                  <Link href="/" onClick={() => setNavbar(!navbar)}>
+                    <span className="text-2xl flex items-center justify-center md:text-[14px]">
+                      <FaHome className="mr-1" /> Home
+                    </span>
+                  </Link>
+                </li>
+                <li className="pb-6  py-2 md:px-3 text-center border-b-2 md:border-b-0  hover:bg-[#AF1222]  border-[#AF1222]  md:hover:text-[#AF1222] md:hover:bg-transparent">
+                  <Link href="/articles" onClick={() => setNavbar(!navbar)}>
+                    <span className="text-2xl flex items-center justify-center md:text-[14px]">
+                      <BiSolidNews className="mr-1" /> Articles
+                    </span>
+                  </Link>
+                </li>
+                <li className="pb-6 py-2 px-3 text-center  border-b-2 md:border-b-0  hover:bg-[#AF1222]  border-[#AF1222]  md:hover:text-[#AF1222] md:hover:bg-transparent">
+                  <Link href="/matchups" onClick={() => setNavbar(!navbar)}>
+                    <span className="text-2xl flex items-center justify-center md:text-[14px]">
+                      <FaCalendarAlt className="mr-1" /> Matchups
+                    </span>
+                  </Link>
+                </li>
+                <li className="pb-6  py-2 px-3 text-center  border-b-2 md:border-b-0  hover:bg-[#AF1222]  border-[#AF1222]  md:hover:text-[#AF1222] md:hover:bg-transparent">
+                  <Link href="/standings" onClick={() => setNavbar(!navbar)}>
+                    <span className="text-2xl flex items-center justify-center md:text-[14px]">
+                      <AiOutlineOrderedList className="mr-1" /> Standings
+                    </span>
+                  </Link>
+                </li>
+                <li className="pb-6 py-2 px-3 text-center  border-b-2 md:border-b-0  hover:bg-[#AF1222]  border-[#AF1222]  md:hover:text-[#AF1222] md:hover:bg-transparent">
+                  <Link
+                    href="/powerrankings"
+                    onClick={() => setNavbar(!navbar)}
+                  >
+                    <span className="text-2xl flex items-center justify-center md:text-[14px]">
+                      <FaRankingStar className="mr-1" /> Power Rankings
+                    </span>
+                  </Link>
+                </li>
+                <li className="pb-6  py-2 px-3 text-center  border-b-2 md:border-b-0  hover:bg-[#AF1222]  border-[#AF1222]  md:hover:text-[#AF1222] md:hover:bg-transparent">
+                  <Link href="" onClick={() => setNavbar(!navbar)}>
+                    <span className="text-2xl flex items-center justify-center md:text-[14px]">
+                      <MdMore className="mr-1" /> <Dropdown />
+                    </span>
+                  </Link>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </div>
