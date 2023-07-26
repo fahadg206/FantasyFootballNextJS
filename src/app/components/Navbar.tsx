@@ -26,7 +26,7 @@ function NavBar() {
   return (
     <div className="z-50">
       <nav className=" w-full top-0 left-0 right-0 z-10">
-        <ul className="hidden md:flex items-center ">
+        <ul className="hidden md:flex md:items-center border-b border-[#af1222] border-opacity-25 h-[90px] w-[85vw] ml-11">
           <li className="mr-auto">
             <Link href="/">
               <div>
@@ -81,7 +81,7 @@ function NavBar() {
           <div className="flex-items-center">
             <div className=" flex items-center justify-between py-3 md:py-5 md:block ">
               <button
-                className="md:hidden p-2 text-gray-700 rounded-md outline-none focus:border-gray-400 focus:border"
+                className="md:hidden p-2 text-[#af1222] rounded-md outline-none focus:border-gray-400 focus:border"
                 onClick={() => {
                   setShowScore(!showScore);
                   setNavbar(false);
@@ -98,13 +98,13 @@ function NavBar() {
               </button>
               <div className="md:hidden">
                 <Link href="/">
-                  <Image height={200} width={200} alt="logo" src={Logo} />
+                  <Image height={240} width={240} alt="logo" src={Logo} />
                 </Link>
               </div>
               {/* HAMBURGER BUTTON FOR MOBILE */}
               <div className="md:hidden">
                 <button
-                  className="p-2 text-gray-700 rounded-md outline-none focus:border-gray-400 focus:border"
+                  className="p-2 text-[#af1222] rounded-md outline-none focus:border-gray-400 focus:border"
                   onClick={() => {
                     setNavbar(!navbar);
                     setShowScore(false);
@@ -124,14 +124,14 @@ function NavBar() {
           </div>
           {/* {show scores on navbar} */}
           <div>
-            <div className={showScore ? "p-12 md:p-0 block" : "hidden"}>
+            <div className={showScore ? " md:p-0 block" : "hidden"}>
               <ScoreboardNav />
             </div>
           </div>
           <div>
             {/* MOBILE NAVBAR */}
             <div
-              className={`flex justify-center items-center sticky top-0 h-[60vh] z-50  ${
+              className={`flex justify-center items-start  top-0 h-screen  z-50 bg-green-700  ${
                 navbar ? "md:p-0 " : "hidden"
               }`}
             >
@@ -140,6 +140,13 @@ function NavBar() {
                   <Link href="/" onClick={() => setNavbar(!navbar)}>
                     <span className="text-2xl flex items-center justify-center md:text-[14px]">
                       <FaHome className="mr-1" /> Home
+                    </span>
+                  </Link>
+                </li>
+                <li className="pb-6 py-2 md:px-3 text-center border-b-2 md:border-b-0  hover:bg-[#AF1222]  border-[#AF1222]  hover:transition hover:duration-300 hover:ease-in-out hover:rounded p-6">
+                  <Link href="/" onClick={() => setNavbar(!navbar)}>
+                    <span className="text-2xl flex items-center justify-center md:text-[14px]">
+                      <FaSearch className="mr-1" /> Stats
                     </span>
                   </Link>
                 </li>
@@ -171,13 +178,6 @@ function NavBar() {
                   >
                     <span className="text-2xl flex items-center justify-center md:text-[14px]">
                       <FaRankingStar className="mr-1" /> Power Rankings
-                    </span>
-                  </Link>
-                </li>
-                <li className="pb-6  py-2 px-3 text-center  border-b-2 md:border-b-0  hover:bg-[#AF1222]  border-[#AF1222] hover:transition hover:duration-300 hover:ease-in-out hover:rounded p-6">
-                  <Link href="" onClick={() => setNavbar(!navbar)}>
-                    <span className="text-2xl flex items-center justify-center md:text-[14px]">
-                      <MdMore className="mr-1" /> <Dropdown />
                     </span>
                   </Link>
                 </li>

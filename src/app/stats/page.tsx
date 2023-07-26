@@ -2,7 +2,7 @@
 import React from "react";
 
 import { useState } from "react";
-import { Modal, useModal, Button, Text } from "@nextui-org/react";
+import { Modal, useModal, Button, Text, Input } from "@nextui-org/react";
 import { FaSearch } from "react-icons/fa";
 
 export default function Home() {
@@ -14,13 +14,17 @@ export default function Home() {
     >
       <div className="mt-3">Welcome to {"League Name"}</div>
       <div className="grid-cols-1 justify-center text-center md:flex ">
-        <input
+        <Input
           onChange={(e) => {
             setInput(e.target.value);
           }}
+          size="lg"
+          width="60vw"
           type="text"
-          placeholder="Search owners, matchups, or stats"
-          className="p-1 rounded-lg border border-[#af1222] focus:rounded-lg border-rounded focus:ring focus:ring-[#af1222] focus:border-[#af1222] w-[70vw] md:w-[50vw]  bg-[#050505] text-[11px] md:text-[16px]"
+          color="success"
+          css={{ color: "white", fontSize: "14px" }}
+          labelPlaceholder="Search owners, matchups, or stats"
+          className="p-1 rounded-lg  focus:rounded-lg border-rounded focus:ring focus:ring-[#af1222] focus:border-[#af1222] w-[70vw] md:w-[50vw] bg-[#050505] text-[11px] md:text-[16px]"
         />
         <div className="w-screen flex justify-center mt-3 md:block md:w-[0vw]">
           <Button
