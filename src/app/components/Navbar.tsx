@@ -26,7 +26,7 @@ function NavBar() {
   return (
     <div className="z-50">
       <nav className=" w-full top-0 left-0 right-0 z-10">
-        <ul className="hidden md:flex md:items-center border-b border-[#af1222] border-opacity-25 h-[90px] w-[85vw] ml-11">
+        <ul className="hidden md:flex md:items-center border-b border-[#af1222] border-opacity-25 h-[90px]  ">
           <li className="mr-auto">
             <Link href="/">
               <div>
@@ -36,15 +36,15 @@ function NavBar() {
           </li>
           <li className="mr-3">
             <Link href="/">
-              <span className=" flex items-center justify-center text-[14px] hover:bg-[#AF1222] hover:transition hover:duration-300 hover:ease-in-out hover:rounded p-1">
-                <FaHome className="mr-1" /> Home
+              <span className=" flex items-center justify-center text-[14px] hover:bg-[#AF1222]  hover:transition hover:duration-300 hover:ease-in-out hover:rounded p-1">
+                <FaHome className="mr-1  " /> Home
               </span>
             </Link>
           </li>
           <li className="mr-3">
             <Link href="/stats">
               <span className=" flex items-center justify-center text-[14px] hover:bg-[#AF1222] hover:transition hover:duration-300 hover:ease-in-out hover:rounded p-1">
-                <FaSearch className="mr-1" /> Stats
+                <FaSearch className="mr-1 " /> Stats
               </span>
             </Link>
           </li>
@@ -56,7 +56,7 @@ function NavBar() {
             </Link>
           </li>
           <li className="mr-3">
-            <Link href="/">
+            <Link href="/matchups">
               <span className=" flex items-center justify-center text-[14px] hover:bg-[#AF1222] hover:transition hover:duration-300 hover:ease-in-out hover:rounded p-1">
                 <FaCalendarAlt className="mr-1" /> Matchups
               </span>
