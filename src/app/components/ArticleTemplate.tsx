@@ -23,9 +23,10 @@ const ArticleTemplate = ({
   p1: string;
   p2: string;
   p3: string;
+  name: string;
 }) => {
   return (
-    <div className=" text-[#E9EBEA] flex flex-col items-center sm:grid grid-cols-2 bg-[#202123] w-screen md:w-[60vw] md:rounded md:border-2 md:border-[#AF1222]">
+    <div className="  flex flex-col items-center justify-center sm:grid grid-cols-2  w-screen md:w-[60vw] md:rounded md:border-2 md:border-[#1a1a1a] border-opacity-10 ">
       <div className="grid grid-cols-1 justify-items-center w-full sm:sticky top-20 self-start lg:top-5 mt-5">
         <Image
           className="rounded-[10px]"
@@ -35,9 +36,9 @@ const ArticleTemplate = ({
           width={300}
         />
       </div>
-      <div className="grid grid-cols-1 gap-y-3 justify-items-center mt-10 ml-5 self-start">
+      <div className="grid grid-cols-1 gap-y-3 justify-items-center mt-10 ml-5 self-start w-screen md:w-[20vw]">
         <p className="text-5xl font-bold">{title}</p>
-        <div className="flex w-[77vw] sm:flex sm:w-[35vw] md:flex items-center md:w-[25vw] justify-between border-b-2 border-black border-opacity-10">
+        <div className="flex w-[77vw] sm:flex sm:w-[35vw] md:flex items-center md:w-[25vw] justify-between border-b-2 dark:border-[#EDEDED] border-[#000000] dark:border-opacity-10 border-opacity-20">
           <div className="flex items-center">
             <Image
               className="rounded-[10px]"
@@ -59,7 +60,7 @@ const ArticleTemplate = ({
           {p3} <br />
           <br />
         </p>
-        <p className="flex w-[77vw] sm:flex sm:w-[35vw] md:flex items-center md:w-[25vw] justify-between border-b-2 border-black border-opacity-5"></p>
+        <p className="flex w-[77vw] sm:flex sm:w-[35vw] md:flex items-center md:w-[25vw] justify-between border-b-2 dark:border-[#EDEDED] border-[#000000] dark:border-opacity-5 border-opacity-20"></p>
         <br />
         <br />
       </div>
