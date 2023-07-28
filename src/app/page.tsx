@@ -36,7 +36,7 @@ import { Modal, useModal, Button, Text, Input } from "@nextui-org/react";
 import { FaSearch } from "react-icons/fa";
 
 export default function Home() {
-  const { setVisible, bindings } = useModal();
+  /* SAVING USERNAME INPUT INTO LOCALSTORAGE. CLEARING LOCAL STORAGE IF EMPTY. PASSING USERNAME AND YEAR SELECTED TO PROPS  */
   const [text, setText] = useState("");
   const [usernameSubmitted, setUsernameSubmitted] = useState(false);
   const [storedUsernames, setStoredUsernames] = useState(new Array());
@@ -76,6 +76,7 @@ export default function Home() {
     setText(username);
   };
 
+  /* ^ sSAVING USERNAME INPUT INTO LOCALSTORAGE. CLEARING LOCAL STORAGE IF EMPTY. PASSING USERNAME AND YEAR SELECTED TO PROPS ^ */
   return (
     <div
       className={`text-3xl text-white  flex flex-col justify-start items-center gap-10 border-2 border-[#af1222] h-[60vh] bg-[url('./images/youtube-video-gif.gif')] bg-[length:470px_800px] md:bg-[url('./images/youtube-video-gif.gif')] bg-no-repeat md:bg-cover`}
