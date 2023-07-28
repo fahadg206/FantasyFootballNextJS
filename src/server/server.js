@@ -19,6 +19,7 @@ const round = (num) => {
 };
 
 let players = new Map();
+let processedPlayers;
 
 function GET() {
   console.log("Called server");
@@ -77,7 +78,7 @@ function GET() {
                       const playerData = weeklyData.shift();
                       const scoringSettings = leagueData.scoring_settings;
 
-                      const processedPlayers = computePlayers(playerData, weeklyData, scoringSettings);
+                      processedPlayers = computePlayers(playerData, weeklyData, scoringSettings);
 
                       const playerMap = new Map(Object.entries(processedPlayers));
 
@@ -164,7 +165,8 @@ async function initializeData() {
 app.get("/api/players", (req, res) => {
   // Return the players map as JSON
   console.log("inside endpoint");
-  res.json(Array.from(players.entries()));
+  processedPlayers["4017"];
+  res.json(processedPlayers);
 });
 
 // Start the server and initialize data

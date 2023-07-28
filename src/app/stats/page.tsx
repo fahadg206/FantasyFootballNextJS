@@ -32,7 +32,7 @@ useEffect(() => {
     .then((response) => {
       const playersData = response.data;
       // Process and use the data as needed
-      console.log(playersData["4019"]);
+      console.log(playersData["4017"]);
     })
     .catch((error) => {
       console.error('Error while fetching players data:', error);
