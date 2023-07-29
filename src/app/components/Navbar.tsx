@@ -15,7 +15,7 @@ import { MdMore, MdQueryStats } from "react-icons/md";
 import { IoCloseSharp } from "react-icons/io5";
 import { AiOutlineOrderedList } from "react-icons/ai";
 import ScoreboardNav from "./ScoreboardNav";
-import Dropdown from "./Dropdown";
+
 import Image from "next/image";
 import Logo from "../images/Transparent.png";
 import { Navbar } from "@nextui-org/react";

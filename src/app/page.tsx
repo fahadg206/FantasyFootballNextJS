@@ -32,16 +32,38 @@ import React from "react";
 import Standings from "./league/[leagueID]/standings/page";
 
 import { useState, useEffect } from "react";
-import { Modal, useModal, Button, Text, Input } from "@nextui-org/react";
+import {
+  Modal,
+  useModal,
+  Button,
+  Text,
+  Input,
+  Navbar,
+} from "@nextui-org/react";
 import { FaSearch } from "react-icons/fa";
+import NavBar from "./components/Navbar";
 
 export default function Home() {
+  const options = ["2020", "2021", "2022"];
   /* SAVING USERNAME INPUT INTO LOCALSTORAGE. CLEARING LOCAL STORAGE IF EMPTY. PASSING USERNAME AND YEAR SELECTED TO PROPS  */
   const [text, setText] = useState("");
   const [usernameSubmitted, setUsernameSubmitted] = useState(false);
   const [storedUsernames, setStoredUsernames] = useState(new Array());
 
-  const [selectedSeason, setSelectedSeason] = useState(2022);
+  const [selectedSeason, setSelectedSeason] = useState(options[0]);
+
+  // const handleSelect = (option: string) => {
+  //   setSelectedOption(option);
+  //   onSelect(option);
+  // };
+  //Fantasy Years
+
+  //Displays the selected year
+  const handleSelection = (selectedOption: string) => {
+    console.log("Selected option:", selectedOption);
+    setSelectedSeason(selectedOption);
+    // Do something with the selected option if needed.
+  };
 
   useEffect(() => {
     if ("usernames" in localStorage) {
@@ -107,8 +129,24 @@ export default function Home() {
             <Button onClick={onStorageCleared}>Clear</Button>
           </div>
         </form>
-        <Standings usernameSubmitted={usernameSubmitted} username={text} />
       </div>
+      <div>
+        <select
+          value={selectedSeason}
+          onChange={(e) => handleSelection(e.target.value)}
+        >
+          {options.map((option) => (
+            <option key={option} value={option}>
+              {option}
+            </option>
+          ))}
+        </select>
+      </div>
+      <Standings
+        usernameSubmitted={usernameSubmitted}
+        username={text}
+        selectedSeason={selectedSeason}
+      />
     </div>
   );
 }

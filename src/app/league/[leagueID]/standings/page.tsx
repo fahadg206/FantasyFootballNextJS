@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
-
 import axios from "axios";
 
+import NavBar from "@/app/components/Navbar";
+import { LucideArrowUpRightSquare } from "lucide-react";
 type myProps = {
   username: string;
   usernameSubmitted: boolean;
+  selectedSeason: string;
 };
 
 export default function page(props: myProps) {
@@ -23,7 +25,7 @@ export default function page(props: myProps) {
   // Grabbing users league data (all the leagues they are in) and passing it into array
   const getUserLeaguesData = async () => {
     const response = await axios.get(
-      `https://api.sleeper.app/v1/user/${userId}/leagues/nfl/2022`
+      `https://api.sleeper.app/v1/user/${userId}/leagues/nfl/${props.selectedSeason}`
     );
 
     const leagueData = response.data;
@@ -40,9 +42,19 @@ export default function page(props: myProps) {
     <ul>
       <h1>{props.usernameSubmitted ? "true" : "false"}</h1>
       {leagueData.length > 0 ? (
-        leagueData.map((league) => <h1 key={league.name}>{league.name}</h1>)
+        leagueData.map((league: any) => (
+          <div>
+            <h1 key={league.name}>
+              {league.name}
+              {props.selectedSeason}
+            </h1>
+            <div className="hidden">
+              <NavBar leagueID={league.league_id} />
+            </div>
+          </div>
+        ))
       ) : (
-        <h1>No league data available.</h1>
+        <h1>User not found or League Year not found</h1>
       )}
     </ul>
   );

@@ -3,8 +3,6 @@
 import React, { useState } from "react";
 import ArticleTemplate from "../../../components/ArticleTemplate";
 import imran from "../images/scary_imran.png";
-import { AiOutlineArrowUp, AiOutlineArrowDown } from "react-icons/ai";
-import { Link } from "react-scroll";
 
 const articles = () => {
   const [counter, setCounter] = useState("0");
