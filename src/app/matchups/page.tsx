@@ -18,6 +18,13 @@ interface Manager {
   // Add other properties as needed
 }
 
+interface User {
+  managerID: string;
+  rosterID: string;
+  userName: string;
+  // Add other properties as needed
+}
+
 interface LeagueData {
   season: string;
   previous_league_id: string;
@@ -47,15 +54,17 @@ interface Rivalry {
   matchups: RivalryMatchup[];
 }
 
-const REACT_APP_LEAGUE_ID: string = process.env.REACT_APP_LEAGUE_ID || '';
+const REACT_APP_LEAGUE_ID: string = process.env.REACT_APP_LEAGUE_ID || '864448469199347712';
 
 const matchups = () => {
   const [selected, setSelected] = React.useState(new Set(["text"]));
   const [selected2, setSelected2] = React.useState(new Set(["text"]));
   const [playersData, setPlayersData] = React.useState([]);
-  const [users, setUsers] = React.useState([]);
+  const [users, setUsers] = React.useState(new Set<User>());
 
   const managers: Manager[] = [];
+
+  const usersDropdown: Set<User> = new Set();
 
 
 
@@ -93,7 +102,7 @@ const matchups = () => {
       const data: LeagueData = res.data;
   
       if (res.status === 200) {
-        console.log("Here's the league data:", data);
+        //console.log("Here's the league data:", data);
       } else {
         // Handle other status codes or error cases
       }
@@ -143,12 +152,30 @@ const processRivalryMatchups = (
   return { matchup, week, year: '' }; // Replace 'year: '' ' with the actual year if available
 };
 
-const getRosterIDFromManagerIDAndYear = (teamManagers: any, managerID: string, year: string): string | null => {
+const getRosterIDFromManagerIDAndYear = (teamManagers: any, managerID: string | null, year: string, userName: string): string | null => {
+  if (!managerID || !year) return null; // Handle null values here
   if (!managerID || !year) return null;
   for (const rosterID in teamManagers.teamManagersMap[year]) {
     if (
       teamManagers.teamManagersMap[year][rosterID].managers.indexOf(managerID) > -1
     ) {
+      // console.log("ManagerID: ", managerID);
+      // console.log("RosterID: ", rosterID);
+      // console.log("Username:", userName);
+      if(!usersDropdown.has({managerID,
+        rosterID,
+        userName
+
+      })){
+        usersDropdown.add({managerID,
+          rosterID,
+          userName
+  
+        })
+        setUsers(usersDropdown);
+
+      }
+      
       return rosterID;
     }
   }
@@ -156,11 +183,11 @@ const getRosterIDFromManagerIDAndYear = (teamManagers: any, managerID: string, y
 };
 
 const getLeagueTeamManagers = async (): Promise<any> => {
-  console.log("Called");
+  
   let currentLeagueID = REACT_APP_LEAGUE_ID;
   let teamManagersMap: any = {};
   let finalUsers: any = {};
-  let currentSeason: string | null = null;
+  let currentSeason: string = "";
 
   while (currentLeagueID && currentLeagueID !== '0') {
     const usersRaw = await axios.get<any>(
@@ -169,7 +196,7 @@ const getLeagueTeamManagers = async (): Promise<any> => {
     const rostersRaw = await axios.get<any>(
       `https://api.sleeper.app/v1/league/${currentLeagueID}/rosters`
     );
-
+    
     const usersJson = JSON.stringify(usersRaw.data);
     const rostersJson = rostersRaw.data;
     const leagueData = await getLeagueData(currentLeagueID);
@@ -185,7 +212,9 @@ const getLeagueTeamManagers = async (): Promise<any> => {
     for (const processedUserKey in processedUsers) {
       if (finalUsers[processedUserKey]) continue;
       finalUsers[processedUserKey] = processedUsers[processedUserKey];
+      
     }
+
     for (const roster of rostersJson) {
       teamManagersMap[year][roster.roster_id] = {
         team: getTeamData(processedUsers, roster.owner_id),
@@ -198,8 +227,15 @@ const getLeagueTeamManagers = async (): Promise<any> => {
     teamManagersMap,
     users: finalUsers,
   };
-  console.log("Here's what it looks like: ", Object.values(response.users));
-  setUsers(Object.values(response.users));
+
+// console.log("Data prior to function call", response.teamManagersMap["2022"]);
+const keys = Object.keys(response.users);
+for (const key of keys) {
+  getRosterIDFromManagerIDAndYear(response, response.users[key].user_id, response.currentSeason, response.users[key].display_name);
+  //console.log(`${key}: ${response.users[key].display_name}`);
+}
+  
+  
   return response;
 };
 
@@ -241,7 +277,7 @@ const getManagers = (roster: any): string[] => {
       managers.push(coOwner);
     }
   }
-  console.log("Managers:", managers[0]);
+  //console.log("Managers:", managers[0]);
   return managers;
 }
  
@@ -266,45 +302,12 @@ const getManagers = (roster: any): string[] => {
   
   
 
-  // Define callback functions to handle selection changes
-  const handleSelectionChange = (selection: any) => {
-    setSelected(selection);
-  };
-
-  const handleSelectionChange2 = (selection2: any) => {
-    setSelected2(selection2);
-  };
-
-  const dropdownItems1: any = users
-    .map((player) => {
-      if (selected2.keys().next().value !== player) {
-        return (
-          <Dropdown.Item css={{ color: "white" }} key={player}>
-            {player}
-          </Dropdown.Item>
-        );
-      }
-      return undefined;
-    })
-    .filter((item) => item !== undefined);
-
-  const dropdownItems2: any = users
-    .map((player) => {
-      if (selected.keys().next().value !== player) {
-        return (
-          <Dropdown.Item css={{ color: "#af1222" }} key={player}>
-            {player}
-          </Dropdown.Item>
-        );
-      }
-      return undefined;
-    })
-    .filter((item) => item !== undefined);
+  
     
 
-   
+    
     useEffect(() => {
-      //..etLeagueTeamManagers();
+      
       axios
         .get('http://localhost:3001/api/players')
         .then((response) => {
@@ -315,8 +318,57 @@ const getManagers = (roster: any): string[] => {
         .catch((error) => {
           console.error('Error while fetching players data:', error);
         });
-    }, [users]);
+    }, []);
 
+    useEffect(() => {
+      const fetchLeagueData = async () => {
+        const leagueData = await getLeagueTeamManagers();
+        
+        
+      };
+  
+      fetchLeagueData();
+      console.log("Hey", usersDropdown)
+   
+    }, [JSON.stringify(usersDropdown)]);
+
+
+// Define callback functions to handle selection changes
+const handleSelectionChange = (selection: any) => {
+  setSelected(selection);
+};
+
+const handleSelectionChange2 = (selection2: any) => {
+  setSelected2(selection2);
+};
+
+
+console.log("Here's the dropdown: ", users);
+const dropdownItems1: any = Array.from(users)
+  .map((player) => {
+    if (selected2.keys().next().value !== player.userName) {
+      return (
+        <Dropdown.Item css={{ color: "white" }} key={player.userName}>
+          {player.userName}
+        </Dropdown.Item>
+      );
+    }
+    return undefined;
+  })
+  .filter((item) => item !== undefined);
+
+const dropdownItems2: any = Array.from(users)
+  .map((player) => {
+    if (selected.keys().next().value !== player.userName) {
+      return (
+        <Dropdown.Item css={{ color: "#af1222" }} key={player.userName}>
+          {player.userName}
+        </Dropdown.Item>
+      );
+    }
+    return undefined;
+  })
+  .filter((item) => item !== undefined);
   return (
     <div className="flex justify-around h-screen border-2 border-[#af1222]">
       <div className="mt-5">
