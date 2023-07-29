@@ -1,11 +1,14 @@
 "use client";
 
-import React from "react";
-import { Dropdown } from "@nextui-org/react";
+import React, { useState } from "react";
+import { Dropdown, Modal, useModal, Button, Text } from "@nextui-org/react";
+import { FaSearch } from "react-icons/fa";
 
 const matchups = () => {
   const [selected, setSelected] = React.useState(new Set(["text"]));
   const [selected2, setSelected2] = React.useState(new Set(["text"]));
+  const [input, setInput] = useState("");
+  const { setVisible, bindings } = useModal();
 
   const selectedValue = React.useMemo(
     () => Array.from(selected).join(", ").replaceAll("_", " "),
@@ -35,7 +38,7 @@ const matchups = () => {
     .map((player) => {
       if (selected2.keys().next().value !== player) {
         return (
-          <Dropdown.Item css={{ color: "white" }} key={player}>
+          <Dropdown.Item css={{ color: "#af1222" }} key={player}>
             {player}
           </Dropdown.Item>
         );
@@ -60,7 +63,7 @@ const matchups = () => {
   // ... your other code ...
 
   return (
-    <div className="flex justify-around h-screen border-2 border-[#af1222]">
+    <div className="flex justify-center gap-10 h-screen border-2 border-[#af1222]">
       <div className="mt-5">
         Select User:
         <Dropdown>
@@ -70,10 +73,10 @@ const matchups = () => {
           <Dropdown.Menu
             aria-label="Single selection actions"
             css={{
-              backgroundColor: "#af1222",
+              backgroundColor: "black",
               border: "solid",
-              borderColor: "black",
-              color: "black",
+              borderColor: "#af1222",
+              color: "white",
             }}
             disallowEmptySelection
             selectionMode="single"
@@ -107,7 +110,77 @@ const matchups = () => {
           </Dropdown.Menu>
         </Dropdown>
       </div>
+      <div className="mt-10">
+        <Button
+          onPress={() => {
+            console.log(input);
+            setVisible(true);
+          }}
+          css={{
+            backgroundImage: "linear-gradient(black, black, #af1222, #af1222)",
+            color: "#ffffff",
+            borderStyle: "solid",
+            borderColor: "#af1222",
+            // Set the text color to white or any desired color
+            // Add other styles as needed
+          }}
+          // bg-gradient-to-b border border-[#af1222] from-black to-[#af1222] p-1 rounded
+          auto
+        >
+          <FaSearch />
+        </Button>
+      </div>
       {/* Modal */}
+      <div>
+        {" "}
+        {!selected.has("text") && !selected2.has("text") ? (
+          <div>
+            <Modal
+              scroll
+              width="600px"
+              aria-labelledby="modal-title"
+              aria-describedby="modal-description"
+              {...bindings}
+              css={{
+                backgroundColor: "#202123",
+                color: "white",
+                "@smMax": {
+                  backgroundColor: "#050505",
+                  width: "90vw",
+                  display: "flex",
+                  justifyContent: "center",
+                  textAlign: "center",
+                  marginLeft: "20px",
+                },
+              }}
+            >
+              <Modal.Header>
+                <Text id="modal-title" size={18} css={{ color: "#E9EBEA" }}>
+                  Modal with a lot of content
+                </Text>
+              </Modal.Header>
+              <Modal.Body css={{ color: "#190103" }}>
+                <Text id="modal-description" css={{ color: "#E9EBEA" }}>
+                  {selectedValue} {selectedValue2}
+                </Text>
+              </Modal.Body>
+              <Modal.Footer>
+                <Button
+                  auto
+                  flat
+                  color="default"
+                  onPress={() => setVisible(false)}
+                  css={{ color: "white", backgroundColor: "#af1222" }}
+                >
+                  Close
+                </Button>
+              </Modal.Footer>
+            </Modal>
+          </div>
+        ) : (
+          ""
+        )}
+      </div>
     </div>
   );
 };

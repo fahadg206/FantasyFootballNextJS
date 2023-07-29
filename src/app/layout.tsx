@@ -5,6 +5,7 @@ import Scoreboard from "./components/Scoreboard";
 import Navbar from "./components/Navbar";
 import Providers from "./components/Theme";
 import Themechanger from "./components/ThemeChanger";
+
 import Footer from "./components/Footer";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -15,20 +16,21 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
+  params,
 }: {
   children: React.ReactNode;
+  params: { leagueID: string };
 }) {
   return (
     <html lang="en">
       <body
-        className={`${inter.className} bg-[#f0eaea] dark:bg-[#050505] from-1a1a1c to-AF1222 text-[#1a1a1c] dark:text-[#E9EBEA] container mx-auto p-4 font-[${inter}] `}
+        className={`${inter.className} bg-[#EDEDED] dark:bg-[#000000] from-1a1a1c to-AF1222 text-[#1a1a1c] dark:text-[#EDEDED] container mx-auto p-4 font-[${inter}] `}
       >
         <Providers>
           <div className="z-20">
             <Themechanger />
             <Scoreboard />
-            <Navbar />
-
+            <Navbar leagueID={params.leagueID} />
             {children}
           </div>
         </Providers>
