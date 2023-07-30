@@ -1,5 +1,7 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
 import axios from "axios";
+
+import LeagueContext from "../../../context/LeagueContext";
 
 import NavBar from "@/app/components/Navbar";
 import { LucideArrowUpRightSquare } from "lucide-react";
@@ -38,6 +40,10 @@ export default function page(props: myProps) {
     getUserLeaguesData();
   }, [props.usernameSubmitted, userId]);
 
+  const [context, setContext] = useContext(LeagueContext);
+
+  setContext(leagueData);
+
   return (
     <ul>
       <h1>{props.usernameSubmitted ? "true" : "false"}</h1>
@@ -48,9 +54,7 @@ export default function page(props: myProps) {
               {league.name}
               {props.selectedSeason}
             </h1>
-            <div className="hidden">
-              <NavBar leagueID={league.league_id} />
-            </div>
+            <div className="text-3xl text-green-900"></div>
           </div>
         ))
       ) : (

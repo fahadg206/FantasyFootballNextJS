@@ -60,7 +60,7 @@ export default function Home() {
 
   //Displays the selected year
   const handleSelection = (selectedOption: string) => {
-    console.log("Selected option:", selectedOption);
+    //console.log("Selected option:", selectedOption);
     setSelectedSeason(selectedOption);
     // Do something with the selected option if needed.
   };
@@ -87,9 +87,9 @@ export default function Home() {
       localStorage.setItem("usernames", JSON.stringify(storedUsernames));
     }
   };
-  console.log(usernameSubmitted);
-  console.log(text);
-  console.log(storedUsernames);
+  // console.log(usernameSubmitted);
+  // console.log(text);
+  // console.log(storedUsernames);
 
   const textChanged = (username: string) => {
     if (usernameSubmitted) {

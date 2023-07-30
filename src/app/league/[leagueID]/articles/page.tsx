@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import ArticleTemplate from "../../../components/ArticleTemplate";
-import imran from "../images/scary_imran.png";
+import imran from "../../../images/scary_imran.png";
 
 const articles = () => {
   const [counter, setCounter] = useState("0");

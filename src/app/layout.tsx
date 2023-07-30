@@ -1,3 +1,4 @@
+"use client";
 import "./globals.css";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
@@ -5,6 +6,8 @@ import Scoreboard from "./components/Scoreboard";
 import Navbar from "./components/Navbar";
 import Providers from "./components/Theme";
 import Themechanger from "./components/ThemeChanger";
+import LeagueContext from "./context/LeagueContext";
+import { useContext, useEffect } from "react";
 
 import Footer from "./components/Footer";
 
@@ -16,11 +19,13 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
-  params,
 }: {
   children: React.ReactNode;
-  params: { leagueID: string };
 }) {
+  // useEffect(() => {
+  //   console.log("Root Layout", leagueID);
+  // }, [leagueID]);
+
   return (
     <html lang="en">
       <body
@@ -30,7 +35,7 @@ export default function RootLayout({
           <div className="z-20">
             <Themechanger />
             <Scoreboard />
-            <Navbar leagueID={params.leagueID} />
+            <Navbar leagueID="1232" usernameSubmitted={true} />
             {children}
           </div>
         </Providers>

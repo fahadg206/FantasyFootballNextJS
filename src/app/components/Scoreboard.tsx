@@ -1,8 +1,13 @@
-import React from "react";
+"use client";
+
+import React, { useContext } from "react";
 import Imran from "../images/scary_imran.png";
 import Image from "next/image";
+import LeagueContext from "../context/LeagueContext";
 
 export default function Scoreboard() {
+  const [context, setContext] = useContext(LeagueContext);
+  console.log("context", context);
   return (
     <div className=" hidden md:flex justify-center gap-5 mb-2 text-[12px] ">
       <div className="border-r border-[#1a1a1a] p-5  rounded-md  flex flex-col items-start">
