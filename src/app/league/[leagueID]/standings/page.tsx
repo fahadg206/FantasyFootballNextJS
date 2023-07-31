@@ -1,9 +1,12 @@
+"use client";
 import { useEffect, useState, useContext } from "react";
+import { useRouter } from "next/navigation";
 import axios from "axios";
 
 import LeagueContext from "../../../context/LeagueContext";
+import SelectedLeagueContext from "@/app/context/SelectedLeagueContext";
 
-import NavBar from "@/app/components/Navbar";
+import NavBar from "../../../components/Navbar";
 import { LucideArrowUpRightSquare } from "lucide-react";
 type myProps = {
   username: string;
@@ -11,9 +14,21 @@ type myProps = {
   selectedSeason: string;
 };
 
+interface LeagueState {
+  name: string;
+  league_id: string;
+}
+
 export default function page(props: myProps) {
   const [leagueData, setLeagueData] = useState([]);
   const [userId, setUserId] = useState("");
+  const [leagueID, setLeagueID] = useState("");
+  const [selectedLeague, setSelectedLeague] = useState<LeagueState>({
+    name: "",
+    league_id: "",
+  });
+
+  const router = useRouter();
 
   // Grabbing a user with the username we recieved from home page.
   const getUser = async () => {
@@ -41,25 +56,39 @@ export default function page(props: myProps) {
   }, [props.usernameSubmitted, userId]);
 
   const [context, setContext] = useContext(LeagueContext);
+  const [selectedLeagueContext, setSelectedLeagueContext] = useContext(
+    SelectedLeagueContext
+  );
 
   setContext(leagueData);
 
   return (
-    <ul>
-      <h1>{props.usernameSubmitted ? "true" : "false"}</h1>
+    <div>
       {leagueData.length > 0 ? (
         leagueData.map((league: any) => (
-          <div>
-            <h1 key={league.name}>
+          <div className="flex p-1">
+            <h1 className="mr-2" key={league.name}>
               {league.name}
-              {props.selectedSeason}
             </h1>
-            <div className="text-3xl text-green-900"></div>
+            <button
+              onClick={() => {
+                setSelectedLeague(league);
+                setLeagueID(selectedLeagueContext.league_id);
+                router.push(`league/${leagueID}`);
+              }}
+              className="text-[15px] text-[#af1222] border-2 border-[#af1222] p-1 bg-[black] rounded hover:bg-[#1a1a1a]"
+            >
+              Select League
+            </button>
           </div>
         ))
       ) : (
-        <h1>User not found or League Year not found</h1>
+        <h1></h1>
       )}
-    </ul>
+
+      {setSelectedLeagueContext(selectedLeague)}
+      {/* {console.log(selectedLeague.league_id)} */}
+      <NavBar usernameSubmitted={props.usernameSubmitted} leagueID="" />
+    </div>
   );
 }

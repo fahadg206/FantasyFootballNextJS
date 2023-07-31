@@ -1,7 +1,7 @@
 import React from "react";
 
 const page = () => {
-  return <div>leagueID: </div>;
+  return <div>Welcome to your league bruh </div>;
 };
 
 export default page;

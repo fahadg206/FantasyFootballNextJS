@@ -42,6 +42,8 @@ import {
 } from "@nextui-org/react";
 import { FaSearch } from "react-icons/fa";
 import NavBar from "./components/Navbar";
+import Logo from "./images/Transparent.png";
+import Image from "next/image";
 
 export default function Home() {
   const options = ["2020", "2021", "2022"];
@@ -100,53 +102,65 @@ export default function Home() {
 
   /* ^ sSAVING USERNAME INPUT INTO LOCALSTORAGE. CLEARING LOCAL STORAGE IF EMPTY. PASSING USERNAME AND YEAR SELECTED TO PROPS ^ */
   return (
-    <div
-      className={`text-3xl text-white  flex flex-col justify-start items-center gap-10 border-2 border-[#af1222] h-[60vh] bg-[url('./images/youtube-video-gif.gif')] bg-[length:470px_800px] md:bg-[url('./images/youtube-video-gif.gif')] bg-no-repeat md:bg-cover`}
-    >
-      <div className="mt-3">Welcome to {"League Name"}</div>
-      <div className="grid-cols-1 justify-center text-center lg:flex ">
-        <form onSubmit={onFormSubmit}>
-          <Input
-            onChange={(e) => {
-              textChanged(e.target.value);
-            }}
-            size="lg"
-            width="60vw"
-            type="text"
-            labelPlaceholder="Search owners, matchups, or stats"
-            css={{
-              color: "white",
-              fontSize: "40px",
-              "@smMax": {
-                width: "90vw",
-              },
-            }}
-            value={text}
-            className="p-1 rounded-lg  focus:rounded-lg border-rounded focus:ring focus:ring-[#af1222] focus:border-[#af1222] w-[70vw] md:w-[50vw] bg-[#050505] text-[11px] md:text-[16px]"
+    <div className={`text-xl text-white  h-screen `}>
+      <div className="flex flex-col justify-center h-screen items-center  ">
+        <Image src={Logo} width={500} height={500} alt="logo" />
+        <div className=" ">
+          <form onSubmit={onFormSubmit}>
+            <Input
+              onChange={(e) => {
+                textChanged(e.target.value);
+              }}
+              size="lg"
+              width="60vw"
+              type="text"
+              labelPlaceholder="Search owners, matchups, or stats"
+              css={{
+                color: "white",
+                fontSize: "40px",
+                "@smMax": {
+                  width: "90vw",
+                },
+              }}
+              value={text}
+              className="p-1 rounded-lg  focus:rounded-lg border-rounded focus:ring focus:ring-[#af1222] focus:border-[#af1222]  bg-[#050505] text-[11px] md:text-[16px]"
+            />
+            <div className="w-[60vw] flex justify-center items-center   ">
+              <button className="mr-2 text-[15px] bg-[#af1222] p-[2px] rounded">
+                Submit
+              </button>
+              <Button
+                css={{ width: "20px", backgroundColor: "#af1222" }}
+                size="sm"
+                auto
+                className="mr-2"
+                onClick={onStorageCleared}
+              >
+                Clear
+              </Button>
+              <div>
+                <select
+                  value={selectedSeason}
+                  onChange={(e) => handleSelection(e.target.value)}
+                >
+                  {options.map((option) => (
+                    <option key={option} value={option}>
+                      {option}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+          </form>
+        </div>
+        <div>
+          <Standings
+            usernameSubmitted={usernameSubmitted}
+            username={text}
+            selectedSeason={selectedSeason}
           />
-          <div className="w-screen flex justify-center mt-3  md:mt-0 items-center md:ml-2  md:block md:w-[0vw]">
-            <button>Submit</button>
-            <Button onClick={onStorageCleared}>Clear</Button>
-          </div>
-        </form>
+        </div>
       </div>
-      <div>
-        <select
-          value={selectedSeason}
-          onChange={(e) => handleSelection(e.target.value)}
-        >
-          {options.map((option) => (
-            <option key={option} value={option}>
-              {option}
-            </option>
-          ))}
-        </select>
-      </div>
-      <Standings
-        usernameSubmitted={usernameSubmitted}
-        username={text}
-        selectedSeason={selectedSeason}
-      />
     </div>
   );
 }
