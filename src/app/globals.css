@@ -2,31 +2,9 @@
 @tailwind components;
 @tailwind utilities;
 
-/* .fahad {
-  background-image: radial-gradient(
-    97% 5%,
+/* COLORWAYS
+ BLACK: #00000
+ RED: #AF1222
+ GREY: #1A1A1A
 
-    #af1222,
-    #050505,
-    #050505,
-    #050505,
-    #050505,
-    #050505,
-    #050505,
-    #050505
-  );
-  height: min-content;
-}
-
-.fahad-2 {
-  background-image: radial-gradient(
-    closest-corner at 5% 97% #af1222,
-    #050505,
-    #050505,
-    #050505,
-    #050505,
-    #050505,
-    #050505,
-    #050505
-  );
-} */
+*/
