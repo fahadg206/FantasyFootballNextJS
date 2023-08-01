@@ -1,11 +1,14 @@
 "use client";
 
 import React from "react";
+import { FaSearch } from "react-icons/fa";
 import { Dropdown, Modal, useModal, Button, Text } from "@nextui-org/react";
 import axios, { AxiosResponse } from "axios";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { match } from "assert";
 import { useDropdown } from "@nextui-org/react/types/dropdown/use-dropdown";
+import { M_PLUS_1 } from "next/font/google";
+import Image from "next/image";
 
 interface NflState {
   season: string;
@@ -57,7 +60,7 @@ interface Rivalry {
 }
 
 const REACT_APP_LEAGUE_ID: string =
-  process.env.REACT_APP_LEAGUE_ID || "864448469199347712";
+  process.env.REACT_APP_LEAGUE_ID || "872659020144656384";
 
 const matchups = () => {
   const [selected, setSelected] = React.useState(new Set(["text"]));
@@ -69,11 +72,15 @@ const matchups = () => {
 
   const { setVisible, bindings } = useModal();
 
+  const [input, setInput] = useState("");
+
   const managers: Manager[] = [];
 
   const usersDropdown: Set<User> = new Set();
 
   const usersDropdown2: Set<User> = new Set();
+
+  const rivalsMap = new Map();
 
   const getNflState = async (): Promise<NflState> => {
     try {
@@ -463,6 +470,8 @@ const matchups = () => {
       .get("http://localhost:3001/api/players")
       .then((response) => {
         const playersData = response.data;
+
+        setPlayersData(playersData);
         // Process and use the data as needed
         console.log(playersData["4017"]);
       })
@@ -493,6 +502,7 @@ const matchups = () => {
           .then((rivalryData) => {
             const rivals = new Set<Rivalry>();
             rivals.add(rivalryData);
+
             setRivalry(rivals);
             console.log("Selected users Rivalry Data: ", rivalryData);
           })
@@ -507,6 +517,9 @@ const matchups = () => {
     fetchData();
   }, [JSON.stringify(usersDropdown), selected, selected2]);
 
+  for (const rival of rivalry) {
+    rivalsMap.set("Rival", rival);
+  }
   // Define callback functions to handle selection changes
   const handleSelectionChange = (selection: any) => {
     setSelected(selection);
@@ -545,6 +558,10 @@ const matchups = () => {
       return undefined;
     })
     .filter((item) => item !== undefined);
+  console.log(rivalsMap);
+  // const avatarID = rivalsMap
+  //   .get("Rival")
+  //   .matchups[0].matchup[0].starters[0].toString();
   return (
     <div className="flex justify-around h-screen border-2 border-[#af1222]">
       <div className="mt-5">
@@ -593,6 +610,26 @@ const matchups = () => {
           </Dropdown.Menu>
         </Dropdown>
       </div>
+      <div className="mt-10">
+        <Button
+          onPress={() => {
+            console.log(input);
+            setVisible(true);
+          }}
+          css={{
+            backgroundImage: "linear-gradient(black, black, #af1222, #af1222)",
+            color: "#ffffff",
+            borderStyle: "solid",
+            borderColor: "#af1222",
+            // Set the text color to white or any desired color
+            // Add other styles as needed
+          }}
+          // bg-gradient-to-b border border-[#af1222] from-black to-[#af1222] p-1 rounded
+          auto
+        >
+          <FaSearch />
+        </Button>
+      </div>
       {/* Modal */}
       <div>
         {" "}
@@ -624,8 +661,26 @@ const matchups = () => {
               </Modal.Header>
               <Modal.Body css={{ color: "#190103" }}>
                 <Text id="modal-description" css={{ color: "#E9EBEA" }}>
-                  {selectedValue} {selectedValue2}
+                  {rivalsMap.has("Rival")
+                    ? playersData[
+                        rivalsMap
+                          .get("Rival")
+                          .matchups[0].matchup[0].starters[0].toString()
+                      ].fn +
+                      " " +
+                      playersData[
+                        rivalsMap
+                          .get("Rival")
+                          .matchups[0].matchup[0].starters[0].toString()
+                      ].ln
+                    : "Nice try buddy"}
                 </Text>
+                <Image
+                  src="https://sleepercdn.com/content/nfl/players/thumb/4017.jpg"
+                  alt="player"
+                  width={100}
+                  height={100}
+                />
               </Modal.Body>
               <Modal.Footer>
                 <Button
