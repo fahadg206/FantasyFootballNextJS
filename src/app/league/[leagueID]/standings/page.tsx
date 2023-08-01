@@ -74,7 +74,7 @@ export default function page(props: myProps) {
               onClick={() => {
                 setSelectedLeague(league);
                 setLeagueID(selectedLeagueContext.league_id);
-                router.push(`league/${leagueID}`);
+                router.push(`/league/${leagueID}`);
               }}
               className="text-[15px] text-[#af1222] border-2 border-[#af1222] p-1 bg-[black] rounded hover:bg-[#1a1a1a]"
             >

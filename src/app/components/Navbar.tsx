@@ -55,7 +55,7 @@ function NavBar(props: MyProps) {
 
     return (
       <nav className="fixed left-10 top-0 p-4 text-[13px] flex flex-col items-center  gap-2 h-screen w-[33vw] ">
-        <Link href="/">
+        <Link href={`/league/${leagueID}`}>
           <div className="  ">
             <Image src={Logo} alt="logo" width={250} height={250} />
           </div>
