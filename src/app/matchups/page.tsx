@@ -5,6 +5,7 @@ import { Dropdown, Modal, useModal, Button, Text } from "@nextui-org/react";
 import axios, { AxiosResponse } from "axios";
 import { useEffect } from "react";
 import { match } from "assert";
+import { useDropdown } from "@nextui-org/react/types/dropdown/use-dropdown";
 
 interface NflState {
   season: string;
@@ -63,6 +64,7 @@ const matchups = () => {
   const [selected2, setSelected2] = React.useState(new Set(["text"]));
   const [playersData, setPlayersData] = React.useState([]);
   const [users, setUsers] = React.useState(new Set<User>());
+  const [users2, setUsers2] = React.useState(new Set<User>());
   const [rivalry, setRivalry] = React.useState(new Set<Rivalry>());
 
   const { setVisible, bindings } = useModal();
@@ -70,6 +72,8 @@ const matchups = () => {
   const managers: Manager[] = [];
 
   const usersDropdown: Set<User> = new Set();
+
+  const usersDropdown2: Set<User> = new Set();
 
   const getNflState = async (): Promise<NflState> => {
     try {
@@ -311,11 +315,17 @@ const matchups = () => {
         // console.log("ManagerID: ", managerID);
         // console.log("RosterID: ", rosterID);
         // console.log("Username:", userName);
-        if (userName) {
+        if (userName && users.size <= 12) {
           // The userName is provided and not undefined
 
-          if (!usersDropdown.has({ managerID, rosterID, userName })) {
-            usersDropdown.add({ managerID, rosterID, userName });
+          const userTemp: User = { managerID, rosterID, userName };
+
+          const usersMap = new Map();
+          for (const user of usersDropdown) {
+            usersMap.set(user.managerID, user);
+          }
+          if (!usersMap.has(userTemp.managerID)) {
+            usersDropdown.add(userTemp);
             setUsers(usersDropdown);
           }
         }
@@ -364,6 +374,7 @@ const matchups = () => {
             managers: getManagers(roster),
           };
         }
+        console.log("Team managers: ", teamManagersMap);
       } else {
         console.error("Failed to get league data");
       }
@@ -495,10 +506,6 @@ const matchups = () => {
 
     fetchData();
   }, [JSON.stringify(usersDropdown), selected, selected2]);
-
-  console.log("Check ", rivalry);
-
-  console.log("Dropdown list :", users.size);
 
   // Define callback functions to handle selection changes
   const handleSelectionChange = (selection: any) => {
