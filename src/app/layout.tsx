@@ -1,4 +1,3 @@
-"use client";
 import "./globals.css";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
@@ -22,10 +21,6 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  // useEffect(() => {
-  //   console.log("Root Layout", leagueID);
-  // }, [leagueID]);
-
   return (
     <html lang="en">
       <body

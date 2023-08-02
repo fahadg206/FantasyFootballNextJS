@@ -100,6 +100,21 @@ export default function Home() {
     setText(username);
   };
 
+  useEffect(() => {
+    localStorage.setItem(
+      "usernameSubmitted",
+      JSON.stringify(usernameSubmitted)
+    );
+  }, [usernameSubmitted]);
+
+  // Retrieve the usernameSubmitted from local storage on component mount
+  useEffect(() => {
+    const savedUsernameSubmitted = JSON.parse(
+      localStorage.getItem("usernameSubmitted") || "false"
+    );
+    setUsernameSubmitted(savedUsernameSubmitted);
+  }, []);
+
   /* ^ sSAVING USERNAME INPUT INTO LOCALSTORAGE. CLEARING LOCAL STORAGE IF EMPTY. PASSING USERNAME AND YEAR SELECTED TO PROPS ^ */
   return (
     <div className={`text-xl text-white  h-screen `}>

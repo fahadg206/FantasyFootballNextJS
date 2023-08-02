@@ -36,22 +36,32 @@ function NavBar(props: MyProps) {
     SelectedLeagueContext
   );
 
+  console.log("selected league ID", selectedLeagueContext.league_id);
+
+  if (props.usernameSubmitted) {
+    if (selectedLeagueContext.league_id) {
+      if (selectedLeagueContext.league_id !== leagueID)
+        setLeagueID(selectedLeagueContext.league_id);
+    }
+  }
+
+  // Save the selected league ID to local storage when it changes
+  useEffect(() => {
+    localStorage.setItem("selectedLeagueID", leagueID);
+  }, [leagueID]);
+
+  // Retrieve the selected league ID from local storage on component mount
+  useEffect(() => {
+    const savedLeagueID = localStorage.getItem("selectedLeagueID");
+    if (savedLeagueID) {
+      setLeagueID(savedLeagueID);
+    }
+  }, []);
+
   const SideNav = () => {
     const [selected, setSelected] = useState(0);
     const [navbar, setNavbar] = useState(false);
     const [showScore, setShowScore] = useState(false);
-
-    const [selectedLeagueContext, setSelectedLeagueContext] = useContext(
-      SelectedLeagueContext
-    );
-    console.log(selectedLeagueContext);
-
-    if (props.usernameSubmitted) {
-      if (selectedLeagueContext.league_id) {
-        if (selectedLeagueContext.league_id !== leagueID)
-          setLeagueID(selectedLeagueContext.league_id);
-      }
-    }
 
     return (
       <nav className="fixed left-10 top-0 p-4 text-[13px] flex flex-col items-center  gap-2 h-screen w-[33vw] ">
@@ -162,7 +172,7 @@ function NavBar(props: MyProps) {
   };
 
   const showNav = () => {
-    if (props.usernameSubmitted && selectedLeagueContext.league_id) {
+    if (leagueID) {
       return (
         <div className=" flex">
           <SideNav />
@@ -170,10 +180,6 @@ function NavBar(props: MyProps) {
       );
     }
   };
-
-  useEffect(() => {
-    showNav();
-  }, [leagueID]);
 
   return <div>{showNav()}</div>;
 }
