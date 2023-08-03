@@ -55,12 +55,12 @@ export default function page(props: myProps) {
     getUserLeaguesData();
   }, [props.usernameSubmitted, userId]);
 
-  const [context, setContext] = useContext(LeagueContext);
-  const [selectedLeagueContext, setSelectedLeagueContext] = useContext(
-    SelectedLeagueContext
-  );
+  // const [context, setContext] = useContext(LeagueContext);
+  // const [selectedLeagueContext, setSelectedLeagueContext] = useContext(
+  //   SelectedLeagueContext
+  // );
 
-  setContext(leagueData);
+  // setContext(leagueData);
 
   return (
     <div>
@@ -72,7 +72,7 @@ export default function page(props: myProps) {
             </h1>
             <button
               onClick={() => {
-                setSelectedLeagueContext(league);
+                //setSelectedLeagueContext(league);
                 localStorage.setItem("selectedLeagueID", league.league_id);
                 localStorage.setItem("selectedLeagueName", league.name);
                 router.push(

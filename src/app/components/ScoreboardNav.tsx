@@ -1,26 +1,42 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
+import { Link } from "react-router-dom";
 
-export default function ScoreboardNav() {
+export default function ScoreboardNav(navbarMatchup) {
   return (
-    <div className=" flex flex-col items-center gap-5  h-screen mt-2 duration-500">
-      <div className="border border-black p-8 dark:bg-[#202123] rounded w-[85vw] ">
-        Kabo
-      </div>
-      <div className="border border-black p-8 dark:bg-[#202123] rounded w-[85vw]">
-        FG
-      </div>
-      <div className="border border-black p-8 dark:bg-[#202123] rounded w-[85vw]">
-        Jefe
-      </div>
-      <div className="border border-black p-8 dark:bg-[#202123] rounded w-[85vw]">
-        Unc
-      </div>
-      <div className="border border-black p-8 dark:bg-[#202123] rounded w-[85vw]">
-        BGN
-      </div>
-      <div className="border border-black p-8 dark:bg-[#202123] rounded w-[85vw]">
-        Imran
-      </div>
+    <div
+      key={new Date()}
+      className="flex flex-wrap lg:flex-row md:flex-row justify-between items-center w-full opacity-100 text-black "
+    >
+      {/* <Link to="/schedule">
+        <div className="mx-2 my-2 shadow-md shadow-[black] hover:scale-110  hover:shadow-#D1D5DB duration-500 p-[10px] rounded-[20px] bg-[#F9F9FB] w-[140px] flex justify-center">
+          {navbarMatchup[0]}
+        </div>
+      </Link>
+      <Link to="/schedule">
+        <div className="mx-2 my-2 shadow-md shadow-[black]  hover:scale-110 hover:shadow-#D1D5DB duration-500 p-[10px] rounded-[20px] bg-[#F9F9FB] w-[140px] flex justify-center">
+          {navbarMatchup[1]}
+        </div>
+      </Link>
+      <Link to="/schedule">
+        <div className="mx-2 my-2 shadow-md shadow-[black] hover:scale-110 hover:shadow-#D1D5DB duration-500 p-[10px] rounded-[20px] bg-[#F9F9FB] w-[140px] flex justify-center">
+          {navbarMatchup[2]}
+        </div>
+      </Link>
+      <Link to="/schedule">
+        <div className="mx-2 my-2 shadow-md shadow-[black] hover:scale-110 hover:shadow-#D1D5DB duration-500 p-[10px] rounded-[20px] bg-[#F9F9FB] w-[140px] flex justify-center">
+          {navbarMatchup[3]}
+        </div>
+      </Link>
+      <Link to="/schedule">
+        <div className="mx-2 my-2 shadow-md shadow-[black] hover:scale-110 hover:shadow-#D1D5DB duration-500 p-[10px] rounded-[20px] bg-[#F9F9FB] w-[140px] flex justify-center">
+          {navbarMatchup[4]}
+        </div>
+      </Link>
+      <Link to="/schedule">
+        <div className="mx-2 my-2 shadow-md shadow-[black] hover:scale-110 hover:shadow-#D1D5DB duration-500 p-[10px] rounded-[20px] bg-[#F9F9FB] w-[140px] flex justify-center">
+          {navbarMatchup[5]}
+        </div>
+      </Link> */}
     </div>
   );
 }
