@@ -3,20 +3,13 @@
 import React, { useContext, useEffect } from "react";
 import Imran from "../images/scary_imran.png";
 import Image from "next/image";
-import LeagueContext from "../context/LeagueContext";
-import SelectedLeagueContext from "../context/SelectedLeagueContext";
 
 export default function Scoreboard() {
-  const [context, setContext] = useContext(LeagueContext);
-  const [selectedLeagueContext, setSelectedLeagueContext] = useContext(
-    SelectedLeagueContext
-  );
-
   const showScoreboard = () => {
     if (localStorage.getItem("selectedLeagueID")) {
       return (
-        <div className=" hidden xl:flex justify-center gap-5 mb-2 text-[12px]  xl:h-[10vh]">
-          <div className="border-r border-[#1a1a1a] p-5  rounded-md  flex flex-col items-start">
+        <div className=" hidden xl:flex justify-center gap-5 mb-2 text-[12px]  xl:h-[15vh] xl:w-[60vw] xl:bg-[red]">
+          <div className=" border-r border-[#1a1a1a] p-5  rounded-md  flex flex-col items-start">
             <div className="flex gap-10">
               <span className="flex items-center">
                 <Image
@@ -197,7 +190,7 @@ export default function Scoreboard() {
 
   useEffect(() => {
     showScoreboard();
-  }, [selectedLeagueContext.league_id]);
+  }, [localStorage.getItem("selectedLeagueID")]);
 
   return <div>{showScoreboard()}</div>;
 }

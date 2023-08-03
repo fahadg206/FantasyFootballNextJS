@@ -7,7 +7,9 @@ const page = () => {
   const [selectedLeagueContext, setSelectedLeagueContext] = useContext(
     SelectedLeagueContext
   );
-  return <div>{`Welcome to ${selectedLeagueContext.name}!`}</div>;
+  return (
+    <div className="text-start">{`Welcome to ${selectedLeagueContext.name}!`}</div>
+  );
 };
 
 export default page;

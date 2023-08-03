@@ -24,19 +24,21 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${inter.className} flex space-around bg-[#EDEDED] dark:bg-[#000000] from-1a1a1c to-AF1222 text-[#1a1a1c] dark:text-[#EDEDED]  mx-auto p-4 font-[${inter}] w-screen h-screen`}
+        className={`${inter.className} flex  bg-[#EDEDED] dark:bg-[#000000] from-1a1a1c to-AF1222 text-[#1a1a1c] dark:text-[#EDEDED]  mx-auto p-4 font-[${inter}] w-screen h-screen`}
       >
         <Providers>
-          <div className="flex flex-col flex-1">
-            <NavBar usernameSubmitted={true} leagueID="" />
-          </div>
-          <div className="flex flex-col items-start  w-[73%] mr-[20px]">
-            <Themechanger />
-            <div className="">
-              <Scoreboard />
+          <div className="flex flex-col xl:grid xl:grid-cols-8">
+            <div className="block xl:col-start-1 xl:col-end-2">
+              <NavBar usernameSubmitted={true} leagueID="" />
             </div>
+            <div className="block xl:col-start-3 xl:col-end-8 ">
+              <Themechanger />
+              <div className="">
+                <Scoreboard />
+              </div>
 
-            {children}
+              {children}
+            </div>
           </div>
         </Providers>
       </body>
