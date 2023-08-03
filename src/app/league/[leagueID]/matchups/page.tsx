@@ -4,11 +4,12 @@ import React from "react";
 import { FaSearch } from "react-icons/fa";
 import { Dropdown, Modal, useModal, Button, Text } from "@nextui-org/react";
 import axios, { AxiosResponse } from "axios";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
 import { match } from "assert";
 import { useDropdown } from "@nextui-org/react/types/dropdown/use-dropdown";
 import { M_PLUS_1 } from "next/font/google";
 import Image from "next/image";
+import SelectedLeagueContext from "../../../context/SelectedLeagueContext";
 
 interface NflState {
   season: string;
@@ -69,6 +70,11 @@ const matchups = () => {
   const [users, setUsers] = React.useState(new Set<User>());
   const [users2, setUsers2] = React.useState(new Set<User>());
   const [rivalry, setRivalry] = React.useState(new Set<Rivalry>());
+  const [selectedLeagueContext, setSelectedLeagueContext] = useContext(
+    SelectedLeagueContext
+  );
+
+  const REACT_APP_LEAGUE_ID: string = selectedLeagueContext.league_id;
 
   const { setVisible, bindings } = useModal();
 
