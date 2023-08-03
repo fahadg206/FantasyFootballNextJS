@@ -19,7 +19,7 @@ export default function Home() {
             setInput(e.target.value);
           }}
           size="lg"
-          width="60vw"
+          width="56vw"
           type="text"
           labelPlaceholder="Search owners, matchups, or stats"
           css={{

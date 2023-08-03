@@ -72,9 +72,12 @@ export default function page(props: myProps) {
             </h1>
             <button
               onClick={() => {
-                setSelectedLeague(league);
-                setLeagueID(selectedLeagueContext.league_id);
-                router.push(`/league/${leagueID}`);
+                setSelectedLeagueContext(league);
+                localStorage.setItem("selectedLeagueID", league.league_id);
+                localStorage.setItem("selectedLeagueName", league.name);
+                router.push(
+                  `/league/${localStorage.getItem("selectedLeagueID")}`
+                );
               }}
               className="text-[15px] text-[#af1222] border-2 border-[#af1222] p-1 bg-[black] rounded hover:bg-[#1a1a1a]"
             >
@@ -86,7 +89,7 @@ export default function page(props: myProps) {
         <h1></h1>
       )}
 
-      {setSelectedLeagueContext(selectedLeague)}
+      {/* {setSelectedLeagueContext(selectedLeague)} */}
       {/* {console.log(selectedLeague.league_id)} */}
       <NavBar usernameSubmitted={props.usernameSubmitted} leagueID="" />
     </div>

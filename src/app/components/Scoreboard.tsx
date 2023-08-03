@@ -13,9 +13,9 @@ export default function Scoreboard() {
   );
 
   const showScoreboard = () => {
-    if (selectedLeagueContext.league_id) {
+    if (localStorage.getItem("selectedLeagueID")) {
       return (
-        <div className=" hidden md:flex justify-center gap-5 mb-2 text-[12px] ">
+        <div className=" hidden xl:flex justify-center gap-5 mb-2 text-[12px]  xl:h-[10vh]">
           <div className="border-r border-[#1a1a1a] p-5  rounded-md  flex flex-col items-start">
             <div className="flex gap-10">
               <span className="flex items-center">

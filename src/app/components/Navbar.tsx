@@ -24,6 +24,7 @@ import Logo from "../images/Transparent.png";
 import Image from "next/image";
 import Link from "next/link";
 import SelectedLeagueContext from "../context/SelectedLeagueContext";
+import ScoreboardNav from "./ScoreboardNav";
 
 interface MyProps {
   leagueID: string;
@@ -31,32 +32,11 @@ interface MyProps {
 }
 
 function NavBar(props: MyProps) {
-  const [leagueID, setLeagueID] = useState("");
   const [selectedLeagueContext, setSelectedLeagueContext] = useContext(
     SelectedLeagueContext
   );
 
   console.log("selected league ID", selectedLeagueContext.league_id);
-
-  if (props.usernameSubmitted) {
-    if (selectedLeagueContext.league_id) {
-      if (selectedLeagueContext.league_id !== leagueID)
-        setLeagueID(selectedLeagueContext.league_id);
-    }
-  }
-
-  // Save the selected league ID to local storage when it changes
-  useEffect(() => {
-    localStorage.setItem("selectedLeagueID", leagueID);
-  }, [leagueID]);
-
-  // Retrieve the selected league ID from local storage on component mount
-  useEffect(() => {
-    const savedLeagueID = localStorage.getItem("selectedLeagueID");
-    if (savedLeagueID) {
-      setLeagueID(savedLeagueID);
-    }
-  }, []);
 
   const SideNav = () => {
     const [selected, setSelected] = useState(0);
@@ -64,14 +44,14 @@ function NavBar(props: MyProps) {
     const [showScore, setShowScore] = useState(false);
 
     return (
-      <nav className="fixed left-10 top-0 p-4 text-[13px] flex flex-col items-center  gap-2 h-screen w-[33vw] ">
-        <Link href={`/league/${leagueID}`}>
+      <nav className="hidden xl:fixed left-10 top-0 p-4 text-[13px] xl:flex flex-col items-center  gap-2 h-screen w-[33vw] ">
+        <Link href={`/league/${localStorage.getItem("selectedLeagueID")}`}>
           <div className="  ">
             <Image src={Logo} alt="logo" width={250} height={250} />
           </div>
         </Link>
         <div className=" h-[46vh] flex flex-col justify-around">
-          <Link href="/league">
+          <Link href={`/league/${localStorage.getItem("selectedLeagueID")}`}>
             <div className="flex items-center w-[90px]">
               <NavItem
                 selected={selected === 0}
@@ -83,7 +63,11 @@ function NavBar(props: MyProps) {
               <p className="ml-2">Home</p>
             </div>
           </Link>
-          <Link href={`/league/${leagueID}/articles`}>
+          <Link
+            href={`/league/${localStorage.getItem(
+              "selectedLeagueID"
+            )}/articles`}
+          >
             <div className="flex items-center w-[90px]">
               <NavItem
                 selected={selected === 1}
@@ -95,7 +79,9 @@ function NavBar(props: MyProps) {
               <p className="ml-2">Articles</p>
             </div>
           </Link>
-          <Link href={`/league/${leagueID}/stats`}>
+          <Link
+            href={`/league/${localStorage.getItem("selectedLeagueID")}/stats`}
+          >
             <div className="flex items-center w-[90px]">
               <NavItem
                 selected={selected === 2}
@@ -107,7 +93,11 @@ function NavBar(props: MyProps) {
               <p className="ml-2">Stats</p>
             </div>
           </Link>
-          <Link href={`/league/${leagueID}/matchups`}>
+          <Link
+            href={`/league/${localStorage.getItem(
+              "selectedLeagueID"
+            )}/matchups`}
+          >
             <div className="flex items-center w-[90px]">
               <NavItem
                 selected={selected === 3}
@@ -119,7 +109,11 @@ function NavBar(props: MyProps) {
               <p className="ml-2">Matchups</p>
             </div>
           </Link>
-          <Link href={`/league/${leagueID}/standings`}>
+          <Link
+            href={`/league/${localStorage.getItem(
+              "selectedLeagueID"
+            )}/standings`}
+          >
             <div className="flex items-center w-[90px]">
               <NavItem
                 selected={selected === 4}
@@ -131,7 +125,11 @@ function NavBar(props: MyProps) {
               <p className="ml-2">Standings</p>
             </div>
           </Link>
-          <Link href={`/league/${leagueID}/powerrankings`}>
+          <Link
+            href={`/league/${localStorage.getItem(
+              "selectedLeagueID"
+            )}/powerrankings`}
+          >
             <div className="flex items-center w-[90px]">
               <NavItem
                 selected={selected === 5}
@@ -143,6 +141,116 @@ function NavBar(props: MyProps) {
               <p className="ml-2">PowerRankings</p>
             </div>
           </Link>
+        </div>
+        {/* MOBILE NAVBAR STARTS HERE */}
+        <div className="justify-between px-4 mx-auto lg:max-w-7xl xl:items-start xl:flex xl:px-8">
+          <div className="flex-items-center">
+            <div className=" flex items-center justify-between py-3 xl:py-5 xl:block border-b-2 border-[#af1222] border-opacity-10 h-[110px]">
+              <button
+                className="xl:hidden p-2 text-[#af1222] rounded-xl outline-none focus:border-gray-400 focus:border cursor-pointer "
+                onClick={() => {
+                  setShowScore(!showScore);
+                  setNavbar(false);
+                }}
+              >
+                {showScore ? (
+                  <FaFootballBall size={30} />
+                ) : (
+                  <FaFootballBall
+                    size={30}
+                    className="focus:border-none active:border-none"
+                  />
+                )}
+              </button>
+              <div className="xl:hidden">
+                <Link href="/">
+                  <Image height={240} width={240} alt="logo" src={Logo} />
+                </Link>
+              </div>
+              {/* HAMBURGER BUTTON FOR MOBILE */}
+              <div className="xl:hidden">
+                <button
+                  className="p-2 text-[#af1222] rounded-xl outline-none focus:border-gray-400 focus:border cursor-pointer "
+                  onClick={() => {
+                    setNavbar(!navbar);
+                    setShowScore(false);
+                  }}
+                >
+                  {navbar ? (
+                    <IoCloseSharp size={40} className={`scale-125 `} />
+                  ) : (
+                    <FaBars size={30} className={``} />
+                  )}
+                </button>
+              </div>
+            </div>
+          </div>
+          {/* {show scores on navbar} */}
+          <div>
+            <div
+              className={
+                showScore ? " xl:p-0 block duration-500 ease-in" : "hidden"
+              }
+            >
+              <ScoreboardNav />
+            </div>
+          </div>
+          <div>
+            {/* MOBILE NAVBAR */}
+            <div
+              className={`flex z-50 w-screen  ${navbar ? "xl:p-0 " : "hidden"}`}
+            >
+              <ul className="container xl:h-auto xl:hidden mt-10 ">
+                <li className="pb-6 py-2 xl:px-3  hover:bg-[#AF1222]  hover:transition  hover:ease-in-out hover:rounded p-6">
+                  <Link href="/" onClick={() => setNavbar(!navbar)}>
+                    <span className="text-[18px] flex items-center   xl:text-[14px]">
+                      <FaHome size={18} className="mr-1 " /> Home
+                    </span>
+                  </Link>
+                </li>
+                <li className="pb-6 py-2 xl:px-3 text-center  hover:bg-[#AF1222] ]  hover:transition  hover:ease-in-out hover:rounded p-6">
+                  <Link href="/stats" onClick={() => setNavbar(!navbar)}>
+                    <span className="text-[18px]  flex items-center  xl:text-[14px]">
+                      <FaSearch size={18} className="mr-1 " /> Stats
+                    </span>
+                  </Link>
+                </li>
+                <li className="pb-6  py-2 xl:px-3 text-center  hover:bg-[#AF1222]    hover:transition  hover:ease-in-out hover:rounded p-6">
+                  <Link href="/articles" onClick={() => setNavbar(!navbar)}>
+                    <span className="text-[18px]  flex items-center  xl:text-[14px]">
+                      <BiSolidNews size={18} className="mr-1 " /> Articles
+                    </span>
+                  </Link>
+                </li>
+                <li className="pb-6 py-2 px-3 text-center   hover:bg-[#AF1222]    hover:transition hover:ease-in-out hover:rounded p-6">
+                  <Link href="/matchups" onClick={() => setNavbar(!navbar)}>
+                    <span className="text-[18px]  flex items-center   xl:text-[14px]">
+                      <FaCalendarAlt size={18} className="mr-1 " /> Matchups
+                    </span>
+                  </Link>
+                </li>
+                <li className="pb-6  py-2 px-3 text-center    hover:bg-[#AF1222]  hover:transition hover:ease-in-out hover:rounded p-6">
+                  <Link href="/standings" onClick={() => setNavbar(!navbar)}>
+                    <span className="text-[18px]  flex items-center xl:text-[14px]">
+                      <AiOutlineOrderedList size={18} className="mr-1 " />{" "}
+                      Standings
+                    </span>
+                  </Link>
+                </li>
+                <li className="pb-6 py-2 px-3 text-center   hover:bg-[#AF1222]  hover:transition  hover:ease-in-out hover:rounded p-6">
+                  <Link
+                    href="/powerrankings"
+                    onClick={() => setNavbar(!navbar)}
+                  >
+                    <span className="text-[18px]  flex items-center  xl:text-[14px]">
+                      <FaRankingStar size={18} className="mr-1 " /> Power
+                      Rankings
+                    </span>
+                  </Link>
+                </li>
+              </ul>
+            </div>
+          </div>
         </div>
       </nav>
     );
@@ -171,8 +279,11 @@ function NavBar(props: MyProps) {
     );
   };
 
+  if (localStorage.getItem("usernameSubmitted") === "false") {
+    localStorage.clear();
+  }
   const showNav = () => {
-    if (leagueID) {
+    if (localStorage.getItem("selectedLeagueID")) {
       return (
         <div className=" flex">
           <SideNav />

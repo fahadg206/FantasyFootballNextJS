@@ -29,7 +29,7 @@ const articles = () => {
   };
 
   return (
-    <div className="flex flex-col justify-center items-center container">
+    <div className="flex flex-col justify-center items-center container w-[60vw]">
       <ArticleTemplate
         title="yo"
         image={imran}
