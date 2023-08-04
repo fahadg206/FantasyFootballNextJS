@@ -56,7 +56,7 @@ interface Matchup {
   points: number;
 }
 
-export default function Schedule() {
+export default function Schedule(props: any) {
   const [playersData, setPlayersData] = React.useState([]);
   const REACT_APP_LEAGUE_ID: string | null =
     localStorage.getItem("selectedLeagueID");

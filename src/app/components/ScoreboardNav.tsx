@@ -6,6 +6,8 @@ import axios from "axios";
 
 import uuid from "uuid";
 import Image from "next/image";
+import Scoreboard from "./Scoreboard";
+import Schedule from "../league/[leagueID]/schedule/page";
 
 interface ScheduleData {
   [userId: string]: {
@@ -31,14 +33,25 @@ interface Matchup {
   starters_points: number[];
 }
 
+interface MatchupMapData {
+  avatar: string;
+  name: string;
+  roster_id?: string;
+  user_id?: string;
+  starters?: string[];
+  team_points?: string;
+  opponent?: string;
+  matchup_id?: string;
+}
+
 export default function ScoreboardNav() {
   //object that contains userId, avatar, team name, & roster_id
 
   const [schedule, setSchedule] = useState<Matchup[]>([]);
   const [loading, setLoading] = useState(true);
   const [scheduleDataFinal, setScheduleDataFinal] = useState<ScheduleData>({});
-  const existingMatchup = new Map();
-  const matchupMap = new Map();
+
+  const matchupMap = new Map<string, MatchupMapData[]>();
   const REACT_APP_LEAGUE_ID: string | null =
     localStorage.getItem("selectedLeagueID");
 
@@ -141,11 +154,18 @@ export default function ScoreboardNav() {
       if (!matchupMap.has(userData.matchup_id)) {
         matchupMap.set(userData.matchup_id, [userData]);
       } else {
-        matchupMap.get(userData.matchup_id)?.push(userData);
+        const matchupData = matchupMap.get(userData.matchup_id);
+        if (matchupData && matchupData.length > 0) {
+          const firstPlayer = matchupData[0];
+          firstPlayer.opponent = userData.name;
+          matchupMap.set(userData.matchup_id, [firstPlayer]);
+          userData.opponent = firstPlayer.name;
+          matchupMap.get(userData.matchup_id)?.push(userData);
+        }
       }
     }
   }
-  console.log(matchupMap);
+  //console.log(matchupMap);
 
   const matchupText = Array.from(matchupMap).map(([matchupID, matchupData]) => {
     const team1 = matchupData[0];
@@ -192,6 +212,12 @@ export default function ScoreboardNav() {
 
   return (
     <div>
+      <div className="hidden">
+        <Scoreboard matchupMap={matchupMap} />
+      </div>
+      <div className="hidden">
+        <Schedule matchupMap={matchupMap} />
+      </div>
       <div>
         {matchupText.map((matchup) => (
           <div key={uuid}>{matchup}</div>
