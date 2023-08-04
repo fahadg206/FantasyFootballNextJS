@@ -36,12 +36,8 @@ function NavBar(props: MyProps) {
     SelectedLeagueContext
   );
 
-  console.log("selected league ID", localStorage.getItem("selectedLeagueID"));
-
   const SideNav = () => {
     const [selected, setSelected] = useState(0);
-    const [navbar, setNavbar] = useState(false);
-    const [showScore, setShowScore] = useState(false);
 
     return (
       <nav className="hidden  xl:fixed left-10 top-0 p-4 text-[13px] xl:flex flex-col items-center xl:ml-[120px]  gap-2 h-screen  ">
@@ -340,6 +336,9 @@ function NavBar(props: MyProps) {
       );
     }
   };
+  useEffect(() => {
+    showNav();
+  }, [localStorage.getItem("selectedLeagueID")]);
 
   return <div>{showNav()}</div>;
 }

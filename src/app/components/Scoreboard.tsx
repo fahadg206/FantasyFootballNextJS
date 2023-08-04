@@ -5,7 +5,6 @@ import Imran from "../images/scary_imran.png";
 import Image from "next/image";
 
 export default function Scoreboard(props: any) {
-  console.log("Bro", props);
   //const weeklyMatchups = props.weeklyMatches;
   const matchupMap = new Map();
   const showScoreboard = () => {

@@ -61,6 +61,7 @@ export default function Schedule() {
   const REACT_APP_LEAGUE_ID: string | null =
     localStorage.getItem("selectedLeagueID");
   const [schedule, setSchedule] = useState<any[]>([]); // Replace 'any' with appropriate type if possible
+  const [scheduleDataFinal, setScheduleDataFinal] = useState<ScheduleData>({});
   const [weeklyMatchups, setWeeklyMatchups] = useState<Map<string, UserData>>(
     new Map()
   );
@@ -123,58 +124,68 @@ export default function Schedule() {
       `https://api.sleeper.app/v1/league/${REACT_APP_LEAGUE_ID}/matchups/${week}`
     );
     setSchedule(response.data);
-    console.log("Matchups, ", response);
   };
 
   const getUsers = async () => {
-    // returns user id, name, avatar
-    const response = await axios.get<any>(
-      `https://api.sleeper.app/v1/league/${REACT_APP_LEAGUE_ID}/users`
-    );
-    // Setting the avatar and name in this function and giving a default value to roster_id if it doesn't exist
-    for (let i = 0; i < response.data.length; i++) {
-      scheduleData.set(response.data[i].user_id, {
-        avatar: `https://sleepercdn.com/avatars/thumbs/${response.data[i].avatar}`,
-        name: response.data[i].display_name,
-        roster_id:
-          scheduleData.get(response.data[i].user_id)?.roster_id || "loading",
-        user_id: response.data[i].user_id,
-      });
-    }
-    console.log("Response! ", response);
-    setUsers(response.data);
+    try {
+      const response = await axios.get<any>(
+        `https://api.sleeper.app/v1/league/${REACT_APP_LEAGUE_ID}/users`
+      );
 
-    setWeeklyMatchups(scheduleData);
+      return response.data;
+    } catch (err) {
+      console.error(err);
+      throw new Error("Failed to get users");
+    }
   };
 
   const getRoster = async () => {
-    // returns user id, roster id
-    const response = await axios.get<any>(
-      `https://api.sleeper.app/v1/league/${REACT_APP_LEAGUE_ID}/rosters`
-    );
-    // Setting the roster_id in this function and giving a default value to avatar and name if they don't exist
-    for (let i = 0; i < response.data.length; i++) {
-      scheduleData.set(response.data[i].owner_id, {
-        avatar:
-          scheduleData.get(response.data[i].owner_id)?.avatar || "loading",
-        name: scheduleData.get(response.data[i].owner_id)?.name || "loading",
-        roster_id: response.data[i].roster_id,
-        user_id: response.data[i].owner_id,
-      });
+    try {
+      const response = await axios.get<any>(
+        `https://api.sleeper.app/v1/league/${REACT_APP_LEAGUE_ID}/rosters`
+      );
+
+      return response.data;
+    } catch (err) {
+      console.error(err);
+      throw new Error("Failed to get rosters");
     }
-    setRosters(response.data);
-    setWeeklyMatchups(scheduleData);
   };
 
   useEffect(() => {
-    console.log("Getting called");
-    getSchedule();
-    getUsers();
-    getRoster();
-  }, [
-    localStorage.getItem("selectedLeagueID"),
-    JSON.stringify(weeklyMatchups),
-  ]);
+    const fetchData = async () => {
+      try {
+        const usersData = await getUsers();
+        const rostersData = await getRoster();
+
+        // Create a new map to store the updated schedule data
+        const updatedScheduleData: ScheduleData = {};
+
+        // Update the scheduleData map with user data
+        for (const user of usersData) {
+          updatedScheduleData[user.user_id] = {
+            avatar: `https://sleepercdn.com/avatars/thumbs/${user.avatar}`,
+            name: user.display_name,
+            roster_id: "",
+          };
+        }
+
+        // Update the scheduleData map with roster data
+        for (const roster of rostersData) {
+          if (updatedScheduleData[roster.owner_id]) {
+            updatedScheduleData[roster.owner_id].roster_id = roster.roster_id;
+          }
+        }
+
+        // Set the updated scheduleData map to state
+        setScheduleDataFinal(updatedScheduleData);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+
+    fetchData();
+  }, [REACT_APP_LEAGUE_ID]);
 
   useEffect(() => {
     axios
@@ -184,7 +195,6 @@ export default function Schedule() {
 
         setPlayersData(playersData);
         // Process and use the data as needed
-        console.log(playersData["4017"]);
       })
       .catch((error) => {
         console.error("Error while fetching players data:", error);
@@ -193,7 +203,6 @@ export default function Schedule() {
 
   const showScoreboard = () => {
     if (localStorage.getItem("selectedLeagueID")) {
-      console.log("Weekly ", weeklyMatchups);
       // Ensure that weeklyMatchups includes additional attributes not set in the api calls earlier
       [...weeklyMatchups.values()].map((player: UserData) => {
         for (let i = 0; i < schedule.length; i++) {
@@ -253,9 +262,6 @@ export default function Schedule() {
                         team1
                       );
 
-                      console.log("Team 1", team1?.name, team1.starters);
-                      console.log("Team 2", team2?.name, team2.starters);
-
                       let team1Proj = 0.0;
                       let team2Proj = 0.0;
                       //console.log("team 1, ", team1.starters);
@@ -275,12 +281,6 @@ export default function Schedule() {
                             );
                           }
                         }
-
-                        console.log(
-                          "Here's the first teams proj ",
-                          team1.name,
-                          team1Proj
-                        );
                       }
 
                       if (team2?.starters) {
@@ -297,12 +297,6 @@ export default function Schedule() {
                             );
                           }
                         }
-
-                        console.log(
-                          "Here's the second teams proj ",
-                          team2.name,
-                          team2Proj
-                        );
                       }
 
                       // ...
@@ -363,9 +357,8 @@ export default function Schedule() {
                           </div>
                         </div>
                       );
-                      console.log("YO");
+
                       navbarMatchup.push(matchupText);
-                      console.log("Nav", navbarMatchup);
                     }
                   }
 
@@ -412,6 +405,7 @@ export default function Schedule() {
   useEffect(() => {
     showScoreboard();
   }, [localStorage.getItem("selectedLeagueID")]);
+
   const weeklyMatches = [...weeklyMatchups.values()].map((player) => {
     return (
       <div key={player.user_id} className="text-[black]">
@@ -511,6 +505,8 @@ export default function Schedule() {
     );
   });
   const uniqueKey = uuidv4(); // Generate a unique key
+  //console.log("scheduleData later", scheduleDataFinal);
+
   return (
     <div
       key={uniqueKey}
@@ -528,11 +524,11 @@ export default function Schedule() {
         </tr>
       </table>
       <div className="hidden">
-        <Scoreboard weeklyMatches={scheduleData} />
+        <Scoreboard scheduleData={scheduleDataFinal} />
       </div>
-      <div className="hidden">
-        <ScoreboardNav weeklyMatches={weeklyMatchups} />
-      </div>
+      {/* <div className="hidden">
+        <ScoreboardNav scheduleData={scheduleDataFinal} />
+      </div> */}
     </div>
   );
 
