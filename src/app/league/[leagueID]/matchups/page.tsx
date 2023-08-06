@@ -23,6 +23,13 @@ interface Manager {
   // Add other properties as needed
 }
 
+interface RivalsManager {
+  managerID: string;
+  name: string;
+  year: string;
+  // Add other properties as needed
+}
+
 interface User {
   managerID: string;
   rosterID: string;
@@ -69,6 +76,9 @@ const matchups = () => {
   const [users, setUsers] = React.useState(new Set<User>());
   const [users2, setUsers2] = React.useState(new Set<User>());
   const [rivalry, setRivalry] = React.useState(new Set<Rivalry>());
+  const [rivalManagers, setRivalManagers] = React.useState(
+    new Set<RivalsManager>()
+  );
 
   const REACT_APP_LEAGUE_ID: string = localStorage.getItem("selectedLeagueID");
 
@@ -362,7 +372,6 @@ const matchups = () => {
       const usersJson = JSON.stringify(usersRaw.data);
       const rostersJson = rostersRaw.data;
       const leagueData = await getLeagueData(currentLeagueID);
-
       if (leagueData !== null) {
         const year = leagueData.season;
         currentLeagueID = leagueData.previous_league_id;
@@ -395,7 +404,6 @@ const matchups = () => {
       users: finalUsers,
     };
 
-    // console.log("Data prior to function call", response.teamManagersMap["2022"]);
     const keys = Object.keys(response.users);
     for (const key of keys) {
       getRosterIDFromManagerIDAndYear(
@@ -406,7 +414,8 @@ const matchups = () => {
       );
       //console.log(`${key}: ${response.users[key].display_name}`);
     }
-
+    //console.log("Data prior to function call", response);
+    setRivalManagers(response.teamManagersMap);
     return response;
   };
 
@@ -560,10 +569,12 @@ const matchups = () => {
       return undefined;
     })
     .filter((item) => item !== undefined);
-  console.log(rivalsMap);
+  console.log("Here are the rivals", rivalsMap);
   // const avatarID = rivalsMap
   //   .get("Rival")
   //   .matchups[0].matchup[0].starters[0].toString();
+
+  console.log("Work ", rivalManagers);
   return (
     <div className="flex justify-around h-screen border-2 border-[#af1222]">
       <div className="mt-5">
@@ -634,7 +645,6 @@ const matchups = () => {
       </div>
       {/* Modal */}
       <div>
-        {" "}
         {selected.size > 0 && selected2.size > 0 && (
           <div>
             <Modal
@@ -662,27 +672,151 @@ const matchups = () => {
                 </Text>
               </Modal.Header>
               <Modal.Body css={{ color: "#190103" }}>
-                <Text id="modal-description" css={{ color: "#E9EBEA" }}>
-                  {rivalsMap.has("Rival")
-                    ? playersData[
-                        rivalsMap
-                          .get("Rival")
-                          .matchups[0].matchup[0].starters[0].toString()
-                      ].fn +
-                      " " +
-                      playersData[
-                        rivalsMap
-                          .get("Rival")
-                          .matchups[0].matchup[0].starters[0].toString()
-                      ].ln
-                    : "Nice try buddy"}
-                </Text>
-                <Image
-                  src="https://sleepercdn.com/content/nfl/players/thumb/4017.jpg"
-                  alt="player"
-                  width={100}
-                  height={100}
-                />
+                <div>
+                  {rivalsMap.has("Rival") ? (
+                    <div>
+                      {rivalsMap
+                        .get("Rival")
+                        .matchups.map((matchup, matchupIndex) => (
+                          <div className="text-center mb-10">
+                            <Text className="mb-10" css={{ color: "#E9EBEA" }}>
+                              Week:
+                              {matchup.week}
+                            </Text>
+                            <div key={matchupIndex} className="flex">
+                              <div className="mr-5">
+                                <Text css={{ color: "#E9EBEA" }}>
+                                  {
+                                    rivalManagers[matchup.year][
+                                      matchup.matchup[0].roster_id
+                                    ].team.name
+                                  }
+                                </Text>
+
+                                <Image
+                                  src={`https://sleepercdn.com/avatars/thumbs/${
+                                    rivalManagers[matchup.year][
+                                      matchup.matchup[0].roster_id
+                                    ].team.avatar
+                                  }`}
+                                  alt="player"
+                                  width={60}
+                                  height={60}
+                                  className="rounded-full mr-1"
+                                />
+
+                                {matchup.matchup[0].starters.map(
+                                  (starter, starterIndex) => (
+                                    <div key={starterIndex}>
+                                      {" "}
+                                      <Image
+                                        src={
+                                          playersData[starter.toString()].pos ==
+                                          "DEF"
+                                            ? `https://sleepercdn.com/images/team_logos/nfl/${starter.toLowerCase()}.png`
+                                            : `https://sleepercdn.com/content/nfl/players/thumb/${starter}.jpg`
+                                        }
+                                        alt="player"
+                                        width={100}
+                                        height={100}
+                                      />
+                                      <Text css={{ color: "#E9EBEA" }}>
+                                        {playersData[starter.toString()].fn}{" "}
+                                        {playersData[starter.toString()].ln}
+                                      </Text>
+                                      <Text css={{ color: "#E9EBEA" }}></Text>
+                                      <Text css={{ color: "#E9EBEA" }}>
+                                        {"points: "}
+                                        {
+                                          matchup.matchup[0].points[
+                                            starterIndex
+                                          ]
+                                        }
+                                      </Text>
+                                    </div>
+                                  )
+                                )}
+                                <Text css={{ color: "#E9EBEA" }}>
+                                  {"Total points: "}
+                                  {matchup.matchup[0].points
+                                    .reduce(
+                                      (total, currentValue) =>
+                                        total + parseFloat(currentValue),
+                                      0
+                                    )
+                                    .toFixed(2)}
+                                </Text>
+                              </div>
+                              <div>
+                                <Text css={{ color: "#E9EBEA" }}>
+                                  {
+                                    rivalManagers[matchup.year][
+                                      matchup.matchup[1].roster_id
+                                    ].team.name
+                                  }
+                                </Text>
+                                <Image
+                                  src={`https://sleepercdn.com/avatars/thumbs/${
+                                    rivalManagers[matchup.year][
+                                      matchup.matchup[1].roster_id
+                                    ].team.avatar
+                                  }`}
+                                  alt="player"
+                                  width={60}
+                                  height={60}
+                                  className="rounded-full mr-1"
+                                />
+
+                                {matchup.matchup[1].starters.map(
+                                  (starter, starterIndex) => (
+                                    <div key={starterIndex}>
+                                      <Image
+                                        src={
+                                          playersData[starter.toString()].pos ==
+                                          "DEF"
+                                            ? `https://sleepercdn.com/images/team_logos/nfl/${starter.toLowerCase()}.png`
+                                            : `https://sleepercdn.com/content/nfl/players/thumb/${starter}.jpg`
+                                        }
+                                        alt="player"
+                                        width={100}
+                                        height={100}
+                                      />
+                                      <Text css={{ color: "#E9EBEA" }}>
+                                        {playersData[starter.toString()].fn}{" "}
+                                        {playersData[starter.toString()].ln}
+                                      </Text>
+                                      <Text css={{ color: "#E9EBEA" }}>
+                                        {"points: "}
+                                        {
+                                          matchup.matchup[1].points[
+                                            starterIndex
+                                          ]
+                                        }
+                                      </Text>
+                                    </div>
+                                  )
+                                )}
+                              </div>
+                            </div>
+                            <Text css={{ color: "#E9EBEA" }}>
+                              {"Total points: "}
+                              {matchup.matchup[1].points
+                                .reduce(
+                                  (total, currentValue) =>
+                                    total + parseFloat(currentValue),
+                                  0
+                                )
+                                .toFixed(2)}
+                            </Text>
+                          </div>
+                        ))}
+                    </div>
+                  ) : (
+                    <Text id="modal-description" css={{ color: "#E9EBEA" }}>
+                      Nice try buddy
+                    </Text>
+                  )}
+                </div>
               </Modal.Body>
               <Modal.Footer>
                 <Button
