@@ -40,7 +40,7 @@ function NavBar(props: MyProps) {
     const [selected, setSelected] = useState(0);
 
     return (
-      <nav className="hidden  xl:fixed left-10 top-0 p-4 text-[13px] xl:flex flex-col items-center xl:ml-[120px]  gap-2 h-screen  ">
+      <nav className="hidden  2xl:ml-[80px] xl:fixed left-10 top-0 p-4 text-[13px] xl:flex flex-col items-center  gap-2 h-screen  ">
         <Link href={`/league/${localStorage.getItem("selectedLeagueID")}`}>
           <div className="  ">
             <Image src={Logo} alt="logo" width={250} height={250} />
@@ -162,7 +162,7 @@ function NavBar(props: MyProps) {
     const [showScore, setShowScore] = useState(false);
     const [navbar, setNavbar] = useState(false);
     return (
-      <div className=" px-4 mx-auto w-screen xl:hidden ">
+      <div className=" px-4 mx-auto w-screen 2xl:hidden ">
         <div className="flex-items-center">
           <div className=" flex items-center justify-between py-3 xl:py-5 xl:block border-b-2 border-[#af1222] border-opacity-10 h-[110px]">
             <button
@@ -219,10 +219,12 @@ function NavBar(props: MyProps) {
         <div>
           {/* MOBILE NAVBAR */}
           <div
-            className={`flex z-50 w-screen  ${navbar ? "xl:p-0 " : "hidden"}`}
+            className={`flex z-50 w-screen bg-[green]  ${
+              navbar ? "block " : "hidden"
+            }`}
           >
-            <ul className="container xl:h-auto xl:hidden mt-10 ">
-              <li className="pb-6 py-2 xl:px-3  hover:bg-[#AF1222]  hover:transition  hover:ease-in-out hover:rounded p-6">
+            <ul className=" xl:h-auto xl:hidden mt-10 bg-[red]">
+              <li className="pb-6 py-2 xl:px-3  hover:bg-[#AF1222]  hover:transition  hover:ease-in-out hover:rounded bg-[purple]">
                 <Link
                   href={`/league/${localStorage.getItem("selectedLeagueID")}`}
                   onClick={() => setNavbar(!navbar)}
@@ -232,7 +234,7 @@ function NavBar(props: MyProps) {
                   </span>
                 </Link>
               </li>
-              <li className="pb-6 py-2 xl:px-3 text-center  hover:bg-[#AF1222] ]  hover:transition  hover:ease-in-out hover:rounded p-6">
+              <li className="pb-6 py-2 xl:px-3 text-center  hover:bg-[#AF1222] ]  hover:transition  hover:ease-in-out hover:rounded ">
                 <Link
                   href={`/league/${localStorage.getItem(
                     "selectedLeagueID"
@@ -244,7 +246,7 @@ function NavBar(props: MyProps) {
                   </span>
                 </Link>
               </li>
-              <li className="pb-6  py-2 xl:px-3 text-center  hover:bg-[#AF1222]    hover:transition  hover:ease-in-out hover:rounded p-6">
+              <li className="pb-6  py-2 xl:px-3 text-center  hover:bg-[#AF1222]    hover:transition  hover:ease-in-out hover:rounded ">
                 <Link
                   href={`/league/${localStorage.getItem(
                     "selectedLeagueID"
@@ -256,7 +258,7 @@ function NavBar(props: MyProps) {
                   </span>
                 </Link>
               </li>
-              <li className="pb-6 py-2 px-3 text-center   hover:bg-[#AF1222]    hover:transition hover:ease-in-out hover:rounded p-6">
+              <li className="pb-6 py-2 px-3 text-center   hover:bg-[#AF1222]    hover:transition hover:ease-in-out hover:rounded ">
                 <Link
                   href={`/league/${localStorage.getItem(
                     "selectedLeagueID"
@@ -268,7 +270,7 @@ function NavBar(props: MyProps) {
                   </span>
                 </Link>
               </li>
-              <li className="pb-6  py-2 px-3 text-center    hover:bg-[#AF1222]  hover:transition hover:ease-in-out hover:rounded p-6">
+              <li className="pb-6  py-2 px-3 text-center    hover:bg-[#AF1222]  hover:transition hover:ease-in-out hover:rounded ">
                 <Link
                   href={`/league/${localStorage.getItem(
                     "selectedLeagueID"
@@ -281,7 +283,7 @@ function NavBar(props: MyProps) {
                   </span>
                 </Link>
               </li>
-              <li className="pb-6 py-2 px-3 text-center   hover:bg-[#AF1222]  hover:transition  hover:ease-in-out hover:rounded p-6">
+              <li className="pb-6 py-2 px-3 text-center   hover:bg-[#AF1222]  hover:transition  hover:ease-in-out hover:rounded ">
                 <Link
                   href={`/league/${localStorage.getItem(
                     "selectedLeagueID"

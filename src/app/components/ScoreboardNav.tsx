@@ -213,7 +213,7 @@ export default function ScoreboardNav() {
   return (
     <div>
       <div className="hidden">
-        <Scoreboard matchupMap={matchupMap} />
+        <Scoreboard />
       </div>
       <div className="hidden">
         <Schedule matchupMap={matchupMap} />
