@@ -1,6 +1,7 @@
 "use client";
 import { AnimatePresence, motion } from "framer-motion";
 import { useState, useContext, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import {
   SiFramer,
   SiTailwindcss,
@@ -25,6 +26,7 @@ import Image from "next/image";
 import Link from "next/link";
 import SelectedLeagueContext from "../context/SelectedLeagueContext";
 import ScoreboardNav from "./ScoreboardNav";
+import Router from "next/router";
 
 interface MyProps {
   leagueID: string;
@@ -32,9 +34,7 @@ interface MyProps {
 }
 
 function NavBar(props: MyProps) {
-  const [selectedLeagueContext, setSelectedLeagueContext] = useContext(
-    SelectedLeagueContext
-  );
+  const router = useRouter();
 
   const SideNav = () => {
     const [selected, setSelected] = useState(0);
@@ -164,7 +164,7 @@ function NavBar(props: MyProps) {
     return (
       <div className=" px-4 mx-auto w-screen 2xl:hidden ">
         <div className="flex-items-center">
-          <div className=" flex items-center justify-between py-3 xl:py-5 xl:block border-b-2 border-[#af1222] border-opacity-10 h-[110px]">
+          <div className=" flex items-center justify-between py-3 xl:py-5 xl:block border-b-2 xl:border-b-1 border-[#af1222] border-opacity-10 h-[110px]">
             <button
               className="xl:hidden p-2 text-[#af1222] rounded-xl outline-none focus:border-gray-400 focus:border cursor-pointer "
               onClick={() => {
@@ -327,6 +327,7 @@ function NavBar(props: MyProps) {
 
   if (localStorage.getItem("usernameSubmitted") === "false") {
     localStorage.clear();
+    router.refresh();
   }
   const showNav = () => {
     if (localStorage.getItem("selectedLeagueID")) {
@@ -336,13 +337,13 @@ function NavBar(props: MyProps) {
           <MobileNav />
         </div>
       );
-    }
+    } else return <div>{""}</div>;
   };
   useEffect(() => {
     showNav();
   }, [localStorage.getItem("selectedLeagueID")]);
 
-  return <div>{showNav()}</div>;
+  return <div className="">{showNav()}</div>;
 }
 
 export default NavBar;

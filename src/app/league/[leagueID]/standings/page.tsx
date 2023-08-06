@@ -23,6 +23,7 @@ export default function page(props: myProps) {
   const [leagueData, setLeagueData] = useState([]);
   const [userId, setUserId] = useState("");
   const [leagueID, setLeagueID] = useState("");
+  const [loading, setLoading] = useState(true);
   const [selectedLeague, setSelectedLeague] = useState<LeagueState>({
     name: "",
     league_id: "",
@@ -55,6 +56,8 @@ export default function page(props: myProps) {
     getUserLeaguesData();
   }, [props.usernameSubmitted, userId]);
 
+  useEffect(() => {}, [loading]);
+
   // const [context, setContext] = useContext(LeagueContext);
   // const [selectedLeagueContext, setSelectedLeagueContext] = useContext(
   //   SelectedLeagueContext
@@ -75,9 +78,11 @@ export default function page(props: myProps) {
                 //setSelectedLeagueContext(league);
                 localStorage.setItem("selectedLeagueID", league.league_id);
                 localStorage.setItem("selectedLeagueName", league.name);
+                setLoading(!loading);
                 router.push(
                   `/league/${localStorage.getItem("selectedLeagueID")}`
                 );
+                router.refresh();
               }}
               className="text-[15px] text-[#af1222] border-2 border-[#af1222] p-1 bg-[black] rounded hover:bg-[#1a1a1a]"
             >

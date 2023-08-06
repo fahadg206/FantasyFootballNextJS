@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import Imran from "../images/scary_imran.png";
 import Image from "next/image";
 import axios from "axios";
+import { Spinner } from "@nextui-org/react";
 
 interface ScheduleData {
   [userId: string]: {
@@ -42,6 +43,7 @@ interface MatchupMapData {
 export default function Scoreboard() {
   const [schedule, setSchedule] = useState<Matchup[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loadingData, setLoadingData] = useState(true);
   const [scheduleDataFinal, setScheduleDataFinal] = useState<ScheduleData>({});
 
   const matchupMap = new Map<string, MatchupMapData[]>();
@@ -89,6 +91,13 @@ export default function Scoreboard() {
   };
 
   useEffect(() => {
+    // Check if matchupMap has been populated
+    if (matchupMap.size > 0) {
+      setLoadingData(false);
+    }
+  }, [matchupMap]);
+
+  useEffect(() => {
     const fetchData = async () => {
       try {
         const usersData = await getUsers();
@@ -128,17 +137,15 @@ export default function Scoreboard() {
 
         // Set the updated scheduleData map to state
         setScheduleDataFinal(updatedScheduleData);
+        setLoadingData(false);
       } catch (error) {
         console.error("Error fetching data:", error);
+        setLoadingData(false);
       }
     };
 
     fetchData();
   }, [REACT_APP_LEAGUE_ID]);
-
-  if (loading) {
-    return <div>Loading...</div>;
-  }
 
   // setting each matchup into Map with key being matchup_id and value being two teams with corresponding matchup_id
   for (const userId in scheduleDataFinal) {
@@ -158,7 +165,7 @@ export default function Scoreboard() {
       }
     }
   }
-  console.log(matchupMap);
+
   //MATCHUP TEXT
   const matchupText = Array.from(matchupMap).map(([matchupID, matchupData]) => {
     const team1 = matchupData[0];
@@ -167,10 +174,10 @@ export default function Scoreboard() {
     return (
       <div
         key={matchupID}
-        className="hidden xl:flex flex-wrap  justify-center mb-2 text-[12px] font-bold xl:h-[13vh] xl:w-[10vw] xl:bg-[red] "
+        className="hidden xl:flex flex-wrap  justify-center mb-2 text-[10px] font-bold xl:h-[13vh] xl:w-[10vw] hover:bg-[#c4bfbf] dark:hover:bg-[#1a1a1c] cursor-pointer hover:scale-110 hover:duration-200"
       >
-        <div className="border-r border-[#1a1a1a] p-2 rounded-md flex flex-col items-start justify-center h-[13vh] bg-[blue] w-[10vw]">
-          <div className="team1 flex justify-between items-center  bg-[green] w-[9vw]">
+        <div className="border-r dark:border-[#1a1a1a] border-[#af1222] border-opacity-10 p-2 rounded-md flex flex-col items-start justify-center h-[13vh] w-[10vw]">
+          <div className="team1 flex justify-between items-center  w-[9vw]">
             <span className="flex items-center">
               <Image
                 src={team1.avatar}
@@ -181,13 +188,13 @@ export default function Scoreboard() {
               />
               <p>
                 {team1.name.length > 12
-                  ? team1.name.slice(0, 12).toLowerCase()
+                  ? team1.name.slice(0, 8).toLowerCase()
                   : team1.name.toLowerCase()}
               </p>
             </span>
             <p>{team1.team_points || "0"}</p>
           </div>
-          <div className="team2 flex justify-between items-center  bg-[green] w-[9vw]">
+          <div className="team2 flex justify-between items-center w-[9vw]">
             <span className="flex items-center">
               <Image
                 src={team2.avatar}
@@ -198,17 +205,24 @@ export default function Scoreboard() {
               />
               <p>
                 {team2.name.length > 12
-                  ? team2.name.slice(0, 15).toLowerCase()
+                  ? team2.name.slice(0, 8).toLowerCase()
                   : team2.name.toLowerCase()}
               </p>
             </span>
             <p>{team2.team_points || "0"}</p>
           </div>
-          <p className="w-[9vw] text-center">O/U: 350.24</p>
+          <p className="w-[9vw] text-center text-[9px]">O/U: 350.24</p>
+          <p className="w-[9vw] text-center text-[7px] text-[grey]">
+            YSLBigNervous -7
+          </p>
         </div>
       </div>
     );
   });
+
+  if (loadingData) {
+    return <Spinner className="w-screen text-center" color="error" />; // Show a loading indicator
+  }
 
   if (localStorage.getItem("selectedLeagueID")) {
     return matchupText;

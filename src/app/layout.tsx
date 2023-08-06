@@ -33,7 +33,7 @@ export default function RootLayout({
             </div>
             <div className="block xl:col-start-3 xl:col-end-8 ">
               <Themechanger />
-              <div className="flex w-[60vw] bg-[green]">
+              <div className="flex w-[60vw]">
                 <Scoreboard />
               </div>
               <div className="mt-5 w-[60vw]">{children}</div>
