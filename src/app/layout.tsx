@@ -13,7 +13,7 @@ import NavBar from "./components/Navbar";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "RainCityLeague",
+  title: "Fantasy Pulse",
 };
 
 export default function RootLayout({

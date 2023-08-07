@@ -1,14 +1,36 @@
 "use client";
 
 import { motion } from "framer-motion";
+import axios from "axios";
+import React, { useState, useEffect } from "react";
+import Image from "next/image";
+import scaryimran from "../images/scary_imran.png";
+
+import { LuUserPlus, LuUserMinus } from "react-icons/lu";
 
 const ScrollingTestimonials = () => {
+  const [leagueTransactions, setLeagueTransactions] = useState([]);
+
+  const getLeagueTransactions = async () => {
+    const response = await axios.get(
+      `https://api.sleeper.app/v1/league/${localStorage.getItem(
+        "selectedLeagueID"
+      )}/transactions/1`
+    );
+    setLeagueTransactions(response.data);
+  };
+  console.log("league transactions", leagueTransactions);
+
+  useEffect(() => {
+    getLeagueTransactions();
+  }, []);
+
   return (
     <div>
       <div className="mb-8 px-4">
-        <h3 className="text-slate-50 text-4xl font-semibold text-center">
-          Testimonials
-        </h3>
+        <h2 className="text-slate-50 text-2xl font-semibold text-center">
+          {`Welcome to ${localStorage.getItem("selectedLeagueName")}!`}
+        </h2>
         <p className="text-center text-slate-300 text-sm mt-2 max-w-lg mx-auto">
           Lorem ipsum dolor sit amet consectetur adipisicing elit. Repellendus
           consequatur reprehenderit.
@@ -18,19 +40,19 @@ const ScrollingTestimonials = () => {
         <div className="absolute top-0 bottom-0 left-0 w-24 z-10 bg-gradient-to-r from-[black] to-transparent" />
 
         <div className="flex items-center mb-4">
-          <TestimonialList list={testimonials.top} duration={125} />
-          <TestimonialList list={testimonials.top} duration={125} />
-          <TestimonialList list={testimonials.top} duration={125} />
+          <TestimonialList list={leagueTransactions} duration={125} />
+          <TestimonialList list={leagueTransactions} duration={125} />
+          <TestimonialList list={leagueTransactions} duration={125} />
         </div>
         <div className="flex items-center mb-4">
-          <TestimonialList list={testimonials.middle} duration={75} reverse />
-          <TestimonialList list={testimonials.middle} duration={75} reverse />
-          <TestimonialList list={testimonials.middle} duration={75} reverse />
+          <TestimonialList list={leagueTransactions} duration={75} reverse />
+          <TestimonialList list={leagueTransactions} duration={75} reverse />
+          <TestimonialList list={leagueTransactions} duration={75} reverse />
         </div>
         <div className="flex items-center">
-          <TestimonialList list={testimonials.bottom} duration={275} />
-          <TestimonialList list={testimonials.bottom} duration={275} />
-          <TestimonialList list={testimonials.bottom} duration={275} />
+          <TestimonialList list={leagueTransactions} duration={275} />
+          <TestimonialList list={leagueTransactions} duration={275} />
+          <TestimonialList list={leagueTransactions} duration={275} />
         </div>
 
         <div className="absolute top-0 bottom-0 right-0 w-24 z-10 bg-gradient-to-l from-[black] to-transparent" />
@@ -47,23 +69,93 @@ const TestimonialList = ({ list, reverse = false, duration = 50 }) => {
       transition={{ duration, repeat: Infinity, ease: "linear" }}
       className="flex gap-4 px-2"
     >
-      {list.map((t) => {
-        return (
-          <div
-            key={t.id}
-            className="shrink-0 w-[500px] grid grid-cols-[7rem,_1fr] rounded-lg overflow-hidden relative"
-          >
-            <img src={t.img} className="w-full h-44 object-cover" />
-            <div className="bg-[#af1222] text-slate-50 p-4">
-              <span className="block font-semibold text-lg mb-1">{t.name}</span>
-              <span className="block mb-3 text-sm font-medium">{t.title}</span>
-              <span className="block text-sm text-slate-300">{t.info}</span>
+      {list.map((transaction) => {
+        if (transaction.status === "complete") {
+          return (
+            <div
+              key={transaction.id}
+              className="shrink-0 w-[500px] flex justify-center rounded-lg overflow-hidden relative bg-[green]"
+            >
+              <div>
+                <div className="bg-[#af1222] text-slate-50 p-4">
+                  <span className="block font-semibold text-lg mb-1">
+                    {`${transaction.type}   :    ${transaction.status}`}
+                  </span>
+                </div>
+
+                <div className="teams flex justify-between bg-[purple] w-[25vw]">
+                  <div className="team1 flex flex-col">
+                    <p className="border-b-2 border-black text-center">Kabo</p>
+                    <div>
+                      <span className="flex items-center">
+                        <LuUserPlus /> Mahomes
+                      </span>
+                      <span className="flex items-center">
+                        <LuUserPlus /> Mahomes
+                      </span>
+                      <span className="flex items-center">
+                        <LuUserPlus /> Mahomes
+                      </span>
+                      <span className="flex items-center">
+                        <LuUserPlus /> Mahomes
+                      </span>
+                      <span className="flex items-center">
+                        <LuUserPlus /> Mahomes
+                      </span>
+                      <span className="flex items-center">
+                        <LuUserPlus /> Mahomes
+                      </span>
+                      <span className="flex items-center">
+                        <LuUserPlus /> Mahomes
+                      </span>
+                      <span className="flex items-center">
+                        <LuUserMinus /> McCaffrey
+                      </span>
+                    </div>
+                  </div>
+                  <div className="team2 flex flex-col">
+                    <p className="border-b-2 border-black text-center">FG</p>
+                    <div>
+                      <span className="flex items-center">
+                        <LuUserPlus /> Mahomes
+                      </span>
+                      <span className="flex items-center">
+                        <LuUserMinus /> McCaffrey
+                      </span>
+                      <span className="flex items-center">
+                        <LuUserMinus /> McCaffrey
+                      </span>
+                      <span className="flex items-center">
+                        <LuUserMinus /> McCaffrey
+                      </span>
+                      <span className="flex items-center">
+                        <LuUserMinus /> McCaffrey
+                      </span>
+                      <span className="flex items-center">
+                        <LuUserMinus /> McCaffrey
+                      </span>
+                      <span className="flex items-center">
+                        <LuUserMinus /> McCaffrey
+                      </span>
+                      <span className="flex items-center">
+                        <LuUserMinus /> McCaffrey
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* <Image
+                src={scaryimran}
+                className="w-[60px] h-[60px] object-cover"
+              /> */}
+
+              <span className="text-7xl absolute top-2 right-2 text-[black]">
+                "
+              </span>
             </div>
-            <span className="text-7xl absolute top-2 right-2 text-[black]">
-              "
-            </span>
-          </div>
-        );
+          );
+        }
       })}
     </motion.div>
   );

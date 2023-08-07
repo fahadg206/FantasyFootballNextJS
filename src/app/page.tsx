@@ -1,32 +1,3 @@
-// import useSWR from "swr";
-// import axios from "axios";
-
-// type UserData = {
-//   username: string;
-//   user_id: number;
-//   display_name: string;
-//   avatar: string;
-// };
-
-// export default function page() {
-//   const fetcher = async (url: string) => {
-//     const response = await axios.get(url);
-//     return response.data;
-//   };
-
-//   const {
-//     data: userData,
-//     error: userError,
-//     isLoading,
-//   } = useSWR("https://api.sleeper.app/v1/user/_fg", fetcher);
-
-//   if (userError) console.log("Error");
-//   if (!userData) return console.log("loading...");
-//   if (isLoading) return <h1>Loading....</h1>;
-
-//   console.log(userData);
-//   return <div>{userData.display_name}</div>;
-// }
 "use client";
 import React from "react";
 import Standings from "./league/[leagueID]/standings/page";

@@ -10,6 +10,7 @@ import {
   SiCss3,
 } from "react-icons/si";
 import { FaRankingStar } from "react-icons/fa6";
+import { RiTeamFill } from "react-icons/ri";
 import { BiSolidNews } from "react-icons/bi";
 import { IoCloseSharp, IoPulseSharp } from "react-icons/io5";
 import { AiOutlineOrderedList } from "react-icons/ai";
@@ -144,13 +145,29 @@ function NavBar(props: MyProps) {
           >
             <div className="flex items-center w-[90px]">
               <NavItem
-                selected={selected === 5}
-                id={5}
+                selected={selected === 6}
+                id={6}
                 setSelected={setSelected}
               >
                 <FaCalendarAlt />
               </NavItem>
               <p className="ml-2">Schedule</p>
+            </div>
+          </Link>
+          <Link
+            href={`/league/${localStorage.getItem(
+              "selectedLeagueID"
+            )}/leaguemanagers`}
+          >
+            <div className="flex items-center w-[90px]">
+              <NavItem
+                selected={selected === 7}
+                id={7}
+                setSelected={setSelected}
+              >
+                <RiTeamFill />
+              </NavItem>
+              <p className="ml-2">League Managers</p>
             </div>
           </Link>
         </div>
