@@ -1,12 +1,12 @@
-"use client";
 import React from "react";
+import ScrollingTestimonials from "../../components/ScrollingTestimonials";
+import ScrollingTeamLogos from "../../components/ScrollingTeamLogos";
 
-const page = () => {
+export default function page() {
   return (
-    <div className="w-[60vw] text-center bg-[green] ">
-      {`Welcome to ${localStorage.getItem("selectedLeagueName")}!`}{" "}
+    <div>
+      <ScrollingTestimonials />
+      <ScrollingTeamLogos />
     </div>
   );
-};
-
-export default page;
+}

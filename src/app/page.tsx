@@ -44,6 +44,7 @@ import { FaSearch } from "react-icons/fa";
 import NavBar from "./components/Navbar";
 import Logo from "./images/Transparent.png";
 import Image from "next/image";
+import SelectLeague from "./components/SelectLeague";
 
 export default function Home() {
   const options = ["2020", "2021", "2022"];
@@ -117,8 +118,8 @@ export default function Home() {
 
   /* ^ sSAVING USERNAME INPUT INTO LOCALSTORAGE. CLEARING LOCAL STORAGE IF EMPTY. PASSING USERNAME AND YEAR SELECTED TO PROPS ^ */
   return (
-    <div className={`text-xl text-white  h-screen `}>
-      <div className="flex flex-col justify-center h-screen items-center  ">
+    <div className={`text-xl text-white  h-screen  flex absolute left-0 `}>
+      <div className="flex flex-col justify-center h-screen items-center w-screen">
         <Image src={Logo} width={500} height={500} alt="logo" />
         <div className=" ">
           <form onSubmit={onFormSubmit}>
@@ -140,19 +141,16 @@ export default function Home() {
               value={text}
               className="p-1 rounded-lg  focus:rounded-lg border-rounded focus:ring focus:ring-[#af1222] focus:border-[#af1222]  bg-[#050505] text-[11px] md:text-[16px]"
             />
-            <div className="w-[60vw] flex justify-center items-center   ">
+            <div className="w-[screen] flex justify-center items-center mt-3 ">
               <button className="mr-2 text-[15px] bg-[#af1222] p-[2px] rounded">
                 Submit
               </button>
-              <Button
-                css={{ width: "20px", backgroundColor: "#af1222" }}
-                size="sm"
-                auto
-                className="mr-2"
+              <button
                 onClick={onStorageCleared}
+                className="mr-2 text-[15px] bg-[#af1222] p-[2px] px-2 rounded"
               >
                 Clear
-              </Button>
+              </button>
               <div>
                 <select
                   value={selectedSeason}
@@ -169,7 +167,7 @@ export default function Home() {
           </form>
         </div>
         <div>
-          <Standings
+          <SelectLeague
             usernameSubmitted={usernameSubmitted}
             username={text}
             selectedSeason={selectedSeason}

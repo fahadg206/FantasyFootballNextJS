@@ -1,10 +1,13 @@
 const express = require("express");
 const cors = require("cors");
 const axios = require("axios");
+const fetch = require("node-fetch");
 
 // Initialize the server
 const app = express();
 const port = 3001; // Choose a suitable port number
+
+const { Response } = require("node-fetch");
 
 async function waitForAll(...ps) {
   const promises = ps.map((p) => (p instanceof Response ? p.json() : p));

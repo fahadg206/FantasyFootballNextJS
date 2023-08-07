@@ -12,7 +12,9 @@ export default function Home() {
     <div
       className={`text-3xl text-white  flex flex-col justify-start items-center gap-10 border-2 border-[#af1222] h-[60vh] bg-[url('./images/youtube-video-gif.gif')] bg-[length:470px_800px] md:bg-[url('./images/youtube-video-gif.gif')] bg-no-repeat md:bg-cover`}
     >
-      <div className="mt-3">Welcome to {"League Name"}</div>
+      <div className="mt-3 text-2xl font-bold">
+        {`Welcome to ${localStorage.getItem("selectedLeagueName")}!`}
+      </div>
       <div className="grid-cols-1 justify-center text-center lg:flex ">
         <Input
           onChange={(e) => {

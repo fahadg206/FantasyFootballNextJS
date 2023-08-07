@@ -1,102 +1,111 @@
-"use client";
-import { useEffect, useState, useContext } from "react";
-import { useRouter } from "next/navigation";
-import axios from "axios";
+// import React from "react";
+// import {
+//   Table,
+//   TableHeader,
+//   TableColumn,
+//   TableBody,
+//   TableRow,
+//   TableCell,
+//   User,
+//   Chip,
+//   Tooltip,
+//   ChipProps,
+//   getKeyValue,
+// } from "@nextui-org/react";
+// import { EditIcon } from "./EditIcon";
+// import { DeleteIcon } from "./DeleteIcon";
+// import { EyeIcon } from "./EyeIcon";
+// import { columns, users } from "./data";
 
-import LeagueContext from "../../../context/LeagueContext";
-import SelectedLeagueContext from "@/app/context/SelectedLeagueContext";
+// const statusColorMap: Record<string, ChipProps["color"]> = {
+//   active: "success",
+//   paused: "danger",
+//   vacation: "warning",
+// };
 
-import NavBar from "../../../components/Navbar";
-import { LucideArrowUpRightSquare } from "lucide-react";
-type myProps = {
-  username: string;
-  usernameSubmitted: boolean;
-  selectedSeason: string;
-};
+// type User = (typeof users)[0];
 
-interface LeagueState {
-  name: string;
-  league_id: string;
-}
+// export default function App() {
+//   const renderCell = React.useCallback((user: User, columnKey: React.Key) => {
+//     const cellValue = user[columnKey as keyof User];
 
-export default function page(props: myProps) {
-  const [leagueData, setLeagueData] = useState([]);
-  const [userId, setUserId] = useState("");
-  const [leagueID, setLeagueID] = useState("");
-  const [loading, setLoading] = useState(true);
-  const [selectedLeague, setSelectedLeague] = useState<LeagueState>({
-    name: "",
-    league_id: "",
-  });
+//     switch (columnKey) {
+//       case "name":
+//         return (
+//           <User
+//             avatarProps={{ radius: "lg", src: user.avatar }}
+//             description={user.email}
+//             name={cellValue}
+//           >
+//             {user.email}
+//           </User>
+//         );
+//       case "role":
+//         return (
+//           <div className="flex flex-col">
+//             <p className="text-bold text-sm capitalize">{cellValue}</p>
+//             <p className="text-bold text-sm capitalize text-default-400">
+//               {user.team}
+//             </p>
+//           </div>
+//         );
+//       case "status":
+//         return (
+//           <Chip
+//             className="capitalize"
+//             color={statusColorMap[user.status]}
+//             size="sm"
+//             variant="flat"
+//           >
+//             {cellValue}
+//           </Chip>
+//         );
+//       case "actions":
+//         return (
+//           <div className="relative flex items-center gap-2">
+//             <Tooltip content="Details">
+//               <span className="text-lg text-default-400 cursor-pointer active:opacity-50">
+//                 <EyeIcon />
+//               </span>
+//             </Tooltip>
+//             <Tooltip content="Edit user">
+//               <span className="text-lg text-default-400 cursor-pointer active:opacity-50">
+//                 <EditIcon />
+//               </span>
+//             </Tooltip>
+//             <Tooltip color="danger" content="Delete user">
+//               <span className="text-lg text-danger cursor-pointer active:opacity-50">
+//                 <DeleteIcon />
+//               </span>
+//             </Tooltip>
+//           </div>
+//         );
+//       default:
+//         return cellValue;
+//     }
+//   }, []);
 
-  const router = useRouter();
-
-  // Grabbing a user with the username we recieved from home page.
-  const getUser = async () => {
-    const response = await axios.get(
-      `https://api.sleeper.app/v1/user/${props.username}`
-    );
-    const data = response.data;
-    setUserId(data.user_id);
-  };
-
-  // Grabbing users league data (all the leagues they are in) and passing it into array
-  const getUserLeaguesData = async () => {
-    const response = await axios.get(
-      `https://api.sleeper.app/v1/user/${userId}/leagues/nfl/${props.selectedSeason}`
-    );
-
-    const leagueData = response.data;
-    setLeagueData(leagueData);
-  };
-
-  //re-rendering data when we confirm user has submitted the form on home page. Also re-rendering when we succesfuly make a user call and get back data from getUser()
-  useEffect(() => {
-    getUser();
-    getUserLeaguesData();
-  }, [props.usernameSubmitted, userId]);
-
-  useEffect(() => {}, [loading]);
-
-  // const [context, setContext] = useContext(LeagueContext);
-  // const [selectedLeagueContext, setSelectedLeagueContext] = useContext(
-  //   SelectedLeagueContext
-  // );
-
-  // setContext(leagueData);
-
-  return (
-    <div>
-      {leagueData.length > 0 ? (
-        leagueData.map((league: any) => (
-          <div className="flex p-1">
-            <h1 className="mr-2" key={league.name}>
-              {league.name}
-            </h1>
-            <button
-              onClick={() => {
-                //setSelectedLeagueContext(league);
-                localStorage.setItem("selectedLeagueID", league.league_id);
-                localStorage.setItem("selectedLeagueName", league.name);
-                setLoading(!loading);
-                router.push(
-                  `/league/${localStorage.getItem("selectedLeagueID")}`
-                );
-                router.refresh();
-              }}
-              className="text-[15px] text-[#af1222] border-2 border-[#af1222] p-1 bg-[black] rounded hover:bg-[#1a1a1a]"
-            >
-              Select League
-            </button>
-          </div>
-        ))
-      ) : (
-        <h1></h1>
-      )}
-
-      {/* {setSelectedLeagueContext(selectedLeague)} */}
-      {/* {console.log(selectedLeague.league_id)} */}
-      <NavBar usernameSubmitted={props.usernameSubmitted} leagueID="" />
-    </div>
-  );
-}
+//   return (
+//     <Table aria-label="Example table with custom cells">
+//       <TableHeader columns={columns}>
+//         {(column) => (
+//           <TableColumn
+//             key={column.uid}
+//             align={column.uid === "actions" ? "center" : "start"}
+//           >
+//             {column.name}
+//           </TableColumn>
+//         )}
+//       </TableHeader>
+//       <TableBody items={users}>
+//         {(item) => (
+//           <TableRow key={item.id}>
+//             {(columnKey) => (
+//               <TableCell>{renderCell(item, columnKey)}</TableCell>
+//             )}
+//           </TableRow>
+//         )}
+//       </TableBody>
+//     </Table>
+//   );
+// }

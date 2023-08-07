@@ -174,7 +174,7 @@ export default function Scoreboard() {
     return (
       <div
         key={matchupID}
-        className="hidden xl:flex flex-wrap  justify-center mb-2 text-[10px] font-bold xl:h-[13vh] xl:w-[10vw] hover:bg-[#c4bfbf] dark:hover:bg-[#1a1a1c] cursor-pointer hover:scale-110 hover:duration-200"
+        className="hidden xl:flex flex-wrap  justify-center mb-2 text-[9px] font-bold xl:h-[13vh] xl:w-[10vw] hover:bg-[#c4bfbf] dark:hover:bg-[#1a1a1c] cursor-pointer hover:scale-105 hover:duration-200"
       >
         <div className="border-r dark:border-[#1a1a1a] border-[#af1222] border-opacity-10 p-2 rounded-md flex flex-col items-start justify-center h-[13vh] w-[10vw]">
           <div className="team1 flex justify-between items-center  w-[9vw]">
@@ -187,8 +187,8 @@ export default function Scoreboard() {
                 className="rounded-full mr-1"
               />
               <p>
-                {team1.name.length > 12
-                  ? team1.name.slice(0, 8).toLowerCase()
+                {team1.name.length > 10
+                  ? team1.name.slice(0, 11).toLowerCase()
                   : team1.name.toLowerCase()}
               </p>
             </span>
@@ -204,8 +204,8 @@ export default function Scoreboard() {
                 className="rounded-full mr-1"
               />
               <p>
-                {team2.name.length > 12
-                  ? team2.name.slice(0, 8).toLowerCase()
+                {team2.name.length > 10
+                  ? team2.name.slice(0, 11).toLowerCase()
                   : team2.name.toLowerCase()}
               </p>
             </span>

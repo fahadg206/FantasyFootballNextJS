@@ -11,7 +11,7 @@ import {
 } from "react-icons/si";
 import { FaRankingStar } from "react-icons/fa6";
 import { BiSolidNews } from "react-icons/bi";
-import { IoCloseSharp } from "react-icons/io5";
+import { IoCloseSharp, IoPulseSharp } from "react-icons/io5";
 import { AiOutlineOrderedList } from "react-icons/ai";
 import {
   FaBars,
@@ -100,7 +100,7 @@ function NavBar(props: MyProps) {
                 id={3}
                 setSelected={setSelected}
               >
-                <FaCalendarAlt />
+                <IoPulseSharp />
               </NavItem>
               <p className="ml-2">Matchups</p>
             </div>
@@ -148,9 +148,9 @@ function NavBar(props: MyProps) {
                 id={5}
                 setSelected={setSelected}
               >
-                <FaRankingStar />
+                <FaCalendarAlt />
               </NavItem>
-              <p className="ml-2">PowerRankings</p>
+              <p className="ml-2">Schedule</p>
             </div>
           </Link>
         </div>
