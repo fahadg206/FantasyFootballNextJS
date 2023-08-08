@@ -4,6 +4,17 @@ import Imran from "../images/scary_imran.png";
 import Image from "next/image";
 import axios from "axios";
 import { Spinner } from "@nextui-org/react";
+import { db, storage } from "../firebase";
+import { ref, uploadString, getDownloadURL } from "firebase/storage";
+import {
+  getFirestore,
+  collection,
+  getDocs,
+  addDoc,
+  updateDoc,
+  query,
+} from "firebase/firestore/lite";
+import { QuerySnapshot, onSnapshot } from "firebase/firestore";
 
 interface ScheduleData {
   [userId: string]: {
@@ -165,6 +176,68 @@ export default function Scoreboard() {
       }
     }
   }
+
+  const storageRef = ref(
+    storage,
+    `files/${localStorage.getItem("selectedLeagueID")}.txt`
+  );
+
+  // Uncomment to upload textfile to firebase storage
+
+  // const textContent = JSON.stringify(scheduleDataFinal);
+
+  // // Upload the text content as a text file to Firebase Cloud Storage
+  // uploadString(storageRef, textContent, "raw")
+  //   .then(() => {
+  //     console.log("Text file uploaded to Firebase Cloud Storage.");
+  //   })
+  //   .catch((error) => {
+  //     console.error("Error uploading text file:", error);
+  //   });
+  const readingRef = ref(storage, `files/`);
+  try {
+    getDownloadURL(storageRef)
+      .then((url) => {
+        fetch(url)
+          .then((response) => response.text())
+          .then((fileContent) => {
+            console.log(
+              "Text file content from Firebase Cloud Storage:",
+              fileContent
+            );
+          })
+          .catch((error) => {
+            console.error("Error fetching text file content:", url);
+          });
+      })
+      .catch((error) => {
+        console.error("Error getting download URL:", error);
+      });
+  } catch (error) {
+    console.error("Unexpected error:", error);
+  }
+
+  // Uncomment the addDoc to add to DB
+
+  // addDoc(collection(db, "League Info"), scheduleDataFinal);
+
+  // // Reference to the "League Info" collection
+  // const leagueInfoCollectionRef = collection(db, "League Info");
+
+  // // Fetch documents from the collection
+  // getDocs(leagueInfoCollectionRef)
+  //   .then((querySnapshot) => {
+  //     let dbData = [];
+
+  //     querySnapshot.forEach((doc) => {
+  //       dbData.push({ ...doc.data(), id: doc.id });
+  //     });
+
+  //     console.log("Data from 'League Info' collection:", dbData);
+  //   })
+  //   .catch((error) => {
+  //     console.error("Error reading data:", error);
+  //   });
 
   //MATCHUP TEXT
   const matchupText = Array.from(matchupMap).map(([matchupID, matchupData]) => {
