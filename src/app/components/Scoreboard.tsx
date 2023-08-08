@@ -201,10 +201,10 @@ export default function Scoreboard() {
         fetch(url)
           .then((response) => response.text())
           .then((fileContent) => {
-            console.log(
-              "Text file content from Firebase Cloud Storage:",
-              fileContent
-            );
+            // console.log(
+            //   "Text file content from Firebase Cloud Storage:",
+            //   fileContent
+            // );
           })
           .catch((error) => {
             console.error("Error fetching text file content:", url);

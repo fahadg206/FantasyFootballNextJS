@@ -6,6 +6,7 @@ import Providers from "./components/Theme";
 import Themechanger from "./components/ThemeChanger";
 import LeagueContext from "./context/LeagueContext";
 import { useContext, useEffect } from "react";
+import Logo from "../app/images/Transparent.png";
 
 import Footer from "./components/Footer";
 import NavBar from "./components/Navbar";

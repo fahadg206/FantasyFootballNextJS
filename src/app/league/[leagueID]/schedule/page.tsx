@@ -50,7 +50,6 @@ export default function Schedule(props: any) {
 
   const matchupMapp = localStorage.getItem("matchupMap");
   const matchupMappp = JSON.parse(matchupMapp || "null");
-  console.log("matchupMappp", matchupMappp);
 
   useEffect(() => {
     if (props.matchupMap) {
@@ -60,8 +59,8 @@ export default function Schedule(props: any) {
     }
   }, [props.matchupMap, loading]);
 
-  console.log(loading);
-  console.log(matchupMap);
+  //console.log(loading);
+  //console.log(matchupMap);
   if (loading) {
   }
   matchupText = Array.from(matchupMap || []).map(([matchupID, matchupData]) => {
