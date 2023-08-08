@@ -16,6 +16,16 @@ interface ScheduleData {
     user_id?: string;
   };
 }
+
+interface DraftPicks {
+  season?: string;
+  league_id?: string;
+  owner_id?: number;
+  previous_owner_id?: number;
+  round?: number;
+  roster_id?: string;
+}
+
 interface TradeInfo {
   [transactionID: string]: [
     {
@@ -25,6 +35,7 @@ interface TradeInfo {
       user_id?: string;
       players_recieved?: string[];
       players_sent?: string[];
+      draft_picks?: DraftPicks[];
     }
   ];
 }
@@ -260,10 +271,40 @@ const TestimonialList = ({
             }
           }
           for (const key in transaction.adds) {
+            if (tradeInfoObj[transaction.transaction_id]) {
+              tradeInfoObj[transaction.transaction_id].forEach((manager) => {
+                if (transaction.adds[key] === manager.roster_id) {
+                  if (manager.players_recieved) {
+                    manager.players_recieved.push(key);
+                  } else {
+                    manager.players_recieved = [key];
+                  }
+                  //manager.players_recieved= key;
+                }
+              });
+            }
+          }
+          for (const key in transaction.drops) {
+            if (tradeInfoObj[transaction.transaction_id]) {
+              tradeInfoObj[transaction.transaction_id].forEach((manager) => {
+                if (transaction.drops[key] === manager.roster_id) {
+                  if (manager.players_sent) {
+                    manager.players_sent.push(key);
+                  } else {
+                    manager.players_sent = [key];
+                  }
+                  //manager.players_recieved= key;
+                }
+              });
+            }
+          }
+          if (tradeInfoObj[transaction.transaction_id]) {
             tradeInfoObj[transaction.transaction_id].forEach((manager) => {
-              if (transaction.adds[key] === manager.roster_id) {
-                //manager.players_recieved= key;
+              if (transaction.draft_picks) {
+                manager.draft_picks = transaction.draft_picks;
               }
+
+              //manager.players_recieved= key;
             });
           }
         }

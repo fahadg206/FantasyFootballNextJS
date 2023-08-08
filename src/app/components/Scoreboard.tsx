@@ -194,28 +194,28 @@ export default function Scoreboard() {
   //   .catch((error) => {
   //     console.error("Error uploading text file:", error);
   //   });
-  const readingRef = ref(storage, `files/`);
-  try {
-    getDownloadURL(storageRef)
-      .then((url) => {
-        fetch(url)
-          .then((response) => response.text())
-          .then((fileContent) => {
-            // console.log(
-            //   "Text file content from Firebase Cloud Storage:",
-            //   fileContent
-            // );
-          })
-          .catch((error) => {
-            console.error("Error fetching text file content:", url);
-          });
-      })
-      .catch((error) => {
-        console.error("Error getting download URL:", error);
-      });
-  } catch (error) {
-    console.error("Unexpected error:", error);
-  }
+  // const readingRef = ref(storage, `files/`);
+  // try {
+  //   getDownloadURL(storageRef)
+  //     .then((url) => {
+  //       fetch(url)
+  //         .then((response) => response.text())
+  //         .then((fileContent) => {
+  //           // console.log(
+  //           //   "Text file content from Firebase Cloud Storage:",
+  //           //   fileContent
+  //           // );
+  //         })
+  //         .catch((error) => {
+  //           console.error("Error fetching text file content:", url);
+  //         });
+  //     })
+  //     .catch((error) => {
+  //       console.error("Error getting download URL:", error);
+  //     });
+  // } catch (error) {
+  //   console.error("Unexpected error:", error);
+  // }
 
   // Uncomment the addDoc to add to DB
 
