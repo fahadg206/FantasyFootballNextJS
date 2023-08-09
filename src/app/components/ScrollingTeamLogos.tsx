@@ -47,7 +47,7 @@ const ScrollingTeamLogos = () => {
     setUsers(modifiedUsers);
   };
 
-  console.log("users", users);
+  //console.log("users", users);
 
   useEffect(() => {
     getUsers();
@@ -129,7 +129,7 @@ const ScrollingTeamLogos = () => {
     </>
   );
   return (
-    <section className="bg-[black] py-4">
+    <section className="bg-[black] py-4 w-[95vw] xl:w-[60vw]">
       <div className="flex  overflow-hidden">
         <TranslateWrapper>
           <LogoItemsTop />

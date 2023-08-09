@@ -37,7 +37,9 @@ export default function RootLayout({
               <div className="flex w-[60vw]">
                 <Scoreboard />
               </div>
-              <div className="mt-5 w-screen 2xl:w-[60vw]">{children}</div>
+              <div className="mt-5 w-screen xl:w-[60vw] flex justify-center">
+                {children}
+              </div>
             </div>
           </div>
         </Providers>

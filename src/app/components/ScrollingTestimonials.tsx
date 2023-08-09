@@ -85,7 +85,7 @@ const ScrollingTestimonials = () => {
     }
   };
   console.log("league transactions", leagueTransactions);
-  console.log("rosters", rosters);
+  //console.log("rosters", rosters);
 
   useEffect(() => {
     getLeagueTransactions();
@@ -141,7 +141,7 @@ const ScrollingTestimonials = () => {
   }, []);
 
   return (
-    <div>
+    <div className="w-[95vw] xl:w-[60vw]">
       <div className="mb-8 px-4">
         <h2 className="text-slate-50 text-2xl font-semibold text-center">
           {`Welcome to ${localStorage.getItem("selectedLeagueName")}!`}
@@ -157,18 +157,21 @@ const ScrollingTestimonials = () => {
         <div className="flex items-center mb-4">
           <TestimonialList
             managerMap={managerMap}
+            playersData={playersData}
             reverse={true}
             list={leagueTransactions}
             duration={125}
           />
           <TestimonialList
             managerMap={managerMap}
+            playersData={playersData}
             reverse={true}
             list={leagueTransactions}
             duration={125}
           />
           <TestimonialList
             managerMap={managerMap}
+            playersData={playersData}
             reverse={true}
             list={leagueTransactions}
             duration={125}
@@ -206,11 +209,13 @@ const TestimonialList = ({
   reverse = false,
   duration = 50,
   managerMap,
+  playersData,
 }: {
   list: string[];
   reverse: boolean;
   duration: number;
   managerMap: ScheduleData;
+  playersData: any;
 }) => {
   return (
     <motion.div
@@ -221,7 +226,6 @@ const TestimonialList = ({
     >
       {list.map((transaction) => {
         if (transaction.status === "complete" && transaction.type === "trade") {
-          console.log(transaction.type);
           //players added
           // const addsKeys = transaction.adds
           //   ? Object.keys(transaction.adds)
@@ -308,54 +312,139 @@ const TestimonialList = ({
             });
           }
         }
-        console.log("tradeInfoObj", tradeInfoObj);
 
-        return (
-          <div
-            key={transaction.id}
-            className="shrink-0 w-[500px] flex justify-center rounded-lg overflow-hidden relative bg-[green]"
-          >
-            <div>
-              <div className="bg-[#af1222] text-slate-50 p-4">
-                <span className="block font-semibold text-lg mb-1">
-                  {`${transaction.type}   :    ${transaction.status}`}
-                </span>
-              </div>
+        //looping through draft picks
+        const draftPicks =
+          tradeInfoObj[transaction.transaction_id]?.[0]?.draft_picks || [];
+        for (const draftpick of draftPicks) {
+          console.log("whole array of picks", draftPicks);
+          console.log("individual pick", draftpick);
+        }
+        if (tradeInfoObj.hasOwnProperty(transaction.transaction_id)) {
+          let team1 = tradeInfoObj[transaction.transaction_id][0];
+          let team2 = tradeInfoObj[transaction.transaction_id][1];
+          return (
+            <div
+              key={transaction.id}
+              className="shrink-0 w-[500px] flex justify-center rounded-lg overflow-hidden relative bg-[green]"
+            >
+              <div>
+                <div className="bg-[#af1222] text-slate-50 p-4 flex justify-center">
+                  <span className="block capitalize font-semibold text-lg mb-1">
+                    {`${transaction.type}   :    ${transaction.status}`}
+                  </span>
+                </div>
 
-              <div className="teams flex justify-between bg-[purple] w-[25vw]">
-                <div className="team1 flex flex-col">
-                  <p className="border-b-2 border-black text-center">Kabo</p>
-                  <div>
-                    <span className="flex items-center">
-                      <LuUserPlus />
-                    </span>
-
-                    <span className="flex items-center">
-                      <LuUserPlus /> Mahomes
-                    </span>
+                <div className="teams flex justify-between text-[13px] bg-[purple] w-[25vw]">
+                  <div className="team1 flex flex-col">
+                    <p className="border-b-2 border-black text-center mb-1">
+                      {team1.name}
+                    </p>
+                    <div>
+                      <div className="players-added1 mb-1">
+                        {team1.players_recieved?.map((player) => {
+                          return (
+                            <span className="flex items-center">
+                              <LuUserPlus />
+                              <span className="flex">
+                                <Image
+                                  src={`https://sleepercdn.com/content/nfl/players/thumb/${player}.jpg`}
+                                  alt="player image"
+                                  width={30}
+                                  height={30}
+                                />
+                                {playersData[player].fn}
+                                {""}
+                                {playersData[player].ln}
+                              </span>
+                            </span>
+                          );
+                        })}
+                      </div>
+                      <div className="players-sent1 mb-1">
+                        {team1.players_sent?.map((player) => {
+                          return (
+                            <span className="flex items-center">
+                              <LuUserMinus />
+                              <span className="flex">
+                                <Image
+                                  src={`https://sleepercdn.com/content/nfl/players/thumb/${player}.jpg`}
+                                  alt="player image"
+                                  width={30}
+                                  height={30}
+                                />
+                                {playersData[player].fn}
+                                {""}
+                                {playersData[player].ln}
+                              </span>
+                            </span>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  </div>
+                  <div className="team2 flex flex-col">
+                    <p className="border-b-2 border-black text-center mb-1">
+                      {team2.name}
+                    </p>
+                    <div>
+                      <div className="players-added2 mb-1">
+                        {team2.players_recieved?.map((player) => {
+                          return (
+                            <span className="flex items-center">
+                              <LuUserPlus />
+                              <span className="flex">
+                                <Image
+                                  src={`https://sleepercdn.com/content/nfl/players/thumb/${player}.jpg`}
+                                  alt="player image"
+                                  width={30}
+                                  height={30}
+                                />
+                                {playersData[player].fn}
+                                {""}
+                                {playersData[player].ln}
+                              </span>
+                            </span>
+                          );
+                        })}
+                      </div>
+                      <div className="players-sent2 mb-1">
+                        {" "}
+                        {team2.players_sent?.map((player) => {
+                          return (
+                            <span className="flex items-center">
+                              <LuUserMinus />
+                              <span className="flex">
+                                <Image
+                                  src={`https://sleepercdn.com/content/nfl/players/thumb/${player}.jpg`}
+                                  alt="player image"
+                                  width={30}
+                                  height={30}
+                                />
+                                {playersData[player].fn}
+                                {""}
+                                {playersData[player].ln}
+                              </span>
+                            </span>
+                          );
+                        })}
+                      </div>
+                    </div>
                   </div>
                 </div>
-                <div className="team2 flex flex-col">
-                  <p className="border-b-2 border-black text-center">FG</p>
-                  <div>
-                    <span className="flex items-center">
-                      <LuUserPlus /> Mahomes
-                    </span>
-                  </div>
-                </div>
               </div>
-            </div>
 
-            {/* <Image
+              {/* <Image
                 src={scaryimran}
                 className="w-[60px] h-[60px] object-cover"
               /> */}
 
-            <span className="text-7xl absolute top-2 right-2 text-[black]">
-              "
-            </span>
-          </div>
-        );
+              <span className="text-7xl absolute top-2 right-2 text-[black]">
+                "
+              </span>
+            </div>
+          );
+        }
       })}
     </motion.div>
   );
