@@ -68,15 +68,15 @@ const ScrollingTeamLogos = () => {
 
   const LogoItem = ({ avatar, name }: { avatar: string; name: string }) => {
     return (
-      <div className="w-16 md:w-24 h-16 md:h-24 flex flex-col justify-center items-center hover:bg-[#1a1a1a] text-[#white] transition-colors">
+      <div className="w-16 md:w-24 h-24 flex flex-col justify-center items-center hover:bg-[#1a1a1a] text-[#white] transition-colors">
         <Image
           src={avatar}
           alt="avatar"
           width={50}
           height={50}
-          className="text-4xl md:text-5xl mb-2"
+          className="text-4xl md:text-5xl mb-2 rounded-full"
         />
-        <p className="text-[12px] font-bold">{name}</p>
+        <p className="text-[10px] font-bold">{name}</p>
       </div>
     );
   };
@@ -129,7 +129,7 @@ const ScrollingTeamLogos = () => {
     </>
   );
   return (
-    <section className="bg-[black] py-4 w-[95vw] xl:w-[60vw]">
+    <section className="bg-[#EDEDED] dark:bg-[black] py-4 w-[95vw] xl:w-[60vw]">
       <div className="flex  overflow-hidden">
         <TranslateWrapper>
           <LogoItemsTop />

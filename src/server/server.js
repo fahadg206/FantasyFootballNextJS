@@ -95,7 +95,7 @@ function GET() {
 
                   players = playerMap;
 
-                  console.log(playerMap.get("4017"));
+                  //console.log(playerMap.get("4017"));
 
                   return processedPlayers;
                 });

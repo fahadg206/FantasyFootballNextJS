@@ -168,7 +168,7 @@ export default function page() {
     return <div>Loading...</div>;
   }
 
-  console.log("team managers", scheduleDataFinal);
+  //console.log("team managers", scheduleDataFinal);
 
   return (
     <div className="bg-[green]">

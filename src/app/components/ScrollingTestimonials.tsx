@@ -5,6 +5,7 @@ import axios from "axios";
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import scaryimran from "../images/scary_imran.png";
+import { IoCloseSharp, IoPulseSharp } from "react-icons/io5";
 
 import { LuUserPlus, LuUserMinus } from "react-icons/lu";
 
@@ -20,12 +21,16 @@ interface ScheduleData {
 interface DraftPicks {
   season?: string;
   league_id?: string;
-  owner_id?: number;
-  previous_owner_id?: number;
+  owner_id?: string;
+  previous_owner_id?: string;
   round?: number;
   roster_id?: string;
 }
 
+interface DraftPickInfo {
+  season?: string;
+  round?: number;
+}
 interface TradeInfo {
   [transactionID: string]: [
     {
@@ -36,6 +41,8 @@ interface TradeInfo {
       players_recieved?: string[];
       players_sent?: string[];
       draft_picks?: DraftPicks[];
+      draft_picks_recieved?: DraftPickInfo[];
+      draft_picks_sent?: DraftPickInfo[];
     }
   ];
 }
@@ -84,7 +91,7 @@ const ScrollingTestimonials = () => {
       throw new Error("Failed to get rosters");
     }
   };
-  console.log("league transactions", leagueTransactions);
+  // console.log("league transactions", leagueTransactions);
   //console.log("rosters", rosters);
 
   useEffect(() => {
@@ -124,7 +131,7 @@ const ScrollingTestimonials = () => {
     fetchData();
   }, [localStorage.getItem("selectedLeagueID")]);
 
-  console.log("managerMap", managerMap);
+  //console.log("managerMap", managerMap);
 
   useEffect(() => {
     axios
@@ -143,16 +150,16 @@ const ScrollingTestimonials = () => {
   return (
     <div className="w-[95vw] xl:w-[60vw]">
       <div className="mb-8 px-4">
-        <h2 className="text-slate-50 text-2xl font-semibold text-center">
+        <h2 className="dark:text-slate-50 text-2xl font-semibold text-center">
           {`Welcome to ${localStorage.getItem("selectedLeagueName")}!`}
         </h2>
-        <p className="text-center text-slate-300 text-sm mt-2 max-w-lg mx-auto">
+        <p className="text-center dark:text-slate-300 text-sm mt-2 max-w-lg mx-auto">
           Lorem ipsum dolor sit amet consectetur adipisicing elit. Repellendus
           consequatur reprehenderit.
         </p>
       </div>
       <div className="p-4 overflow-x-hidden relative">
-        <div className="absolute top-0 bottom-0 left-0 w-24 z-10 bg-gradient-to-r from-[black] to-transparent" />
+        <div className="absolute top-0 bottom-0 left-0 w-24 z-10 bg-gradient-to-l from-transparent to-[#EDEDED] dark:bg-gradient-to-l dark:from-transparent dark:to-[black]" />
 
         <div className="flex items-center mb-4">
           <TestimonialList
@@ -160,23 +167,24 @@ const ScrollingTestimonials = () => {
             playersData={playersData}
             reverse={true}
             list={leagueTransactions}
-            duration={125}
+            duration={100}
           />
           <TestimonialList
             managerMap={managerMap}
             playersData={playersData}
             reverse={true}
             list={leagueTransactions}
-            duration={125}
+            duration={100}
           />
           <TestimonialList
             managerMap={managerMap}
             playersData={playersData}
             reverse={true}
             list={leagueTransactions}
-            duration={125}
+            duration={100}
           />
         </div>
+
         {/* <div className="flex items-center mb-4">
           <TestimonialList list={leagueTransactions} duration={125} reverse />
           <TestimonialList list={leagueTransactions} duration={125} reverse />
@@ -188,7 +196,7 @@ const ScrollingTestimonials = () => {
           <TestimonialList list={leagueTransactions} duration={275} />
         </div> */}
 
-        <div className="absolute top-0 bottom-0 right-0 w-24 z-10 bg-gradient-to-l from-[black] to-transparent" />
+        <div className="absolute top-0 bottom-0 right-0 w-24 z-10 bg-gradient-to-l from-[#EDEDED] to-transparent dark:bg-gradient-to-l dark:from-[black] dark:to-transparent" />
       </div>
     </div>
   );
@@ -314,136 +322,304 @@ const TestimonialList = ({
         }
 
         //looping through draft picks
-        const draftPicks =
-          tradeInfoObj[transaction.transaction_id]?.[0]?.draft_picks || [];
-        for (const draftpick of draftPicks) {
-          console.log("whole array of picks", draftPicks);
-          console.log("individual pick", draftpick);
+
+        //if(tradeInfoObj[transaction.transaction_id][0].draft_picks && tradeInfoObj[transaction.transaction_id][0].)
+
+        if (
+          tradeInfoObj[transaction.transaction_id] &&
+          tradeInfoObj[transaction.transaction_id][0].draft_picks
+        ) {
+          //console.log(tradeInfoObj[transaction.transaction_id][0]);
+          const draftPicks =
+            tradeInfoObj[transaction.transaction_id][0].draft_picks || [];
+
+          //draft pick trades UI
+          for (const draftPick of draftPicks) {
+            //console.log("all picks", draftPicks);
+            //console.log("individual pick", draftPick);
+            //loop through each manager to link draft picks to right owner
+            tradeInfoObj[transaction.transaction_id].forEach((manager) => {
+              if (manager.roster_id === draftPick.owner_id) {
+                if (
+                  manager.draft_picks_recieved &&
+                  manager.draft_picks_recieved?.length > 0
+                ) {
+                  manager.draft_picks_recieved.push({
+                    season: draftPick.season,
+                    round: draftPick.round,
+                  });
+                } else {
+                  manager.draft_picks_recieved = [
+                    {
+                      season: draftPick.season,
+                      round: draftPick.round,
+                    },
+                  ];
+                }
+              }
+              if (manager.roster_id === draftPick.previous_owner_id) {
+                console.log("traded");
+                if (
+                  manager.draft_picks_sent &&
+                  manager.draft_picks_sent?.length > 0
+                ) {
+                  manager.draft_picks_sent.push({
+                    season: draftPick.season,
+                    round: draftPick.round,
+                  });
+                } else {
+                  manager.draft_picks_sent = [
+                    {
+                      season: draftPick.season,
+                      round: draftPick.round,
+                    },
+                  ];
+                }
+              }
+            });
+          }
         }
+
+        if (tradeInfoObj[transaction.transaction_id]) {
+          console.log(tradeInfoObj[transaction.transaction_id]);
+        }
+
+        //players trade UI
+
         if (tradeInfoObj.hasOwnProperty(transaction.transaction_id)) {
-          let team1 = tradeInfoObj[transaction.transaction_id][0];
-          let team2 = tradeInfoObj[transaction.transaction_id][1];
-          return (
-            <div
-              key={transaction.id}
-              className="shrink-0 w-[500px] flex justify-center rounded-lg overflow-hidden relative bg-[green]"
-            >
-              <div>
-                <div className="bg-[#af1222] text-slate-50 p-4 flex justify-center">
-                  <span className="block capitalize font-semibold text-lg mb-1">
-                    {`${transaction.type}   :    ${transaction.status}`}
-                  </span>
-                </div>
+          // if (
+          //   tradeInfoObj[transaction.transaction_id] &&
+          //   !tradeInfoObj[transaction.transaction_id][0].draft_picks
+          // ) {
+          // }
+          if (tradeInfoObj[transaction.transaction_id]) {
+            let team1 = tradeInfoObj[transaction.transaction_id][0];
+            let team2 = tradeInfoObj[transaction.transaction_id][1];
+            return (
+              <div
+                key={transaction.id}
+                className="w-screen md:w-[60vw] h-[27vh] lg:w-[25vw] flex flex-wrap justify-center rounded-lg overflow-hidden relative border-2 border-[#af1222] dark:border-[#1a1a1a] border-opacity-80"
+              >
+                <div>
+                  <div className=" text-[13px] xl:text-[20px] text-white font-bold p-2 flex justify-center bg-[#af1222]">
+                    <span className="block capitalize font-semibold  mb-1">
+                      {`${transaction.type}   :    ${transaction.status}`}
+                    </span>
+                  </div>
 
-                <div className="teams flex justify-between text-[13px] bg-[purple] w-[25vw]">
-                  <div className="team1 flex flex-col">
-                    <p className="border-b-2 border-black text-center mb-1">
-                      {team1.name}
-                    </p>
-                    <div>
-                      <div className="players-added1 mb-1">
-                        {team1.players_recieved?.map((player) => {
-                          return (
-                            <span className="flex items-center">
-                              <LuUserPlus />
-                              <span className="flex">
-                                <Image
-                                  src={`https://sleepercdn.com/content/nfl/players/thumb/${player}.jpg`}
-                                  alt="player image"
-                                  width={30}
-                                  height={30}
-                                />
-                                {playersData[player].fn}
-                                {""}
-                                {playersData[player].ln}
+                  <div className="teams p-5 w-screen md:w-[60vw] h-[27vh] lg:w-[25vw] flex justify-around text-[11px] xl:text-[13px] font-bold ">
+                    <div className="team1 flex flex-col">
+                      <span className="border-b-2 border-[#1a1a1a] border-opacity-80 text-center mb-1 flex justify-center items-center">
+                        <Image
+                          className="rounded-full mr-2"
+                          src={team1.avatar}
+                          alt="manager"
+                          width={22}
+                          height={22}
+                        />
+                        {team1.name}
+                      </span>
+                      <div>
+                        <div className="players-added1 mb-1">
+                          {team1.players_recieved?.map((player) => {
+                            return (
+                              <span className="flex items-center">
+                                <LuUserPlus className="text-[green]" />
+                                <span className="flex">
+                                  <Image
+                                    src={`https://sleepercdn.com/content/nfl/players/thumb/${player}.jpg`}
+                                    alt="player image"
+                                    width={30}
+                                    height={30}
+                                  />
+                                  {`${playersData[player].fn} ${playersData[player].ln}`}
+                                </span>
                               </span>
-                            </span>
-                          );
-                        })}
+                            );
+                          })}
+                          {team1.draft_picks_recieved?.map((pick) => {
+                            return (
+                              <div className="">
+                                <span className="flex items-center">
+                                  <LuUserPlus className="text-[green]" />
+                                  {` ${pick.season} ${`${pick.round}${
+                                    pick.round?.toString()[
+                                      pick.round?.toString().length - 1
+                                    ] === "1"
+                                      ? "st"
+                                      : pick.round?.toString()[
+                                          pick.round?.toString().length - 1
+                                        ] === "2"
+                                      ? "nd"
+                                      : pick.round?.toString()[
+                                          pick.round?.toString().length - 1
+                                        ] === "3"
+                                      ? "rd"
+                                      : "th"
+                                  } Round Pick`} `}
+                                </span>
+                              </div>
+                            );
+                          })}
+                        </div>
+                        <div className="players-sent1 mb-1">
+                          {team1.players_sent?.map((player) => {
+                            return (
+                              <span className="flex items-center">
+                                <LuUserMinus className="text-[#af1222]" />
+                                <span className="flex">
+                                  <Image
+                                    src={`https://sleepercdn.com/content/nfl/players/thumb/${player}.jpg`}
+                                    alt="player image"
+                                    width={30}
+                                    height={30}
+                                  />
+                                  {`${playersData[player].fn} ${playersData[player].ln}`}
+                                </span>
+                              </span>
+                            );
+                          })}
+                          {team1.draft_picks_sent?.map((pick) => {
+                            return (
+                              <div className="">
+                                <span className="flex items-center">
+                                  <LuUserMinus className="text-[#af1222]" />
+                                  {` ${pick.season} ${`${pick.round}${
+                                    pick.round?.toString()[
+                                      pick.round?.toString().length - 1
+                                    ] === "1"
+                                      ? "st"
+                                      : pick.round?.toString()[
+                                          pick.round?.toString().length - 1
+                                        ] === "2"
+                                      ? "nd"
+                                      : pick.round?.toString()[
+                                          pick.round?.toString().length - 1
+                                        ] === "3"
+                                      ? "rd"
+                                      : "th"
+                                  } Round Pick`} `}
+                                </span>
+                              </div>
+                            );
+                          })}
+                        </div>
                       </div>
-                      <div className="players-sent1 mb-1">
-                        {team1.players_sent?.map((player) => {
-                          return (
-                            <span className="flex items-center">
-                              <LuUserMinus />
-                              <span className="flex">
-                                <Image
-                                  src={`https://sleepercdn.com/content/nfl/players/thumb/${player}.jpg`}
-                                  alt="player image"
-                                  width={30}
-                                  height={30}
-                                />
-                                {playersData[player].fn}
-                                {""}
-                                {playersData[player].ln}
+                    </div>
+                    <div className="team2 flex flex-col">
+                      <span className="border-b-2 border-[#1a1a1a] border-opacity-80 text-center mb-1 flex justify-center items-center">
+                        <Image
+                          className="rounded-full mr-2"
+                          src={team2.avatar}
+                          alt="manager"
+                          width={22}
+                          height={22}
+                        />
+                        {team2.name}
+                      </span>
+
+                      <div>
+                        <div className="players-added2 mb-1">
+                          {team2.players_recieved?.map((player) => {
+                            return (
+                              <span className="flex items-center">
+                                <LuUserPlus className="text-[green]" />
+                                <span className="flex">
+                                  <Image
+                                    src={`https://sleepercdn.com/content/nfl/players/thumb/${player}.jpg`}
+                                    alt="player image"
+                                    width={30}
+                                    height={30}
+                                  />
+                                  {`${playersData[player].fn} ${playersData[player].ln}`}
+                                </span>
                               </span>
-                            </span>
-                          );
-                        })}
+                            );
+                          })}
+                          {team2.draft_picks_recieved?.map((pick) => {
+                            return (
+                              <div className="">
+                                <span className="flex items-center">
+                                  <LuUserPlus className="text-[green]" />
+                                  {` ${pick.season} ${`${pick.round}${
+                                    pick.round?.toString()[
+                                      pick.round?.toString().length - 1
+                                    ] === "1"
+                                      ? "st"
+                                      : pick.round?.toString()[
+                                          pick.round?.toString().length - 1
+                                        ] === "2"
+                                      ? "nd"
+                                      : pick.round?.toString()[
+                                          pick.round?.toString().length - 1
+                                        ] === "3"
+                                      ? "rd"
+                                      : "th"
+                                  } Round Pick`} `}
+                                </span>
+                              </div>
+                            );
+                          })}
+                        </div>
+                        <div className="players-sent2 mb-1">
+                          {" "}
+                          {team2.players_sent?.map((player) => {
+                            return (
+                              <span className="flex items-center">
+                                <LuUserMinus className="text-[#af1222]" />
+                                <span className="flex">
+                                  <Image
+                                    src={`https://sleepercdn.com/content/nfl/players/thumb/${player}.jpg`}
+                                    alt="player image"
+                                    width={30}
+                                    height={30}
+                                  />
+                                  {`${playersData[player].fn} ${playersData[player].ln}`}
+                                </span>
+                              </span>
+                            );
+                          })}
+                          {team2.draft_picks_sent?.map((pick) => {
+                            return (
+                              <div className="">
+                                <span className="flex items-center">
+                                  <LuUserMinus className="text-[#af1222]" />
+                                  {` ${pick.season} ${`${pick.round}${
+                                    pick.round?.toString()[
+                                      pick.round?.toString().length - 1
+                                    ] === "1"
+                                      ? "st"
+                                      : pick.round?.toString()[
+                                          pick.round?.toString().length - 1
+                                        ] === "2"
+                                      ? "nd"
+                                      : pick.round?.toString()[
+                                          pick.round?.toString().length - 1
+                                        ] === "3"
+                                      ? "rd"
+                                      : "th"
+                                  } Round Pick`} `}
+                                </span>
+                              </div>
+                            );
+                          })}
+                        </div>
                       </div>
                     </div>
                   </div>
-                  <div className="team2 flex flex-col">
-                    <p className="border-b-2 border-black text-center mb-1">
-                      {team2.name}
-                    </p>
-                    <div>
-                      <div className="players-added2 mb-1">
-                        {team2.players_recieved?.map((player) => {
-                          return (
-                            <span className="flex items-center">
-                              <LuUserPlus />
-                              <span className="flex">
-                                <Image
-                                  src={`https://sleepercdn.com/content/nfl/players/thumb/${player}.jpg`}
-                                  alt="player image"
-                                  width={30}
-                                  height={30}
-                                />
-                                {playersData[player].fn}
-                                {""}
-                                {playersData[player].ln}
-                              </span>
-                            </span>
-                          );
-                        })}
-                      </div>
-                      <div className="players-sent2 mb-1">
-                        {" "}
-                        {team2.players_sent?.map((player) => {
-                          return (
-                            <span className="flex items-center">
-                              <LuUserMinus />
-                              <span className="flex">
-                                <Image
-                                  src={`https://sleepercdn.com/content/nfl/players/thumb/${player}.jpg`}
-                                  alt="player image"
-                                  width={30}
-                                  height={30}
-                                />
-                                {playersData[player].fn}
-                                {""}
-                                {playersData[player].ln}
-                              </span>
-                            </span>
-                          );
-                        })}
-                      </div>
-                    </div>
-                  </div>
                 </div>
-              </div>
 
-              {/* <Image
+                {/* <Image
                 src={scaryimran}
                 className="w-[60px] h-[60px] object-cover"
               /> */}
 
-              <span className="text-7xl absolute top-2 right-2 text-[black]">
-                "
-              </span>
-            </div>
-          );
+                <span className="text-3xl absolute top-2 right-2 text-white dark:text-[black]">
+                  <IoPulseSharp />
+                </span>
+              </div>
+            );
+          }
         }
       })}
     </motion.div>
