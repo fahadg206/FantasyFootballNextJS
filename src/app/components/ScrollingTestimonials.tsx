@@ -149,15 +149,6 @@ const ScrollingTestimonials = () => {
 
   return (
     <div className="w-[95vw] xl:w-[60vw]">
-      <div className="mb-8 px-4">
-        <h2 className="dark:text-slate-50 text-2xl font-semibold text-center">
-          {`Welcome to ${localStorage.getItem("selectedLeagueName")}!`}
-        </h2>
-        <p className="text-center dark:text-slate-300 text-sm mt-2 max-w-lg mx-auto">
-          Lorem ipsum dolor sit amet consectetur adipisicing elit. Repellendus
-          consequatur reprehenderit.
-        </p>
-      </div>
       <div className="p-4 overflow-x-hidden relative">
         <div className="absolute top-0 bottom-0 left-0 w-24 z-10 bg-gradient-to-l from-transparent to-[#EDEDED] dark:bg-gradient-to-l dark:from-transparent dark:to-[black]" />
 

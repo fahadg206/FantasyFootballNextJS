@@ -2,7 +2,7 @@ import { NextApiResponse, NextApiRequest } from "next";
 import dotenv from "dotenv";
 import { TextLoader } from "langchain/document_loaders/fs/text";
 import { JSONLoader } from "langchain/document_loaders";
-import { HNSWLib } from "langchain/vectorstores/hnswlib";
+import { FaissStore } from "langchain/vectorstores/faiss";
 import { OpenAIEmbeddings } from "langchain/embeddings/openai";
 import { ChatOpenAI } from "langchain/chat_models/openai";
 import { RetrievalQAChain } from "langchain/chains";
@@ -44,7 +44,7 @@ export default async function handler(req, res) {
       console.log("Retrieved data:", retrievedData);
 
       // Process the retrieved data
-      const vectorStore = await HNSWLib.fromTexts(
+      const vectorStore = await FaissStore.fromTexts(
         [JSON.stringify(retrievedData), "Bye bye", "hello nice world"],
         [{ id: 2 }, { id: 1 }, { id: 3 }],
         new OpenAIEmbeddings()
