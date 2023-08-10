@@ -5,7 +5,7 @@ import axios from "axios";
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import scaryimran from "../images/scary_imran.png";
-import { IoCloseSharp, IoPulseSharp } from "react-icons/io5";
+import { IoPulseSharp } from "react-icons/io5";
 
 import { LuUserPlus, LuUserMinus } from "react-icons/lu";
 
@@ -358,7 +358,7 @@ const TestimonialList = ({
                 }
               }
               if (manager.roster_id === draftPick.previous_owner_id) {
-                console.log("traded");
+                //console.log("traded");
                 if (
                   manager.draft_picks_sent &&
                   manager.draft_picks_sent?.length > 0
@@ -381,7 +381,7 @@ const TestimonialList = ({
         }
 
         if (tradeInfoObj[transaction.transaction_id]) {
-          console.log(tradeInfoObj[transaction.transaction_id]);
+          //console.log(tradeInfoObj[transaction.transaction_id]);
         }
 
         //players trade UI
