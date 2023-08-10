@@ -1,11 +1,12 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import ArticleTemplate from "../../../components/ArticleTemplate";
 import imran from "../../../images/scary_imran.png";
 
 const articles = () => {
   const [counter, setCounter] = useState("0");
+  const [response, setResponse] = useState(null);
   console.log(counter);
 
   const incrementCounter: any = () => {
@@ -27,6 +28,21 @@ const articles = () => {
       setCounter("0");
     }
   };
+
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const response = await fetch("http://localhost:3000/api/fetchData");
+        const data = await response.json();
+        setResponse(data);
+        console.log("Data fetched:", data); // Log the fetched data here
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    }
+
+    fetchData();
+  }, []);
 
   return (
     <div className="flex flex-col justify-center items-center container w-[60vw]">

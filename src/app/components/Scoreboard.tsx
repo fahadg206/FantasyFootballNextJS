@@ -13,8 +13,9 @@ import {
   addDoc,
   updateDoc,
   query,
+  where,
 } from "firebase/firestore/lite";
-import { QuerySnapshot, onSnapshot } from "firebase/firestore";
+import { QuerySnapshot, onSnapshot, doc } from "firebase/firestore";
 
 interface ScheduleData {
   [userId: string]: {
@@ -26,6 +27,12 @@ interface ScheduleData {
     team_points?: string;
     opponent?: string;
     matchup_id?: string;
+  };
+}
+
+interface WeeklyInformation {
+  [league_id: string]: {
+    info?: ScheduleData;
   };
 }
 
@@ -56,6 +63,8 @@ export default function Scoreboard() {
   const [loading, setLoading] = useState(true);
   const [loadingData, setLoadingData] = useState(true);
   const [scheduleDataFinal, setScheduleDataFinal] = useState<ScheduleData>({});
+
+  const weeklyInfo: WeeklyInformation = {};
 
   const matchupMap = new Map<string, MatchupMapData[]>();
   const REACT_APP_LEAGUE_ID: string | null =
@@ -136,8 +145,6 @@ export default function Scoreboard() {
           }
 
           for (const matchup of scheduleData) {
-            // console.log("matchup", matchup);
-            // console.log("roster", roster);
             if (roster.roster_id === matchup.roster_id) {
               updatedScheduleData[roster.owner_id].matchup_id =
                 matchup.matchup_id;
@@ -217,29 +224,51 @@ export default function Scoreboard() {
   //   console.error("Unexpected error:", error);
   // }
 
-  // Uncomment the addDoc to add to DB
+  if (REACT_APP_LEAGUE_ID) {
+    const updateWeeklyInfo = async () => {
+      if (!weeklyInfo[REACT_APP_LEAGUE_ID]) {
+        weeklyInfo[REACT_APP_LEAGUE_ID] = {}; // Initialize the league entry if it doesn't exist
+      }
 
-  // addDoc(collection(db, "League Info"), scheduleDataFinal);
+      // Create a copy of scheduleDataFinal
+      const updatedInfo = { ...scheduleDataFinal };
 
-  // // Reference to the "League Info" collection
-  // const leagueInfoCollectionRef = collection(db, "League Info");
+      // Set the copied data to weeklyInfo
+      weeklyInfo[REACT_APP_LEAGUE_ID].info = updatedInfo;
 
-  // // Fetch documents from the collection
-  // getDocs(leagueInfoCollectionRef)
-  //   .then((querySnapshot) => {
-  //     let dbData = [];
+      // Reference to the "Weekly Info" collection
+      const weeklyInfoCollectionRef = collection(db, "Weekly Info");
 
-  //     querySnapshot.forEach((doc) => {
-  //       dbData.push({ ...doc.data(), id: doc.id });
-  //     });
+      // Use a Query to check if a document with the league_id exists
+      const queryRef = query(
+        weeklyInfoCollectionRef,
+        where("league_id", "==", REACT_APP_LEAGUE_ID)
+      );
 
-  //     console.log("Data from 'League Info' collection:", dbData);
-  //   })
-  //   .catch((error) => {
-  //     console.error("Error reading data:", error);
-  //   });
+      const querySnapshot = await getDocs(queryRef);
 
-  //MATCHUP TEXT
+      // Add or update the document based on whether it already exists
+      if (!querySnapshot.empty) {
+        // Document exists, update it
+        querySnapshot.forEach(async (doc) => {
+          await updateDoc(doc.ref, {
+            info: weeklyInfo[REACT_APP_LEAGUE_ID].info,
+          });
+        });
+      } else {
+        // Document does not exist, add a new one
+        await addDoc(weeklyInfoCollectionRef, {
+          league_id: REACT_APP_LEAGUE_ID,
+          info: weeklyInfo[REACT_APP_LEAGUE_ID].info,
+        });
+      }
+    };
+
+    // Call the async function
+    updateWeeklyInfo();
+  }
+
+  // MATCHUP TEXT
   const matchupText = Array.from(matchupMap).map(([matchupID, matchupData]) => {
     const team1 = matchupData[0];
     const team2 = matchupData[1];
@@ -294,7 +323,7 @@ export default function Scoreboard() {
   });
 
   if (loadingData) {
-    return <Spinner className="w-screen text-center" color="error" />; // Show a loading indicator
+    return <Spinner className="w-screen text-center" color="error" />;
   }
 
   if (localStorage.getItem("selectedLeagueID")) {
