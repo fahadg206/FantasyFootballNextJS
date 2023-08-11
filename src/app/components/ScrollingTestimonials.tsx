@@ -68,7 +68,7 @@ const ScrollingTestimonials = () => {
     const response = await axios.get(
       `https://api.sleeper.app/v1/league/${localStorage.getItem(
         "selectedLeagueID"
-      )}/transactions/14`
+      )}/transactions/2`
     );
     setLeagueTransactions(response.data);
   };
@@ -446,20 +446,29 @@ const TestimonialList = ({
           if (tradeInfoObj[transaction.transaction_id]) {
             let team1 = tradeInfoObj[transaction.transaction_id][0];
             let team2 = tradeInfoObj[transaction.transaction_id][1];
+            let team3;
+            if (tradeInfoObj[transaction.transaction_id])
+              team3 = tradeInfoObj[transaction.transaction_id][2];
             return (
               <div
                 key={transaction.id}
-                className="w-screen md:w-[60vw] h-[27vh] lg:w-[25vw] flex flex-wrap justify-center rounded-lg overflow-hidden relative border-2 border-[#af1222] dark:border-[#1a1a1a] border-opacity-80"
+                className="w-screen  md:w-[60vw] h-[27vh] lg:w-[25vw] flex flex-wrap justify-center rounded-lg overflow-hidden relative border-2 border-[#af1222] dark:border-[#1a1a1a] border-opacity-80"
               >
-                <div>
+                <div className={""}>
                   <div className=" text-[13px] xl:text-[20px] text-white font-bold p-2 flex justify-center bg-[#af1222]">
                     <span className="block capitalize font-semibold  mb-1">
                       {`${transaction.type}   :    ${transaction.status}`}
                     </span>
                   </div>
 
-                  <div className="teams p-5 w-screen md:w-[60vw] h-[27vh] lg:w-[25vw] flex justify-around text-[11px] xl:text-[13px] font-bold ">
-                    <div className="team1 flex flex-col">
+                  <div className="teams  p-5 w-screen md:w-[60vw] h-[27vh] lg:w-[25vw] flex justify-around text-[11px] xl:text-[13px] font-bold ">
+                    <div
+                      className={
+                        team3
+                          ? "team1 flex flex-col text-[9px]"
+                          : "team1 flex flex-col text-[12px]"
+                      }
+                    >
                       <span className="border-b-2 border-[#1a1a1a] border-opacity-80 text-center mb-1 flex justify-center items-center">
                         <Image
                           className="rounded-full mr-2"
@@ -557,7 +566,13 @@ const TestimonialList = ({
                         </div>
                       </div>
                     </div>
-                    <div className="team2 flex flex-col">
+                    <div
+                      className={
+                        team3
+                          ? "team2 flex flex-col text-[9px]"
+                          : "team2 flex flex-col text-[12px]"
+                      }
+                    >
                       <span className="border-b-2 border-[#1a1a1a] border-opacity-80 text-center mb-1 flex justify-center items-center">
                         <Image
                           className="rounded-full mr-2"
@@ -631,6 +646,112 @@ const TestimonialList = ({
                             );
                           })}
                           {team2.draft_picks_sent?.map((pick) => {
+                            return (
+                              <div className="">
+                                <span className="flex items-center">
+                                  <LuUserMinus className="text-[#af1222]" />
+                                  {` ${pick.season} ${`${pick.round}${
+                                    pick.round?.toString()[
+                                      pick.round?.toString().length - 1
+                                    ] === "1"
+                                      ? "st"
+                                      : pick.round?.toString()[
+                                          pick.round?.toString().length - 1
+                                        ] === "2"
+                                      ? "nd"
+                                      : pick.round?.toString()[
+                                          pick.round?.toString().length - 1
+                                        ] === "3"
+                                      ? "rd"
+                                      : "th"
+                                  } Round Pick`} `}
+                                </span>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    </div>
+                    <div
+                      className={
+                        team3
+                          ? "team3 flex flex-col text-[9px]"
+                          : "team3 flex flex-col text-[12px]"
+                      }
+                    >
+                      <span className="border-b-2 border-[#1a1a1a] border-opacity-80 text-center mb-1 flex justify-center items-center">
+                        <Image
+                          className={team3 ? "rounded-full mr-2" : "hidden"}
+                          src={team3?.avatar}
+                          alt="manager"
+                          width={22}
+                          height={22}
+                        />
+                        {team3?.name}
+                      </span>
+
+                      <div>
+                        <div className="players-added2 mb-1">
+                          {team3?.players_recieved?.map((player) => {
+                            return (
+                              <span className="flex items-center">
+                                <LuUserPlus className="text-[green]" />
+                                <span className="flex">
+                                  <Image
+                                    src={`https://sleepercdn.com/content/nfl/players/thumb/${player}.jpg`}
+                                    alt="player image"
+                                    width={30}
+                                    height={30}
+                                  />
+                                  {`${playersData[player].fn} ${playersData[player].ln}`}
+                                </span>
+                              </span>
+                            );
+                          })}
+                          {team3?.draft_picks_recieved?.map((pick) => {
+                            return (
+                              <div className="">
+                                <span className="flex items-center">
+                                  <LuUserPlus className="text-[green]" />
+                                  {` ${pick.season} ${`${pick.round}${
+                                    pick.round?.toString()[
+                                      pick.round?.toString().length - 1
+                                    ] === "1"
+                                      ? "st"
+                                      : pick.round?.toString()[
+                                          pick.round?.toString().length - 1
+                                        ] === "2"
+                                      ? "nd"
+                                      : pick.round?.toString()[
+                                          pick.round?.toString().length - 1
+                                        ] === "3"
+                                      ? "rd"
+                                      : "th"
+                                  } Round Pick`} `}
+                                </span>
+                              </div>
+                            );
+                          })}
+                        </div>
+                        <div className="players-sent2 mb-1">
+                          {" "}
+                          {team3?.players_sent?.map((player) => {
+                            return (
+                              <span className="flex items-center">
+                                <LuUserMinus className="text-[#af1222]" />
+                                <span className="flex">
+                                  <Image
+                                    src={`https://sleepercdn.com/content/nfl/players/thumb/${player}.jpg`}
+                                    alt="player image"
+                                    width={30}
+                                    height={30}
+                                  />
+                                  {`${playersData[player].fn} ${playersData[player].ln}`}
+                                </span>
+                              </span>
+                            );
+                          })}
+                          {team3?.draft_picks_sent?.map((pick) => {
                             return (
                               <div className="">
                                 <span className="flex items-center">

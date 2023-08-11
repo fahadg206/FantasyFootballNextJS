@@ -248,7 +248,7 @@ export default function Scoreboard() {
       const querySnapshot = await getDocs(queryRef);
 
       // Add or update the document based on whether it already exists
-      if (!querySnapshot.empty) {
+      if (!querySnapshot.empty && weeklyInfo[REACT_APP_LEAGUE_ID].info) {
         // Document exists, update it
         querySnapshot.forEach(async (doc) => {
           await updateDoc(doc.ref, {
