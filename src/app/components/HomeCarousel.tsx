@@ -4,6 +4,8 @@ import { motion } from "framer-motion";
 import { useState } from "react";
 import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
 import useMeasure from "react-use-measure";
+import Logo from "../images/Transparent.png";
+import Image from "next/image";
 
 const CARD_WIDTH = 350;
 const CARD_HEIGHT = 350;
@@ -42,7 +44,7 @@ const CardCarousel = () => {
   };
 
   return (
-    <section className="w-[41vw]" ref={ref}>
+    <section className="w-[95vw] xl:w-[60vw]" ref={ref}>
       <div className="relative overflow-hidden p-4">
         {/* CARDS */}
         <div className="mx-auto max-w-6xl">
@@ -97,7 +99,7 @@ const Card = ({ url, category, title, description }) => {
         width: CARD_WIDTH,
         height: CARD_HEIGHT,
         marginRight: MARGIN,
-        backgroundImage: `url(${url})`,
+        backgroundImage: `url("../images/Transparent.png")`,
         backgroundPosition: "center",
         backgroundSize: "cover",
       }}
@@ -107,6 +109,7 @@ const Card = ({ url, category, title, description }) => {
           {category}
         </span>
         <p className="my-2 text-3xl font-bold">{title}</p>
+        <Image src={Logo} alt="image" width={50} height={50} />
         <p className="text-lg text-slate-300">{description}</p>
       </div>
     </div>

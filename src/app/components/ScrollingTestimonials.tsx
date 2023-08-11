@@ -47,6 +47,17 @@ interface TradeInfo {
   ];
 }
 
+interface WaiverInfo {
+  [transactionID: string]: {
+    avatar?: string;
+    name?: string;
+    roster_id?: string;
+    user_id?: string;
+    player_added?: string;
+    player_dropped?: string;
+  };
+}
+
 const ScrollingTestimonials = () => {
   const [leagueTransactions, setLeagueTransactions] = useState([]);
   const [playersData, setPlayersData] = useState([]);
@@ -57,7 +68,7 @@ const ScrollingTestimonials = () => {
     const response = await axios.get(
       `https://api.sleeper.app/v1/league/${localStorage.getItem(
         "selectedLeagueID"
-      )}/transactions/1`
+      )}/transactions/14`
     );
     setLeagueTransactions(response.data);
   };
@@ -91,7 +102,7 @@ const ScrollingTestimonials = () => {
       throw new Error("Failed to get rosters");
     }
   };
-  // console.log("league transactions", leagueTransactions);
+  //console.log("league transactions", leagueTransactions);
   //console.log("rosters", rosters);
 
   useEffect(() => {
@@ -194,6 +205,7 @@ const ScrollingTestimonials = () => {
 };
 
 const tradeInfoObj: TradeInfo = {};
+const waiverInfoObj: WaiverInfo = {};
 function areObjectsEqual(obj1: any, obj2: any) {
   return (
     obj1.name === obj2.name &&
@@ -273,6 +285,7 @@ const TestimonialList = ({
               }
             }
           }
+
           for (const key in transaction.adds) {
             if (tradeInfoObj[transaction.transaction_id]) {
               tradeInfoObj[transaction.transaction_id].forEach((manager) => {
@@ -311,6 +324,53 @@ const TestimonialList = ({
             });
           }
         }
+
+        if (
+          transaction.status === "complete" &&
+          transaction.type === "waiver"
+        ) {
+          for (const manager in managerMap) {
+            for (const rosterId of transaction.consenter_ids) {
+              if (!waiverInfoObj[manager]) {
+                waiverInfoObj[manager] = {};
+              }
+
+              if (rosterId === managerMap[manager].roster_id) {
+                const newManagerData = {
+                  name: managerMap[manager].name,
+                  avatar: managerMap[manager].avatar,
+                  roster_id: managerMap[manager].roster_id,
+                  user_id: managerMap[manager].user_id,
+                };
+
+                waiverInfoObj[transaction.transaction_id] = newManagerData;
+              }
+            }
+            for (const key in transaction.adds) {
+              if (waiverInfoObj[transaction.transaction_id]) {
+                if (
+                  transaction.adds[key] ===
+                  waiverInfoObj[transaction.transaction_id].roster_id
+                ) {
+                  waiverInfoObj[transaction.transaction_id].player_added = key;
+                }
+              }
+            }
+            for (const key in transaction.drops) {
+              if (waiverInfoObj[transaction.transaction_id]) {
+                if (
+                  transaction.drops[key] ===
+                  waiverInfoObj[transaction.transaction_id].roster_id
+                ) {
+                  waiverInfoObj[transaction.transaction_id].player_dropped =
+                    key;
+                }
+              }
+            }
+          }
+        }
+        console.log("trade info", tradeInfoObj);
+        console.log("waiver info", waiverInfoObj);
 
         //looping through draft picks
 
@@ -604,6 +664,53 @@ const TestimonialList = ({
                 src={scaryimran}
                 className="w-[60px] h-[60px] object-cover"
               /> */}
+
+                <span className="text-3xl absolute top-2 right-2 text-white dark:text-[black]">
+                  <IoPulseSharp />
+                </span>
+              </div>
+            );
+          }
+        }
+        if (waiverInfoObj.hasOwnProperty(transaction.transaction_id)) {
+          if (waiverInfoObj[transaction.transaction_id]) {
+            const player = waiverInfoObj[transaction.transaction_id];
+            return (
+              <div
+                key={transaction.id}
+                className="w-screen md:w-[60vw] h-[27vh] lg:w-[25vw] flex flex-wrap justify-center rounded-lg overflow-hidden relative border-2 border-[#af1222] dark:border-[#1a1a1a] border-opacity-80"
+              >
+                <div>
+                  <div className=" text-[13px] xl:text-[20px] text-white font-bold p-2 flex justify-center bg-[#af1222]">
+                    <span className="block capitalize font-semibold  mb-1">
+                      {`${transaction.type}   :    ${transaction.status}`}
+                    </span>
+                  </div>
+                  <div className="waiver">
+                    <span className="border-b-2 border-[#1a1a1a] border-opacity-80 text-center mb-1 flex justify-center items-center">
+                      <Image
+                        className="rounded-full mr-2"
+                        src={player.avatar}
+                        alt="manager"
+                        width={22}
+                        height={22}
+                      />
+                      {player.name}
+                    </span>
+                    <div>
+                      <div className="player-added">
+                        <LuUserPlus />{" "}
+                        {playersData[player.player_added]?.fn || "Unknown"}{" "}
+                        {playersData[player.player_added]?.ln || "Player"}
+                      </div>
+                      <div className="player-dropped">
+                        <LuUserMinus />{" "}
+                        {playersData[player.player_dropped]?.fn || "Unknown"}{" "}
+                        {playersData[player.player_dropped]?.ln || "Player"}
+                      </div>
+                    </div>
+                  </div>
+                </div>
 
                 <span className="text-3xl absolute top-2 right-2 text-white dark:text-[black]">
                   <IoPulseSharp />

@@ -18,9 +18,8 @@ export default function page() {
           consequatur reprehenderit.
         </p>
       </div>
-      <div className="flex justify-between">
+      <div>
         <HomeCarousel />
-        <Headlines />
       </div>
       <ScrollingTestimonials />
       <ScrollingTeamLogos />

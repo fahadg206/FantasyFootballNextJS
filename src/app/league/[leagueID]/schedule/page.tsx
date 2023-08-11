@@ -1,14 +1,9 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import Imran from "../images/scary_imran.png";
+import getMatchupMap from "../../../libs/getMatchupData";
 import Image from "next/image";
 import uuid from "uuid";
-
-import { v4 as uuidv4 } from "uuid";
-import axios from "axios";
-import Scoreboard from "../../../components/Scoreboard";
-import ScoreboardNav from "../../../components/ScoreboardNav";
 
 interface NflState {
   season: string;
@@ -48,9 +43,6 @@ export default function Schedule(props: any) {
 
   let matchupText;
 
-  const matchupMapp = localStorage.getItem("matchupMap");
-  const matchupMappp = JSON.parse(matchupMapp || "null");
-
   useEffect(() => {
     if (props.matchupMap) {
       setMatchupMap(props.matchupMap);
@@ -59,10 +51,6 @@ export default function Schedule(props: any) {
     }
   }, [props.matchupMap, loading]);
 
-  //console.log(loading);
-  //console.log(matchupMap);
-  if (loading) {
-  }
   matchupText = Array.from(matchupMap || []).map(([matchupID, matchupData]) => {
     const team1 = matchupData[0];
     const team2 = matchupData[1];
@@ -109,9 +97,14 @@ export default function Schedule(props: any) {
     );
   });
 
+  if (loading) {
+    return <div>Loading..</div>;
+  }
+
   return (
     <div className="bg-green-800 w-[60vw] h-screen">
-      {matchupMap ? matchupText : "not working"}
+      {matchupText &&
+        matchupText.map((matchup) => <div key={uuid}>{matchup}</div>)}
     </div>
   );
 }

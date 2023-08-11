@@ -147,10 +147,10 @@ const page = () => {
 
   const Table = () => {
     return (
-      <div className="w-[90vw] xl:w-[60vw] bg-black shadow-lg rounded-lg overflow-x-scroll border-[1px] border-[#1a1a1a] ">
+      <div className="w-[90vw] xl:w-[60vw]  shadow-lg rounded-lg overflow-x-scroll border-[1px] dark:border-[#1a1a1a] ">
         <table className="w-full">
           <thead>
-            <tr className="border-b-[1px] border-[#1a1a1a] text-slate-400 text-sm ">
+            <tr className="border-b-[1px] border-[#1a1a1a]  text-sm ">
               <th className="text-start p-4 font-medium text-[11px] md:text-[16px]">
                 League Manager
               </th>
@@ -189,7 +189,7 @@ const page = () => {
     return (
       <motion.tr
         layoutId={`row-${user.id}`}
-        className="bg-black border-[1px] border-[#1a1a1a]"
+        className=" border-[1px] dark:border-[#1a1a1a]"
       >
         <td className="p-4 flex items-center gap-3 overflow-hidden ">
           <Image
@@ -201,7 +201,7 @@ const page = () => {
           />
           <div>
             <span className="block mb-1 font-medium">{user.name}</span>
-            <span className="block text-xs text-slate-500"></span>
+            <span className="block text-xs "></span>
           </div>
         </td>
 
@@ -231,7 +231,7 @@ const page = () => {
 
   return (
     <div className="w-[90vw] xl:w-[60vw] ">
-      <h2 className="text-xl flex justify-center text-center font-bold  mb-2">{`${localStorage.getItem(
+      <h2 className="text-md xl:text-xl flex justify-center text-center font-bold  mb-2">{`${localStorage.getItem(
         "selectedLeagueName"
       )} Overall Standings`}</h2>
       <Table />

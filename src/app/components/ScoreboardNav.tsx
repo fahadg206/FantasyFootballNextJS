@@ -210,9 +210,6 @@ export default function ScoreboardNav() {
     );
   });
 
-  if (matchupMap.size > 0)
-    localStorage.setItem("matchupMap", JSON.stringify(matchupMap));
-
   return (
     <div>
       <div>
@@ -220,7 +217,9 @@ export default function ScoreboardNav() {
           <div key={uuid}>{matchup}</div>
         ))}
         {matchupMap && (
-          <Schedule matchup={matchupText} matchupMap={matchupMap} />
+          <div>
+            <Schedule matchup={matchupText} matchupMap={matchupMap} />
+          </div>
         )}
       </div>
     </div>
