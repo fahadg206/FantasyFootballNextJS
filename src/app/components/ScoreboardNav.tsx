@@ -8,6 +8,7 @@ import uuid from "uuid";
 import Image from "next/image";
 import Scoreboard from "./Scoreboard";
 import Schedule from "../league/[leagueID]/schedule/page";
+import getMatchupMap from "../libs/getMatchupData";
 
 interface ScheduleData {
   [userId: string]: {
@@ -51,121 +52,25 @@ export default function ScoreboardNav() {
   const [loading, setLoading] = useState(true);
   const [scheduleDataFinal, setScheduleDataFinal] = useState<ScheduleData>({});
 
-  const matchupMap = new Map<string, MatchupMapData[]>();
+  const [matchupMap, setMatchupMap] = useState<Map<string, MatchupMapData[]>>(
+    new Map()
+  );
   const REACT_APP_LEAGUE_ID: string | null =
     localStorage.getItem("selectedLeagueID");
 
-  const getSchedule = async () => {
-    try {
-      const response = await axios.get<any>(
-        `https://api.sleeper.app/v1/league/${REACT_APP_LEAGUE_ID}/matchups/1`
-      );
-      setSchedule(response.data);
-      setLoading(false);
-      return response.data;
-    } catch (err) {
-      console.error(err);
-      throw new Error("Failed to get matchups");
-    }
-  };
-
-  const getUsers = async () => {
-    try {
-      const response = await axios.get<any>(
-        `https://api.sleeper.app/v1/league/${REACT_APP_LEAGUE_ID}/users`
-      );
-
-      return response.data;
-    } catch (err) {
-      console.error(err);
-      throw new Error("Failed to get users");
-    }
-  };
-
-  const getRoster = async () => {
-    try {
-      const response = await axios.get<any>(
-        `https://api.sleeper.app/v1/league/${REACT_APP_LEAGUE_ID}/rosters`
-      );
-
-      return response.data;
-    } catch (err) {
-      console.error(err);
-      throw new Error("Failed to get rosters");
-    }
-  };
-
   useEffect(() => {
-    const fetchData = async () => {
+    async function fetchMatchupData() {
       try {
-        const usersData = await getUsers();
-        const rostersData = await getRoster();
-        const scheduleData = await getSchedule();
-
-        // Create a new map to store the updated schedule data
-        const updatedScheduleData: ScheduleData = {};
-
-        // Update the scheduleData map with user data
-        for (const user of usersData) {
-          updatedScheduleData[user.user_id] = {
-            avatar: `https://sleepercdn.com/avatars/thumbs/${user.avatar}`,
-            name: user.display_name,
-            user_id: user.user_id,
-          };
-        }
-
-        // Update the scheduleData map with roster data
-        for (const roster of rostersData) {
-          if (updatedScheduleData[roster.owner_id]) {
-            updatedScheduleData[roster.owner_id].roster_id = roster.roster_id;
-
-            updatedScheduleData[roster.owner_id].starters = roster.starters;
-          }
-
-          for (const matchup of scheduleData) {
-            // console.log("matchup", matchup);
-            // console.log("roster", roster);
-            if (roster.roster_id === matchup.roster_id) {
-              updatedScheduleData[roster.owner_id].matchup_id =
-                matchup.matchup_id;
-              updatedScheduleData[roster.owner_id].team_points = matchup.points;
-            }
-          }
-        }
-
-        // Set the updated scheduleData map to state
-        setScheduleDataFinal(updatedScheduleData);
+        const matchupMapData = await getMatchupMap(REACT_APP_LEAGUE_ID);
+        setMatchupMap(matchupMapData);
+        console.log("Data ", matchupMap);
       } catch (error) {
-        console.error("Error fetching data:", error);
-      }
-    };
-
-    fetchData();
-  }, [REACT_APP_LEAGUE_ID]);
-
-  if (loading) {
-    return <div>Loading...</div>;
-  }
-
-  // setting each matchup into Map with key being matchup_id and value being two teams with corresponding matchup_id
-  for (const userId in scheduleDataFinal) {
-    const userData = scheduleDataFinal[userId];
-    if (userData.matchup_id) {
-      if (!matchupMap.has(userData.matchup_id)) {
-        matchupMap.set(userData.matchup_id, [userData]);
-      } else {
-        const matchupData = matchupMap.get(userData.matchup_id);
-        if (matchupData && matchupData.length > 0) {
-          const firstPlayer = matchupData[0];
-          firstPlayer.opponent = userData.name;
-          matchupMap.set(userData.matchup_id, [firstPlayer]);
-          userData.opponent = firstPlayer.name;
-          matchupMap.get(userData.matchup_id)?.push(userData);
-        }
+        console.error("Error fetching matchup data:", error);
       }
     }
-  }
-  //console.log(matchupMap);
+
+    fetchMatchupData();
+  }, [REACT_APP_LEAGUE_ID]);
 
   const matchupText = Array.from(matchupMap).map(([matchupID, matchupData]) => {
     const team1 = matchupData[0];

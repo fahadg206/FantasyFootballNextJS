@@ -369,8 +369,8 @@ const TestimonialList = ({
             }
           }
         }
-        console.log("trade info", tradeInfoObj);
-        console.log("waiver info", waiverInfoObj);
+        // console.log("trade info", tradeInfoObj);
+        // console.log("waiver info", waiverInfoObj);
 
         //looping through draft picks
 

@@ -1,5 +1,26 @@
 import React, { useEffect, useState } from "react";
+import Imran from "../images/scary_imran.png";
+import Image from "next/image";
 import axios from "axios";
+import { Spinner } from "@nextui-org/react";
+import { db, storage } from "../firebase";
+import { ref, uploadString, getDownloadURL } from "firebase/storage";
+import {
+  getFirestore,
+  collection,
+  getDocs,
+  addDoc,
+  updateDoc,
+  query,
+  where,
+} from "firebase/firestore/lite";
+import { QuerySnapshot, onSnapshot, doc } from "firebase/firestore";
+
+interface WeeklyInformation {
+  [league_id: string]: {
+    info?: ScheduleData;
+  };
+}
 
 interface ScheduleData {
   [userId: string]: {
@@ -36,18 +57,20 @@ interface MatchupMapData {
   matchup_id?: string;
 }
 
-export default async function getMatchupData() {
+export default async function getMatchupData(league_id: any) {
+  console.log("ID", league_id);
   const matchupMap = new Map<string, MatchupMapData[]>();
 
+  const weeklyInfo: WeeklyInformation = {};
+
   //const [scheduleDataFinal, setScheduleDataFinal] = useState<ScheduleData>({});
-  const REACT_APP_LEAGUE_ID = "864448469199347712";
+  const REACT_APP_LEAGUE_ID = league_id;
 
   const getSchedule = async () => {
     try {
       const response = await axios.get<any>(
         `https://api.sleeper.app/v1/league/${REACT_APP_LEAGUE_ID}/matchups/1`
       );
-
       return response.data;
     } catch (err) {
       console.error(err);
@@ -122,26 +145,111 @@ export default async function getMatchupData() {
     } catch (error) {
       console.error("Error fetching data:", error);
     }
-  };
-
-  fetchData();
-
-  for (const userId in updatedScheduleData) {
-    const userData = updatedScheduleData[userId];
-    if (userData.matchup_id) {
-      if (!matchupMap.has(userData.matchup_id)) {
-        matchupMap.set(userData.matchup_id, [userData]);
-      } else {
-        const matchupData = matchupMap.get(userData.matchup_id);
-        if (matchupData && matchupData.length > 0) {
-          const firstPlayer = matchupData[0];
-          firstPlayer.opponent = userData.name;
-          matchupMap.set(userData.matchup_id, [firstPlayer]);
-          userData.opponent = firstPlayer.name;
-          matchupMap.get(userData.matchup_id)?.push(userData);
+    for (const userId in updatedScheduleData) {
+      const userData = updatedScheduleData[userId];
+      if (userData.matchup_id) {
+        if (!matchupMap.has(userData.matchup_id)) {
+          matchupMap.set(userData.matchup_id, [userData]);
+        } else {
+          const matchupData = matchupMap.get(userData.matchup_id);
+          if (matchupData && matchupData.length > 0) {
+            const firstPlayer = matchupData[0];
+            firstPlayer.opponent = userData.name;
+            matchupMap.set(userData.matchup_id, [firstPlayer]);
+            userData.opponent = firstPlayer.name;
+            matchupMap.get(userData.matchup_id)?.push(userData);
+          }
         }
       }
     }
-  }
-  return matchupMap;
+    console.log("inside fetch ", matchupMap);
+    //setting each matchup into Map with key being matchup_id and value being two teams with corresponding matchup_id
+
+    const storageRef = ref(storage, `files/${league_id}.txt`);
+
+    //Uncomment to upload textfile to firebase storage
+
+    const textContent = JSON.stringify(updatedScheduleData);
+
+    // Upload the text content as a text file to Firebase Cloud Storage
+    uploadString(storageRef, textContent, "raw")
+      .then(() => {
+        console.log("Text file uploaded to Firebase Cloud Storage.");
+      })
+      .catch((error) => {
+        console.error("Error uploading text file:", error);
+      });
+    const readingRef = ref(storage, `files/`);
+    try {
+      getDownloadURL(storageRef)
+        .then((url) => {
+          fetch(url)
+            .then((response) => response.text())
+            .then((fileContent) => {
+              // console.log(
+              //   "Text file content from Firebase Cloud Storage:",
+              //   fileContent
+              // );
+            })
+            .catch((error) => {
+              console.error("Error fetching text file content:", url);
+            });
+        })
+        .catch((error) => {
+          console.error("Error getting download URL:", error);
+        });
+    } catch (error) {
+      console.error("Unexpected error:", error);
+    }
+
+    if (REACT_APP_LEAGUE_ID) {
+      const updateWeeklyInfo = async () => {
+        if (!weeklyInfo[REACT_APP_LEAGUE_ID]) {
+          weeklyInfo[REACT_APP_LEAGUE_ID] = {}; // Initialize the league entry if it doesn't exist
+        }
+
+        // Create a copy of scheduleDataFinal
+        const updatedInfo = { ...updatedScheduleData };
+
+        // Set the copied data to weeklyInfo
+        weeklyInfo[REACT_APP_LEAGUE_ID].info = updatedInfo;
+
+        // Reference to the "Weekly Info" collection
+        const weeklyInfoCollectionRef = collection(db, "Weekly Info");
+
+        // Use a Query to check if a document with the league_id exists
+        const queryRef = query(
+          weeklyInfoCollectionRef,
+          where("league_id", "==", REACT_APP_LEAGUE_ID)
+        );
+
+        const querySnapshot = await getDocs(queryRef);
+
+        // Add or update the document based on whether it already exists
+        if (!querySnapshot.empty && weeklyInfo[REACT_APP_LEAGUE_ID].info) {
+          // Document exists, update it
+          querySnapshot.forEach(async (doc) => {
+            await updateDoc(doc.ref, {
+              info: weeklyInfo[REACT_APP_LEAGUE_ID].info,
+            });
+          });
+        } else {
+          // Document does not exist, add a new one
+          await addDoc(weeklyInfoCollectionRef, {
+            league_id: REACT_APP_LEAGUE_ID,
+            info: weeklyInfo[REACT_APP_LEAGUE_ID].info,
+          });
+        }
+      };
+
+      // Call the async function
+      updateWeeklyInfo();
+    }
+
+    return matchupMap;
+  };
+
+  const response = fetchData();
+
+  return response;
 }
