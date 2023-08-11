@@ -57,7 +57,7 @@ interface MatchupMapData {
   matchup_id?: string;
 }
 
-export default async function getMatchupData(league_id: any) {
+export default async function getMatchupData(league_id: any, counter: number) {
   console.log("ID", league_id);
   const matchupMap = new Map<string, MatchupMapData[]>();
 
@@ -69,7 +69,9 @@ export default async function getMatchupData(league_id: any) {
   const getSchedule = async () => {
     try {
       const response = await axios.get<any>(
-        `https://api.sleeper.app/v1/league/${REACT_APP_LEAGUE_ID}/matchups/1`
+        `https://api.sleeper.app/v1/league/${REACT_APP_LEAGUE_ID}/matchups/${
+          counter ? counter : 1
+        }`
       );
       return response.data;
     } catch (err) {

@@ -40,16 +40,30 @@ export default function Schedule(props: any) {
     string,
     MatchupMapData[]
   > | null>(null);
+  const [counter, setCounter] = useState(0);
+
+  const REACT_APP_LEAGUE_ID = localStorage.getItem("selectedLeagueID");
 
   let matchupText;
 
   useEffect(() => {
-    if (props.matchupMap) {
-      setMatchupMap(props.matchupMap);
-
-      setLoading(false);
+    async function fetchMatchupData() {
+      try {
+        const matchupMapData = await getMatchupMap(
+          REACT_APP_LEAGUE_ID,
+          counter
+        );
+        setMatchupMap(matchupMapData);
+        console.log("Data ", matchupMap);
+      } catch (error) {
+        console.error("Error fetching matchup data:", error);
+      }
     }
-  }, [props.matchupMap, loading]);
+
+    fetchMatchupData();
+  }, [REACT_APP_LEAGUE_ID, counter]);
+
+  console.log(counter);
 
   matchupText = Array.from(matchupMap || []).map(([matchupID, matchupData]) => {
     const team1 = matchupData[0];
@@ -58,9 +72,9 @@ export default function Schedule(props: any) {
     return (
       <div
         key={team1.name}
-        className=" flex flex-col items-center gap-5 mt-2 duration-500"
+        className=" flex flex-col items-center gap-5 mt-2 duration-500 w-[95vw] xl:w-[60vw]"
       >
-        <div className="border border-black p-[30px] dark:bg-[#202123] rounded w-[85vw] flex flex-col">
+        <div className="border border-black p-[30px] dark:bg-[#202123] rounded w-[95vw] xl:w-[60vw]  flex flex-col">
           <div className="team1 flex items-center justify-between">
             <div className="flex items-center">
               <Image
@@ -97,14 +111,14 @@ export default function Schedule(props: any) {
     );
   });
 
-  if (loading) {
-    return <div>Loading..</div>;
-  }
-
   return (
-    <div className="bg-green-800 w-[60vw] h-screen">
-      {matchupText &&
-        matchupText.map((matchup) => <div key={uuid}>{matchup}</div>)}
+    <div className="bg-green-800 flex flex-col items-center">
+      <div className="flex">
+        <p onClick={() => setCounter(counter + 1)}>+</p>
+        <p onClick={() => setCounter(counter - 1)}>-</p>
+        {`Week: ${counter}`}
+      </div>
+      {matchupText}
     </div>
   );
 }

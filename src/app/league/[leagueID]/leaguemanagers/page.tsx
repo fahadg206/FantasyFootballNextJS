@@ -42,7 +42,8 @@ export default function page() {
   const [scheduleDataFinal, setScheduleDataFinal] = useState<ScheduleData>({});
   const [loading, setLoading] = useState(true);
   const [schedule, setSchedule] = useState<Matchup[]>([]);
-  const [selectedManagerName, setSelectedManagerName] = useState("manager");
+  const [defaultManager, setDefaultManager] = useState("");
+  const [selectedManagerName, setSelectedManagerName] = useState("");
   const [playersData, setPlayersData] = React.useState([]);
 
   const matchupMap = new Map<string, MatchupMapData[]>();
@@ -109,6 +110,7 @@ export default function page() {
             user_id: user.user_id,
           };
         }
+        setDefaultManager(usersData[0].user_id);
 
         // Update the scheduleData map with roster data
         for (const roster of rostersData) {
@@ -173,7 +175,9 @@ export default function page() {
   return (
     <div className="bg-[green]">
       {selectedManagerName}
-      {scheduleDataFinal[selectedManager].starters.map((starter) => (
+      {scheduleDataFinal[
+        selectedManager ? selectedManager : defaultManager
+      ].starters.map((starter) => (
         <div>{playersData[starter].fn + playersData[starter].ln}</div>
       ))}
     </div>

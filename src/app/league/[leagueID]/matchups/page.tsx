@@ -593,7 +593,7 @@ const matchups = () => {
 
   console.log("Work ", rivalManagers);
   return (
-    <div className="flex justify-around h-screen border-2 border-[#af1222]">
+    <div className="flex justify-around h-screen border-2 border-[#af1222] w-[95vw] xl:w-[60vw]">
       <div className="mt-5">
         Select User:
         <Dropdown>

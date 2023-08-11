@@ -54,10 +54,11 @@ export default async function handler(req, res) {
         temperature: 0.9,
       });
 
-      const question = "Give me a summary of the data";
+      const question =
+        "Give me a short article with no more than 3 short paragraphs using my style summarizing all this weeks matchups, make sure to include a little bit of humor and a sports caster style way of reporting";
       const chain = RetrievalQAChain.fromLLM(model, vectorStore.asRetriever());
 
-      const apiResponse = await chain.call({ query: question });
+      //const apiResponse = await chain.call({ query: question });
       console.log(apiResponse);
 
       return res.status(200).json(apiResponse);

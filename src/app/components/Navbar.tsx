@@ -125,22 +125,6 @@ function NavBar(props: MyProps) {
           <Link
             href={`/league/${localStorage.getItem(
               "selectedLeagueID"
-            )}/powerrankings`}
-          >
-            <div className="flex items-center w-[90px]">
-              <NavItem
-                selected={selected === 5}
-                id={5}
-                setSelected={setSelected}
-              >
-                <FaRankingStar />
-              </NavItem>
-              <p className="ml-2">PowerRankings</p>
-            </div>
-          </Link>
-          <Link
-            href={`/league/${localStorage.getItem(
-              "selectedLeagueID"
             )}/schedule`}
           >
             <div className="flex items-center w-[90px]">

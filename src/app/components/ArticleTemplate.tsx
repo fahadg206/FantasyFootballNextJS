@@ -54,7 +54,7 @@ const ArticleTemplate = ({
           </div>
           <p className="text-[12px]">{date}</p>
         </div>
-        <p className="p-3 text-left text-[18px]">
+        <p className="p-3 text-left text-[14px]">
           {p1} <br />
           {p2} <br />
           {p3} <br />
