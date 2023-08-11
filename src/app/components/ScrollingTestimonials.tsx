@@ -6,6 +6,16 @@ import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import scaryimran from "../images/scary_imran.png";
 import { IoPulseSharp } from "react-icons/io5";
+import {
+  getFirestore,
+  collection,
+  getDocs,
+  addDoc,
+  updateDoc,
+  query,
+  where,
+} from "firebase/firestore/lite";
+import { db, storage } from "../firebase";
 
 import { LuUserPlus, LuUserMinus } from "react-icons/lu";
 

@@ -9,6 +9,16 @@ import { match } from "assert";
 import { useDropdown } from "@nextui-org/react/types/dropdown/use-dropdown";
 import { M_PLUS_1 } from "next/font/google";
 import Image from "next/image";
+import {
+  getFirestore,
+  collection,
+  getDocs,
+  addDoc,
+  updateDoc,
+  query,
+  where,
+} from "firebase/firestore/lite";
+import { db, storage } from "../../../firebase";
 
 interface NflState {
   season: string;
@@ -490,7 +500,14 @@ const matchups = () => {
         console.error("Error while fetching players data:", error);
       });
   }, []);
+  const playersDataObject = {}; // Initialize an empty object to store data as key-value pairs
 
+  // for (let i = 0; i < playersData.length; i++) {
+  //   playersDataObject[i] = playersData[i];
+  // }
+  // addDoc(collection(db, "players"), {
+  //   player: playersDataObject["4017"],
+  // });
   useEffect(() => {
     const fetchData = async () => {
       // Fetch league data and wait for the result
