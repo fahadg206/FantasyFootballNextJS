@@ -64,6 +64,8 @@ export default function Scoreboard() {
   const [loading, setLoading] = useState(true);
   const [loadingData, setLoadingData] = useState(true);
   const [scheduleDataFinal, setScheduleDataFinal] = useState<ScheduleData>({});
+  const [playersData, setPlayersData] = React.useState([]);
+  const [week, setWeek] = useState<number>();
 
   const weeklyInfo: WeeklyInformation = {};
 
@@ -76,9 +78,21 @@ export default function Scoreboard() {
   useEffect(() => {
     async function fetchMatchupData() {
       try {
-        const matchupMapData = await getMatchupMap(REACT_APP_LEAGUE_ID);
+        const response = await axios.get(
+          `https://api.sleeper.app/v1/state/nfl`
+        );
+
+        const nflState = response.data;
+        let week = 1;
+        if (nflState.season_type === "regular") {
+          week = nflState.display_week;
+        } else if (nflState.season_type === "post") {
+          week = 18;
+        }
+        setWeek(week);
+        const matchupMapData = await getMatchupMap(REACT_APP_LEAGUE_ID, week);
         setMatchupMap(matchupMapData);
-        console.log("Data ", matchupMap);
+        console.log("Scoreboard Data ", matchupMap);
       } catch (error) {
         console.error("Error fetching matchup data:", error);
       }
@@ -86,6 +100,21 @@ export default function Scoreboard() {
 
     fetchMatchupData();
   }, [REACT_APP_LEAGUE_ID]);
+
+  useEffect(() => {
+    axios
+      .get("http://localhost:3001/api/players")
+      .then((response) => {
+        const playersData = response.data;
+
+        setPlayersData(playersData);
+        // Process and use the data as needed
+        console.log(playersData["4017"]);
+      })
+      .catch((error) => {
+        console.error("Error while fetching players data:", error);
+      });
+  }, []);
 
   if (localStorage.getItem("usernameSubmitted") === "false") {
     localStorage.clear();
@@ -96,6 +125,45 @@ export default function Scoreboard() {
   const matchupText = Array.from(matchupMap).map(([matchupID, matchupData]) => {
     const team1 = matchupData[0];
     const team2 = matchupData[1];
+
+    let team1Proj = 0.0;
+    let team2Proj = 0.0;
+    //console.log("team 1, ", team1.starters);
+    // ...
+
+    if (team1?.starters) {
+      for (const currPlayer of team1.starters) {
+        if (
+          playersData[currPlayer] &&
+          playersData[currPlayer].wi &&
+          playersData[currPlayer].wi[week?.toString()] &&
+          playersData[currPlayer].wi[week?.toString()].p !== undefined
+        ) {
+          team1Proj += parseFloat(
+            playersData[currPlayer].wi[week?.toString()].p
+          );
+        }
+      }
+
+      console.log("Here's the first teams proj ", team1.name, team1Proj);
+    }
+
+    if (team2?.starters) {
+      for (const currPlayer of team2.starters) {
+        if (
+          playersData[currPlayer] &&
+          playersData[currPlayer].wi &&
+          playersData[currPlayer].wi[week?.toString()] &&
+          playersData[currPlayer].wi[week?.toString()].p !== undefined
+        ) {
+          team2Proj += parseFloat(
+            playersData[currPlayer].wi[week?.toString()].p
+          );
+        }
+      }
+
+      console.log("Here's the second teams proj ", team2.name, team2Proj);
+    }
 
     return (
       <div
@@ -113,9 +181,11 @@ export default function Scoreboard() {
                 className="rounded-full mr-1"
               />
               <p>
-                {team1.name.length > 10
-                  ? team1.name.slice(0, 11).toLowerCase()
-                  : team1.name.toLowerCase()}
+                {team1.name.length >= 9
+                  ? team1.name.match(/[A-Z]/g).length > 3
+                    ? team1.name.slice(0, 10).toLowerCase()
+                    : team1.name.slice(0, 10)
+                  : team1.name}
               </p>
             </span>
             <p>{team1.team_points || "0"}</p>
@@ -130,16 +200,22 @@ export default function Scoreboard() {
                 className="rounded-full mr-1"
               />
               <p>
-                {team2.name.length > 10
-                  ? team2.name.slice(0, 11).toLowerCase()
-                  : team2.name.toLowerCase()}
+                {team2.name.length >= 9
+                  ? team2.name.match(/[A-Z]/g).length > 3
+                    ? team2.name.slice(0, 10).toLowerCase()
+                    : team2.name.slice(0, 10)
+                  : team2.name}
               </p>
             </span>
             <p>{team2.team_points || "0"}</p>
           </div>
-          <p className="w-[9vw] text-center text-[9px]">O/U: 350.24</p>
-          <p className="w-[9vw] text-center text-[7px] text-[grey]">
-            YSLBigNervous -7
+          <p className="w-[9vw] text-center text-[9px]">
+            O/U: {Math.round(team1Proj + team2Proj)}
+          </p>
+          <p className="w-[9vw] text-center text-[9px] text-[grey]">
+            {team1Proj > team2Proj
+              ? team1?.name + " -" + Math.round(team1Proj - team2Proj)
+              : team2?.name + " -" + Math.round(team2Proj - team1Proj)}
           </p>
         </div>
       </div>

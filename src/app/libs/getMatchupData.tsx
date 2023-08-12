@@ -29,6 +29,10 @@ interface ScheduleData {
     roster_id?: string;
     user_id?: string;
     starters?: string[];
+    starters_points?: string[];
+    players?: string[];
+    players_points?: string[];
+    starters_full_data?: Starter[];
     team_points?: string;
     opponent?: string;
     matchup_id?: string;
@@ -57,7 +61,15 @@ interface MatchupMapData {
   matchup_id?: string;
 }
 
-export default async function getMatchupData(league_id: any, counter: number) {
+interface Starter {
+  fname?: string;
+  lname?: string;
+  avatar?: string;
+  scored_points?: string;
+  projected_points?: string;
+}
+
+export default async function getMatchupData(league_id: any, week: number) {
   console.log("ID", league_id);
   const matchupMap = new Map<string, MatchupMapData[]>();
 
@@ -70,7 +82,7 @@ export default async function getMatchupData(league_id: any, counter: number) {
     try {
       const response = await axios.get<any>(
         `https://api.sleeper.app/v1/league/${REACT_APP_LEAGUE_ID}/matchups/${
-          counter ? counter : 1
+          week ? week : 1
         }`
       );
       return response.data;
@@ -106,7 +118,7 @@ export default async function getMatchupData(league_id: any, counter: number) {
     }
   };
   const updatedScheduleData: ScheduleData = {};
-  const fetchData = async () => {
+  const fetchData = async (playersData: any) => {
     try {
       const usersData = await getUsers();
       const rostersData = await getRoster();
@@ -138,6 +150,40 @@ export default async function getMatchupData(league_id: any, counter: number) {
             updatedScheduleData[roster.owner_id].matchup_id =
               matchup.matchup_id;
             updatedScheduleData[roster.owner_id].team_points = matchup.points;
+            updatedScheduleData[roster.owner_id].starters_points =
+              matchup.starters_points;
+            updatedScheduleData[roster.owner_id].players = matchup.players;
+            updatedScheduleData[roster.owner_id].players_points =
+              matchup.players_points;
+          }
+        }
+
+        for (const userId in updatedScheduleData) {
+          if (updatedScheduleData.hasOwnProperty(userId)) {
+            const starters_data = [];
+            if (!updatedScheduleData[userId].starters_full_data) {
+              updatedScheduleData[userId].starters_full_data = [{}];
+            }
+            if (updatedScheduleData[userId]?.starters) {
+              for (const starter of updatedScheduleData[userId].starters) {
+                const starter_data = {
+                  fname: playersData[starter].fn,
+                  lname: playersData[starter].ln,
+                  avatar:
+                    playersData[starter.toString()].pos == "DEF"
+                      ? `https://sleepercdn.com/images/team_logos/nfl/${starter.toLowerCase()}.png`
+                      : `https://sleepercdn.com/content/nfl/players/thumb/${starter}.jpg`,
+                  scored_points:
+                    updatedScheduleData[userId].players_points[starter],
+                  projected_points: playersData[starter].wi,
+                };
+                updatedScheduleData[userId].starters_full_data?.push(
+                  starter_data
+                );
+              }
+            }
+
+            updatedScheduleData[userId].starters_full_data;
           }
         }
       }
@@ -170,6 +216,8 @@ export default async function getMatchupData(league_id: any, counter: number) {
     const storageRef = ref(storage, `files/${league_id}.txt`);
 
     //Uncomment to upload textfile to firebase storage
+
+    console.log("Updated Data: ", updatedScheduleData);
 
     const textContent = JSON.stringify(updatedScheduleData);
 
@@ -251,7 +299,22 @@ export default async function getMatchupData(league_id: any, counter: number) {
     return matchupMap;
   };
 
-  const response = fetchData();
+  async function fetchPlayersData() {
+    try {
+      const response = await axios.get("http://localhost:3001/api/players");
+      const playersData = response.data;
+      // Process and use the data as needed
+      console.log("inside fetch ", playersData["4017"]);
+      return playersData;
+    } catch (error) {
+      console.error("Error while fetching players data:", error);
+      return [];
+    }
+  }
+
+  const playersData = await fetchPlayersData();
+
+  const response = fetchData(playersData);
 
   return response;
 }

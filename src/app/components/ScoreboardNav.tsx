@@ -61,7 +61,18 @@ export default function ScoreboardNav() {
   useEffect(() => {
     async function fetchMatchupData() {
       try {
-        const matchupMapData = await getMatchupMap(REACT_APP_LEAGUE_ID);
+        const response = await axios.get(
+          `https://api.sleeper.app/v1/state/nfl`
+        );
+
+        const nflState = response.data;
+        let week = 1;
+        if (nflState.season_type === "regular") {
+          week = nflState.display_week;
+        } else if (nflState.season_type === "post") {
+          week = 18;
+        }
+        const matchupMapData = await getMatchupMap(REACT_APP_LEAGUE_ID, week);
         setMatchupMap(matchupMapData);
         console.log("Data ", matchupMap);
       } catch (error) {
