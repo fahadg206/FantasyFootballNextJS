@@ -87,6 +87,10 @@ export default function Scoreboard() {
     fetchMatchupData();
   }, [REACT_APP_LEAGUE_ID]);
 
+  if (localStorage.getItem("usernameSubmitted") === "false") {
+    localStorage.clear();
+  }
+
   // MATCHUP TEXT
   console.log("outside useffect ", matchupMap);
   const matchupText = Array.from(matchupMap).map(([matchupID, matchupData]) => {
