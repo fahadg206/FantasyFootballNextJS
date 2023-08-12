@@ -54,7 +54,6 @@ export default function Schedule(props: any) {
           counter
         );
         setMatchupMap(matchupMapData);
-        console.log("Data ", matchupMap);
       } catch (error) {
         console.error("Error fetching matchup data:", error);
       }
@@ -62,8 +61,6 @@ export default function Schedule(props: any) {
 
     fetchMatchupData();
   }, [REACT_APP_LEAGUE_ID, counter]);
-
-  console.log(counter);
 
   matchupText = Array.from(matchupMap || []).map(([matchupID, matchupData]) => {
     const team1 = matchupData[0];

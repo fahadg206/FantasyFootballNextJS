@@ -70,7 +70,6 @@ interface Starter {
 }
 
 export default async function getMatchupData(league_id: any, week: number) {
-  console.log("ID", league_id);
   const matchupMap = new Map<string, MatchupMapData[]>();
 
   const weeklyInfo: WeeklyInformation = {};
@@ -210,7 +209,7 @@ export default async function getMatchupData(league_id: any, week: number) {
         }
       }
     }
-    console.log("inside fetch ", matchupMap);
+
     //setting each matchup into Map with key being matchup_id and value being two teams with corresponding matchup_id
 
     const storageRef = ref(storage, `files/${league_id}.txt`);
@@ -304,7 +303,7 @@ export default async function getMatchupData(league_id: any, week: number) {
       const response = await axios.get("http://localhost:3001/api/players");
       const playersData = response.data;
       // Process and use the data as needed
-      console.log("inside fetch ", playersData["4017"]);
+
       return playersData;
     } catch (error) {
       console.error("Error while fetching players data:", error);

@@ -92,7 +92,6 @@ export default function Scoreboard() {
         setWeek(week);
         const matchupMapData = await getMatchupMap(REACT_APP_LEAGUE_ID, week);
         setMatchupMap(matchupMapData);
-        console.log("Scoreboard Data ", matchupMap);
       } catch (error) {
         console.error("Error fetching matchup data:", error);
       }
@@ -109,7 +108,6 @@ export default function Scoreboard() {
 
         setPlayersData(playersData);
         // Process and use the data as needed
-        console.log(playersData["4017"]);
       })
       .catch((error) => {
         console.error("Error while fetching players data:", error);
@@ -121,7 +119,7 @@ export default function Scoreboard() {
   }
 
   // MATCHUP TEXT
-  console.log("outside useffect ", matchupMap);
+
   const matchupText = Array.from(matchupMap).map(([matchupID, matchupData]) => {
     const team1 = matchupData[0];
     const team2 = matchupData[1];
@@ -144,8 +142,6 @@ export default function Scoreboard() {
           );
         }
       }
-
-      console.log("Here's the first teams proj ", team1.name, team1Proj);
     }
 
     if (team2?.starters) {
@@ -161,8 +157,6 @@ export default function Scoreboard() {
           );
         }
       }
-
-      console.log("Here's the second teams proj ", team2.name, team2Proj);
     }
 
     return (

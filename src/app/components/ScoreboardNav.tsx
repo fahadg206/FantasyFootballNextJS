@@ -74,7 +74,6 @@ export default function ScoreboardNav() {
         }
         const matchupMapData = await getMatchupMap(REACT_APP_LEAGUE_ID, week);
         setMatchupMap(matchupMapData);
-        console.log("Data ", matchupMap);
       } catch (error) {
         console.error("Error fetching matchup data:", error);
       }

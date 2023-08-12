@@ -78,7 +78,7 @@ const ScrollingTestimonials = () => {
     const response = await axios.get(
       `https://api.sleeper.app/v1/league/${localStorage.getItem(
         "selectedLeagueID"
-      )}/transactions/1`
+      )}/transactions/6`
     );
     setLeagueTransactions(response.data);
   };
@@ -497,7 +497,11 @@ const TestimonialList = ({
                                 <LuUserPlus className="text-[green] mr-1" />
                                 <span className="flex">
                                   <Image
-                                    src={`https://sleepercdn.com/content/nfl/players/thumb/${player}.jpg`}
+                                    src={
+                                      playersData[player].pos == "DEF"
+                                        ? `https://sleepercdn.com/images/team_logos/nfl/${player.toLowerCase()}.png`
+                                        : `https://sleepercdn.com/content/nfl/players/thumb/${player}.jpg`
+                                    }
                                     alt="player image"
                                     width={30}
                                     height={30}
@@ -539,7 +543,11 @@ const TestimonialList = ({
                                 <LuUserMinus className="text-[#af1222] mr-1" />
                                 <span className="flex">
                                   <Image
-                                    src={`https://sleepercdn.com/content/nfl/players/thumb/${player}.jpg`}
+                                    src={
+                                      playersData[player].pos == "DEF"
+                                        ? `https://sleepercdn.com/images/team_logos/nfl/${player.toLowerCase()}.png`
+                                        : `https://sleepercdn.com/content/nfl/players/thumb/${player}.jpg`
+                                    }
                                     alt="player image"
                                     width={30}
                                     height={30}
@@ -602,7 +610,11 @@ const TestimonialList = ({
                                 <LuUserPlus className="text-[green] mr-1" />
                                 <span className="flex">
                                   <Image
-                                    src={`https://sleepercdn.com/content/nfl/players/thumb/${player}.jpg`}
+                                    src={
+                                      playersData[player].pos == "DEF"
+                                        ? `https://sleepercdn.com/images/team_logos/nfl/${player.toLowerCase()}.png`
+                                        : `https://sleepercdn.com/content/nfl/players/thumb/${player}.jpg`
+                                    }
                                     alt="player image"
                                     width={30}
                                     height={30}
@@ -645,7 +657,11 @@ const TestimonialList = ({
                                 <LuUserMinus className="text-[#af1222] mr-1" />
                                 <span className="flex">
                                   <Image
-                                    src={`https://sleepercdn.com/content/nfl/players/thumb/${player}.jpg`}
+                                    src={
+                                      playersData[player].pos == "DEF"
+                                        ? `https://sleepercdn.com/images/team_logos/nfl/${player.toLowerCase()}.png`
+                                        : `https://sleepercdn.com/content/nfl/players/thumb/${player}.jpg`
+                                    }
                                     alt="player image"
                                     width={30}
                                     height={30}
@@ -708,7 +724,11 @@ const TestimonialList = ({
                                 <LuUserPlus className="text-[green] mr-1" />
                                 <span className="flex">
                                   <Image
-                                    src={`https://sleepercdn.com/content/nfl/players/thumb/${player}.jpg`}
+                                    src={
+                                      playersData[player].pos == "DEF"
+                                        ? `https://sleepercdn.com/images/team_logos/nfl/${player.toLowerCase()}.png`
+                                        : `https://sleepercdn.com/content/nfl/players/thumb/${player}.jpg`
+                                    }
                                     alt="player image"
                                     width={30}
                                     height={30}
@@ -751,7 +771,11 @@ const TestimonialList = ({
                                 <LuUserMinus className="text-[#af1222] mr-1" />
                                 <span className="flex">
                                   <Image
-                                    src={`https://sleepercdn.com/content/nfl/players/thumb/${player}.jpg`}
+                                    src={
+                                      playersData[player].pos == "DEF"
+                                        ? `https://sleepercdn.com/images/team_logos/nfl/${player.toLowerCase()}.png`
+                                        : `https://sleepercdn.com/content/nfl/players/thumb/${player}.jpg`
+                                    }
                                     alt="player image"
                                     width={30}
                                     height={30}
@@ -832,13 +856,39 @@ const TestimonialList = ({
                       <div className="player-added ">
                         <span className="flex items-center">
                           <LuUserPlus className="text-[green] mr-1" />{" "}
+                          <Image
+                            src={
+                              playersData[player.player_added]?.pos == "DEF"
+                                ? `https://sleepercdn.com/images/team_logos/nfl/${player.player_added.toLowerCase()}.png`
+                                : `https://sleepercdn.com/content/nfl/players/thumb/${player.player_added}.jpg`
+                            }
+                            alt="player image"
+                            width={30}
+                            height={30}
+                          />
                           {`${playersData[player.player_added]?.fn || "Unknown"}
                           ${playersData[player.player_added]?.ln || "Player"}`}
                         </span>
                       </div>
-                      <div className="player-dropped ">
+                      <div
+                        className={
+                          playersData[player.player_dropped]
+                            ? "player-dropped "
+                            : "player-dropped hidden"
+                        }
+                      >
                         <span className="flex items-center">
                           <LuUserMinus className="text-[#af1222] mr-1" />{" "}
+                          <Image
+                            src={
+                              playersData[player.player_dropped]?.pos == "DEF"
+                                ? `https://sleepercdn.com/images/team_logos/nfl/${player.player_dropped.toLowerCase()}.png`
+                                : `https://sleepercdn.com/content/nfl/players/thumb/${player.player_dropped}.jpg`
+                            }
+                            alt="player image"
+                            width={30}
+                            height={30}
+                          />
                           {`${
                             playersData[player.player_dropped]?.fn || "Unknown"
                           }
