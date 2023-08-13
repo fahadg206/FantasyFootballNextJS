@@ -567,7 +567,7 @@ const matchups = () => {
     .map((player) => {
       if (selected2.keys().next().value !== player.userName) {
         return (
-          <Dropdown.Item css={{ color: "white" }} key={player.userName}>
+          <Dropdown.Item css={{ color: "#af1222" }} key={player.userName}>
             {player.userName}
           </Dropdown.Item>
         );
@@ -597,72 +597,76 @@ const matchups = () => {
   const slate =
     rivalsMap.get("Rival") && rivalsMap.get("Rival").matchups[weekCount];
   return (
-    <div className="flex justify-around h-screen border-2 border-[#af1222] w-[95vw] xl:w-[60vw]">
-      <div className="mt-5">
-        Select User:
-        <Dropdown>
-          <Dropdown.Button flat css={{ tt: "capitalize", color: "#af1222" }}>
-            {selectedValue}
-          </Dropdown.Button>
-          <Dropdown.Menu
-            aria-label="Single selection actions"
-            css={{
-              backgroundColor: "#af1222",
-              border: "solid",
-              borderColor: "black",
-              color: "black",
+    <div className="h-screen border-[1px] border-[#1a1a1a] w-[95vw] xl:w-[60vw]">
+      <div className="bg-[purple] flex justify-center h-screen mt-5">
+        <div className="mr-10">
+          Select User:
+          <Dropdown>
+            <Dropdown.Button flat css={{ tt: "capitalize", color: "#af1222" }}>
+              {selectedValue}
+            </Dropdown.Button>
+            <Dropdown.Menu
+              aria-label="Single selection actions"
+              css={{
+                backgroundColor: "black",
+                border: "solid",
+                borderColor: "#af1222",
+                color: "white",
+              }}
+              disallowEmptySelection
+              selectionMode="single"
+              selectedKeys={selected}
+              onSelectionChange={handleSelectionChange}
+            >
+              {dropdownItems1}
+            </Dropdown.Menu>
+          </Dropdown>
+        </div>
+        <div className="mr-10">
+          Select User:
+          <Dropdown>
+            <Dropdown.Button flat css={{ tt: "capitalize", color: "#af1222" }}>
+              {selectedValue2}
+            </Dropdown.Button>
+            <Dropdown.Menu
+              aria-label="Single selection actions"
+              css={{
+                backgroundColor: "black",
+                border: "solid",
+                borderColor: "#af1222",
+                color: "white",
+              }}
+              disallowEmptySelection
+              selectionMode="single"
+              selectedKeys={selected2}
+              onSelectionChange={handleSelectionChange2}
+            >
+              {dropdownItems2}
+            </Dropdown.Menu>
+          </Dropdown>
+        </div>
+
+        <div className="mt-6">
+          <Button
+            onPress={() => {
+              console.log(input);
+              setVisible(true);
             }}
-            disallowEmptySelection
-            selectionMode="single"
-            selectedKeys={selected}
-            onSelectionChange={handleSelectionChange}
-          >
-            {dropdownItems1}
-          </Dropdown.Menu>
-        </Dropdown>
-      </div>
-      <div className="mt-5">
-        Select User:
-        <Dropdown>
-          <Dropdown.Button flat css={{ tt: "capitalize", color: "#af1222" }}>
-            {selectedValue2}
-          </Dropdown.Button>
-          <Dropdown.Menu
-            aria-label="Single selection actions"
             css={{
-              backgroundColor: "black",
-              border: "solid",
+              backgroundImage:
+                "linear-gradient(black, black, #af1222, #af1222)",
+              color: "#ffffff",
+              borderStyle: "solid",
               borderColor: "#af1222",
-              color: "white",
+              // Set the text color to white or any desired color
+              // Add other styles as needed
             }}
-            disallowEmptySelection
-            selectionMode="single"
-            selectedKeys={selected2}
-            onSelectionChange={handleSelectionChange2}
+            // bg-gradient-to-b border border-[#af1222] from-black to-[#af1222] p-1 rounded
+            auto
           >
-            {dropdownItems2}
-          </Dropdown.Menu>
-        </Dropdown>
-      </div>
-      <div className="mt-10">
-        <Button
-          onPress={() => {
-            console.log(input);
-            setVisible(true);
-          }}
-          css={{
-            backgroundImage: "linear-gradient(black, black, #af1222, #af1222)",
-            color: "#ffffff",
-            borderStyle: "solid",
-            borderColor: "#af1222",
-            // Set the text color to white or any desired color
-            // Add other styles as needed
-          }}
-          // bg-gradient-to-b border border-[#af1222] from-black to-[#af1222] p-1 rounded
-          auto
-        >
-          <FaSearch />
-        </Button>
+            <FaSearch />
+          </Button>
+        </div>
       </div>
       {/* Modal */}
       <div>
@@ -675,7 +679,7 @@ const matchups = () => {
               aria-describedby="modal-description"
               {...bindings}
               css={{
-                backgroundColor: "#202123",
+                backgroundColor: "#050505",
                 color: "white",
                 "@smMax": {
                   backgroundColor: "#050505",
@@ -689,7 +693,7 @@ const matchups = () => {
             >
               <Modal.Header>
                 <Text id="modal-title" size={18} css={{ color: "#E9EBEA" }}>
-                  Modal with a lot of content
+                  Matchup Summary
                 </Text>
               </Modal.Header>
               <Modal.Body css={{ color: "#190103" }}>
@@ -697,7 +701,14 @@ const matchups = () => {
                   {rivalsMap.has("Rival") ? (
                     <div>
                       <div className="text-center mb-10">
-                        <div className="flex justify-center text-[#af1222] text-[25px]">
+                        <div
+                          className={
+                            rivalsMap.get("Rival") &&
+                            rivalsMap.get("Rival").matchups.length <= 1
+                              ? `hidden`
+                              : `flex justify-center text-[#af1222] text-[25px]`
+                          }
+                        >
                           <BsArrowBarLeft
                             onClick={() =>
                               setWeekCount(Math.max(0, weekCount - 1))
@@ -718,31 +729,37 @@ const matchups = () => {
                           Week:
                           {slate.week}
                         </Text>
-                        <div className="flex">
-                          <div className="mr-5">
-                            <Text css={{ color: "#E9EBEA" }}>
-                              {
-                                rivalManagers[slate.year][
-                                  slate.matchup[0].roster_id
-                                ].team.name
-                              }
-                            </Text>
-
-                            <Image
-                              src={`https://sleepercdn.com/avatars/thumbs/${
-                                rivalManagers[slate.year][
-                                  slate.matchup[0].roster_id
-                                ].team.avatar
-                              }`}
-                              alt="player"
-                              width={60}
-                              height={60}
-                              className="rounded-full mr-1"
-                            />
+                        <div className="flex teams justify-around">
+                          <div className=" team1 flex flex-col items-center">
+                            <div className="flex items-center justify-center border-b-[1px] border-[#1a1a1a] border-opacity-80 mb-2 w-full">
+                              <Image
+                                src={`https://sleepercdn.com/avatars/thumbs/${
+                                  rivalManagers[slate.year][
+                                    slate.matchup[0].roster_id
+                                  ].team.avatar
+                                }`}
+                                alt="player"
+                                width={38}
+                                height={38}
+                                className="rounded-full mr-2"
+                              />
+                              <Text
+                                css={{ color: "#E9EBEA", fontWeight: "$bold" }}
+                              >
+                                {
+                                  rivalManagers[slate.year][
+                                    slate.matchup[0].roster_id
+                                  ].team.name
+                                }
+                              </Text>
+                            </div>
 
                             {slate.matchup[0].starters.map(
                               (starter, starterIndex) => (
-                                <div key={starterIndex}>
+                                <div
+                                  key={starterIndex}
+                                  className="flex flex-col items-center border-b-[1px] border-[#1a1a1a] border-opacity-60 mb-1 w-full"
+                                >
                                   {" "}
                                   <Image
                                     src={
@@ -752,18 +769,39 @@ const matchups = () => {
                                         : `https://sleepercdn.com/content/nfl/players/thumb/${starter}.jpg`
                                     }
                                     alt="player"
-                                    width={100}
-                                    height={100}
+                                    width={57}
+                                    height={57}
                                   />
-                                  <Text css={{ color: "#E9EBEA" }}>
-                                    {playersData[starter.toString()].fn}{" "}
-                                    {playersData[starter.toString()].ln}
-                                  </Text>
-                                  <Text css={{ color: "#E9EBEA" }}></Text>
-                                  <Text css={{ color: "#E9EBEA" }}>
-                                    {"points: "}
-                                    {slate.matchup[0].points[starterIndex]}
-                                  </Text>
+                                  <div className="flex">
+                                    <Text
+                                      css={{
+                                        color: "#E9EBEA",
+                                        fontSize: "12px",
+                                        fontWeight: "$bold",
+                                      }}
+                                    >
+                                      {playersData[starter.toString()].fn}{" "}
+                                      {playersData[starter.toString()].ln}
+                                    </Text>
+                                    <Text
+                                      css={{
+                                        color: "#E9EBEA",
+                                        fontSize: "12px",
+                                        fontWeight: "$bold",
+                                      }}
+                                    >
+                                      :
+                                    </Text>
+                                    <Text
+                                      css={{
+                                        color: "#E9EBEA",
+                                        fontSize: "12px",
+                                        fontWeight: "$bold",
+                                      }}
+                                    >
+                                      {slate.matchup[0].points[starterIndex]}
+                                    </Text>
+                                  </div>
                                 </div>
                               )
                             )}
@@ -778,29 +816,37 @@ const matchups = () => {
                                 .toFixed(2)}
                             </Text>
                           </div>
-                          <div>
-                            <Text css={{ color: "#E9EBEA" }}>
-                              {
-                                rivalManagers[slate.year][
-                                  slate.matchup[1].roster_id
-                                ].team.name
-                              }
-                            </Text>
-                            <Image
-                              src={`https://sleepercdn.com/avatars/thumbs/${
-                                rivalManagers[slate.year][
-                                  slate.matchup[1].roster_id
-                                ].team.avatar
-                              }`}
-                              alt="player"
-                              width={60}
-                              height={60}
-                              className="rounded-full mr-1"
-                            />
+                          <div className=" team2 flex flex-col items-center">
+                            <div className="flex items-center justify-center border-b-[1px] border-[#1a1a1a] border-opacity-80 mb-2 w-full">
+                              <Image
+                                src={`https://sleepercdn.com/avatars/thumbs/${
+                                  rivalManagers[slate.year][
+                                    slate.matchup[1].roster_id
+                                  ].team.avatar
+                                }`}
+                                alt="player"
+                                width={38}
+                                height={38}
+                                className="rounded-full mr-2"
+                              />
+                              <Text
+                                css={{ color: "#E9EBEA", fontWeight: "$bold" }}
+                              >
+                                {
+                                  rivalManagers[slate.year][
+                                    slate.matchup[1].roster_id
+                                  ].team.name
+                                }
+                              </Text>
+                            </div>
 
                             {slate.matchup[1].starters.map(
                               (starter, starterIndex) => (
-                                <div key={starterIndex}>
+                                <div
+                                  key={starterIndex}
+                                  className="flex flex-col items-center border-b-[1px] border-[#1a1a1a] border-opacity-60 mb-1 w-full"
+                                >
+                                  {" "}
                                   <Image
                                     src={
                                       playersData[starter.toString()].pos ==
@@ -809,32 +855,54 @@ const matchups = () => {
                                         : `https://sleepercdn.com/content/nfl/players/thumb/${starter}.jpg`
                                     }
                                     alt="player"
-                                    width={100}
-                                    height={100}
+                                    width={57}
+                                    height={57}
                                   />
-                                  <Text css={{ color: "#E9EBEA" }}>
-                                    {playersData[starter.toString()].fn}{" "}
-                                    {playersData[starter.toString()].ln}
-                                  </Text>
-                                  <Text css={{ color: "#E9EBEA" }}>
-                                    {"points: "}
-                                    {slate.matchup[1].points[starterIndex]}
-                                  </Text>
+                                  <div className="flex">
+                                    <Text
+                                      css={{
+                                        color: "#E9EBEA",
+                                        fontSize: "12px",
+                                        fontWeight: "$bold",
+                                      }}
+                                    >
+                                      {playersData[starter.toString()].fn}{" "}
+                                      {playersData[starter.toString()].ln}
+                                    </Text>
+                                    <Text
+                                      css={{
+                                        color: "#E9EBEA",
+                                        fontSize: "12px",
+                                        fontWeight: "$bold",
+                                      }}
+                                    >
+                                      :
+                                    </Text>
+                                    <Text
+                                      css={{
+                                        color: "#E9EBEA",
+                                        fontSize: "12px",
+                                        fontWeight: "$bold",
+                                      }}
+                                    >
+                                      {slate.matchup[1].points[starterIndex]}
+                                    </Text>
+                                  </div>
                                 </div>
                               )
                             )}
+                            <Text css={{ color: "#E9EBEA" }}>
+                              {"Total points: "}
+                              {slate.matchup[1].points
+                                .reduce(
+                                  (total, currentValue) =>
+                                    total + parseFloat(currentValue),
+                                  0
+                                )
+                                .toFixed(2)}
+                            </Text>
                           </div>
                         </div>
-                        <Text css={{ color: "#E9EBEA" }}>
-                          {"Total points: "}
-                          {slate.matchup[1].points
-                            .reduce(
-                              (total, currentValue) =>
-                                total + parseFloat(currentValue),
-                              0
-                            )
-                            .toFixed(2)}
-                        </Text>
                       </div>
                     </div>
                   ) : (
