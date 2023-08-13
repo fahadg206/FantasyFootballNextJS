@@ -69,7 +69,7 @@ interface Starter {
   projected_points?: string;
 }
 
-export default async function getMatchupData(league_id: any, week: number) {
+export default async function getUserData(league_id: any, week: number) {
   const matchupMap = new Map<string, MatchupMapData[]>();
 
   const weeklyInfo: WeeklyInformation = {};
@@ -252,7 +252,7 @@ export default async function getMatchupData(league_id: any, week: number) {
 
     //Uncomment to upload textfile to firebase storage
 
-    //console.log("Updated Data: ", updatedScheduleData);
+    console.log("Updated Data: ", updatedScheduleData);
 
     const articleMatchupData: ScheduleData = JSON.parse(
       JSON.stringify(updatedScheduleData)
@@ -272,7 +272,7 @@ export default async function getMatchupData(league_id: any, week: number) {
       }
     }
 
-    //console.log("Data after freeze...", articleMatchupData);
+    console.log("Data after freeze...", articleMatchupData);
 
     const textContent = JSON.stringify(articleMatchupData);
 
@@ -307,54 +307,7 @@ export default async function getMatchupData(league_id: any, week: number) {
       console.error("Unexpected error:", error);
     }
 
-    // if (REACT_APP_LEAGUE_ID) {
-    //   const updateWeeklyInfo = async () => {
-    //     if (!weeklyInfo[REACT_APP_LEAGUE_ID]) {
-    //       weeklyInfo[REACT_APP_LEAGUE_ID] = {}; // Initialize the league entry if it doesn't exist
-    //     }
-
-    //     // Create a copy of scheduleDataFinal
-    //     const updatedInfo = { ...updatedScheduleData };
-
-    //     // Set the copied data to weeklyInfo
-    //     weeklyInfo[REACT_APP_LEAGUE_ID].info = updatedInfo;
-    //     console.log("ayo", weeklyInfo);
-
-    //     // Reference to the "Weekly Info" collection
-    //     const weeklyInfoCollectionRef = collection(db, "Weekly Info");
-
-    //     // Use a Query to check if a document with the league_id exists
-    //     const queryRef = query(
-    //       weeklyInfoCollectionRef,
-    //       where("league_id", "==", REACT_APP_LEAGUE_ID)
-    //     );
-
-    //     const querySnapshot = await getDocs(queryRef);
-
-    //     // Add or update the document based on whether it already exists
-    //     if (!querySnapshot.empty && weeklyInfo[REACT_APP_LEAGUE_ID].info) {
-    //       // Document exists, update it
-    //       console.log("in if");
-    //       querySnapshot.forEach(async (doc) => {
-    //         await updateDoc(doc.ref, {
-    //           info: weeklyInfo[REACT_APP_LEAGUE_ID].info,
-    //         });
-    //       });
-    //     } else {
-    //       console.log("in else", weeklyInfo[REACT_APP_LEAGUE_ID].info);
-    //       // Document does not exist, add a new one
-    //       await addDoc(weeklyInfoCollectionRef, {
-    //         league_id: REACT_APP_LEAGUE_ID,
-    //         info: weeklyInfo[REACT_APP_LEAGUE_ID].info,
-    //       });
-    //     }
-    //   };
-
-    //   // Call the async function
-    //   updateWeeklyInfo();
-    // }
-
-    return matchupMap;
+    return updatedScheduleData;
   };
 
   async function fetchPlayersData() {
