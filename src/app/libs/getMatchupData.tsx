@@ -254,7 +254,9 @@ export default async function getMatchupData(league_id: any, week: number) {
 
     console.log("Updated Data: ", updatedScheduleData);
 
-    const articleMatchupData: ScheduleData = updatedScheduleData;
+    const articleMatchupData: ScheduleData = JSON.parse(
+      JSON.stringify(updatedScheduleData)
+    );
 
     for (const matchupData in articleMatchupData) {
       delete articleMatchupData[matchupData].starters;

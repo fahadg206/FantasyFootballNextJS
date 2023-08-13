@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import LeagueManagersSelection from "../../../components/LeagueManagersSelection";
 
 interface ScheduleData {
   [userId: string]: {
@@ -174,6 +175,7 @@ export default function page() {
 
   return (
     <div className="bg-[green]">
+      <LeagueManagersSelection />
       {selectedManagerName}
       {scheduleDataFinal[
         selectedManager ? selectedManager : defaultManager
