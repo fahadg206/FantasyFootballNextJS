@@ -1,4 +1,9 @@
-import { NextApiResponse, NextApiRequest } from "next";
+import { ref, getDownloadURL } from "firebase/storage";
+import { collection, query, where, getDocs } from "firebase/firestore/lite";
+import { Document } from "langchain/document";
+import { articles } from "./articles";
+
+import { QuerySnapshot, onSnapshot } from "firebase/firestore";
 import dotenv from "dotenv";
 import { TextLoader } from "langchain/document_loaders/fs/text";
 import { JSONLoader } from "langchain/document_loaders";
@@ -9,69 +14,62 @@ import { RetrievalQAChain } from "langchain/chains";
 import fs from "fs";
 import path from "path";
 import { db, storage } from "../../app/firebase";
-import { ref, uploadString, getDownloadURL } from "firebase/storage";
-import {
-  getFirestore,
-  collection,
-  getDoc,
-  getDocs,
-  addDoc,
-  updateDoc,
-  query,
-  orderBy,
-  limit,
-  where,
-} from "firebase/firestore/lite";
-import { QuerySnapshot, onSnapshot } from "firebase/firestore";
 
 dotenv.config();
 
 export default async function handler(req, res) {
   const REACT_APP_LEAGUE_ID = "864448469199347712";
 
-  const readingRef = ref(storage, `files/864448469199347712.txt`);
   try {
-    getDownloadURL(readingRef)
-      .then((url) => {
-        fetch(url)
-          .then((response) => response.text())
-          .then(async (fileContent) => {
-            const file = JSON.stringify(fileContent);
-            const newFile = file.replace(/\//g, "");
+    const readingRef = ref(storage, `files/864448469199347712.txt`);
+    const url = await getDownloadURL(readingRef);
+    const response = await fetch(url);
+    const fileContent = await response.text();
+    const newFile = JSON.stringify(fileContent).replace(/\//g, "");
 
-            console.log("File ", newFile);
-            // Process the retrieved data
-            const vectorStore = await FaissStore.fromTexts(
-              [file],
-              [{ id: 1 }],
-              new OpenAIEmbeddings()
-            );
+    //console.log("File ", newFile);
 
-            const model = new ChatOpenAI({
-              temperature: 0.9,
-            });
-            //"Give me a short article using my style summarizing all the matchups, make sure to include all teams, a little bit of humor and a sports caster style way of reporting";
-            const question =
-              "Give me a short article using my style summarizing all the matchups, make sure to include all teams, their leading scoring players, a little bit of humor and a sports caster style way of reporting";
-            const chain = RetrievalQAChain.fromLLM(
-              model,
-              vectorStore.asRetriever()
-            );
+    const leagueData = [
+      new Document({
+        pageContent: [newFile],
+        metadata: {
+          title: "Fantasy Pulse",
+          author: "Fantasy Pulse Editorial Team",
+          date: "Sep 1, 2022",
+        },
+      }),
+    ];
 
-            const apiResponse = await chain.call({ query: question });
-            console.log(apiResponse);
+    // Process the retrieved data
+    const vectorStore = await FaissStore.fromDocuments(
+      leagueData,
+      new OpenAIEmbeddings()
+    );
 
-            return res.status(200).json(apiResponse);
-          })
-          .catch((error) => {
-            console.error("Error fetching text file content:", error);
-          });
-      })
-      .catch((error) => {
-        console.error("Error getting download URL:", error);
-      });
+    //await vectorStore.addDocuments(articles.article1);
+    await vectorStore.addDocuments(articles.article2);
+    //await vectorStore.addDocuments(articles.article3);
+    await vectorStore.addDocuments(articles.article4);
+
+    const model = new ChatOpenAI({
+      temperature: 0.9,
+      model: "gpt-4",
+      max_tokens: 8000,
+    });
+
+    await vectorStore.save("leagueData");
+
+    const question =
+      "using my style of writing give me a sports breakdown recapping all the league's matchups, include the scores, who won by comparing their team_points to their opponent's team_points and their star players include a bit of humor as well";
+    const chain = RetrievalQAChain.fromLLM(model, vectorStore.asRetriever());
+
+    const apiResponse = await chain.call({ query: question });
+    console.log(apiResponse.text);
+
+    return res.status(200).json(apiResponse);
   } catch (error) {
     console.error("Unexpected error:", error);
+    return res.status(500).json({ error: "An error occurred" });
   }
 
   try {
@@ -85,22 +83,6 @@ export default async function handler(req, res) {
     );
 
     if (!querySnapshot.empty) {
-      //   const retrievedData = querySnapshot.docs[0].data();
-      //   console.log("Retrieved data:", retrievedData);
-
-      //   const model = new ChatOpenAI({
-      //     temperature: 0.9,
-      //   });
-
-      //   const question =
-      //     "Give me a short article with no more than 3 short paragraphs using my style summarizing all this weeks matchups, make sure to include a little bit of humor and a sports caster style way of reporting";
-      //   const chain = RetrievalQAChain.fromLLM(model, vectorStore.asRetriever());
-
-      //   //const apiResponse = await chain.call({ query: question });
-      //   console.log(apiResponse);
-
-      //   return res.status(200).json(apiResponse);
-      // } else {
       console.log("No documents found in 'Article Info' collection");
       return res.status(404).json({ error: "No documents found" });
     }
