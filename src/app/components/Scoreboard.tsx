@@ -17,7 +17,7 @@ import {
 } from "firebase/firestore/lite";
 import { QuerySnapshot, onSnapshot, doc } from "firebase/firestore";
 import getMatchupMap from "../../app/libs/getMatchupData";
-
+import { useRouter } from "next/navigation";
 interface ScheduleData {
   [userId: string]: {
     avatar: string;
@@ -75,6 +75,8 @@ export default function Scoreboard() {
   const REACT_APP_LEAGUE_ID: string | null =
     localStorage.getItem("selectedLeagueID");
 
+  const router = useRouter();
+
   useEffect(() => {
     async function fetchMatchupData() {
       try {
@@ -116,6 +118,7 @@ export default function Scoreboard() {
 
   if (localStorage.getItem("usernameSubmitted") === "false") {
     localStorage.clear();
+    router.refresh();
   }
 
   // MATCHUP TEXT
@@ -162,7 +165,11 @@ export default function Scoreboard() {
     return (
       <div
         key={matchupID}
-        className="hidden xl:flex flex-wrap  justify-center mb-2 text-[9px] font-bold xl:h-[13vh] xl:w-[10vw] hover:bg-[#c4bfbf] dark:hover:bg-[#1a1a1c] cursor-pointer hover:scale-105 hover:duration-200"
+        className={
+          !localStorage.getItem("selectedLeagueID")
+            ? `hidden`
+            : `hidden xl:flex flex-wrap  justify-center mb-2 text-[9px] font-bold xl:h-[13vh] xl:w-[10vw] hover:bg-[#c4bfbf] dark:hover:bg-[#1a1a1c] cursor-pointer hover:scale-105 hover:duration-200`
+        }
       >
         <div className="border-r dark:border-[#1a1a1a] border-[#af1222] border-opacity-10 p-2 rounded-md flex flex-col items-start justify-center h-[13vh] w-[10vw]">
           <div className="team1 flex justify-between items-center  w-[9vw]">

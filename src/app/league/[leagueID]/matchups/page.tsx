@@ -731,34 +731,62 @@ const matchups = () => {
                         </Text>
                         <div className="flex teams justify-around">
                           <div className=" team1 flex flex-col items-center">
-                            <div className="flex items-center justify-center border-b-[1px] border-[#1a1a1a] border-opacity-80 mb-2 w-full">
-                              <Image
-                                src={`https://sleepercdn.com/avatars/thumbs/${
-                                  rivalManagers[slate.year][
-                                    slate.matchup[0].roster_id
-                                  ].team.avatar
-                                }`}
-                                alt="player"
-                                width={38}
-                                height={38}
-                                className="rounded-full mr-2"
-                              />
-                              <Text
-                                css={{ color: "#E9EBEA", fontWeight: "$bold" }}
-                              >
-                                {
-                                  rivalManagers[slate.year][
-                                    slate.matchup[0].roster_id
-                                  ].team.name
-                                }
-                              </Text>
+                            <div className="flex items-center justify-center border-b-[1px] border-[#1a1a1a] border-opacity-80 mb-2 w-full ">
+                              <div className="flex items-center mr-1 sm:mr-3">
+                                {" "}
+                                <Image
+                                  src={`https://sleepercdn.com/avatars/thumbs/${
+                                    rivalManagers[slate.year][
+                                      slate.matchup[0].roster_id
+                                    ].team.avatar
+                                  }`}
+                                  alt="player"
+                                  width={38}
+                                  height={38}
+                                  className="rounded-full mr-2 w-[25px] h-[25px] sm:w-full sm:h-full"
+                                />
+                                <Text
+                                  css={{
+                                    color: "#E9EBEA",
+                                    fontWeight: "$bold",
+                                    "@xsMax": {
+                                      fontSize: "10px",
+                                    },
+                                  }}
+                                >
+                                  {
+                                    rivalManagers[slate.year][
+                                      slate.matchup[0].roster_id
+                                    ].team.name
+                                  }
+                                </Text>
+                              </div>
+                              <div className="flex items-center">
+                                <Text
+                                  css={{
+                                    color: "#E9EBEA",
+                                    fontSize: "14px",
+                                    "@xsMax": {
+                                      fontSize: "10px",
+                                    },
+                                  }}
+                                >
+                                  {slate.matchup[0].points
+                                    .reduce(
+                                      (total, currentValue) =>
+                                        total + parseFloat(currentValue),
+                                      0
+                                    )
+                                    .toFixed(2)}
+                                </Text>
+                              </div>
                             </div>
 
                             {slate.matchup[0].starters.map(
                               (starter, starterIndex) => (
                                 <div
                                   key={starterIndex}
-                                  className="flex flex-col items-center border-b-[1px] border-[#1a1a1a] border-opacity-60 mb-1 w-full"
+                                  className="flex flex-col items-center justify-center border-b-[1px] border-[#1a1a1a] border-opacity-60 mb-1 w-full "
                                 >
                                   {" "}
                                   <Image
@@ -805,46 +833,64 @@ const matchups = () => {
                                 </div>
                               )
                             )}
-                            <Text css={{ color: "#E9EBEA" }}>
-                              {"Total points: "}
-                              {slate.matchup[0].points
-                                .reduce(
-                                  (total, currentValue) =>
-                                    total + parseFloat(currentValue),
-                                  0
-                                )
-                                .toFixed(2)}
-                            </Text>
                           </div>
                           <div className=" team2 flex flex-col items-center">
-                            <div className="flex items-center justify-center border-b-[1px] border-[#1a1a1a] border-opacity-80 mb-2 w-full">
-                              <Image
-                                src={`https://sleepercdn.com/avatars/thumbs/${
-                                  rivalManagers[slate.year][
-                                    slate.matchup[1].roster_id
-                                  ].team.avatar
-                                }`}
-                                alt="player"
-                                width={38}
-                                height={38}
-                                className="rounded-full mr-2"
-                              />
-                              <Text
-                                css={{ color: "#E9EBEA", fontWeight: "$bold" }}
-                              >
-                                {
-                                  rivalManagers[slate.year][
-                                    slate.matchup[1].roster_id
-                                  ].team.name
-                                }
-                              </Text>
+                            <div className="flex items-center justify-center border-b-[1px] border-[#1a1a1a] border-opacity-80 mb-2 w-full ">
+                              <div className="flex items-center mr-1 sm:mr-3">
+                                <Text
+                                  css={{
+                                    color: "#E9EBEA",
+                                    fontSize: "14px",
+                                    "@xsMax": {
+                                      fontSize: "10px",
+                                    },
+                                  }}
+                                >
+                                  {slate.matchup[1].points
+                                    .reduce(
+                                      (total, currentValue) =>
+                                        total + parseFloat(currentValue),
+                                      0
+                                    )
+                                    .toFixed(2)}
+                                </Text>
+                              </div>
+                              <div className="flex items-center ">
+                                {" "}
+                                <Image
+                                  src={`https://sleepercdn.com/avatars/thumbs/${
+                                    rivalManagers[slate.year][
+                                      slate.matchup[1].roster_id
+                                    ].team.avatar
+                                  }`}
+                                  alt="player"
+                                  width={38}
+                                  height={38}
+                                  className="rounded-full mr-2 w-[25px] h-[25px] sm:w-full sm:h-full"
+                                />
+                                <Text
+                                  css={{
+                                    color: "#E9EBEA",
+                                    fontWeight: "$bold",
+                                    "@xsMax": {
+                                      fontSize: "10px",
+                                    },
+                                  }}
+                                >
+                                  {
+                                    rivalManagers[slate.year][
+                                      slate.matchup[1].roster_id
+                                    ].team.name
+                                  }
+                                </Text>
+                              </div>
                             </div>
 
                             {slate.matchup[1].starters.map(
                               (starter, starterIndex) => (
                                 <div
                                   key={starterIndex}
-                                  className="flex flex-col items-center border-b-[1px] border-[#1a1a1a] border-opacity-60 mb-1 w-full"
+                                  className="flex flex-col items-center justify-center border-b-[1px] border-[#1a1a1a] border-opacity-60 mb-1 w-full"
                                 >
                                   {" "}
                                   <Image
@@ -891,16 +937,6 @@ const matchups = () => {
                                 </div>
                               )
                             )}
-                            <Text css={{ color: "#E9EBEA" }}>
-                              {"Total points: "}
-                              {slate.matchup[1].points
-                                .reduce(
-                                  (total, currentValue) =>
-                                    total + parseFloat(currentValue),
-                                  0
-                                )
-                                .toFixed(2)}
-                            </Text>
                           </div>
                         </div>
                       </div>

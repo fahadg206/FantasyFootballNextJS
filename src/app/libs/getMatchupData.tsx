@@ -116,6 +116,23 @@ export default async function getMatchupData(league_id: any, week: number) {
       throw new Error("Failed to get rosters");
     }
   };
+
+  function areObjectsEqual(obj1: Starter, obj2: Starter) {
+    const keys1 = Object.keys(obj1);
+    const keys2 = Object.keys(obj2);
+
+    if (keys1.length !== keys2.length) {
+      return false;
+    }
+
+    for (const key of keys1) {
+      if (obj1[key] !== obj2[key]) {
+        return false;
+      }
+    }
+
+    return true;
+  }
   const updatedScheduleData: ScheduleData = {};
   const fetchData = async (playersData: any) => {
     try {
@@ -159,7 +176,6 @@ export default async function getMatchupData(league_id: any, week: number) {
 
         for (const userId in updatedScheduleData) {
           if (updatedScheduleData.hasOwnProperty(userId)) {
-            const starters_data = [];
             if (!updatedScheduleData[userId].starters_full_data) {
               updatedScheduleData[userId].starters_full_data = [{}];
             }
@@ -176,9 +192,32 @@ export default async function getMatchupData(league_id: any, week: number) {
                     updatedScheduleData[userId].players_points[starter],
                   projected_points: playersData[starter].wi,
                 };
-                updatedScheduleData[userId].starters_full_data?.push(
-                  starter_data
-                );
+                if (
+                  updatedScheduleData[userId]?.starters_full_data &&
+                  !updatedScheduleData[userId]?.starters_full_data?.some(
+                    (item) => {
+                      return areObjectsEqual(item, starter_data); // Compare each item to starter_data
+                    }
+                  )
+                ) {
+                  updatedScheduleData[userId].starters_full_data.push(
+                    starter_data
+                  ); // Push starter_data to the array
+                } else {
+                  updatedScheduleData[userId].starters_full_data = [
+                    {
+                      fname: playersData[starter].fn,
+                      lname: playersData[starter].ln,
+                      avatar:
+                        playersData[starter.toString()].pos === "DEF"
+                          ? `https://sleepercdn.com/images/team_logos/nfl/${starter.toLowerCase()}.png`
+                          : `https://sleepercdn.com/content/nfl/players/thumb/${starter}.jpg`,
+                      scored_points:
+                        updatedScheduleData[userId].players_points[starter],
+                      projected_points: playersData[starter].wi,
+                    },
+                  ];
+                }
               }
             }
 
@@ -262,6 +301,7 @@ export default async function getMatchupData(league_id: any, week: number) {
 
         // Set the copied data to weeklyInfo
         weeklyInfo[REACT_APP_LEAGUE_ID].info = updatedInfo;
+        console.log("ayo", weeklyInfo);
 
         // Reference to the "Weekly Info" collection
         const weeklyInfoCollectionRef = collection(db, "Weekly Info");
@@ -277,12 +317,14 @@ export default async function getMatchupData(league_id: any, week: number) {
         // Add or update the document based on whether it already exists
         if (!querySnapshot.empty && weeklyInfo[REACT_APP_LEAGUE_ID].info) {
           // Document exists, update it
+          console.log("in if");
           querySnapshot.forEach(async (doc) => {
             await updateDoc(doc.ref, {
               info: weeklyInfo[REACT_APP_LEAGUE_ID].info,
             });
           });
         } else {
+          console.log("in else", weeklyInfo[REACT_APP_LEAGUE_ID].info);
           // Document does not exist, add a new one
           await addDoc(weeklyInfoCollectionRef, {
             league_id: REACT_APP_LEAGUE_ID,

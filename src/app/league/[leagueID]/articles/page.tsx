@@ -50,31 +50,36 @@ const articles = () => {
 
   return (
     <div className="flex flex-col justify-center items-center container w-[60vw]">
-      <ArticleTemplate
-        title="yo"
-        image={imran}
-        author={"imran"}
-        authorImg={imran}
-        jobtitle="RCL Insider"
-        date="Sep 14th, 2023"
-        p1={article.text}
-        p2="fsdkjbfkjsbfksjdbf"
-        p3="fskhfdskjfhdskj"
-        name="1"
-      />
-
-      <ArticleTemplate
-        title="yo"
-        image={imran}
-        author={"imran"}
-        authorImg={imran}
-        jobtitle="RCL Insider"
-        date="Sep 14th, 2023"
-        p1="hgdsbsdkfbskj"
-        p2="fsdkjbfkjsbfksjdbf"
-        p3="fskhfdskjfhdskj"
-        name="2"
-      />
+      <div className="mb-2">
+        {" "}
+        <ArticleTemplate
+          title="yo"
+          image={imran}
+          author={"imran"}
+          authorImg={imran}
+          jobtitle="RCL Insider"
+          date="Sep 14th, 2023"
+          p1={article.text}
+          p2="fsdkjbfkjsbfksjdbf"
+          p3="fskhfdskjfhdskj"
+          name="1"
+        />
+      </div>
+      <div>
+        {" "}
+        <ArticleTemplate
+          title="yo"
+          image={imran}
+          author={"imran"}
+          authorImg={imran}
+          jobtitle="RCL Insider"
+          date="Sep 14th, 2023"
+          p1={article.text}
+          p2="fsdkjbfkjsbfksjdbf"
+          p3="fskhfdskjfhdskj"
+          name="1"
+        />
+      </div>
     </div>
   );
 };
