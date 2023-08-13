@@ -72,7 +72,7 @@ export default function ScoreboardNav() {
         } else if (nflState.season_type === "post") {
           week = 18;
         }
-        const matchupMapData = await getMatchupMap(REACT_APP_LEAGUE_ID, week);
+        const matchupMapData = await getMatchupMap(REACT_APP_LEAGUE_ID, 1);
         setMatchupMap(matchupMapData);
       } catch (error) {
         console.error("Error fetching matchup data:", error);

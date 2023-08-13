@@ -29,6 +29,51 @@ dotenv.config();
 export default async function handler(req, res) {
   const REACT_APP_LEAGUE_ID = "864448469199347712";
 
+  const readingRef = ref(storage, `files/864448469199347712.txt`);
+  try {
+    getDownloadURL(readingRef)
+      .then((url) => {
+        fetch(url)
+          .then((response) => response.text())
+          .then(async (fileContent) => {
+            const file = JSON.stringify(fileContent);
+            const newFile = file.replace(/\//g, "");
+
+            console.log("File ", newFile);
+            // Process the retrieved data
+            const vectorStore = await FaissStore.fromTexts(
+              [file],
+              [{ id: 1 }],
+              new OpenAIEmbeddings()
+            );
+
+            const model = new ChatOpenAI({
+              temperature: 0.9,
+            });
+            //"Give me a short article using my style summarizing all the matchups, make sure to include all teams, a little bit of humor and a sports caster style way of reporting";
+            const question =
+              "Give me a short article using my style summarizing all the matchups, make sure to include all teams, their leading scoring players, a little bit of humor and a sports caster style way of reporting";
+            const chain = RetrievalQAChain.fromLLM(
+              model,
+              vectorStore.asRetriever()
+            );
+
+            const apiResponse = await chain.call({ query: question });
+            console.log(apiResponse);
+
+            return res.status(200).json(apiResponse);
+          })
+          .catch((error) => {
+            console.error("Error fetching text file content:", error);
+          });
+      })
+      .catch((error) => {
+        console.error("Error getting download URL:", error);
+      });
+  } catch (error) {
+    console.error("Unexpected error:", error);
+  }
+
   try {
     // Retrieve data from the database based on league_id
     const querySnapshot = await getDocs(
@@ -40,29 +85,22 @@ export default async function handler(req, res) {
     );
 
     if (!querySnapshot.empty) {
-      const retrievedData = querySnapshot.docs[0].data();
-      console.log("Retrieved data:", retrievedData);
+      //   const retrievedData = querySnapshot.docs[0].data();
+      //   console.log("Retrieved data:", retrievedData);
 
-      // Process the retrieved data
-      const vectorStore = await FaissStore.fromTexts(
-        [JSON.stringify(retrievedData), "Bye bye", "hello nice world"],
-        [{ id: 2 }, { id: 1 }, { id: 3 }],
-        new OpenAIEmbeddings()
-      );
+      //   const model = new ChatOpenAI({
+      //     temperature: 0.9,
+      //   });
 
-      const model = new ChatOpenAI({
-        temperature: 0.9,
-      });
+      //   const question =
+      //     "Give me a short article with no more than 3 short paragraphs using my style summarizing all this weeks matchups, make sure to include a little bit of humor and a sports caster style way of reporting";
+      //   const chain = RetrievalQAChain.fromLLM(model, vectorStore.asRetriever());
 
-      const question =
-        "Give me a short article with no more than 3 short paragraphs using my style summarizing all this weeks matchups, make sure to include a little bit of humor and a sports caster style way of reporting";
-      const chain = RetrievalQAChain.fromLLM(model, vectorStore.asRetriever());
+      //   //const apiResponse = await chain.call({ query: question });
+      //   console.log(apiResponse);
 
-      //const apiResponse = await chain.call({ query: question });
-      console.log(apiResponse);
-
-      return res.status(200).json(apiResponse);
-    } else {
+      //   return res.status(200).json(apiResponse);
+      // } else {
       console.log("No documents found in 'Article Info' collection");
       return res.status(404).json({ error: "No documents found" });
     }
