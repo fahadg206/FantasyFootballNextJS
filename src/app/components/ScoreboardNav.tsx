@@ -131,11 +131,6 @@ export default function ScoreboardNav() {
         {matchupText.map((matchup) => (
           <div key={uuid}>{matchup}</div>
         ))}
-        {matchupMap && (
-          <div>
-            <Schedule matchup={matchupText} matchupMap={matchupMap} />
-          </div>
-        )}
       </div>
     </div>
   );

@@ -26,19 +26,19 @@ const ArticleTemplate = ({
   name: string;
 }) => {
   return (
-    <div className="  flex flex-col items-center justify-center sm:grid grid-cols-2  w-screen 2xl:w-[60vw] md:rounded md:border-2 md:border-[#1a1a1a] border-opacity-10 ">
-      <div className="grid grid-cols-1 justify-items-center w-full sm:sticky top-20 self-start lg:top-5 mt-5">
+    <div className="flex flex-col items-center justify-end sm:flex sm:flex-row sm:justify-around  w-screen xl:w-[60vw] md:rounded md:border-2 md:border-[#1a1a1a] border-opacity-10 ">
+      <div className="mt-5">
         <Image
-          className="rounded-[10px]"
+          className="rounded-[10px] "
           src={image}
           alt="whatever"
-          height={300}
-          width={300}
+          height={250}
+          width={250}
         />
       </div>
-      <div className="grid grid-cols-1 gap-y-3 justify-items-center mt-10 ml-5 self-start w-screen md:w-[20vw]">
+      <div className="grid grid-cols-1 gap-y-3 justify-items-center mt-10 w-[90%] sm:w-[60%] ">
         <p className="text-5xl font-bold">{title}</p>
-        <div className="flex w-[77vw]  md:flex items-center md:w-[25vw] justify-between border-b-2 dark:border-[#EDEDED] border-[#000000] dark:border-opacity-10 border-opacity-20">
+        <div className="flex md:flex items-center w-full justify-around border-b-2 dark:border-[#EDEDED] border-[#000000] dark:border-opacity-10 border-opacity-20">
           <div className="flex items-center">
             <Image
               className="rounded-[10px]"
@@ -54,13 +54,15 @@ const ArticleTemplate = ({
           </div>
           <p className="text-[12px]">{date}</p>
         </div>
-        <p className="p-3 text-left text-[14px]">
-          {p1} <br />
-          {p2} <br />
-          {p3} <br />
-          <br />
+        <p className=" w-[90%] text-center break-words text-[11px] sm:text-[13px] md:text-[15px]">
+          {p1}
         </p>
-        <p className="flex w-[77vw] sm:flex sm:w-[35vw] md:flex items-center md:w-[25vw] justify-between border-b-2 dark:border-[#EDEDED] border-[#000000] dark:border-opacity-5 border-opacity-20"></p>
+        <p className=" w-[90%] text-center break-words text-[11px] sm:text-[13px] md:text-[15px]">
+          {p2}
+        </p>
+        <p className="w-[90%] text-center break-words text-[11px] sm:text-[13px] md:text-[15px]">
+          {p3}
+        </p>
         <br />
         <br />
       </div>

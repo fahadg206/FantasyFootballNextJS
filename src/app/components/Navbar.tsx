@@ -165,9 +165,9 @@ function NavBar(props: MyProps) {
     return (
       <div className=" px-4 mx-auto w-screen 2xl:hidden ">
         <div className="flex-items-center">
-          <div className=" flex items-center justify-between py-3 xl:py-5 xl:block border-b-2 xl:border-b-1 border-[#af1222] border-opacity-10 h-[110px]">
+          <div className="  flex items-center justify-between py-3  border-b-2 border-b-1 border-[#af1222] border-opacity-10 h-[110px] xl:hidden">
             <button
-              className="xl:hidden p-2 text-[#af1222] rounded-xl outline-none focus:border-gray-400 focus:border cursor-pointer "
+              className="xl:hidden  text-[#af1222] rounded-xl outline-none focus:border-gray-400 focus:border cursor-pointer "
               onClick={() => {
                 setShowScore(!showScore);
                 setNavbar(false);
@@ -192,7 +192,7 @@ function NavBar(props: MyProps) {
             {/* HAMBURGER BUTTON FOR MOBILE */}
             <div className="xl:hidden">
               <button
-                className="p-2 text-[#af1222] rounded-xl outline-none focus:border-gray-400 focus:border cursor-pointer "
+                className=" text-[#af1222] rounded-xl outline-none focus:border-gray-400 focus:border cursor-pointer "
                 onClick={() => {
                   setNavbar(!navbar);
                   setShowScore(false);

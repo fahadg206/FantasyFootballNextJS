@@ -60,7 +60,7 @@ const articles = () => {
           jobtitle="RCL Insider"
           date="Sep 14th, 2023"
           p1={article.text}
-          p2="fsdkjbfkjsbfksjdbf"
+          p2="ggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggg"
           p3="fskhfdskjfhdskj"
           name="1"
         />
