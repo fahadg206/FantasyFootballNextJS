@@ -92,20 +92,39 @@ const TabsFeatures = () => {
           <div className="h-3 w-3 rounded-full bg-green-500" />
         </div>
 
-        <div className="flex flex-wrap items-center bg-[purple]  w-[90%] h-[90%] text-[20px]">
+        <div className="flex flex-wrap items-center justify-center bg-[purple] w-[90%] h-[90%] text-[20px]">
           {userDataArray[selected].starters_full_data?.map((starter) => {
+            const playerName = starter.fname + " " + starter.lname;
+            const points = starter.scored_points;
+
+            // Calculate the length of the player name and points
+            const totalContentLength =
+              playerName.length + points.toString().length;
+
+            // Calculate the scale factor based on content length
+            const scaleFactor = Math.min(1, 100 / totalContentLength);
+
+            // Calculate adjusted font size and image size
+            const fontSize = scaleFactor * 13 + "px";
+            const imageSize = scaleFactor * 50;
+
             return (
-              <div className="flex flex-col justify-center items-center p-2 bg-black">
+              <div
+                className="player flex flex-col justify-center items-center p-2 bg-black w-[100px] h-[100px] border-[1px] border-[#1a1a1a]"
+                style={{ fontSize }}
+              >
                 <Image
                   src={starter.avatar}
                   alt="player"
-                  width={50}
-                  height={50}
+                  width={imageSize}
+                  height={imageSize}
                 />
-                <p className="text-[13px]">
-                  {starter.fname + " " + starter.lname}
+                <p className="text-[11px]  w-full text-center overflow-hidden">
+                  {playerName}
                 </p>
-                <p className="text-[13px]">{starter.scored_points}</p>
+                <p className="text-[11px] font-bold w-full text-center overflow-hidden">
+                  {points}
+                </p>
               </div>
             );
           })}
@@ -142,19 +161,25 @@ const TabsFeatures = () => {
       <div className="relative w-full">
         <button
           onClick={() => setSelected(tabNum)}
-          className="relative z-0 flex w-full flex-row items-center justify-center gap-4 border-b-4 border-slate-200 bg-white p-6 transition-colors hover:bg-slate-100 md:flex-col"
+          className="relative z-0  w-full  gap-2 border-b-4 border-slate-200 bg-white  transition-colors hover:bg-slate-100  items-center justify-center flex flex-col"
         >
           <span
-            className={`rounded-lg bg-gradient-to-br from-indigo-700 from-10% to-indigo-500 p-3  text-white shadow-indigo-400 transition-all duration-300 ${
+            className={`rounded-lg bg-gradient-to-br from-indigo-700 from-10% to-indigo-500 p-1  text-white shadow-indigo-400 transition-all duration-300 ${
               selected
                 ? "scale-100 opacity-100 shadow-lg"
                 : "scale-90 opacity-50 shadow"
             }`}
           >
-            <Image src={avatar} alt="avatar" width={20} height={20} />
+            <Image
+              src={avatar}
+              alt="avatar"
+              width={50}
+              height={50}
+              className="rounded-full"
+            />
           </span>
           <span
-            className={`min-w-[150px] max-w-[200px] text-start text-xs text-slate-600 transition-opacity md:text-center ${
+            className={`min-w-[150px] max-w-[200px] text-xs text-slate-600 transition-opacity md:text-center ${
               selected ? "opacity-100" : "opacity-50"
             }`}
           >
@@ -184,7 +209,9 @@ const TabsFeatures = () => {
                 exit={{ opacity: 0, y: 10 }}
                 key={index}
               >
-                <p>{user.name}</p>
+                <p className="w-full flex justify-center items-center text-2xl font-bold ">
+                  {user.name}
+                </p>
                 {user.Feature && user.Feature(user.avatar)}
               </motion.div>
             ) : undefined;
