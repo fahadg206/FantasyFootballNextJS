@@ -1,5 +1,4 @@
 "use client";
-
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import LeagueManagersSelection from "../../../components/LeagueManagersSelection";
@@ -15,6 +14,11 @@ interface ScheduleData {
     opponent?: string;
     matchup_id?: string;
   };
+}
+
+interface ManagerMatchup {
+  week?: string;
+  matchup: MatchupMapData[];
 }
 
 interface Matchup {
@@ -39,27 +43,27 @@ interface MatchupMapData {
   matchup_id?: string;
 }
 
-export default function page() {
+export default function Page() {
   const [scheduleDataFinal, setScheduleDataFinal] = useState<ScheduleData>({});
   const [loading, setLoading] = useState(true);
-  const [schedule, setSchedule] = useState<Matchup[]>([]);
   const [defaultManager, setDefaultManager] = useState("");
-  const [selectedManagerName, setSelectedManagerName] = useState("");
+  const [selectedManagerMatchups, setSelectedManagerMatchups] = useState<
+    Map<string, ManagerMatchup[]>
+  >(new Map());
+
+  const [selectedManagerData, setSelectedManagerData] = useState();
   const [playersData, setPlayersData] = React.useState([]);
 
-  const matchupMap = new Map<string, MatchupMapData[]>();
   const REACT_APP_LEAGUE_ID: string | null =
     localStorage.getItem("selectedLeagueID");
 
   const selectedManager = localStorage.getItem("selectedManager");
 
-  const getSchedule = async () => {
+  const getSchedule = async (week: number) => {
     try {
       const response = await axios.get<any>(
-        `https://api.sleeper.app/v1/league/${REACT_APP_LEAGUE_ID}/matchups/1`
+        `https://api.sleeper.app/v1/league/${REACT_APP_LEAGUE_ID}/matchups/${week}`
       );
-      setSchedule(response.data);
-      setLoading(false);
       return response.data;
     } catch (err) {
       console.error(err);
@@ -94,16 +98,15 @@ export default function page() {
   };
 
   useEffect(() => {
-    const fetchData = async () => {
+    const fetchDataForWeek = async (week: number) => {
       try {
         const usersData = await getUsers();
         const rostersData = await getRoster();
-        const scheduleData = await getSchedule();
+        const scheduleData = await getSchedule(week);
 
-        // Create a new map to store the updated schedule data
         const updatedScheduleData: ScheduleData = {};
+        const matchupMap = new Map<string, MatchupMapData[]>();
 
-        // Update the scheduleData map with user data
         for (const user of usersData) {
           updatedScheduleData[user.user_id] = {
             avatar: `https://sleepercdn.com/avatars/thumbs/${user.avatar}`,
@@ -113,17 +116,13 @@ export default function page() {
         }
         setDefaultManager(usersData[0].user_id);
 
-        // Update the scheduleData map with roster data
         for (const roster of rostersData) {
           if (updatedScheduleData[roster.owner_id]) {
             updatedScheduleData[roster.owner_id].roster_id = roster.roster_id;
-
             updatedScheduleData[roster.owner_id].starters = roster.starters;
           }
 
           for (const matchup of scheduleData) {
-            // console.log("matchup", matchup);
-            // console.log("roster", roster);
             if (roster.roster_id === matchup.roster_id) {
               updatedScheduleData[roster.owner_id].matchup_id =
                 matchup.matchup_id;
@@ -132,21 +131,87 @@ export default function page() {
           }
         }
 
-        // Set the updated scheduleData map to state
         setScheduleDataFinal(updatedScheduleData);
+
+        for (const userId in updatedScheduleData) {
+          const userData = updatedScheduleData[userId];
+          if (userData.matchup_id) {
+            if (!matchupMap.has(userData.matchup_id)) {
+              matchupMap.set(userData.matchup_id, [userData]);
+            } else {
+              const matchupData = matchupMap.get(userData.matchup_id);
+              if (matchupData && matchupData.length > 0) {
+                const firstPlayer = matchupData[0];
+                firstPlayer.opponent = userData.name;
+                matchupMap.set(userData.matchup_id, [firstPlayer]);
+                userData.opponent = firstPlayer.name;
+                matchupMap.get(userData.matchup_id)?.push(userData);
+              }
+            }
+          }
+        }
+
+        for (const userId in updatedScheduleData) {
+          const user = updatedScheduleData[userId];
+          const filteredMatchupData = matchupMap.get(user.matchup_id);
+          if (filteredMatchupData) {
+            if (user.user_id) {
+              if (selectedManagerMatchups.has(user.user_id)) {
+                const existingMatchups = selectedManagerMatchups.get(
+                  user.user_id
+                );
+                existingMatchups?.push({
+                  week: week.toString(),
+                  matchup: filteredMatchupData,
+                });
+                selectedManagerMatchups.set(user.user_id, existingMatchups);
+              } else {
+                selectedManagerMatchups.set(user.user_id, [
+                  { week: week.toString(), matchup: filteredMatchupData },
+                ]);
+              }
+            }
+          }
+        }
+
+        for (const user in updatedScheduleData) {
+          if (updatedScheduleData[user].user_id === selectedManager) {
+            //setSelectedManagerData(updatedScheduleData[selectedManager]);
+            console.log("what was set ", updatedScheduleData[selectedManager]);
+            break; // Exit the loop once the manager is found
+          }
+        }
+
+        return matchupMap;
       } catch (error) {
-        console.error("Error fetching data:", error);
+        console.error("Error fetching data for week", week, ":", error);
+        throw error;
       }
     };
 
-    fetchData();
+    const fetchAllData = async () => {
+      try {
+        for (let i = 1; i < 5; i++) {
+          const weekMatchupMap = await fetchDataForWeek(i);
+          // Handle additional processing or state updates if needed
+        }
+        setLoading(false);
+      } catch (error) {
+        console.error("Error fetching all data:", error);
+        setLoading(false);
+      }
+    };
+
+    fetchAllData();
   }, [REACT_APP_LEAGUE_ID]);
 
   useEffect(() => {
     // Update selectedManagerName when scheduleDataFinal or selectedManager changes
+
     for (const user in scheduleDataFinal) {
       if (scheduleDataFinal[user].user_id === selectedManager) {
-        setSelectedManagerName(scheduleDataFinal[selectedManager].name);
+        setSelectedManagerData(scheduleDataFinal[selectedManager]);
+        console.log("what was set ", scheduleDataFinal[selectedManager]);
         break; // Exit the loop once the manager is found
       }
     }
@@ -171,12 +236,19 @@ export default function page() {
     return <div>Loading...</div>;
   }
 
-  //console.log("team managers", scheduleDataFinal);
+  if (selectedManager) {
+    console.log("Selected manager ", selectedManagerData.name);
+
+    console.log(
+      "Selected managers matchups: ",
+      selectedManagerMatchups.get(selectedManager)
+    );
+  }
 
   return (
     <div className="">
       <LeagueManagersSelection />
-      {selectedManagerName}
+      {selectedManager?.name}
       {scheduleDataFinal[
         selectedManager ? selectedManager : defaultManager
       ].starters.map((starter) => (
