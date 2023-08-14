@@ -174,7 +174,7 @@ export default function page() {
   //console.log("team managers", scheduleDataFinal);
 
   return (
-    <div className="bg-[green]">
+    <div className="">
       <LeagueManagersSelection />
       {selectedManagerName}
       {scheduleDataFinal[

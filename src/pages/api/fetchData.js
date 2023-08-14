@@ -63,7 +63,7 @@ export default async function handler(req, res) {
       "using my style of writing give me a sports breakdown recapping all the league's matchups, include the scores, who won by comparing their team_points to their opponent's team_points and their star players include a bit of humor as well";
     const chain = RetrievalQAChain.fromLLM(model, vectorStore.asRetriever());
 
-    const apiResponse = await chain.call({ query: question });
+    //const apiResponse = await chain.call({ query: question });
     console.log(apiResponse.text);
 
     return res.status(200).json(apiResponse);
