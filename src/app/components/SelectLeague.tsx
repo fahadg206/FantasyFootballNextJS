@@ -73,6 +73,7 @@ export default function page(props: myProps) {
             <button
               onClick={() => {
                 //setSelectedLeagueContext(league);
+
                 localStorage.setItem("selectedLeagueID", league.league_id);
                 localStorage.setItem("selectedLeagueName", league.name);
                 setLoading(!loading);
