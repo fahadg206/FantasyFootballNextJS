@@ -248,12 +248,6 @@ export default function Page() {
   return (
     <div className="">
       <LeagueManagersSelection />
-      {selectedManager?.name}
-      {scheduleDataFinal[
-        selectedManager ? selectedManager : defaultManager
-      ].starters.map((starter) => (
-        <div>{playersData[starter].fn + playersData[starter].ln}</div>
-      ))}
     </div>
   );
 }

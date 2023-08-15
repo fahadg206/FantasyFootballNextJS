@@ -281,38 +281,38 @@ export default async function getMatchupData(league_id: any, week: number) {
 
     //console.log("Data after freeze...", articleMatchupData);
 
-    const textContent = JSON.stringify(articleMatchupData);
+    // const textContent = JSON.stringify(articleMatchupData);
 
-    // Upload the text content as a text file to Firebase Cloud Storage
-    uploadString(storageRef, textContent, "raw")
-      .then(() => {
-        console.log("Text file uploaded to Firebase Cloud Storage.");
-      })
-      .catch((error) => {
-        console.error("Error uploading text file:", error);
-      });
-    const readingRef = ref(storage, `files/`);
-    try {
-      getDownloadURL(readingRef)
-        .then((url) => {
-          fetch(url)
-            .then((response) => response.text())
-            .then((fileContent) => {
-              console.log(
-                "Text file content from Firebase Cloud Storage:",
-                fileContent
-              );
-            })
-            .catch((error) => {
-              console.error("Error fetching text file content:", url);
-            });
-        })
-        .catch((error) => {
-          console.error("Error getting download URL:", error);
-        });
-    } catch (error) {
-      console.error("Unexpected error:", error);
-    }
+    // // Upload the text content as a text file to Firebase Cloud Storage
+    // uploadString(storageRef, textContent, "raw")
+    //   .then(() => {
+    //     console.log("Text file uploaded to Firebase Cloud Storage.");
+    //   })
+    //   .catch((error) => {
+    //     console.error("Error uploading text file:", error);
+    //   });
+    // const readingRef = ref(storage, `files/`);
+    // try {
+    //   getDownloadURL(readingRef)
+    //     .then((url) => {
+    //       fetch(url)
+    //         .then((response) => response.text())
+    //         .then((fileContent) => {
+    //           console.log(
+    //             "Text file content from Firebase Cloud Storage:",
+    //             fileContent
+    //           );
+    //         })
+    //         .catch((error) => {
+    //           console.error("Error fetching text file content:", url);
+    //         });
+    //     })
+    //     .catch((error) => {
+    //       console.error("Error getting download URL:", error);
+    //     });
+    // } catch (error) {
+    //   console.error("Unexpected error:", error);
+    // }
 
     // if (REACT_APP_LEAGUE_ID) {
     //   const updateWeeklyInfo = async () => {
@@ -361,7 +361,7 @@ export default async function getMatchupData(league_id: any, week: number) {
     //   updateWeeklyInfo();
     // }
 
-    return { matchupMap, articleMatchupData };
+    return { matchupMap, articleMatchupData, updatedScheduleData };
   };
 
   async function fetchPlayersData() {

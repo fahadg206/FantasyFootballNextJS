@@ -4,7 +4,7 @@ import { FiMonitor, FiSave, FiSearch } from "react-icons/fi";
 import { AnimatePresence, motion } from "framer-motion";
 import { useState, useEffect } from "react";
 import getMatchupMap from "../libs/getMatchupData";
-import getUserData from "../libs/getUserData";
+
 import axios from "axios";
 import Image from "next/image";
 
@@ -46,6 +46,8 @@ interface Starter {
 }
 const TabsFeatures = () => {
   const [selected, setSelected] = useState(0);
+  const [selectedManager, setSelectedManager] = useState("");
+
   const [matchupMap, setMatchupMap] = useState<Map<string, MatchupMapData[]>>(
     new Map()
   );
@@ -71,17 +73,24 @@ const TabsFeatures = () => {
   useEffect(() => {
     const fetchData = async () => {
       const matchupMapData = await getMatchupMap(REACT_APP_LEAGUE_ID, 1);
-      const userData = await getUserData(REACT_APP_LEAGUE_ID, 1);
-      setUserData(userData);
-      setMatchupMap(matchupMapData.matchupMap);
+      setUserData(matchupMapData.updatedScheduleData);
+      //setMatchupMap(matchupMapData.matchupMap);
+      setSelectedManager(localStorage.getItem("selectedManager"));
+      console.log(matchupMapData.updatedScheduleData);
     };
 
     fetchData();
   }, [REACT_APP_LEAGUE_ID]);
-
+  //console.log(matchupMap);
   // Convert the userData object into an array of objects
 
-  console.log(matchupMap);
+  //console.log("sdhf", userData);
+  const userDataArray = Object.values(userData || {}).map((user) => ({
+    ...user,
+    Feature: () => <ExampleFeature avatar={user.avatar} />,
+  }));
+
+  console.log("usersss", userDataArray);
 
   const ExampleFeature = ({ avatar }) => (
     <div className="w-full px-0 py-8 md:px-8">
@@ -94,53 +103,58 @@ const TabsFeatures = () => {
 
         <div className="flex flex-wrap items-center justify-center w-[90%] h-[90%] text-[20px] ">
           {userDataArray[selected].starters_full_data?.map((starter) => {
-            const playerName = starter.fname.charAt(0) + ". " + starter.lname;
-            const points = starter.scored_points;
+            if (Object.keys(starter).length > 0) {
+              const playerName =
+                starter.fname?.charAt(0) + ". " + starter.lname;
+              const points = starter.scored_points;
 
-            // Calculate the length of the player name and points
-            const totalContentLength =
-              playerName.length + points.toString().length;
+              // Calculate the length of the player name and points
+              const totalContentLength =
+                playerName.length + (points && points.toString().length);
 
-            // Calculate the scale factor based on content length
-            const scaleFactor = Math.min(1, 100 / totalContentLength);
+              // Calculate the scale factor based on content length
+              const scaleFactor = Math.min(1, 100 / totalContentLength);
 
-            // Calculate adjusted font size and image size
-            const fontSize = scaleFactor * 13 + "px";
-            const imageSize = scaleFactor * 50;
+              // Calculate adjusted font size and image size
+              const fontSize = scaleFactor * 13 + "px";
+              const imageSize = scaleFactor * 70;
 
-            return (
-              <div
-                className="player flex flex-col justify-center items-center p-2  w-[100px] h-[100px] border-[1px] border-[#1a1a1a] hover:scale-105 hover:duration-200 cursor-pointer"
-                style={{ fontSize }}
-              >
-                <Image
-                  src={starter.avatar}
-                  alt="player"
-                  width={imageSize}
-                  height={imageSize}
-                />
-                <p className="text-[12px]  w-full text-center overflow-hidden">
-                  {playerName}
-                </p>
-                <p className="text-[12px] font-bold w-full text-center overflow-hidden">
-                  {points}
-                </p>
-              </div>
-            );
+              return (
+                <div
+                  className="player flex flex-col justify-center items-center p-2  w-[100px] h-[100px] border-[1px] border-[#1a1a1a] hover:scale-105 hover:duration-200 cursor-pointer"
+                  style={{ fontSize }}
+                >
+                  <Image
+                    src={starter.avatar}
+                    alt="player"
+                    width={imageSize}
+                    height={imageSize}
+                  />
+
+                  <p className="text-[12px]  w-full text-center overflow-hidden">
+                    {playerName}
+                  </p>
+                  <p className="text-[12px] font-bold w-full text-center overflow-hidden">
+                    {points}
+                  </p>
+                </div>
+              );
+            }
           })}
         </div>
       </div>
     </div>
   );
-  const userDataArray = Object.values(userData || {}).map((user) => ({
-    ...user,
-    Feature: () => <ExampleFeature avatar={user.avatar} />,
-  }));
 
   const Tabs = ({ selected, setSelected }) => {
     return (
       <div className="flex overflow-x-scroll">
         {userDataArray.map((user, index) => {
+          console.log("before if", selected);
+          if (user.user_id === selectedManager) {
+            setSelected(index);
+          }
+          console.log("after if", selected);
           return (
             <Tab
               key={index}
@@ -149,6 +163,7 @@ const TabsFeatures = () => {
               avatar={user.avatar}
               name={user.name}
               tabNum={index}
+              selectedManager={user.user_id}
             />
           );
         })}
@@ -156,11 +171,22 @@ const TabsFeatures = () => {
     );
   };
 
-  const Tab = ({ selected, avatar, name, setSelected, tabNum }) => {
+  const Tab = ({
+    selected,
+    avatar,
+    name,
+    setSelected,
+    tabNum,
+    selectedManager,
+  }) => {
     return (
       <div className="relative w-full">
         <button
-          onClick={() => setSelected(tabNum)}
+          onClick={() => {
+            //console.log(tabNum);
+            setSelectedManager(selectedManager);
+            setSelected(tabNum);
+          }}
           className="relative z-0  w-full  gap-2 border-b-4 border-[#1a1a1a]  transition-colors hover:bg-[#1a1a1a] items-center justify-center flex flex-col"
         >
           <span
@@ -202,19 +228,23 @@ const TabsFeatures = () => {
 
         <AnimatePresence mode="wait">
           {userDataArray.map((user, index) => {
-            return selected === index ? (
+            return (
               <motion.div
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: 10 }}
                 key={index}
               >
-                <p className="w-full flex justify-center items-center text-2xl font-bold ">
-                  {user.name}
-                </p>
-                {user.Feature && user.Feature(user.avatar)}
+                {selected === index ? (
+                  <>
+                    <p className="w-full flex justify-center items-center text-2xl font-bold ">
+                      {user.name}
+                    </p>
+                    {user.Feature && user.Feature(user.avatar)}
+                  </>
+                ) : undefined}
               </motion.div>
-            ) : undefined;
+            );
           })}
         </AnimatePresence>
       </div>

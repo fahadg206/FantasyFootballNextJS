@@ -1,58 +1,56 @@
 "use client";
 import { motion } from "framer-motion";
-import {
-  SiNike,
-  Si3M,
-  SiAbstract,
-  SiAdobe,
-  SiAirtable,
-  SiAmazon,
-  SiBox,
-  SiBytedance,
-  SiChase,
-  SiCloudbees,
-  SiBurton,
-  SiBmw,
-  SiHeroku,
-  SiBuildkite,
-  SiCouchbase,
-  SiDailymotion,
-  SiDeliveroo,
-  SiEpicgames,
-  SiGenius,
-  SiGodaddy,
-} from "react-icons/si";
-import { IconType } from "react-icons";
 import axios from "axios";
 import { useState, useEffect } from "react";
 import Image from "next/image";
+import getMatchupData from "../libs/getMatchupData";
 import { useRouter } from "next/navigation";
 
+interface ScheduleData {
+  [userId: string]: {
+    avatar?: string;
+    name: string;
+    roster_id?: string;
+    user_id?: string;
+    starters?: string[];
+    starters_points?: string[];
+    players?: string[];
+    players_points?: string[];
+    starters_full_data?: Starter[];
+    team_points?: string;
+    opponent?: string;
+    matchup_id?: string;
+    Feature?: (arg: any) => JSX.Element;
+  };
+}
+
+interface Starter {
+  fname?: string;
+  lname?: string;
+  avatar?: string;
+  scored_points?: string;
+  projected_points?: string;
+}
+
 const ScrollingTeamLogos = () => {
-  const [users, setUsers] = useState([]);
+  const [userData, setUserData] = useState<ScheduleData>();
   const router = useRouter();
 
-  const getUsers = async () => {
-    const response = await axios.get(
-      `https://api.sleeper.app/v1/league/${localStorage.getItem(
-        "selectedLeagueID"
-      )}/users`
-    );
-
-    const modifiedUsers = response.data.map((user) => ({
-      ...user,
-      avatar: user.avatar, // Assuming the user's avatar URL is available in "avatar_url"
-    }));
-
-    setUsers(modifiedUsers);
-  };
+  const REACT_APP_LEAGUE_ID = localStorage.getItem("selectedLeagueID");
 
   //console.log("users", users);
 
   useEffect(() => {
-    getUsers();
+    const fetchData = async () => {
+      const userData = await getMatchupData(REACT_APP_LEAGUE_ID, 1);
+      setUserData(userData.updatedScheduleData);
+    };
+
+    fetchData();
   }, []);
 
+  const userDataArray = Object.values(userData || {});
+  console.log("scroll", userDataArray);
   const TranslateWrapper = ({ children, reverse }) => {
     return (
       <motion.div
@@ -83,7 +81,7 @@ const ScrollingTeamLogos = () => {
 
   const LogoItemsTop = () => (
     <>
-      {users.map((user, index) => (
+      {userDataArray.map((user, index) => (
         <button
           onClick={() => {
             localStorage.setItem("selectedManager", user.user_id);
@@ -95,11 +93,7 @@ const ScrollingTeamLogos = () => {
             router.refresh();
           }}
         >
-          <LogoItem
-            key={index}
-            avatar={`https://sleepercdn.com/avatars/${user.avatar}`}
-            name={user.display_name}
-          />
+          <LogoItem key={index} avatar={user.avatar} name={user.name} />
         </button>
       ))}
     </>
@@ -107,7 +101,7 @@ const ScrollingTeamLogos = () => {
 
   const LogoItemsBottom = () => (
     <>
-      {users.map((user, index) => (
+      {userDataArray.map((user, index) => (
         <button
           onClick={() => {
             localStorage.setItem("selectedManager", user.user_id);
@@ -119,11 +113,7 @@ const ScrollingTeamLogos = () => {
             router.refresh();
           }}
         >
-          <LogoItem
-            key={index}
-            avatar={`https://sleepercdn.com/avatars/${user.avatar}`}
-            name={user.display_name}
-          />
+          <LogoItem key={index} avatar={user.avatar} name={user.name} />
         </button>
       ))}
     </>

@@ -94,6 +94,7 @@ export default function Scoreboard() {
         setWeek(week);
         const matchupMapData = await getMatchupMap(REACT_APP_LEAGUE_ID, week);
         console.log("yo", matchupMapData.matchupMap);
+        console.log("scree", matchupMapData.updatedScheduleData);
         setMatchupMap(matchupMapData.matchupMap);
         console.log(matchupMapData);
       } catch (error) {
