@@ -73,7 +73,7 @@ const TabsFeatures = () => {
       const matchupMapData = await getMatchupMap(REACT_APP_LEAGUE_ID, 1);
       const userData = await getUserData(REACT_APP_LEAGUE_ID, 1);
       setUserData(userData);
-      setMatchupMap(matchupMapData);
+      setMatchupMap(matchupMapData.matchupMap);
     };
 
     fetchData();

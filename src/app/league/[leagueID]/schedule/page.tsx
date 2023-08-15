@@ -53,7 +53,7 @@ export default function Schedule(props: any) {
           REACT_APP_LEAGUE_ID,
           counter
         );
-        setMatchupMap(matchupMapData);
+        setMatchupMap(matchupMapData.matchupMap);
       } catch (error) {
         console.error("Error fetching matchup data:", error);
       }

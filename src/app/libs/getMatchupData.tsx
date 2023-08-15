@@ -361,7 +361,7 @@ export default async function getMatchupData(league_id: any, week: number) {
     //   updateWeeklyInfo();
     // }
 
-    return matchupMap;
+    return { matchupMap, articleMatchupData };
   };
 
   async function fetchPlayersData() {
