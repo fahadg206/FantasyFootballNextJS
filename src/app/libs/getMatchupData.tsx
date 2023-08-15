@@ -184,47 +184,68 @@ export default async function getMatchupData(league_id: any, week: number) {
           }
           if (updatedScheduleData[userId]?.starters) {
             for (const starter of updatedScheduleData[userId].starters) {
-              const starter_data = {
-                fname: playersData[starter].fn,
-                lname: playersData[starter].ln,
-                avatar:
-                  playersData[starter.toString()].pos == "DEF"
-                    ? `https://sleepercdn.com/images/team_logos/nfl/${starter.toLowerCase()}.png`
-                    : `https://sleepercdn.com/content/nfl/players/thumb/${starter}.jpg`,
-                scored_points:
-                  updatedScheduleData[userId].players_points[starter],
-              };
-              if (
-                updatedScheduleData[userId]?.starters_full_data &&
-                !updatedScheduleData[userId]?.starters_full_data?.some(
-                  (item) => {
-                    return areObjectsEqual(item, starter_data); // Compare each item to starter_data
-                  }
-                )
-              ) {
-                updatedScheduleData[userId].starters_full_data.push(
-                  starter_data
-                ); // Push starter_data to the array
-              } else {
-                updatedScheduleData[userId].starters_full_data = [
-                  {
-                    fname: playersData[starter].fn,
-                    lname: playersData[starter].ln,
-                    avatar:
-                      playersData[starter.toString()].pos === "DEF"
-                        ? `https://sleepercdn.com/images/team_logos/nfl/${starter.toLowerCase()}.png`
-                        : `https://sleepercdn.com/content/nfl/players/thumb/${starter}.jpg`,
-                    scored_points:
-                      updatedScheduleData[userId].players_points[starter],
-                  },
-                ];
+              if (starter != "0") {
+                const starter_data = {
+                  fname: playersData[starter].fn,
+                  lname: playersData[starter].ln,
+                  avatar:
+                    playersData[starter.toString()].pos == "DEF"
+                      ? `https://sleepercdn.com/images/team_logos/nfl/${starter.toLowerCase()}.png`
+                      : `https://sleepercdn.com/content/nfl/players/thumb/${starter}.jpg`,
+                  scored_points:
+                    updatedScheduleData[userId].players_points[starter],
+                };
+                if (
+                  updatedScheduleData[userId]?.starters_full_data &&
+                  !updatedScheduleData[userId]?.starters_full_data?.some(
+                    (item) => {
+                      return areObjectsEqual(item, starter_data); // Compare each item to starter_data
+                    }
+                  )
+                ) {
+                  updatedScheduleData[userId].starters_full_data.push(
+                    starter_data
+                  ); // Push starter_data to the array
+                } else {
+                  updatedScheduleData[userId].starters_full_data = [
+                    {
+                      fname: playersData[starter].fn,
+                      lname: playersData[starter].ln,
+                      avatar:
+                        playersData[starter.toString()].pos === "DEF"
+                          ? `https://sleepercdn.com/images/team_logos/nfl/${starter.toLowerCase()}.png`
+                          : `https://sleepercdn.com/content/nfl/players/thumb/${starter}.jpg`,
+                      scored_points:
+                        updatedScheduleData[userId].players_points[starter],
+                    },
+                  ];
+                }
               }
             }
           }
-
-          updatedScheduleData[userId].starters_full_data;
         }
       }
+
+      console.log("after everything", updatedScheduleData);
+      for (const userId in updatedScheduleData) {
+        //console.log(updatedScheduleData[userId].matchup_id);
+        const userData = updatedScheduleData[userId];
+        if (userData.matchup_id) {
+          if (!matchupMap.has(userData.matchup_id)) {
+            matchupMap.set(userData.matchup_id, [userData]);
+          } else {
+            const matchupData = matchupMap.get(userData.matchup_id);
+            if (matchupData && matchupData.length > 0) {
+              const firstPlayer = matchupData[0];
+              firstPlayer.opponent = userData.name;
+              matchupMap.set(userData.matchup_id, [firstPlayer]);
+              userData.opponent = firstPlayer.name;
+              matchupMap.get(userData.matchup_id)?.push(userData);
+            }
+          }
+        }
+      }
+      console.log("MAP ", matchupMap);
 
       // Set the updated scheduleData map to state
       //setScheduleDataFinal(updatedScheduleData);
@@ -232,38 +253,17 @@ export default async function getMatchupData(league_id: any, week: number) {
       console.error("Error fetching data:", error);
     }
 
-    console.log("after everything", updatedScheduleData);
-    for (const userId in updatedScheduleData) {
-      //console.log(updatedScheduleData[userId].matchup_id);
-      const userData = updatedScheduleData[userId];
-      if (userData.matchup_id) {
-        if (!matchupMap.has(userData.matchup_id)) {
-          matchupMap.set(userData.matchup_id, [userData]);
-        } else {
-          const matchupData = matchupMap.get(userData.matchup_id);
-          if (matchupData && matchupData.length > 0) {
-            const firstPlayer = matchupData[0];
-            firstPlayer.opponent = userData.name;
-            matchupMap.set(userData.matchup_id, [firstPlayer]);
-            userData.opponent = firstPlayer.name;
-            matchupMap.get(userData.matchup_id)?.push(userData);
-          }
-        }
-      }
-    }
-    console.log("MAP ", matchupMap);
-
     //setting each matchup into Map with key being matchup_id and value being two teams with corresponding matchup_id
 
-    const storageRef = ref(storage, `files/${league_id}.txt`);
+    //const storageRef = ref(storage, `files/${league_id}.txt`);
 
     //Uncomment to upload textfile to firebase storage
 
     //console.log("Updated Data: ", updatedScheduleData);
 
-    const articleMatchupData: ScheduleData = JSON.parse(
-      JSON.stringify(updatedScheduleData)
-    );
+    // const articleMatchupData: ScheduleData = JSON.parse(
+    //   JSON.stringify(updatedScheduleData)
+    // );
 
     // for (const matchupData in articleMatchupData) {
     //   delete articleMatchupData[matchupData].starters;
@@ -361,7 +361,7 @@ export default async function getMatchupData(league_id: any, week: number) {
     //   updateWeeklyInfo();
     // }
 
-    return { matchupMap, articleMatchupData, updatedScheduleData };
+    return { matchupMap, updatedScheduleData };
   };
 
   async function fetchPlayersData() {
