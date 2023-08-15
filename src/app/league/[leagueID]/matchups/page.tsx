@@ -82,7 +82,7 @@ const REACT_APP_LEAGUE_ID: string =
 
 const matchups = () => {
   const [selected, setSelected] = React.useState(new Set(["text"]));
-  const [weekCount, setWeekCount] = useState(0);
+  const [weekCount, setWeekCount] = useState(1);
   const [selected2, setSelected2] = React.useState(new Set(["text"]));
   const [playersData, setPlayersData] = React.useState([]);
   const [users, setUsers] = React.useState(new Set<User>());
@@ -750,7 +750,7 @@ const matchups = () => {
                                     color: "#E9EBEA",
                                     fontWeight: "$bold",
                                     "@xsMax": {
-                                      fontSize: "10px",
+                                      fontSize: "13px",
                                     },
                                   }}
                                 >
@@ -783,55 +783,73 @@ const matchups = () => {
                             </div>
 
                             {slate.matchup[0].starters.map(
-                              (starter, starterIndex) => (
-                                <div
-                                  key={starterIndex}
-                                  className="flex flex-col items-center justify-center border-b-[1px] border-[#1a1a1a] border-opacity-60 mb-1 w-full "
-                                >
-                                  {" "}
-                                  <Image
-                                    src={
-                                      playersData[starter.toString()].pos ==
-                                      "DEF"
-                                        ? `https://sleepercdn.com/images/team_logos/nfl/${starter.toLowerCase()}.png`
-                                        : `https://sleepercdn.com/content/nfl/players/thumb/${starter}.jpg`
-                                    }
-                                    alt="player"
-                                    width={57}
-                                    height={57}
-                                  />
-                                  <div className="flex">
-                                    <Text
-                                      css={{
-                                        color: "#E9EBEA",
-                                        fontSize: "12px",
-                                        fontWeight: "$bold",
-                                      }}
-                                    >
-                                      {playersData[starter.toString()].fn}{" "}
-                                      {playersData[starter.toString()].ln}
-                                    </Text>
-                                    <Text
-                                      css={{
-                                        color: "#E9EBEA",
-                                        fontSize: "12px",
-                                        fontWeight: "$bold",
-                                      }}
-                                    >
-                                      :
-                                    </Text>
-                                    <Text
-                                      css={{
-                                        color: "#E9EBEA",
-                                        fontSize: "12px",
-                                        fontWeight: "$bold",
-                                      }}
-                                    >
-                                      {slate.matchup[0].points[starterIndex]}
-                                    </Text>
+                              (starter, starterIndex) => {
+                                const playerFirstName =
+                                  playersData[starter.toString()].fn.charAt(0) +
+                                  ".";
+                                const playerLastName =
+                                  playersData[starter.toString()].ln;
+                                const playerPoints =
+                                  slate.matchup[0].points[starterIndex];
+
+                                return (
+                                  <div
+                                    key={starterIndex}
+                                    className="flex flex-col items-center justify-center w-[164px] h-[71px] border-[1px] border-[#1a1a1a] mb-1"
+                                  >
+                                    <div className="flex justify-between items-center w-full p-2">
+                                      <div className="flex flex-col items-center justify-center">
+                                        <Image
+                                          src={
+                                            playersData[starter.toString()]
+                                              .pos === "DEF"
+                                              ? `https://sleepercdn.com/images/team_logos/nfl/${starter.toLowerCase()}.png`
+                                              : `https://sleepercdn.com/content/nfl/players/thumb/${starter}.jpg`
+                                          }
+                                          alt="player"
+                                          width={57}
+                                          height={57}
+                                        />
+
+                                        <Text
+                                          css={{
+                                            color: "#E9EBEA",
+                                            fontSize: "12px",
+                                            fontWeight: "$bold",
+                                          }}
+                                        >
+                                          {playerFirstName} {playerLastName}
+                                        </Text>
+                                      </div>
+                                      <div className="flex flex-col items-center justify-center">
+                                        <Text
+                                          css={{
+                                            color: "#E9EBEA",
+                                            fontSize: "12px",
+                                            fontWeight: "$bold",
+                                          }}
+                                        >
+                                          {playerPoints}
+                                        </Text>
+                                        <Text
+                                          css={{
+                                            color: "#A6A6A6",
+                                            fontSize: "8px",
+                                            fontWeight: "$bold",
+                                            fontStyle: "italic",
+                                          }}
+                                        >
+                                          {
+                                            playersData[starter.toString()].wi[
+                                              weekCount?.toString()
+                                            ].p
+                                          }
+                                        </Text>
+                                      </div>
+                                    </div>
                                   </div>
-                                </div>
-                              )
+                                );
+                              }
                             )}
                           </div>
                           <div className=" team2 flex flex-col items-center">
@@ -873,7 +891,7 @@ const matchups = () => {
                                     color: "#E9EBEA",
                                     fontWeight: "$bold",
                                     "@xsMax": {
-                                      fontSize: "10px",
+                                      fontSize: "13px",
                                     },
                                   }}
                                 >
@@ -887,55 +905,73 @@ const matchups = () => {
                             </div>
 
                             {slate.matchup[1].starters.map(
-                              (starter, starterIndex) => (
-                                <div
-                                  key={starterIndex}
-                                  className="flex flex-col items-center justify-center border-b-[1px] border-[#1a1a1a] border-opacity-60 mb-1 w-full"
-                                >
-                                  {" "}
-                                  <Image
-                                    src={
-                                      playersData[starter.toString()].pos ==
-                                      "DEF"
-                                        ? `https://sleepercdn.com/images/team_logos/nfl/${starter.toLowerCase()}.png`
-                                        : `https://sleepercdn.com/content/nfl/players/thumb/${starter}.jpg`
-                                    }
-                                    alt="player"
-                                    width={57}
-                                    height={57}
-                                  />
-                                  <div className="flex">
-                                    <Text
-                                      css={{
-                                        color: "#E9EBEA",
-                                        fontSize: "12px",
-                                        fontWeight: "$bold",
-                                      }}
-                                    >
-                                      {playersData[starter.toString()].fn}{" "}
-                                      {playersData[starter.toString()].ln}
-                                    </Text>
-                                    <Text
-                                      css={{
-                                        color: "#E9EBEA",
-                                        fontSize: "12px",
-                                        fontWeight: "$bold",
-                                      }}
-                                    >
-                                      :
-                                    </Text>
-                                    <Text
-                                      css={{
-                                        color: "#E9EBEA",
-                                        fontSize: "12px",
-                                        fontWeight: "$bold",
-                                      }}
-                                    >
-                                      {slate.matchup[1].points[starterIndex]}
-                                    </Text>
+                              (starter, starterIndex) => {
+                                const playerFirstName =
+                                  playersData[starter.toString()].fn.charAt(0) +
+                                  ".";
+                                const playerLastName =
+                                  playersData[starter.toString()].ln;
+                                const playerPoints =
+                                  slate.matchup[1].points[starterIndex];
+
+                                return (
+                                  <div
+                                    key={starterIndex}
+                                    className="flex flex-col items-center justify-center w-[164px] h-[71px] border-[1px] border-[#1a1a1a] mb-1"
+                                  >
+                                    <div className="flex justify-between items-center w-full p-2">
+                                      <div className="flex flex-col items-center justify-center">
+                                        <Image
+                                          src={
+                                            playersData[starter.toString()]
+                                              .pos === "DEF"
+                                              ? `https://sleepercdn.com/images/team_logos/nfl/${starter.toLowerCase()}.png`
+                                              : `https://sleepercdn.com/content/nfl/players/thumb/${starter}.jpg`
+                                          }
+                                          alt="player"
+                                          width={57}
+                                          height={57}
+                                        />
+
+                                        <Text
+                                          css={{
+                                            color: "#E9EBEA",
+                                            fontSize: "12px",
+                                            fontWeight: "$bold",
+                                          }}
+                                        >
+                                          {playerFirstName} {playerLastName}
+                                        </Text>
+                                      </div>
+                                      <div className="flex flex-col items-center justify-center">
+                                        <Text
+                                          css={{
+                                            color: "#E9EBEA",
+                                            fontSize: "12px",
+                                            fontWeight: "$bold",
+                                          }}
+                                        >
+                                          {playerPoints}
+                                        </Text>
+                                        <Text
+                                          css={{
+                                            color: "#A6A6A6",
+                                            fontSize: "8px",
+                                            fontWeight: "$bold",
+                                            fontStyle: "italic",
+                                          }}
+                                        >
+                                          {
+                                            playersData[starter.toString()].wi[
+                                              weekCount?.toString()
+                                            ].p
+                                          }
+                                        </Text>
+                                      </div>
+                                    </div>
                                   </div>
-                                </div>
-                              )
+                                );
+                              }
                             )}
                           </div>
                         </div>

@@ -85,16 +85,16 @@ const TabsFeatures = () => {
 
   const ExampleFeature = ({ avatar }) => (
     <div className="w-full px-0 py-8 md:px-8">
-      <div className="flex flex-col relative items-center justify-center h-96 w-full rounded-xl bg-yellow-300 shadow-xl shadow-indigo-300 overflow-x-scroll overflow-y-scroll">
-        <div className="flex w-full gap-1.5 absolute top-0 rounded-t-xl bg-slate-900 p-3">
+      <div className="flex flex-col relative items-center justify-center h-96 w-full rounded-xl shadow-xl shadow-[#af1222] overflow-x-scroll ">
+        <div className="flex w-full gap-1.5 absolute top-0 rounded-t-xl bg-[#1a1a1a] p-3">
           <div className="h-3 w-3 rounded-full bg-red-500" />
           <div className="h-3 w-3 rounded-full bg-yellow-500" />
           <div className="h-3 w-3 rounded-full bg-green-500" />
         </div>
 
-        <div className="flex flex-wrap items-center justify-center bg-[purple] w-[90%] h-[90%] text-[20px]">
+        <div className="flex flex-wrap items-center justify-center w-[90%] h-[90%] text-[20px] ">
           {userDataArray[selected].starters_full_data?.map((starter) => {
-            const playerName = starter.fname + " " + starter.lname;
+            const playerName = starter.fname.charAt(0) + ". " + starter.lname;
             const points = starter.scored_points;
 
             // Calculate the length of the player name and points
@@ -110,7 +110,7 @@ const TabsFeatures = () => {
 
             return (
               <div
-                className="player flex flex-col justify-center items-center p-2 bg-black w-[100px] h-[100px] border-[1px] border-[#1a1a1a]"
+                className="player flex flex-col justify-center items-center p-2  w-[100px] h-[100px] border-[1px] border-[#1a1a1a] hover:scale-105 hover:duration-200 cursor-pointer"
                 style={{ fontSize }}
               >
                 <Image
@@ -119,10 +119,10 @@ const TabsFeatures = () => {
                   width={imageSize}
                   height={imageSize}
                 />
-                <p className="text-[11px]  w-full text-center overflow-hidden">
+                <p className="text-[12px]  w-full text-center overflow-hidden">
                   {playerName}
                 </p>
-                <p className="text-[11px] font-bold w-full text-center overflow-hidden">
+                <p className="text-[12px] font-bold w-full text-center overflow-hidden">
                   {points}
                 </p>
               </div>
@@ -161,10 +161,10 @@ const TabsFeatures = () => {
       <div className="relative w-full">
         <button
           onClick={() => setSelected(tabNum)}
-          className="relative z-0  w-full  gap-2 border-b-4 border-slate-200 bg-white  transition-colors hover:bg-slate-100  items-center justify-center flex flex-col"
+          className="relative z-0  w-full  gap-2 border-b-4 border-[#1a1a1a]  transition-colors hover:bg-[#1a1a1a] items-center justify-center flex flex-col"
         >
           <span
-            className={`rounded-lg bg-gradient-to-br from-indigo-700 from-10% to-indigo-500 p-1  text-white shadow-indigo-400 transition-all duration-300 ${
+            className={`rounded-lg  p-1  text-white shadow-[#af1222] transition-all duration-300 ${
               selected
                 ? "scale-100 opacity-100 shadow-lg"
                 : "scale-90 opacity-50 shadow"
@@ -179,7 +179,7 @@ const TabsFeatures = () => {
             />
           </span>
           <span
-            className={`min-w-[150px] max-w-[200px] text-xs text-slate-600 transition-opacity md:text-center ${
+            className={`min-w-[150px] max-w-[200px] text-xs  transition-opacity md:text-center ${
               selected ? "opacity-100" : "opacity-50"
             }`}
           >
@@ -189,14 +189,14 @@ const TabsFeatures = () => {
         {selected && (
           <motion.span
             layoutId="tabs-features-underline"
-            className="absolute bottom-0 left-0 right-0 z-10 h-1 bg-indigo-600"
+            className="absolute bottom-0 left-0 right-0 z-10 h-1 bg-[#af1222]"
           />
         )}
       </div>
     );
   };
   return (
-    <section className="p-4 bg-[pink] w-[95vw] xl:w-[60vw]">
+    <section className="p-4 w-[95vw] xl:w-[60vw]">
       <div className="mx-auto max-w-5xl">
         <Tabs selected={selected} setSelected={setSelected} />
 
