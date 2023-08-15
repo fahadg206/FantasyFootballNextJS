@@ -84,6 +84,7 @@ export default async function getMatchupData(league_id: any, week: number) {
           week ? week : 1
         }`
       );
+
       return response.data;
     } catch (err) {
       console.error(err);
@@ -140,6 +141,8 @@ export default async function getMatchupData(league_id: any, week: number) {
       const rostersData = await getRoster();
       const scheduleData = await getSchedule();
 
+      console.log("response out ", scheduleData);
+
       // Create a new map to store the updated schedule data
 
       // Update the scheduleData map with user data
@@ -156,70 +159,70 @@ export default async function getMatchupData(league_id: any, week: number) {
         if (updatedScheduleData[roster.owner_id]) {
           updatedScheduleData[roster.owner_id].roster_id = roster.roster_id;
         }
+      }
 
-        for (const matchup of scheduleData) {
-          // console.log("matchup", matchup);
-          // console.log("roster", roster);
-          if (roster.roster_id === matchup.roster_id) {
-            updatedScheduleData[roster.owner_id].matchup_id =
-              matchup.matchup_id;
-            updatedScheduleData[roster.owner_id].team_points = matchup.points;
-            updatedScheduleData[roster.owner_id].starters_points =
+      for (const matchup of scheduleData) {
+        // console.log("matchup", matchup);
+        // console.log("roster", roster);
+        for (const userId in updatedScheduleData) {
+          if (updatedScheduleData[userId].roster_id === matchup.roster_id) {
+            updatedScheduleData[userId].matchup_id = matchup.matchup_id;
+            updatedScheduleData[userId].team_points = matchup.points;
+            updatedScheduleData[userId].starters_points =
               matchup.starters_points;
-            updatedScheduleData[roster.owner_id].players = matchup.players;
-            updatedScheduleData[roster.owner_id].players_points =
-              matchup.players_points;
-            updatedScheduleData[roster.owner_id].starters = matchup.starters;
+            updatedScheduleData[userId].players = matchup.players;
+            updatedScheduleData[userId].players_points = matchup.players_points;
+            updatedScheduleData[userId].starters = matchup.starters;
           }
         }
+      }
 
-        for (const userId in updatedScheduleData) {
-          if (updatedScheduleData.hasOwnProperty(userId)) {
-            if (!updatedScheduleData[userId].starters_full_data) {
-              updatedScheduleData[userId].starters_full_data = [{}];
-            }
-            if (updatedScheduleData[userId]?.starters) {
-              for (const starter of updatedScheduleData[userId].starters) {
-                const starter_data = {
-                  fname: playersData[starter].fn,
-                  lname: playersData[starter].ln,
-                  avatar:
-                    playersData[starter.toString()].pos == "DEF"
-                      ? `https://sleepercdn.com/images/team_logos/nfl/${starter.toLowerCase()}.png`
-                      : `https://sleepercdn.com/content/nfl/players/thumb/${starter}.jpg`,
-                  scored_points:
-                    updatedScheduleData[userId].players_points[starter],
-                };
-                if (
-                  updatedScheduleData[userId]?.starters_full_data &&
-                  !updatedScheduleData[userId]?.starters_full_data?.some(
-                    (item) => {
-                      return areObjectsEqual(item, starter_data); // Compare each item to starter_data
-                    }
-                  )
-                ) {
-                  updatedScheduleData[userId].starters_full_data.push(
-                    starter_data
-                  ); // Push starter_data to the array
-                } else {
-                  updatedScheduleData[userId].starters_full_data = [
-                    {
-                      fname: playersData[starter].fn,
-                      lname: playersData[starter].ln,
-                      avatar:
-                        playersData[starter.toString()].pos === "DEF"
-                          ? `https://sleepercdn.com/images/team_logos/nfl/${starter.toLowerCase()}.png`
-                          : `https://sleepercdn.com/content/nfl/players/thumb/${starter}.jpg`,
-                      scored_points:
-                        updatedScheduleData[userId].players_points[starter],
-                    },
-                  ];
-                }
+      for (const userId in updatedScheduleData) {
+        if (updatedScheduleData.hasOwnProperty(userId)) {
+          if (!updatedScheduleData[userId].starters_full_data) {
+            updatedScheduleData[userId].starters_full_data = [{}];
+          }
+          if (updatedScheduleData[userId]?.starters) {
+            for (const starter of updatedScheduleData[userId].starters) {
+              const starter_data = {
+                fname: playersData[starter].fn,
+                lname: playersData[starter].ln,
+                avatar:
+                  playersData[starter.toString()].pos == "DEF"
+                    ? `https://sleepercdn.com/images/team_logos/nfl/${starter.toLowerCase()}.png`
+                    : `https://sleepercdn.com/content/nfl/players/thumb/${starter}.jpg`,
+                scored_points:
+                  updatedScheduleData[userId].players_points[starter],
+              };
+              if (
+                updatedScheduleData[userId]?.starters_full_data &&
+                !updatedScheduleData[userId]?.starters_full_data?.some(
+                  (item) => {
+                    return areObjectsEqual(item, starter_data); // Compare each item to starter_data
+                  }
+                )
+              ) {
+                updatedScheduleData[userId].starters_full_data.push(
+                  starter_data
+                ); // Push starter_data to the array
+              } else {
+                updatedScheduleData[userId].starters_full_data = [
+                  {
+                    fname: playersData[starter].fn,
+                    lname: playersData[starter].ln,
+                    avatar:
+                      playersData[starter.toString()].pos === "DEF"
+                        ? `https://sleepercdn.com/images/team_logos/nfl/${starter.toLowerCase()}.png`
+                        : `https://sleepercdn.com/content/nfl/players/thumb/${starter}.jpg`,
+                    scored_points:
+                      updatedScheduleData[userId].players_points[starter],
+                  },
+                ];
               }
             }
-
-            updatedScheduleData[userId].starters_full_data;
           }
+
+          updatedScheduleData[userId].starters_full_data;
         }
       }
 
@@ -228,7 +231,10 @@ export default async function getMatchupData(league_id: any, week: number) {
     } catch (error) {
       console.error("Error fetching data:", error);
     }
+
+    console.log("after everything", updatedScheduleData);
     for (const userId in updatedScheduleData) {
+      //console.log(updatedScheduleData[userId].matchup_id);
       const userData = updatedScheduleData[userId];
       if (userData.matchup_id) {
         if (!matchupMap.has(userData.matchup_id)) {
@@ -245,6 +251,7 @@ export default async function getMatchupData(league_id: any, week: number) {
         }
       }
     }
+    console.log("MAP ", matchupMap);
 
     //setting each matchup into Map with key being matchup_id and value being two teams with corresponding matchup_id
 
@@ -258,19 +265,19 @@ export default async function getMatchupData(league_id: any, week: number) {
       JSON.stringify(updatedScheduleData)
     );
 
-    for (const matchupData in articleMatchupData) {
-      delete articleMatchupData[matchupData].starters;
-      delete articleMatchupData[matchupData].starters_points;
-      delete articleMatchupData[matchupData].players;
-      delete articleMatchupData[matchupData].players_points;
-      delete articleMatchupData[matchupData].roster_id;
-      delete articleMatchupData[matchupData].user_id;
-      delete articleMatchupData[matchupData].avatar;
-      for (const starter of articleMatchupData[matchupData]
-        .starters_full_data) {
-        delete starter.avatar;
-      }
-    }
+    // for (const matchupData in articleMatchupData) {
+    //   delete articleMatchupData[matchupData].starters;
+    //   delete articleMatchupData[matchupData].starters_points;
+    //   delete articleMatchupData[matchupData].players;
+    //   delete articleMatchupData[matchupData].players_points;
+    //   delete articleMatchupData[matchupData].roster_id;
+    //   delete articleMatchupData[matchupData].user_id;
+    //   delete articleMatchupData[matchupData].avatar;
+    //   for (const starter of articleMatchupData[matchupData]
+    //     .starters_full_data) {
+    //     delete starter.avatar;
+    //   }
+    // }
 
     //console.log("Data after freeze...", articleMatchupData);
 
@@ -372,7 +379,9 @@ export default async function getMatchupData(league_id: any, week: number) {
 
   const playersData = await fetchPlayersData();
 
-  const response = fetchData(playersData);
+  const response = await fetchData(playersData);
+
+  console.log("return s", response);
 
   return response;
 }

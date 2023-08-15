@@ -124,6 +124,7 @@ export default function Scoreboard() {
 
   // MATCHUP TEXT
 
+  console.log("scoreboard ", matchupMap);
   const matchupText = Array.from(matchupMap).map(([matchupID, matchupData]) => {
     const team1 = matchupData[0];
     const team2 = matchupData[1];
@@ -184,7 +185,7 @@ export default function Scoreboard() {
               />
               <p>
                 {team1.name.length >= 9
-                  ? team1.name.match(/[A-Z]/g).length > 3
+                  ? (team1.name.match(/[A-Z]/g) || []).length > 3
                     ? team1.name.slice(0, 10).toLowerCase()
                     : team1.name.slice(0, 10)
                   : team1.name}
@@ -203,7 +204,7 @@ export default function Scoreboard() {
               />
               <p>
                 {team2.name.length >= 9
-                  ? team2.name.match(/[A-Z]/g).length > 3
+                  ? (team2.name.match(/[A-Z]/g) || []).length > 3
                     ? team2.name.slice(0, 10).toLowerCase()
                     : team2.name.slice(0, 10)
                   : team2.name}
