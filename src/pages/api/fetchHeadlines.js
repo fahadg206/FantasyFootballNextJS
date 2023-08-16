@@ -44,42 +44,32 @@ export default async function handler(req, res) {
       new OpenAIEmbeddings()
     );
     //await vectorStore.addDocuments(articles.article1);
-    await vectorStore.addDocuments(articles.article2);
+    //await vectorStore.addDocuments(articles.article2);
     //await vectorStore.addDocuments(articles.article3);
-    await vectorStore.addDocuments(articles.article4);
+    //await vectorStore.addDocuments(articles.article4);
     const model = new ChatOpenAI({
       temperature: 0.9,
       model: "gpt-4",
       max_tokens: 8000,
     });
     await vectorStore.save("leagueData");
-    const question =
-      "using my style of writing give me a sports breakdown recapping all the league's matchups, include the scores, who won by comparing their team_points to their opponent's team_points and their star players include a bit of humor as well";
+    const headline = {
+      id: "",
+      category: "",
+      title: "",
+      description: "",
+    };
+
+    const headlineFormat = JSON.stringify(headline);
+
+    const question = `give me 3 sports style headlines about the league's data, include the scores, who won by comparing their team_points to their opponent's team_points and their star players include a bit of humor as well. I want the information to be in this format exactly ${headlineFormat}, keep description short to one sentance give me the response in valid JSON array format`;
+
     const chain = RetrievalQAChain.fromLLM(model, vectorStore.asRetriever());
-    //const apiResponse = await chain.call({ query: question });
+    const apiResponse = await chain.call({ query: question });
     console.log(apiResponse.text);
-    return res.status(200).json(apiResponse);
+    return res.status(200).json(JSON.parse(apiResponse.text));
   } catch (error) {
     console.error("Unexpected error:", error);
-    return res.status(500).json({ error: "An error occurred" });
-  }
-
-  try {
-    // Retrieve data from the database based on league_id
-    const querySnapshot = await getDocs(
-      query(
-        collection(db, "Weekly Info"),
-        where("league_id", "==", REACT_APP_LEAGUE_ID),
-        limit(1)
-      )
-    );
-
-    if (!querySnapshot.empty) {
-      console.log("No documents found in 'Article Info' collection");
-      return res.status(404).json({ error: "No documents found" });
-    }
-  } catch (error) {
-    console.error("Error:", error);
     return res.status(500).json({ error: "An error occurred" });
   }
 }

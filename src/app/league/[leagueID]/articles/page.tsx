@@ -31,10 +31,16 @@ const articles = () => {
 
   const [article, setArticle] = useState({});
 
+  const REACT_APP_LEAGUE_ID: string | null =
+    localStorage.getItem("selectedLeagueID");
+
   useEffect(() => {
     async function fetchData() {
       try {
-        const response = await fetch("http://localhost:3000/api/fetchData");
+        const response = await fetch("http://localhost:3000/api/fetchData", {
+          method: "POST",
+          body: REACT_APP_LEAGUE_ID,
+        });
         const data = await response.json();
         setArticle(data);
         console.log("Data fetched:", data); // Log the fetched data here

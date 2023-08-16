@@ -50,7 +50,7 @@ const ScrollingTeamLogos = () => {
   }, []);
 
   const userDataArray = Object.values(userData || {});
-  console.log("scroll", userDataArray);
+
   const TranslateWrapper = ({ children, reverse }) => {
     return (
       <motion.div

@@ -20,11 +20,15 @@ import getMatchupMap from "../../app/libs/getMatchupData";
 import { useRouter } from "next/navigation";
 interface ScheduleData {
   [userId: string]: {
-    avatar: string;
+    avatar?: string;
     name: string;
     roster_id?: string;
     user_id?: string;
     starters?: string[];
+    starters_points?: string[];
+    players?: string[];
+    players_points?: string[];
+    starters_full_data?: Starter[];
     team_points?: string;
     opponent?: string;
     matchup_id?: string;
@@ -59,6 +63,14 @@ interface MatchupMapData {
   matchup_id?: string;
 }
 
+interface Starter {
+  fname?: string;
+  lname?: string;
+  avatar?: string;
+  scored_points?: string;
+  projected_points?: string;
+}
+
 export default function Scoreboard() {
   const [schedule, setSchedule] = useState<Matchup[]>([]);
   const [loading, setLoading] = useState(true);
@@ -77,6 +89,63 @@ export default function Scoreboard() {
 
   const router = useRouter();
 
+  function updateDbStorage(weeklyData: ScheduleData) {
+    const storageRef = ref(storage, `files/${REACT_APP_LEAGUE_ID}.txt`);
+
+    // Uncomment to upload textfile to firebase storage
+
+    // const articleMatchupData: ScheduleData = JSON.parse(
+    //   JSON.stringify(weeklyData)
+    // );
+
+    // for (const matchupData in articleMatchupData) {
+    //   delete articleMatchupData[matchupData].starters;
+    //   delete articleMatchupData[matchupData].starters_points;
+    //   delete articleMatchupData[matchupData].players;
+    //   delete articleMatchupData[matchupData].players_points;
+    //   delete articleMatchupData[matchupData].roster_id;
+    //   delete articleMatchupData[matchupData].user_id;
+    //   delete articleMatchupData[matchupData].avatar;
+    //   for (const starter of articleMatchupData[matchupData]
+    //     .starters_full_data) {
+    //     delete starter.avatar;
+    //   }
+    // }
+
+    // const textContent = JSON.stringify(articleMatchupData);
+
+    // // Upload the text content as a text file to Firebase Cloud Storage
+    // uploadString(storageRef, textContent, "raw")
+    //   .then(() => {
+    //     console.log("Text file uploaded to Firebase Cloud Storage.");
+    //   })
+    //   .catch((error) => {
+    //     console.error("Error uploading text file:", error);
+    //   });
+    // const readingRef = ref(storage, `files/`);
+    // try {
+    //   getDownloadURL(readingRef)
+    //     .then((url) => {
+    //       fetch(url)
+    //         .then((response) => response.text())
+    //         .then((fileContent) => {
+    //           console.log(
+    //             "Text file content from Firebase Cloud Storage:",
+    //             fileContent
+    //           );
+    //         })
+    //         .catch((error) => {
+    //           console.error("Error fetching text file content:", url);
+    //         });
+    //     })
+    //     .catch((error) => {
+    //       console.error("Error getting download URL:", error);
+    //     });
+    // } catch (error) {
+    //   console.error("Unexpected error:", error);
+    // }
+  }
+
   useEffect(() => {
     async function fetchMatchupData() {
       try {
@@ -93,10 +162,11 @@ export default function Scoreboard() {
         }
         setWeek(week);
         const matchupMapData = await getMatchupMap(REACT_APP_LEAGUE_ID, week);
-        console.log("yo", matchupMapData.matchupMap);
-        console.log("scree", matchupMapData.updatedScheduleData);
         setMatchupMap(matchupMapData.matchupMap);
-        console.log(matchupMapData);
+        setScheduleDataFinal(matchupMapData.updatedScheduleData);
+
+        updateDbStorage(matchupMapData.updatedScheduleData);
+        //setting each matchup into Map with key being matchup_id and value being two teams with corresponding matchup_id
       } catch (error) {
         console.error("Error fetching matchup data:", error);
       }
@@ -126,7 +196,6 @@ export default function Scoreboard() {
 
   // MATCHUP TEXT
 
-  console.log("scoreboard ", matchupMap);
   const matchupText = Array.from(matchupMap).map(([matchupID, matchupData]) => {
     const team1 = matchupData[0];
     const team2 = matchupData[1];

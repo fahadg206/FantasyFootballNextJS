@@ -141,8 +141,6 @@ export default async function getMatchupData(league_id: any, week: number) {
       const rostersData = await getRoster();
       const scheduleData = await getSchedule();
 
-      console.log("response out ", scheduleData);
-
       // Create a new map to store the updated schedule data
 
       // Update the scheduleData map with user data
@@ -226,7 +224,6 @@ export default async function getMatchupData(league_id: any, week: number) {
         }
       }
 
-      console.log("after everything", updatedScheduleData);
       for (const userId in updatedScheduleData) {
         //console.log(updatedScheduleData[userId].matchup_id);
         const userData = updatedScheduleData[userId];
@@ -245,7 +242,6 @@ export default async function getMatchupData(league_id: any, week: number) {
           }
         }
       }
-      console.log("MAP ", matchupMap);
 
       // Set the updated scheduleData map to state
       //setScheduleDataFinal(updatedScheduleData);
@@ -380,8 +376,6 @@ export default async function getMatchupData(league_id: any, week: number) {
   const playersData = await fetchPlayersData();
 
   const response = await fetchData(playersData);
-
-  console.log("return s", response);
 
   return response;
 }

@@ -272,8 +272,6 @@ export default async function getUserData(league_id: any, week: number) {
       }
     }
 
-    console.log("Data after freeze...", articleMatchupData);
-
     const textContent = JSON.stringify(articleMatchupData);
 
     // Upload the text content as a text file to Firebase Cloud Storage
