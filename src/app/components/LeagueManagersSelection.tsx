@@ -94,14 +94,14 @@ const TabsFeatures = () => {
 
   const ExampleFeature = ({ avatar }) => (
     <div className="w-full px-0 py-8 md:px-8">
-      <div className="flex flex-col relative items-center justify-center h-96 w-full rounded-xl shadow-xl shadow-[#af1222] overflow-x-scroll ">
-        <div className="flex w-full gap-1.5 absolute top-0 rounded-t-xl bg-[#1a1a1a] p-3">
+      <div className="flex flex-col  relative items-center justify-center h-96 w-full rounded-xl shadow-xl shadow-[#af1222] overflow-x-scroll ">
+        <div className="flex w-full gap-1.5 absolute top-0 rounded-t-xl bg-[#A29F9F] dark:bg-[#1a1a1a] p-3">
           <div className="h-3 w-3 rounded-full bg-red-500" />
           <div className="h-3 w-3 rounded-full bg-yellow-500" />
           <div className="h-3 w-3 rounded-full bg-green-500" />
         </div>
 
-        <div className="flex flex-wrap items-center justify-center w-[90%] h-[90%] text-[20px] ">
+        <div className="flex flex-wrap relative top-5 items-center justify-center w-[90%] h-[90%] text-[20px] ">
           {userDataArray[selected].starters_full_data?.map((starter) => {
             if (Object.keys(starter).length > 0) {
               const playerName =
@@ -116,8 +116,8 @@ const TabsFeatures = () => {
               const scaleFactor = Math.min(1, 100 / totalContentLength);
 
               // Calculate adjusted font size and image size
-              const fontSize = scaleFactor * 13 + "px";
-              const imageSize = scaleFactor * 70;
+              const fontSize = scaleFactor * 7 + "px";
+              const imageSize = scaleFactor * 60;
 
               return (
                 <div
@@ -131,10 +131,10 @@ const TabsFeatures = () => {
                     height={imageSize}
                   />
 
-                  <p className="text-[12px]  w-full text-center overflow-hidden">
+                  <p className="text-[10px]  w-full text-center overflow-hidden">
                     {playerName}
                   </p>
-                  <p className="text-[12px] font-bold w-full text-center overflow-hidden">
+                  <p className="text-[10px] font-bold w-full text-center overflow-hidden">
                     {points}
                   </p>
                 </div>
@@ -187,7 +187,7 @@ const TabsFeatures = () => {
             setSelectedManager(selectedManager);
             setSelected(tabNum);
           }}
-          className="relative z-0  w-full  gap-2 border-b-4 border-[#1a1a1a]  transition-colors hover:bg-[#1a1a1a] items-center justify-center flex flex-col"
+          className="relative z-0  w-full  gap-2 border-b-4 border-[#1a1a1a] p-3  transition-colors hover:bg-[#A29F9F] dark:hover:bg-[#1a1a1a] items-center justify-center flex flex-col"
         >
           <span
             className={`rounded-lg  p-1  text-white shadow-[#af1222] transition-all duration-300 ${
