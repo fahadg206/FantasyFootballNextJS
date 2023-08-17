@@ -7,6 +7,16 @@ import useMeasure from "react-use-measure";
 import Logo from "../images/Transparent.png";
 import Image from "next/image";
 import uuid from "uuid";
+import {
+  collection,
+  query,
+  where,
+  getDocs,
+  addDoc,
+  updateDoc,
+  limit,
+} from "firebase/firestore/lite";
+import { db, storage } from "../../app/firebase";
 
 const CARD_WIDTH = 350;
 const CARD_HEIGHT = 350;
@@ -166,26 +176,48 @@ const CardCarousel = () => {
   useEffect(() => {
     async function fetchData() {
       try {
-        //setHeadlines(defaultHeadlines);
-        console.log("Before api");
-        const response = await fetch(
-          "http://localhost:3000/api/fetchHeadlines",
-          {
-            method: "POST",
-            body: REACT_APP_LEAGUE_ID,
-          }
+        // Retrieve data from the database based on league_id
+        const querySnapshot = await getDocs(
+          query(
+            collection(db, "Weekly Headlines"),
+            where("league_id", "==", REACT_APP_LEAGUE_ID),
+            limit(1)
+          )
         );
 
-        const data = await response.json();
-        //console.log("Data fetched:", data);
-        //const parsedHeadline = await JSON.parse(data.text);
-        console.log("parsed ", data);
-        setHeadlines(data);
-        //items = JSON.parse(data.text);
-        //items[0].description = data.text;
-        //console.log("Data fetched:", data); // Log the fetched data here
+        console.log("H");
+
+        if (!querySnapshot.empty) {
+          querySnapshot.forEach((doc) => {
+            const docData = doc.data();
+            console.log("DB returned", JSON.parse(docData.headlines));
+            setHeadlines(JSON.parse(docData.headlines));
+          });
+        } else {
+          console.log("Document does not exist");
+
+          try {
+            const response = await fetch(
+              "http://localhost:3000/api/fetchHeadlines",
+              {
+                method: "POST",
+                body: REACT_APP_LEAGUE_ID,
+              }
+            );
+
+            const data = await response.json();
+            console.log("parsed ", data);
+            setHeadlines(data);
+          } catch (error) {
+            console.error("Error fetching data:", error);
+          }
+        }
+
+        if (querySnapshot.empty) {
+          console.error("No documents found in 'Article Info' collection");
+        }
       } catch (error) {
-        console.error("Error fetching data:", error);
+        console.error("Error:", error);
       }
     }
 

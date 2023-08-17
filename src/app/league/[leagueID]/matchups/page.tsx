@@ -82,7 +82,7 @@ const REACT_APP_LEAGUE_ID: string =
 
 const matchups = () => {
   const [selected, setSelected] = React.useState(new Set(["text"]));
-  const [weekCount, setWeekCount] = useState(1);
+  const [weekCount, setWeekCount] = useState(0);
   const [selected2, setSelected2] = React.useState(new Set(["text"]));
   const [playersData, setPlayersData] = React.useState([]);
   const [users, setUsers] = React.useState(new Set<User>());
@@ -588,7 +588,16 @@ const matchups = () => {
       return undefined;
     })
     .filter((item) => item !== undefined);
-  console.log("Here are the rivals", rivalsMap);
+
+  if (rivalsMap.get("Rival")) {
+    console.log(
+      "Here are the rivals",
+      playersData["4017"].wi[
+        rivalsMap.get("Rival").matchups[weekCount].week?.toString()
+      ].p
+    );
+  }
+  //console.log("Here are the rivals", rivalsMap.get("Rival"));
   // const avatarID = rivalsMap
   //   .get("Rival")
   //   .matchups[0].matchup[0].starters[0].toString();
@@ -727,7 +736,7 @@ const matchups = () => {
                         </div>
                         <Text className="mb-10" css={{ color: "#E9EBEA" }}>
                           Week:
-                          {slate.week}
+                          {slate?.week}
                         </Text>
                         <div className="flex teams justify-around">
                           <div className=" team1 flex flex-col items-center">
@@ -736,7 +745,7 @@ const matchups = () => {
                                 {" "}
                                 <Image
                                   src={`https://sleepercdn.com/avatars/thumbs/${
-                                    rivalManagers[slate.year][
+                                    rivalManagers[slate?.year][
                                       slate.matchup[0].roster_id
                                     ].team.avatar
                                   }`}
@@ -755,8 +764,8 @@ const matchups = () => {
                                   }}
                                 >
                                   {
-                                    rivalManagers[slate.year][
-                                      slate.matchup[0].roster_id
+                                    rivalManagers[slate?.year][
+                                      slate?.matchup[0].roster_id
                                     ].team.name
                                   }
                                 </Text>
@@ -771,7 +780,7 @@ const matchups = () => {
                                     },
                                   }}
                                 >
-                                  {slate.matchup[0].points
+                                  {slate?.matchup[0].points
                                     .reduce(
                                       (total, currentValue) =>
                                         total + parseFloat(currentValue),
@@ -782,7 +791,7 @@ const matchups = () => {
                               </div>
                             </div>
 
-                            {slate.matchup[0].starters.map(
+                            {slate?.matchup[0].starters.map(
                               (starter, starterIndex) => {
                                 const playerFirstName =
                                   playersData[starter.toString()].fn.charAt(0) +
@@ -839,11 +848,21 @@ const matchups = () => {
                                             fontStyle: "italic",
                                           }}
                                         >
-                                          {
-                                            playersData[starter.toString()].wi[
-                                              weekCount?.toString()
-                                            ].p
-                                          }
+                                          {(() => {
+                                            const player =
+                                              playersData[starter.toString()];
+                                            const proj =
+                                              player?.wi[slate.week]?.p;
+                                            if (
+                                              proj !== undefined &&
+                                              proj !== 0.0
+                                            ) {
+                                              return proj;
+                                            }
+                                            return slate.matchup[1].points[
+                                              starterIndex
+                                            ];
+                                          })()}
                                         </Text>
                                       </div>
                                     </div>
@@ -961,11 +980,21 @@ const matchups = () => {
                                             fontStyle: "italic",
                                           }}
                                         >
-                                          {
-                                            playersData[starter.toString()].wi[
-                                              weekCount?.toString()
-                                            ].p
-                                          }
+                                          {(() => {
+                                            const player =
+                                              playersData[starter.toString()];
+                                            const proj =
+                                              player?.wi[slate.week]?.p;
+                                            if (
+                                              proj !== undefined &&
+                                              proj !== 0.0
+                                            ) {
+                                              return proj;
+                                            }
+                                            return slate.matchup[1].points[
+                                              starterIndex
+                                            ];
+                                          })()}
                                         </Text>
                                       </div>
                                     </div>

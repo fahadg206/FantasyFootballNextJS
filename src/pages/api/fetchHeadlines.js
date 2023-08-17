@@ -1,5 +1,12 @@
 import { ref, getDownloadURL } from "firebase/storage";
-import { collection, query, where, getDocs } from "firebase/firestore/lite";
+import {
+  collection,
+  query,
+  where,
+  getDocs,
+  addDoc,
+  updateDoc,
+} from "firebase/firestore/lite";
 import { Document } from "langchain/document";
 import { articles } from "./articles";
 
@@ -16,6 +23,33 @@ import path from "path";
 import { db, storage } from "../../app/firebase";
 
 dotenv.config();
+
+const updateWeeklyInfo = async (REACT_APP_LEAGUE_ID, headlines) => {
+  // Reference to the "Weekly Info" collection
+  const weeklyInfoCollectionRef = collection(db, "Weekly Headlines");
+  // Use a Query to check if a document with the league_id exists
+  const queryRef = query(
+    weeklyInfoCollectionRef,
+    where("league_id", "==", REACT_APP_LEAGUE_ID)
+  );
+  const querySnapshot = await getDocs(queryRef);
+  // Add or update the document based on whether it already exists
+  if (!querySnapshot.empty) {
+    // Document exists, update it
+    console.log("in if");
+    querySnapshot.forEach(async (doc) => {
+      await updateDoc(doc.ref, {
+        headlines: headlines,
+      });
+    });
+  } else {
+    // Document does not exist, add a new one
+    await addDoc(weeklyInfoCollectionRef, {
+      league_id: REACT_APP_LEAGUE_ID,
+      headlines: headlines,
+    });
+  }
+};
 
 export default async function handler(req, res) {
   console.log("what was passed in ", req.body);
@@ -67,6 +101,7 @@ export default async function handler(req, res) {
     const chain = RetrievalQAChain.fromLLM(model, vectorStore.asRetriever());
     const apiResponse = await chain.call({ query: question });
     console.log(apiResponse.text);
+    updateWeeklyInfo(REACT_APP_LEAGUE_ID, apiResponse.text);
     return res.status(200).json(JSON.parse(apiResponse.text));
   } catch (error) {
     console.error("Unexpected error:", error);

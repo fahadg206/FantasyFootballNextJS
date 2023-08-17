@@ -90,60 +90,102 @@ export default function Scoreboard() {
   const router = useRouter();
 
   function updateDbStorage(weeklyData: ScheduleData) {
-    const storageRef = ref(storage, `files/${REACT_APP_LEAGUE_ID}.txt`);
+    if (REACT_APP_LEAGUE_ID) {
+      const storageRef = ref(storage, `files/${REACT_APP_LEAGUE_ID}.txt`);
 
-    // Uncomment to upload textfile to firebase storage
+      //Uncomment to upload textfile to firebase storage
 
-    // const articleMatchupData: ScheduleData = JSON.parse(
-    //   JSON.stringify(weeklyData)
-    // );
+      const articleMatchupData: ScheduleData = JSON.parse(
+        JSON.stringify(weeklyData)
+      );
 
-    // for (const matchupData in articleMatchupData) {
-    //   delete articleMatchupData[matchupData].starters;
-    //   delete articleMatchupData[matchupData].starters_points;
-    //   delete articleMatchupData[matchupData].players;
-    //   delete articleMatchupData[matchupData].players_points;
-    //   delete articleMatchupData[matchupData].roster_id;
-    //   delete articleMatchupData[matchupData].user_id;
-    //   delete articleMatchupData[matchupData].avatar;
-    //   for (const starter of articleMatchupData[matchupData]
-    //     .starters_full_data) {
-    //     delete starter.avatar;
-    //   }
-    // }
+      for (const matchupData in articleMatchupData) {
+        delete articleMatchupData[matchupData].starters;
+        delete articleMatchupData[matchupData].starters_points;
+        delete articleMatchupData[matchupData].players;
+        delete articleMatchupData[matchupData].players_points;
+        delete articleMatchupData[matchupData].roster_id;
+        delete articleMatchupData[matchupData].user_id;
+        delete articleMatchupData[matchupData].avatar;
+        for (const starter of articleMatchupData[matchupData]
+          .starters_full_data) {
+          delete starter.avatar;
+        }
+      }
 
-    // const textContent = JSON.stringify(articleMatchupData);
+      const textContent = JSON.stringify(articleMatchupData);
 
-    // // Upload the text content as a text file to Firebase Cloud Storage
-    // uploadString(storageRef, textContent, "raw")
-    //   .then(() => {
-    //     console.log("Text file uploaded to Firebase Cloud Storage.");
-    //   })
-    //   .catch((error) => {
-    //     console.error("Error uploading text file:", error);
-    //   });
-    // const readingRef = ref(storage, `files/`);
-    // try {
-    //   getDownloadURL(readingRef)
-    //     .then((url) => {
-    //       fetch(url)
-    //         .then((response) => response.text())
-    //         .then((fileContent) => {
-    //           console.log(
-    //             "Text file content from Firebase Cloud Storage:",
-    //             fileContent
-    //           );
-    //         })
-    //         .catch((error) => {
-    //           console.error("Error fetching text file content:", url);
-    //         });
-    //     })
-    //     .catch((error) => {
-    //       console.error("Error getting download URL:", error);
-    //     });
-    // } catch (error) {
-    //   console.error("Unexpected error:", error);
-    // }
+      const readingRef = ref(storage, `files/${REACT_APP_LEAGUE_ID}.txt`);
+      // Function to add content only if it's different
+      addContentIfDifferent(textContent, storageRef);
+
+      // // Upload the text content as a text file to Firebase Cloud Storage
+      // uploadString(storageRef, textContent, "raw")
+      //   .then(() => {
+      //     console.log("Text file uploaded to Firebase Cloud Storage.");
+      //   })
+      //   .catch((error) => {
+      //     console.error("Error uploading text file:", error);
+      //   });
+      // const readingRef = ref(storage, `files/`);
+      // try {
+      //   getDownloadURL(readingRef)
+      //     .then((url) => {
+      //       fetch(url)
+      //         .then((response) => response.text())
+      //         .then((fileContent) => {
+      //           console.log(
+      //             "Text file content from Firebase Cloud Storage:",
+      //             fileContent
+      //           );
+      //         })
+      //         .catch((error) => {
+      //           console.error("Error fetching text file content:", url);
+      //         });
+      //     })
+      //     .catch((error) => {
+      //       console.error("Error getting download URL:", error);
+      //     });
+      // } catch (error) {
+      //   console.error("Unexpected error:", error);
+      // }
+    }
+  }
+  function addContentIfDifferent(newContent: any, readingRef: any) {
+    // Get the current contents of the file
+
+    getDownloadURL(readingRef)
+      .then(function (url) {
+        // Fetch the current contents using the URL
+        fetch(url)
+          .then((response) => response.text())
+          .then((existingContent) => {
+            // Compare existing content with new content
+            if (existingContent !== newContent) {
+              // Upload the new content
+              uploadNewContent(newContent, readingRef);
+            } else {
+              console.log("New content is the same as existing content.");
+            }
+          })
+          .catch(function (error) {
+            console.error("Error fetching existing content:", error);
+          });
+      })
+      .catch(function (error) {
+        console.error("Error getting download URL:", error);
+      });
+  }
+
+  // Function to upload new content
+  function uploadNewContent(content: any, storageRef: any) {
+    uploadString(storageRef, content, "raw")
+      .then(() => {
+        console.log("Text file uploaded to Firebase Cloud Storage.");
+      })
+      .catch((error) => {
+        console.error("Error uploading text file:", error);
+      });
   }
 
   useEffect(() => {
