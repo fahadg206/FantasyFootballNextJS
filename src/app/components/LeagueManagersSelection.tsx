@@ -74,9 +74,9 @@ const TabsFeatures = () => {
     const fetchData = async () => {
       const matchupMapData = await getMatchupMap(REACT_APP_LEAGUE_ID, 1);
       setUserData(matchupMapData.updatedScheduleData);
+      setMatchupMap(matchupMapData.matchupMap);
       //setMatchupMap(matchupMapData.matchupMap);
       setSelectedManager(localStorage.getItem("selectedManager"));
-      console.log(matchupMapData.updatedScheduleData);
     };
 
     fetchData();
@@ -89,8 +89,6 @@ const TabsFeatures = () => {
     ...user,
     Feature: () => <ExampleFeature avatar={user.avatar} />,
   }));
-
-  console.log("usersss", userDataArray);
 
   const ExampleFeature = ({ avatar }) => (
     <div className="w-full px-0 py-8 md:px-8">
@@ -150,11 +148,10 @@ const TabsFeatures = () => {
     return (
       <div className="flex overflow-x-scroll">
         {userDataArray.map((user, index) => {
-          console.log("before if", selected);
           if (user.user_id === selectedManager) {
             setSelected(index);
           }
-          console.log("after if", selected);
+
           return (
             <Tab
               key={index}
@@ -184,6 +181,7 @@ const TabsFeatures = () => {
         <button
           onClick={() => {
             //console.log(tabNum);
+            localStorage.setItem("selectedManager", selectedManager);
             setSelectedManager(selectedManager);
             setSelected(tabNum);
           }}

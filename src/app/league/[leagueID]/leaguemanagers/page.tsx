@@ -217,6 +217,8 @@ export default function Page() {
     }
   }, [scheduleDataFinal, selectedManager]);
 
+  //console.log("weekly match", selectedManagerMatchups);
+
   useEffect(() => {
     axios
       .get("http://localhost:3001/api/players")
@@ -225,7 +227,6 @@ export default function Page() {
 
         setPlayersData(playersData);
         // Process and use the data as needed
-        console.log(playersData["4017"]);
       })
       .catch((error) => {
         console.error("Error while fetching players data:", error);
@@ -237,17 +238,28 @@ export default function Page() {
   }
 
   if (selectedManager) {
-    console.log("Selected manager ", selectedManagerData.name);
-
     console.log(
-      "Selected managers matchups: ",
+      "Selected manager ",
       selectedManagerMatchups.get(selectedManager)
     );
+
+    // console.log(
+    //   "Selected managers matchups: ",
+    //   selectedManagerMatchups.get(selectedManager)
+    // );
   }
+  //console.log(selectedManagerMatchups);
+
+  let element;
 
   return (
     <div className="">
       <LeagueManagersSelection />
+      <div className="w-[100px] h-[100px] border-[1px] border-[#1a1a1a]">
+        {Array.from(selectedManagerMatchups).map(([key, value]) =>
+          value.map((player) => <div key={player.week}>{player.week}</div>)
+        )}
+      </div>
     </div>
   );
 }
