@@ -113,6 +113,8 @@ export default function Scoreboard() {
         }
       }
 
+      console.log("data ", articleMatchupData);
+
       const textContent = JSON.stringify(articleMatchupData);
 
       const readingRef = ref(storage, `files/${REACT_APP_LEAGUE_ID}.txt`);
@@ -153,7 +155,7 @@ export default function Scoreboard() {
   }
   function addContentIfDifferent(newContent: any, readingRef: any) {
     // Get the current contents of the file
-
+    uploadNewContent(newContent, readingRef);
     getDownloadURL(readingRef)
       .then(function (url) {
         // Fetch the current contents using the URL
@@ -161,6 +163,7 @@ export default function Scoreboard() {
           .then((response) => response.text())
           .then((existingContent) => {
             // Compare existing content with new content
+            uploadNewContent(newContent, readingRef);
             if (existingContent !== newContent) {
               // Upload the new content
               uploadNewContent(newContent, readingRef);

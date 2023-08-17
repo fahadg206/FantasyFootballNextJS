@@ -13,6 +13,11 @@ const ArticleTemplate = ({
   p1,
   p2,
   p3,
+  p4,
+  p5,
+  p6,
+  p7,
+  p8,
 }: {
   title: string;
   image: StaticImageData;
@@ -23,6 +28,12 @@ const ArticleTemplate = ({
   p1: string;
   p2: string;
   p3: string;
+  p4: string;
+  p5: string;
+  p6: string;
+  p7: string;
+  p8: string;
+
   name: string;
 }) => {
   return (
@@ -37,7 +48,7 @@ const ArticleTemplate = ({
         />
       </div>
       <div className="grid grid-cols-1 gap-y-3 justify-items-center mt-10 w-[90%] sm:w-[60%] ">
-        <p className="text-5xl font-bold">{title}</p>
+        <p className="text-5xl font-bold w-full text-center">{title}</p>
         <div className="flex md:flex items-center w-full justify-around border-b-2 dark:border-[#EDEDED] border-[#000000] dark:border-opacity-10 border-opacity-20">
           <div className="flex items-center">
             <Image
@@ -62,6 +73,21 @@ const ArticleTemplate = ({
         </p>
         <p className="w-[90%] text-center break-words text-[11px] sm:text-[13px] md:text-[15px]">
           {p3}
+        </p>
+        <p className=" w-[90%] text-center break-words text-[11px] sm:text-[13px] md:text-[15px]">
+          {p4}
+        </p>
+        <p className=" w-[90%] text-center break-words text-[11px] sm:text-[13px] md:text-[15px]">
+          {p5}
+        </p>
+        <p className="w-[90%] text-center break-words text-[11px] sm:text-[13px] md:text-[15px]">
+          {p6}
+        </p>
+        <p className="w-[90%] text-center break-words text-[11px] sm:text-[13px] md:text-[15px]">
+          {p7}
+        </p>
+        <p className="w-[90%] text-center break-words text-[11px] sm:text-[13px] md:text-[15px]">
+          {p8}
         </p>
         <br />
         <br />

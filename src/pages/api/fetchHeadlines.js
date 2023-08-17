@@ -84,9 +84,9 @@ export default async function handler(req, res) {
     const model = new ChatOpenAI({
       temperature: 0.9,
       model: "gpt-4",
-      max_tokens: 8000,
     });
     await vectorStore.save("leagueData");
+
     const headline = {
       id: "",
       category: "",

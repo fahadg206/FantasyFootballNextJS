@@ -1,5 +1,11 @@
 import { ref, getDownloadURL } from "firebase/storage";
-import { collection, query, where, getDocs } from "firebase/firestore/lite";
+import {
+  collection,
+  query,
+  where,
+  getDocs,
+  addDoc,
+} from "firebase/firestore/lite";
 import { Document } from "langchain/document";
 import { articles } from "./articles";
 
@@ -16,6 +22,33 @@ import path from "path";
 import { db, storage } from "../../app/firebase";
 
 dotenv.config();
+
+const updateWeeklyInfo = async (REACT_APP_LEAGUE_ID, articles) => {
+  // Reference to the "Weekly Info" collection
+  const weeklyInfoCollectionRef = collection(db, "Weekly Articles");
+  // Use a Query to check if a document with the league_id exists
+  const queryRef = query(
+    weeklyInfoCollectionRef,
+    where("league_id", "==", REACT_APP_LEAGUE_ID)
+  );
+  const querySnapshot = await getDocs(queryRef);
+  // Add or update the document based on whether it already exists
+  if (!querySnapshot.empty) {
+    // Document exists, update it
+    console.log("in if");
+    querySnapshot.forEach(async (doc) => {
+      await updateDoc(doc.ref, {
+        articles: articles,
+      });
+    });
+  } else {
+    // Document does not exist, add a new one
+    await addDoc(weeklyInfoCollectionRef, {
+      league_id: REACT_APP_LEAGUE_ID,
+      articles: articles,
+    });
+  }
+};
 
 export default async function handler(req, res) {
   console.log("what was passed in ", req.body);
@@ -53,11 +86,20 @@ export default async function handler(req, res) {
       max_tokens: 8000,
     });
     await vectorStore.save("leagueData");
-    const question =
-      "using my style of writing give me a sports breakdown recapping all the league's matchups, include the scores, who won by comparing their team_points to their opponent's team_points and their star players include a bit of humor as well";
+
+    const article = {
+      title: "",
+      paragraph1: "",
+      paragraph2: "",
+      paragraph3: "",
+    };
+
+    const articleTemplate = JSON.stringify(article);
+    const question = `using my style of writing give me a sports breakdown recapping all the league's matchups, include the scores, who won by comparing their team_points to their opponent's team_points and their star players include a bit of humor as well. Give me the response in this exact format ${articleTemplate} with 8 paragraphs exactly and it should be a valid json array`;
     const chain = RetrievalQAChain.fromLLM(model, vectorStore.asRetriever());
-    //const apiResponse = await chain.call({ query: question });
-    console.log(apiResponse.text);
+    const apiResponse = await chain.call({ query: question });
+    console.log(apiResponse);
+    updateWeeklyInfo(REACT_APP_LEAGUE_ID, apiResponse.text);
     return res.status(200).json(apiResponse);
   } catch (error) {
     console.error("Unexpected error:", error);
