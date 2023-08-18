@@ -13,17 +13,23 @@ import {
   limit,
 } from "firebase/firestore/lite";
 
+const JsonBigInt = require("json-bigint");
+
 import { db } from "../../../firebase";
 
 const articles = () => {
   const [articles, setArticles] = useState({});
+  const [articles2, setArticles2] = useState({});
+  const [articles3, setArticles3] = useState({});
 
   const REACT_APP_LEAGUE_ID: string | null =
     localStorage.getItem("selectedLeagueID");
 
   useEffect(() => {
+    console.log(REACT_APP_LEAGUE_ID);
     async function fetchData() {
       try {
+        console.log(REACT_APP_LEAGUE_ID);
         // Retrieve data from the database based on league_id
         const querySnapshot = await getDocs(
           query(
@@ -33,13 +39,22 @@ const articles = () => {
           )
         );
 
-        console.log("H");
-
         if (!querySnapshot.empty) {
           querySnapshot.forEach((doc) => {
             const docData = doc.data();
-            console.log("DB returned", JSON.parse(docData.articles));
-            setArticles(JSON.parse(docData.articles));
+
+            console.log("DB returned", docData);
+            // let segment2split = docData.segment2.split('"paragraph4"');
+            // let segment2p2 = '"paragraph4"' + segment2split[1];
+            // let segment2p1 = segment2split[0] + "}";
+
+            //setArticles(JsonBigInt.parse(docData.articles));
+            // console.log(segment2p1);
+            // setArticles3(JSON.parse(segment2p1));
+            //setArticles3(JsonBigInt.parse(segment2p2));
+            setArticles(docData.articles);
+            setArticles2(docData.segment2);
+            console.log(articles3);
           });
         } else {
           console.log("Document does not exist");
@@ -53,9 +68,21 @@ const articles = () => {
               }
             );
 
+            const segment2 = await fetch(
+              "http://localhost:3000/api/fetchSegment2",
+              {
+                method: "POST",
+                body: REACT_APP_LEAGUE_ID,
+              }
+            );
+
             const data = await response.json();
+            const seg2Data = await segment2.json();
             console.log("parsed ", data);
+            console.log("parsed ", seg2Data);
+
             setArticles(data);
+            setArticles2(seg2Data);
           } catch (error) {
             console.error("Error fetching data:", error);
           }
@@ -70,9 +97,9 @@ const articles = () => {
     }
 
     fetchData();
-  }, [articles]);
+  }, [JSON.stringify(articles)]);
 
-  console.log(articles);
+  console.log("a", articles3);
 
   return (
     <div className="flex flex-col justify-center items-center container w-[60vw]">
@@ -99,15 +126,20 @@ const articles = () => {
       <div>
         {" "}
         <ArticleTemplate
-          title="yo"
+          title={articles2.title}
           image={imran}
           author={"imran"}
           authorImg={imran}
           jobtitle="RCL Insider"
           date="Sep 14th, 2023"
-          p1={"articles"}
-          p2="fsdkjbfkjsbfksjdbf"
-          p3="fskhfdskjfhdskj"
+          p1={articles2.paragraph1}
+          p2={articles2.paragraph2}
+          p3={articles2.paragraph3}
+          p4={articles2.paragraph4}
+          p5={articles2.paragraph5}
+          p6={articles2.paragraph6}
+          p7={articles2.paragraph7}
+          p8={articles2.paragraph8}
           name="1"
         />
       </div>

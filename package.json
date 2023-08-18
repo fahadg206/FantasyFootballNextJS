@@ -27,6 +27,7 @@
     "firebase": "^10.1.0",
     "framer-motion": "^10.15.0",
     "html-to-text": "^9.0.5",
+    "json-bigint": "^1.0.0",
     "langchain": "^0.0.124",
     "lucide-react": "^0.263.0",
     "mammoth": "^1.6.0",

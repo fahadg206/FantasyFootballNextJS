@@ -155,17 +155,15 @@ export default function Scoreboard() {
   }
   function addContentIfDifferent(newContent: any, readingRef: any) {
     // Get the current contents of the file
-    uploadNewContent(newContent, readingRef);
+    //uploadNewContent(newContent, readingRef);
     getDownloadURL(readingRef)
       .then(function (url) {
         // Fetch the current contents using the URL
         fetch(url)
           .then((response) => response.text())
           .then((existingContent) => {
-            // Compare existing content with new content
-            uploadNewContent(newContent, readingRef);
-            if (existingContent !== newContent) {
-              // Upload the new content
+            if (!existingContent || existingContent !== newContent) {
+              // If existingContent is empty or different from new content, upload the new content
               uploadNewContent(newContent, readingRef);
             } else {
               console.log("New content is the same as existing content.");
@@ -176,7 +174,12 @@ export default function Scoreboard() {
           });
       })
       .catch(function (error) {
-        console.error("Error getting download URL:", error);
+        if (error.code === "storage/object-not-found") {
+          // Handle the case when the object (file) is not found in storage
+          uploadNewContent(newContent, readingRef);
+        } else {
+          console.error("Error getting download URL:", error);
+        }
       });
   }
 

@@ -17,6 +17,8 @@ import { JSONLoader } from "langchain/document_loaders";
 import { FaissStore } from "langchain/vectorstores/faiss";
 import { OpenAIEmbeddings } from "langchain/embeddings/openai";
 import { ChatOpenAI } from "langchain/chat_models/openai";
+import { SystemMessage } from "langchain/schema";
+import { HumanMessage } from "langchain/schema";
 import { RetrievalQAChain } from "langchain/chains";
 import fs from "fs";
 import path from "path";
@@ -40,14 +42,14 @@ const updateWeeklyInfo = async (REACT_APP_LEAGUE_ID, articles) => {
     console.log("in if");
     querySnapshot.forEach(async (doc) => {
       await updateDoc(doc.ref, {
-        articles: articles,
+        segment2: articles,
       });
     });
   } else {
     // Document does not exist, add a new one
     await addDoc(weeklyInfoCollectionRef, {
       league_id: REACT_APP_LEAGUE_ID,
-      articles: articles,
+      segment2: articles,
     });
   }
 };
@@ -79,12 +81,12 @@ export default async function handler(req, res) {
       new OpenAIEmbeddings()
     );
     //await vectorStore.addDocuments(articles.article1);
-    await vectorStore.addDocuments(articles.article2);
+    //await vectorStore.addDocuments(articles.article2);
     //await vectorStore.addDocuments(articles.article3);
-    await vectorStore.addDocuments(articles.article4);
+    //await vectorStore.addDocuments(articles.article4);
     const model = new ChatOpenAI({
       temperature: 0.9,
-      model: "gpt-4",
+      model: "gpt-4.0",
       max_tokens: 8000,
     });
     await vectorStore.save("leagueData");
@@ -97,11 +99,28 @@ export default async function handler(req, res) {
     };
 
     const articleTemplate = JSON.stringify(article);
-    const question = `using my style of writing give me a sports breakdown recapping all the league's matchups, include the scores, who won by comparing their team_points to their opponent's team_points and their star players include a bit of humor as well. it should be 450 words max. Give me the response in this exact format ${articleTemplate} with 8 paragraphs that are concise and it should be a valid json array. The format of the JSON response should strictly adhere to RFC8259 compliance, without any deviations or errors.`;
+    const question = `give me an article about this league's data, make the style a jokingly condescending and sarcastic way where you pick on the teams and make fun of their players and choices for some light fun and banter. Keep the content within 450 words maximum. The format of the JSON response should strictly adhere to RFC8259 compliance, without any deviations or errors. The JSON structure should match this template: {
+  "title": "",
+  "paragraph1": "",
+  "paragraph2": "",
+  "paragraph3": "",
+  "paragraph4": "",
+  "paragraph5": "",
+  "paragraph6": "",
+  "paragraph7": ""
+}
+Please ensure that the generated JSON response meets the specified criteria without any syntax issues or inconsistencies.`;
     const chain = RetrievalQAChain.fromLLM(model, vectorStore.asRetriever());
     const apiResponse = await chain.call({ query: question });
     console.log(apiResponse);
-    updateWeeklyInfo(REACT_APP_LEAGUE_ID, apiResponse.text);
+    console.log(typeof apiResponse.text);
+    const cleanUp = await model.call([
+      new SystemMessage(
+        "Turn the following string into valid JSON format that strictly adhere to RFC8259 compliance"
+      ),
+      new HumanMessage(apiResponse.text),
+    ]);
+    updateWeeklyInfo(REACT_APP_LEAGUE_ID, cleanUp.text);
     return res.status(200).json(apiResponse);
   } catch (error) {
     console.error("Unexpected error:", error);
