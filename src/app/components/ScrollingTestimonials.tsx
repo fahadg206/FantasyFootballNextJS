@@ -841,7 +841,7 @@ const TestimonialList = ({
                       {`${transaction.type}   :    ${transaction.status}`}
                     </span>
                   </div>
-                  <div className="waiver">
+                  <div className="waiver mt-3">
                     <span className="border-b-2 border-[#1a1a1a] border-opacity-80 text-center mb-1 flex justify-center items-center">
                       <Image
                         className="rounded-full mr-2"
@@ -850,9 +850,9 @@ const TestimonialList = ({
                         width={22}
                         height={22}
                       />
-                      {player.name}
+                      <p className="text-[14px]">{player.name}</p>
                     </span>
-                    <div className="flex flex-col items-center ">
+                    <div className="flex flex-col items-center  ">
                       <div className="player-added ">
                         <span className="flex items-center">
                           <LuUserPlus className="text-[green] mr-1" />{" "}
@@ -866,8 +866,13 @@ const TestimonialList = ({
                             width={30}
                             height={30}
                           />
-                          {`${playersData[player.player_added]?.fn || "Unknown"}
+                          <p className="text-[14px]">
+                            {" "}
+                            {`${
+                              playersData[player.player_added]?.fn || "Unknown"
+                            }
                           ${playersData[player.player_added]?.ln || "Player"}`}
+                          </p>
                         </span>
                       </div>
                       <div
@@ -889,10 +894,16 @@ const TestimonialList = ({
                             width={30}
                             height={30}
                           />
-                          {`${
-                            playersData[player.player_dropped]?.fn || "Unknown"
-                          }
-                        ${playersData[player.player_dropped]?.ln || "Player"}`}
+                          <p className="text-[14px]">
+                            {" "}
+                            {`${
+                              playersData[player.player_dropped]?.fn ||
+                              "Unknown"
+                            }
+                          ${
+                            playersData[player.player_dropped]?.ln || "Player"
+                          }`}
+                          </p>
                         </span>
                       </div>
                     </div>

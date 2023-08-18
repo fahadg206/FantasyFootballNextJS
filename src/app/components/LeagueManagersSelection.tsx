@@ -46,11 +46,28 @@ interface Starter {
   projected_points?: string;
   position: string;
 }
+
+interface ManagerInfo {
+  [userId: string]: {
+    avatar: string;
+    name: string;
+    roster_id?: string;
+    user_id?: string;
+    starters?: string[];
+    team_points_for_dec?: string;
+    team_points_against_dec?: string;
+    team_points_for?: string;
+    team_points_against?: string;
+    wins?: string;
+    losses?: string;
+  };
+}
+
 const TabsFeatures = () => {
   const [selected, setSelected] = useState(0);
   const [selectedManager, setSelectedManager] = useState("");
-  const { selectedMangerr, setSelectedManagerr } = useSelectedManager();
-
+  const [managerInfo, setManagerInfo] = useState<ManagerInfo>({});
+  const { selectedManagerr, setSelectedManagerr } = useSelectedManager();
   const [matchupMap, setMatchupMap] = useState<Map<string, MatchupMapData[]>>(
     new Map()
   );
@@ -59,12 +76,61 @@ const TabsFeatures = () => {
   const REACT_APP_LEAGUE_ID: string | null =
     localStorage.getItem("selectedLeagueID");
 
+  const getRoster = async () => {
+    try {
+      const response = await axios.get<any>(
+        `https://api.sleeper.app/v1/league/${REACT_APP_LEAGUE_ID}/rosters`
+      );
+
+      return response.data;
+    } catch (err) {
+      console.error(err);
+      throw new Error("Failed to get rosters");
+    }
+  };
+
+  const fetchData = async () => {
+    try {
+      const rostersData = await getRoster();
+      const newManagerInfo: ManagerInfo = {};
+
+      // Update the newManagerInfo map with roster data
+      for (const roster of rostersData) {
+        newManagerInfo[roster.owner_id] = {
+          roster_id: roster.roster_id,
+          starters: roster.starters,
+          team_points_for_dec: roster.settings.fpts_decimal,
+          team_points_for: roster.settings.fpts,
+          team_points_against_dec: roster.settings.fpts_against_decimal,
+          team_points_against: roster.settings.fpts_against,
+          wins: roster.settings.wins,
+          losses: roster.settings.losses,
+        };
+      }
+
+      console.log(newManagerInfo);
+      setManagerInfo(newManagerInfo);
+
+      const matchupMapData = await getMatchupMap(REACT_APP_LEAGUE_ID, 1);
+      setUserData(matchupMapData.updatedScheduleData);
+      setMatchupMap(matchupMapData.matchupMap);
+      setSelectedManager(localStorage.getItem("selectedManager"));
+    } catch (error) {
+      console.error("Error while fetching data:", error);
+    }
+  };
+
+  useEffect(() => {
+    if (REACT_APP_LEAGUE_ID) {
+      fetchData();
+    }
+  }, [REACT_APP_LEAGUE_ID]);
+
   useEffect(() => {
     axios
       .get("http://localhost:3001/api/players")
       .then((response) => {
         const playersData = response.data;
-
         setPlayersData(playersData);
         // Process and use the data as needed
       })
@@ -73,17 +139,7 @@ const TabsFeatures = () => {
       });
   }, []);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      const matchupMapData = await getMatchupMap(REACT_APP_LEAGUE_ID, 1);
-      setUserData(matchupMapData.updatedScheduleData);
-      setMatchupMap(matchupMapData.matchupMap);
-      //setMatchupMap(matchupMapData.matchupMap);
-      setSelectedManager(localStorage.getItem("selectedManager"));
-    };
-
-    fetchData();
-  }, [REACT_APP_LEAGUE_ID]);
+  console.log("Manager Info:", managerInfo);
 
   //console.log(matchupMap);
   // Convert the userData object into an array of objects
@@ -94,15 +150,14 @@ const TabsFeatures = () => {
     Feature: () => <ExampleFeature avatar={user.avatar} />,
   }));
 
-  console.log("fahad", userDataArray[selected]);
-
   const ExampleFeature = ({ avatar }) => (
     <div className="w-full px-0 py-8 md:px-8">
       <div className="flex flex-col  relative items-center justify-center h-96 w-full rounded-xl shadow-xl shadow-[#af1222] overflow-x-scroll ">
-        <div className="flex w-full gap-1.5 absolute top-0 rounded-t-xl bg-[#A29F9F] dark:bg-[#1a1a1a] p-3">
+        <div className="flex w-full gap-1.5 absolute top-0 rounded-t-xl bg-[#A29F9F] dark:bg-[#1a1a1a] p-3 items-center">
           <div className="h-3 w-3 rounded-full bg-red-500" />
           <div className="h-3 w-3 rounded-full bg-yellow-500" />
           <div className="h-3 w-3 rounded-full bg-green-500" />
+          <p className="w-full text-center text-xl font-bold">Starters</p>
         </div>
 
         <div className="flex flex-wrap relative top-5 items-center justify-center w-[90%] h-[90%] text-[20px] ">
@@ -245,9 +300,12 @@ const TabsFeatures = () => {
                 key={index}
               >
                 <>
-                  <p className="w-full flex justify-center items-center text-2xl font-bold ">
-                    {user.name}
-                  </p>
+                  <div className="w-full flex flex-col justify-center items-center text-xl font-bold mt-3">
+                    <p>{user.name}</p>
+                    <p className="text-lg">{`${
+                      managerInfo[user.user_id].wins
+                    }-${managerInfo[user.user_id].losses}`}</p>
+                  </div>
                   {user.Feature && user.Feature(user.avatar)}
                 </>
               </motion.div>

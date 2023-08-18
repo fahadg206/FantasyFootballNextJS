@@ -607,9 +607,10 @@ const matchups = () => {
     rivalsMap.get("Rival") && rivalsMap.get("Rival").matchups[weekCount];
   return (
     <div className="h-screen border-[1px] border-[#1a1a1a] w-[95vw] xl:w-[60vw]">
-      <div className="bg-[purple] flex justify-center h-screen mt-5">
+      <div className="bg-[purple] flex-col flex items-center md:flex-row md:justify-center md:items-start  h-screen mt-5">
         <div className="mr-10">
-          Select User:
+          <p className="text-center text-[14px]">Select User:</p>
+
           <Dropdown>
             <Dropdown.Button flat css={{ tt: "capitalize", color: "#af1222" }}>
               {selectedValue}
@@ -632,7 +633,7 @@ const matchups = () => {
           </Dropdown>
         </div>
         <div className="mr-10">
-          Select User:
+          <p className="text-center text-[14px]">Select User:</p>
           <Dropdown>
             <Dropdown.Button flat css={{ tt: "capitalize", color: "#af1222" }}>
               {selectedValue2}
@@ -655,7 +656,7 @@ const matchups = () => {
           </Dropdown>
         </div>
 
-        <div className="mt-6">
+        <div className="mr-10 md:mr-0 mt-6">
           <Button
             onPress={() => {
               console.log(input);
@@ -759,7 +760,7 @@ const matchups = () => {
                                     color: "#E9EBEA",
                                     fontWeight: "$bold",
                                     "@xsMax": {
-                                      fontSize: "13px",
+                                      fontSize: "12px",
                                     },
                                   }}
                                 >
@@ -777,6 +778,7 @@ const matchups = () => {
                                     fontSize: "14px",
                                     "@xsMax": {
                                       fontSize: "10px",
+                                      fontWeight: "bold",
                                     },
                                   }}
                                 >
@@ -880,6 +882,7 @@ const matchups = () => {
                                     fontSize: "14px",
                                     "@xsMax": {
                                       fontSize: "10px",
+                                      fontWeight: "bold",
                                     },
                                   }}
                                 >
@@ -910,7 +913,7 @@ const matchups = () => {
                                     color: "#E9EBEA",
                                     fontWeight: "$bold",
                                     "@xsMax": {
-                                      fontSize: "13px",
+                                      fontSize: "12px",
                                     },
                                   }}
                                 >
