@@ -175,7 +175,7 @@ const CardCarousel = () => {
 
   useEffect(() => {
     async function fetchData() {
-      console.log(REACT_APP_LEAGUE_ID);
+      //console.log(REACT_APP_LEAGUE_ID);
       try {
         // Retrieve data from the database based on league_id
         const querySnapshot = await getDocs(
@@ -191,7 +191,7 @@ const CardCarousel = () => {
         if (!querySnapshot.empty) {
           querySnapshot.forEach((doc) => {
             const docData = doc.data();
-            console.log("DB returned", JSON.parse(docData.headlines));
+            //console.log("DB returned", JSON.parse(docData.headlines));
             setHeadlines(JSON.parse(docData.headlines));
           });
         } else {
@@ -207,7 +207,7 @@ const CardCarousel = () => {
             );
 
             const data = await response.json();
-            console.log("parsed ", data);
+            //console.log("parsed ", data);
             setHeadlines(data);
           } catch (error) {
             console.error("Error fetching data:", error);
@@ -225,7 +225,7 @@ const CardCarousel = () => {
     fetchData();
   }, []);
 
-  console.log("Headlines: ", headlines);
+  //console.log("Headlines: ", headlines);
 
   const Card = ({ url, category, title, description }) => {
     return (

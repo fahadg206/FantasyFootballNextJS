@@ -1,7 +1,11 @@
 "use client";
 import React, { useState, useEffect } from "react";
+import { motion } from "framer-motion";
 import axios from "axios";
 import LeagueManagersSelection from "../../../components/LeagueManagersSelection";
+import Image from "next/image";
+import { useSelectedManager } from "../../../context/SelectedManagerContext";
+import { useRouter } from "next/navigation";
 
 interface ScheduleData {
   [userId: string]: {
@@ -50,6 +54,7 @@ export default function Page() {
   const [selectedManagerMatchups, setSelectedManagerMatchups] = useState<
     Map<string, ManagerMatchup[]>
   >(new Map());
+  const { selectedManagerr } = useSelectedManager();
 
   const [selectedManagerData, setSelectedManagerData] = useState();
   const [playersData, setPlayersData] = React.useState([]);
@@ -58,6 +63,7 @@ export default function Page() {
     localStorage.getItem("selectedLeagueID");
 
   const selectedManager = localStorage.getItem("selectedManager");
+  const router = useRouter();
 
   const getSchedule = async (week: number) => {
     try {
@@ -151,6 +157,8 @@ export default function Page() {
           }
         }
 
+        //console.log("ayo", matchupMap);
+
         for (const userId in updatedScheduleData) {
           const user = updatedScheduleData[userId];
           const filteredMatchupData = matchupMap.get(user.matchup_id);
@@ -177,7 +185,7 @@ export default function Page() {
         for (const user in updatedScheduleData) {
           if (updatedScheduleData[user].user_id === selectedManager) {
             //setSelectedManagerData(updatedScheduleData[selectedManager]);
-            console.log("what was set ", updatedScheduleData[selectedManager]);
+            //console.log("what was set ", updatedScheduleData[selectedManager]);
             break; // Exit the loop once the manager is found
           }
         }
@@ -190,8 +198,9 @@ export default function Page() {
     };
 
     const fetchAllData = async () => {
+      selectedManagerMatchups.clear();
       try {
-        for (let i = 1; i < 5; i++) {
+        for (let i = 1; i < 17; i++) {
           const weekMatchupMap = await fetchDataForWeek(i);
           // Handle additional processing or state updates if needed
         }
@@ -203,19 +212,20 @@ export default function Page() {
     };
 
     fetchAllData();
-  }, [REACT_APP_LEAGUE_ID]);
+  }, [REACT_APP_LEAGUE_ID, selectedManagerr]);
+  console.log("kabo", selectedManagerr);
 
-  useEffect(() => {
-    // Update selectedManagerName when scheduleDataFinal or selectedManager changes
+  // useEffect(() => {
+  //   // Update selectedManagerName when scheduleDataFinal or selectedManager changes
 
-    for (const user in scheduleDataFinal) {
-      if (scheduleDataFinal[user].user_id === selectedManager) {
-        setSelectedManagerData(scheduleDataFinal[selectedManager]);
-        console.log("what was set ", scheduleDataFinal[selectedManager]);
-        break; // Exit the loop once the manager is found
-      }
-    }
-  }, [scheduleDataFinal, selectedManager]);
+  //   for (const user in scheduleDataFinal) {
+  //     if (scheduleDataFinal[user].user_id === selectedManager) {
+  //       setSelectedManagerData(scheduleDataFinal[selectedManager]);
+  //       //console.log("what was set ", scheduleDataFinal[selectedManager]);
+  //       break; // Exit the loop once the manager is found
+  //     }
+  //   }
+  // }, [scheduleDataFinal, selectedManager]);
 
   //console.log("weekly match", selectedManagerMatchups);
 
@@ -237,28 +247,89 @@ export default function Page() {
     return <div>Loading...</div>;
   }
 
-  if (selectedManager) {
-    console.log(
-      "Selected manager ",
-      selectedManagerMatchups.get(selectedManager)
+  console.log(selectedManagerMatchups.get(defaultManager));
+
+  const selectedManagerWeeklyResults = !selectedManager
+    ? selectedManagerMatchups.get(defaultManager)
+    : selectedManagerMatchups.get(selectedManager);
+
+  const TranslateWrapper = ({ children, reverse }) => {
+    return (
+      <motion.div
+        initial={{ translateX: reverse ? "-100%" : "0%" }}
+        animate={{ translateX: reverse ? "0%" : "-100%" }}
+        transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
+        className="flex gap-4 px-2"
+      >
+        {children}
+      </motion.div>
     );
+  };
 
-    // console.log(
-    //   "Selected managers matchups: ",
-    //   selectedManagerMatchups.get(selectedManager)
-    // );
-  }
-  //console.log(selectedManagerMatchups);
+  const LogoItemsTop = () => (
+    <div className="flex mr-3 justify-center">
+      {selectedManagerWeeklyResults?.map((week) => {
+        let selectedPlayer;
+        let opponent;
+        if (selectedManager) {
+          if (selectedManager === week.matchup[0].user_id) {
+            selectedPlayer = week.matchup[0];
+            opponent = week.matchup[1];
+          } else {
+            selectedPlayer = week.matchup[1];
+            opponent = week.matchup[0];
+          }
+        } else {
+          if (defaultManager === week.matchup[0].user_id) {
+            selectedPlayer = week.matchup[0];
+            opponent = week.matchup[1];
+          } else {
+            selectedPlayer = week.matchup[1];
+            opponent = week.matchup[0];
+          }
+        }
 
-  let element;
+        return (
+          <div
+            className="flex flex-col items-center justify-center mr-2 "
+            key={week.week}
+          >
+            <p className="text-[11px] font-bold mb-1">{` Week ${week.week}`}</p>
+            <div
+              className={
+                selectedPlayer.team_points === opponent.team_points
+                  ? `flex flex-col justify-center items-center w-[100px] h-[80px] border-[1px] border-[#727070] rounded-2xl`
+                  : selectedPlayer.team_points > opponent.team_points
+                  ? `flex flex-col justify-center items-center w-[100px] h-[80px] border-[1px] border-[green] rounded-2xl`
+                  : `flex flex-col justify-center items-center w-[100px] h-[80px] border-[1px] border-[#af1222] rounded-2xl`
+              }
+            >
+              <Image
+                src={opponent.avatar}
+                alt="avatar"
+                width={30}
+                height={30}
+                className="rounded-full mb-2"
+              />
+              <p className="text-[10px] font-bold">{opponent.name}</p>
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  );
 
   return (
-    <div className="">
+    <div className="w-[95vw] xl:w-[60vw]">
       <LeagueManagersSelection />
-      <div className="w-[100px] h-[100px] border-[1px] border-[#1a1a1a]">
-        {Array.from(selectedManagerMatchups).map(([key, value]) =>
-          value.map((player) => <div key={player.week}>{player.week}</div>)
-        )}
+      <h2 className="text-center font-bold mb-2">Weekly Results</h2>
+      <div className="flex overflow-hidden py-1">
+        <TranslateWrapper>
+          <LogoItemsTop />
+        </TranslateWrapper>
+        <TranslateWrapper>
+          <LogoItemsTop />
+        </TranslateWrapper>
       </div>
     </div>
   );

@@ -4,6 +4,7 @@ import { FiMonitor, FiSave, FiSearch } from "react-icons/fi";
 import { AnimatePresence, motion } from "framer-motion";
 import { useState, useEffect } from "react";
 import getMatchupMap from "../libs/getMatchupData";
+import { useSelectedManager } from "../context/SelectedManagerContext";
 
 import axios from "axios";
 import Image from "next/image";
@@ -47,6 +48,7 @@ interface Starter {
 const TabsFeatures = () => {
   const [selected, setSelected] = useState(0);
   const [selectedManager, setSelectedManager] = useState("");
+  const { selectedMangerr, setSelectedManagerr } = useSelectedManager();
 
   const [matchupMap, setMatchupMap] = useState<Map<string, MatchupMapData[]>>(
     new Map()
@@ -81,6 +83,7 @@ const TabsFeatures = () => {
 
     fetchData();
   }, [REACT_APP_LEAGUE_ID]);
+
   //console.log(matchupMap);
   // Convert the userData object into an array of objects
 
@@ -183,6 +186,7 @@ const TabsFeatures = () => {
             //console.log(tabNum);
             localStorage.setItem("selectedManager", selectedManager);
             setSelectedManager(selectedManager);
+            setSelectedManagerr(selectedManager);
             setSelected(tabNum);
           }}
           className="relative z-0  w-full  gap-2 border-b-4 border-[#1a1a1a] p-3  transition-colors hover:bg-[#A29F9F] dark:hover:bg-[#1a1a1a] items-center justify-center flex flex-col"
@@ -226,23 +230,21 @@ const TabsFeatures = () => {
 
         <AnimatePresence mode="wait">
           {userDataArray.map((user, index) => {
-            return (
+            return selected === index ? (
               <motion.div
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: 10 }}
                 key={index}
               >
-                {selected === index ? (
-                  <>
-                    <p className="w-full flex justify-center items-center text-2xl font-bold ">
-                      {user.name}
-                    </p>
-                    {user.Feature && user.Feature(user.avatar)}
-                  </>
-                ) : undefined}
+                <>
+                  <p className="w-full flex justify-center items-center text-2xl font-bold ">
+                    {user.name}
+                  </p>
+                  {user.Feature && user.Feature(user.avatar)}
+                </>
               </motion.div>
-            );
+            ) : undefined;
           })}
         </AnimatePresence>
       </div>

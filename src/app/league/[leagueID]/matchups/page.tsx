@@ -590,12 +590,12 @@ const matchups = () => {
     .filter((item) => item !== undefined);
 
   if (rivalsMap.get("Rival")) {
-    console.log(
-      "Here are the rivals",
-      playersData["4017"].wi[
-        rivalsMap.get("Rival").matchups[weekCount].week?.toString()
-      ].p
-    );
+    // console.log(
+    //   "Here are the rivals",
+    //   playersData["4017"].wi[
+    //     rivalsMap.get("Rival").matchups[weekCount].week?.toString()
+    //   ].p
+    // );
   }
   //console.log("Here are the rivals", rivalsMap.get("Rival"));
   // const avatarID = rivalsMap
