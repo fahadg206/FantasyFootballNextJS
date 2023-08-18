@@ -44,6 +44,7 @@ interface Starter {
   avatar?: string;
   scored_points?: string;
   projected_points?: string;
+  position: string;
 }
 const TabsFeatures = () => {
   const [selected, setSelected] = useState(0);
@@ -93,6 +94,8 @@ const TabsFeatures = () => {
     Feature: () => <ExampleFeature avatar={user.avatar} />,
   }));
 
+  console.log("fahad", userDataArray[selected]);
+
   const ExampleFeature = ({ avatar }) => (
     <div className="w-full px-0 py-8 md:px-8">
       <div className="flex flex-col  relative items-center justify-center h-96 w-full rounded-xl shadow-xl shadow-[#af1222] overflow-x-scroll ">
@@ -118,11 +121,14 @@ const TabsFeatures = () => {
 
               // Calculate adjusted font size and image size
               const fontSize = scaleFactor * 7 + "px";
-              const imageSize = scaleFactor * 60;
+              let imageSize = scaleFactor * 2 * 100;
+              if (starter.position === "DEF") {
+                imageSize = scaleFactor * 55;
+              }
 
               return (
                 <div
-                  className="player flex flex-col justify-center items-center p-2  w-[100px] h-[100px] border-[1px] border-[#1a1a1a] hover:scale-105 hover:duration-200 cursor-pointer"
+                  className="player flex flex-col justify-center items-center p-2 w-[100px] h-[100px]  md:w-[140px] md:h-[140px]  hover:scale-105 hover:duration-200 cursor-pointer"
                   style={{ fontSize }}
                 >
                   <Image
@@ -130,13 +136,14 @@ const TabsFeatures = () => {
                     alt="player"
                     width={imageSize}
                     height={imageSize}
+                    className="rounded-full"
                   />
 
                   <p className="text-[10px]  w-full text-center overflow-hidden">
                     {playerName}
                   </p>
                   <p className="text-[10px] font-bold w-full text-center overflow-hidden">
-                    {points}
+                    {starter.position}
                   </p>
                 </div>
               );

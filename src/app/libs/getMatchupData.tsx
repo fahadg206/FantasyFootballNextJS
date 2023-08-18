@@ -67,6 +67,7 @@ interface Starter {
   avatar?: string;
   scored_points?: string;
   projected_points?: string;
+  position?: string;
 }
 
 export default async function getMatchupData(league_id: any, week: number) {
@@ -192,6 +193,7 @@ export default async function getMatchupData(league_id: any, week: number) {
                       : `https://sleepercdn.com/content/nfl/players/thumb/${starter}.jpg`,
                   scored_points:
                     updatedScheduleData[userId].players_points[starter],
+                  position: playersData[starter].pos,
                 };
                 if (
                   updatedScheduleData[userId]?.starters_full_data &&
@@ -215,6 +217,7 @@ export default async function getMatchupData(league_id: any, week: number) {
                           : `https://sleepercdn.com/content/nfl/players/thumb/${starter}.jpg`,
                       scored_points:
                         updatedScheduleData[userId].players_points[starter],
+                      position: playersData[starter].pos,
                     },
                   ];
                 }
@@ -248,114 +251,6 @@ export default async function getMatchupData(league_id: any, week: number) {
     } catch (error) {
       console.error("Error fetching data:", error);
     }
-
-    //setting each matchup into Map with key being matchup_id and value being two teams with corresponding matchup_id
-
-    //const storageRef = ref(storage, `files/${league_id}.txt`);
-
-    //Uncomment to upload textfile to firebase storage
-
-    //console.log("Updated Data: ", updatedScheduleData);
-
-    // const articleMatchupData: ScheduleData = JSON.parse(
-    //   JSON.stringify(updatedScheduleData)
-    // );
-
-    // for (const matchupData in articleMatchupData) {
-    //   delete articleMatchupData[matchupData].starters;
-    //   delete articleMatchupData[matchupData].starters_points;
-    //   delete articleMatchupData[matchupData].players;
-    //   delete articleMatchupData[matchupData].players_points;
-    //   delete articleMatchupData[matchupData].roster_id;
-    //   delete articleMatchupData[matchupData].user_id;
-    //   delete articleMatchupData[matchupData].avatar;
-    //   for (const starter of articleMatchupData[matchupData]
-    //     .starters_full_data) {
-    //     delete starter.avatar;
-    //   }
-    // }
-
-    //console.log("Data after freeze...", articleMatchupData);
-
-    // const textContent = JSON.stringify(articleMatchupData);
-
-    // // Upload the text content as a text file to Firebase Cloud Storage
-    // uploadString(storageRef, textContent, "raw")
-    //   .then(() => {
-    //     console.log("Text file uploaded to Firebase Cloud Storage.");
-    //   })
-    //   .catch((error) => {
-    //     console.error("Error uploading text file:", error);
-    //   });
-    // const readingRef = ref(storage, `files/`);
-    // try {
-    //   getDownloadURL(readingRef)
-    //     .then((url) => {
-    //       fetch(url)
-    //         .then((response) => response.text())
-    //         .then((fileContent) => {
-    //           console.log(
-    //             "Text file content from Firebase Cloud Storage:",
-    //             fileContent
-    //           );
-    //         })
-    //         .catch((error) => {
-    //           console.error("Error fetching text file content:", url);
-    //         });
-    //     })
-    //     .catch((error) => {
-    //       console.error("Error getting download URL:", error);
-    //     });
-    // } catch (error) {
-    //   console.error("Unexpected error:", error);
-    // }
-
-    // if (REACT_APP_LEAGUE_ID) {
-    //   const updateWeeklyInfo = async () => {
-    //     if (!weeklyInfo[REACT_APP_LEAGUE_ID]) {
-    //       weeklyInfo[REACT_APP_LEAGUE_ID] = {}; // Initialize the league entry if it doesn't exist
-    //     }
-
-    //     // Create a copy of scheduleDataFinal
-    //     const updatedInfo = { ...updatedScheduleData };
-
-    //     // Set the copied data to weeklyInfo
-    //     weeklyInfo[REACT_APP_LEAGUE_ID].info = updatedInfo;
-    //     console.log("ayo", weeklyInfo);
-
-    //     // Reference to the "Weekly Info" collection
-    //     const weeklyInfoCollectionRef = collection(db, "Weekly Info");
-
-    //     // Use a Query to check if a document with the league_id exists
-    //     const queryRef = query(
-    //       weeklyInfoCollectionRef,
-    //       where("league_id", "==", REACT_APP_LEAGUE_ID)
-    //     );
-
-    //     const querySnapshot = await getDocs(queryRef);
-
-    //     // Add or update the document based on whether it already exists
-    //     if (!querySnapshot.empty && weeklyInfo[REACT_APP_LEAGUE_ID].info) {
-    //       // Document exists, update it
-    //       console.log("in if");
-    //       querySnapshot.forEach(async (doc) => {
-    //         await updateDoc(doc.ref, {
-    //           info: weeklyInfo[REACT_APP_LEAGUE_ID].info,
-    //         });
-    //       });
-    //     } else {
-    //       console.log("in else", weeklyInfo[REACT_APP_LEAGUE_ID].info);
-    //       // Document does not exist, add a new one
-    //       await addDoc(weeklyInfoCollectionRef, {
-    //         league_id: REACT_APP_LEAGUE_ID,
-    //         info: weeklyInfo[REACT_APP_LEAGUE_ID].info,
-    //       });
-    //     }
-    //   };
-
-    //   // Call the async function
-    //   updateWeeklyInfo();
-    // }
 
     return { matchupMap, updatedScheduleData };
   };
