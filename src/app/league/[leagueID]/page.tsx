@@ -4,7 +4,7 @@ import React from "react";
 import ScrollingTestimonials from "../../components/ScrollingTestimonials";
 import ScrollingTeamLogos from "../../components/ScrollingTeamLogos";
 import HomeCarousel from "../../components/HomeCarousel";
-import Headlines from "../../components/Headlines";
+import HomePoll from "../../components/HomePoll";
 
 export default function page() {
   return (
@@ -22,6 +22,7 @@ export default function page() {
         <HomeCarousel />
       </div>
       <ScrollingTestimonials />
+      <HomePoll />
       <ScrollingTeamLogos />
     </div>
   );
