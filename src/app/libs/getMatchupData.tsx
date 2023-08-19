@@ -36,6 +36,9 @@ interface ScheduleData {
     team_points?: string;
     opponent?: string;
     matchup_id?: string;
+    wins?: string;
+    losses?: string;
+    streak?: string;
   };
 }
 
@@ -157,6 +160,9 @@ export default async function getMatchupData(league_id: any, week: number) {
       for (const roster of rostersData) {
         if (updatedScheduleData[roster.owner_id]) {
           updatedScheduleData[roster.owner_id].roster_id = roster.roster_id;
+          updatedScheduleData[roster.owner_id].wins = roster.settings.wins;
+          updatedScheduleData[roster.owner_id].losses = roster.settings.losses;
+          updatedScheduleData[roster.owner_id].streak = roster.metadata.streak;
         }
       }
 

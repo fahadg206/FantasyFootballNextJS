@@ -18,6 +18,8 @@ import { FaissStore } from "langchain/vectorstores/faiss";
 import { OpenAIEmbeddings } from "langchain/embeddings/openai";
 import { ChatOpenAI } from "langchain/chat_models/openai";
 import { RetrievalQAChain } from "langchain/chains";
+import { SystemMessage } from "langchain/schema";
+import { HumanMessage } from "langchain/schema";
 import fs from "fs";
 import path from "path";
 import { db, storage } from "../../app/firebase";
@@ -100,8 +102,13 @@ export default async function handler(req, res) {
 
     const chain = RetrievalQAChain.fromLLM(model, vectorStore.asRetriever());
     const apiResponse = await chain.call({ query: question });
-    console.log(apiResponse.text);
-    updateWeeklyInfo(REACT_APP_LEAGUE_ID, apiResponse.text);
+    const cleanUp = await model.call([
+      new SystemMessage(
+        "Turn the following string into valid JSON format that strictly adhere to RFC8259 compliance"
+      ),
+      new HumanMessage(apiResponse.text),
+    ]);
+    updateWeeklyInfo(REACT_APP_LEAGUE_ID, cleanUp.text);
     return res.status(200).json(JSON.parse(apiResponse.text));
   } catch (error) {
     console.error("Unexpected error:", error);
