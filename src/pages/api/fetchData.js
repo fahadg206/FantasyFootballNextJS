@@ -18,6 +18,8 @@ import { FaissStore } from "langchain/vectorstores/faiss";
 import { OpenAIEmbeddings } from "langchain/embeddings/openai";
 import { ChatOpenAI } from "langchain/chat_models/openai";
 import { RetrievalQAChain } from "langchain/chains";
+import { SystemMessage } from "langchain/schema";
+import { HumanMessage } from "langchain/schema";
 import fs from "fs";
 import path from "path";
 import { db, storage } from "../../app/firebase";
@@ -100,8 +102,13 @@ export default async function handler(req, res) {
     const question = `using my style of writing give me a sports breakdown recapping all the league's matchups, include the scores, who won by comparing their team_points to their opponent's team_points and their star players include a bit of humor as well. it should be 450 words max. Give me the response in this exact format ${articleTemplate} with 8 paragraphs that are concise and it should be a valid json array. The format of the JSON response should strictly adhere to RFC8259 compliance, without any deviations or errors.`;
     const chain = RetrievalQAChain.fromLLM(model, vectorStore.asRetriever());
     const apiResponse = await chain.call({ query: question });
-    console.log(apiResponse);
-    updateWeeklyInfo(REACT_APP_LEAGUE_ID, apiResponse.text);
+    const cleanUp = await model.call([
+      new SystemMessage(
+        "Turn the following string into valid JSON format that strictly adhere to RFC8259 compliance"
+      ),
+      new HumanMessage(apiResponse.text),
+    ]);
+    updateWeeklyInfo(REACT_APP_LEAGUE_ID, cleanUp.text);
     return res.status(200).json(apiResponse);
   } catch (error) {
     console.error("Unexpected error:", error);

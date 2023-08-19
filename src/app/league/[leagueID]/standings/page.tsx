@@ -22,6 +22,7 @@ interface ManagerInfo {
     team_points_against?: string;
     wins?: string;
     losses?: string;
+    streak?: string;
   };
 }
 
@@ -112,6 +113,7 @@ const page = () => {
               roster.settings.fpts_against;
             managerInfo[roster.owner_id].wins = roster.settings.wins;
             managerInfo[roster.owner_id].losses = roster.settings.losses;
+            managerInfo[roster.owner_id].streak = roster.metadata.streak;
           }
         }
 
@@ -169,6 +171,9 @@ const page = () => {
               <th className="text-start p-4 font-medium text-[11px] md:text-[16px]">
                 PA
               </th>
+              <th className="text-start p-4 font-medium text-[11px] md:text-[16px]">
+                Streak
+              </th>
             </tr>
           </thead>
 
@@ -224,6 +229,16 @@ const page = () => {
         </td>
         <td className="p-4">
           {user.team_points_against + user.team_points_against_dec / 100}
+        </td>
+        <td className="p-4 font-medium">
+          <span className="">{user.streak.slice(0, -1)}</span>
+          <span
+            className={`p-1 font-bold ${
+              user.streak.slice(-1) === "L" ? "text-[red]" : "text-[green]"
+            }`}
+          >
+            {user.streak.slice(-1)}
+          </span>
         </td>
       </motion.tr>
     );
