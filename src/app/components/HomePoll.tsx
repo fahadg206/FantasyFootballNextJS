@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { db, storage } from "../../app/firebase";
-import { addDoc, collection } from "firebase/firestore";
+import { db } from "../firebase";
+import { addDoc, collection } from "firebase/firestore/lite";
 
 const BarPoll = () => {
   const [votes, setVotes] = useState([
@@ -35,9 +35,11 @@ const BarPoll = () => {
 const Options = ({ votes, setVotes }) => {
   const addVotes = async () => {
     try {
-      await addDoc(collection(db, "Home Poll"), {
+      const voteInfo = collection(db, "Home Poll");
+      addDoc(voteInfo, {
         votes: JSON.stringify(votes),
       });
+
       console.log("Votes added to the database successfully");
     } catch (error) {
       console.error("Error adding votes to the database:", error);
@@ -53,7 +55,7 @@ const Options = ({ votes, setVotes }) => {
       prevVotes.map((v) => (v.title === newVote.title ? newVote : v))
     );
 
-    await addVotes(); // Wait for the state to be updated
+    //await addVotes(); // Wait for the state to be updated
   };
 
   return (
@@ -69,6 +71,7 @@ const Options = ({ votes, setVotes }) => {
               whileTap={{ scale: 0.985 }}
               onClick={() => {
                 handleIncrementVote(vote);
+                addVotes();
               }}
               key={vote.title}
               className={`w-full rounded-md ${vote.color} py-2 font-medium text-white`}
