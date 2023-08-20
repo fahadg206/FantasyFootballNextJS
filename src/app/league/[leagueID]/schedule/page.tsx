@@ -6,6 +6,17 @@ import Image from "next/image";
 import uuid from "uuid";
 import SchedulePoll from "../../../components/SchedulePoll";
 import axios, { AxiosResponse } from "axios";
+import { HiOutlineArrowSmLeft, HiOutlineArrowSmRight } from "react-icons/hi";
+import { BsDot } from "react-icons/bs";
+import {
+  Link,
+  Button,
+  Element,
+  Events,
+  animateScroll as scroll,
+  scrollSpy,
+  scroller,
+} from "react-scroll";
 
 interface NflState {
   season: string;
@@ -134,124 +145,129 @@ export default function Schedule(props: any) {
 
     return (
       <div
-        key={team1.name}
+        key={matchupID}
         className=" flex flex-col items-center gap-5 mt-2 duration-500 w-[95vw] xl:w-[60vw]"
       >
-        <div
-          className={
-            counter === nflState?.display_week
-              ? `border border-black  dark:border-[#1a1a1a] rounded w-[95vw] xl:w-[60vw] flex items-center justify-center md:h-[20vw] xl:h-[10vw]`
-              : `border border-black  dark:border-[#1a1a1a] rounded w-[95vw] xl:w-[60vw] flex items-center justify-center h-[20vh] md:h-[20vw] xl:h-[10vw]`
-          }
-        >
-          <div className="flex flex-col w-[45vw] xl:w-[25vw] items-center mr-1 xl:ml-5">
-            <div className="team1 flex justify-between items-center mb-3 w-[45vw] xl:w-[25vw]">
-              <div className="flex items-center">
-                <Image
-                  className="rounded-full mr-2 md:w-[40px] md:h-[40px] "
-                  src={team1.avatar}
-                  alt="avatar"
-                  width={30}
-                  height={30}
-                />
-                <div className="text-[12px] md:text-[20px] font-bold flex gap-2 items-center">
-                  {team1.name.length >= 9
-                    ? (team1.name.match(/[A-Z]/g) || []).length > 3
-                      ? team1.name.slice(0, 10).toLowerCase()
-                      : team1.name.slice(0, 10)
-                    : team1.name}
-                  <p className="hidden sm:text-[10px] sm:block italic font-bold text-[#949494]">{`${
-                    scheduleDataFinal[team1.user_id].wins
-                  } - ${scheduleDataFinal[team1.user_id].losses}`}</p>
-                </div>
-              </div>
-              <p
-                className={
-                  parseFloat(team1.team_points) > 0
-                    ? `text-[14px] md:text-[18px] mr-5`
-                    : `text-[12px] md:text-[18px] italic font-bold text-[#949494] mr-2`
-                }
-              >
-                {parseFloat(team1.team_points) > 0 ||
-                parseFloat(team2.team_points) > 0
-                  ? team1.team_points
-                  : `${scheduleDataFinal[team1.user_id].wins} - ${
-                      scheduleDataFinal[team1.user_id].losses
-                    }`}
-              </p>
-            </div>
-            <div className="team2 flex justify-between items-center  w-[45vw] xl:w-[25vw]">
-              <div className="flex items-center">
-                <Image
-                  className="rounded-full mr-2 md:w-[40px] md:h-[40px]"
-                  src={team2.avatar}
-                  alt="avatar"
-                  width={30}
-                  height={30}
-                />
-                <div className="text-[12px] md:text-[20px] font-bold flex gap-2 items-center">
-                  {team2.name.length >= 9
-                    ? (team2.name.match(/[A-Z]/g) || []).length > 3
-                      ? team2.name.slice(0, 10).toLowerCase()
-                      : team2.name.slice(0, 10)
-                    : team2.name}
-                  <p className="hidden sm:text-[10px] sm:block italic font-bold text-[#949494]">{`${
-                    scheduleDataFinal[team2.user_id].wins
-                  } - ${scheduleDataFinal[team2.user_id].losses}`}</p>
-                </div>
-              </div>
-              <p
-                className={
-                  parseFloat(team2.team_points) > 0
-                    ? `text-[14px] md:text-[18px] mr-5`
-                    : `text-[12px] md:text-[18px] italic font-bold text-[#949494] mr-2`
-                }
-              >
-                {parseFloat(team1.team_points) > 0 ||
-                parseFloat(team2.team_points) > 0
-                  ? team2.team_points
-                  : `${scheduleDataFinal[team2.user_id].wins} - ${
-                      scheduleDataFinal[team2.user_id].losses
-                    }`}
-              </p>
-            </div>
-            {shouldDisplay && (
-              <p className="text-center text-[14px] font-bold">{"FINAL"}</p>
-            )}
-          </div>
-          <p
-            className={
-              counter === nflState?.display_week
-                ? `hidden md:h-full border-r-[1px] border-dashed border-[#1a1a1a] ml-5 md:block`
-                : `hidden`
-            }
-          ></p>
-          {/* <p className="text-center text-[14px] font-bold">{"FINAL"}</p> */}
+        <Element name={matchupID} className="element ">
           <div
             className={
               counter === nflState?.display_week
-                ? `w-[45vw] xl:w-[35vw] flex justify-center overflow-y-scroll`
-                : `hidden`
+                ? `border border-black  dark:border-[#1a1a1a] rounded w-[95vw] xl:w-[60vw] flex items-center justify-center md:h-[20vw] xl:h-[15vw]`
+                : `border border-black  dark:border-[#1a1a1a] rounded w-[95vw] xl:w-[60vw] flex items-center justify-center h-[25vh] md:h-[20vw] xl:h-[15vw]`
             }
           >
-            <SchedulePoll
-              team1Name={team1.name}
-              team2Name={team2.name}
-              weekCounter={counter}
-              nflWeek={nflState?.display_week}
-            />
+            <div className="flex flex-col w-[45vw] xl:w-[25vw] items-center mr-1 xl:ml-5">
+              <div className="team1 flex justify-between items-center mb-3 w-[45vw] xl:w-[25vw]">
+                <div className="flex items-center">
+                  <Image
+                    className="rounded-full mr-2 md:w-[40px] md:h-[40px] "
+                    src={team1.avatar}
+                    alt="avatar"
+                    width={30}
+                    height={30}
+                  />
+                  <div className="text-[12px] md:text-[20px] font-bold flex gap-2 items-center">
+                    {team1.name.length >= 9
+                      ? (team1.name.match(/[A-Z]/g) || []).length > 3
+                        ? team1.name.slice(0, 10).toLowerCase()
+                        : team1.name.slice(0, 10)
+                      : team1.name}
+                    <p className="hidden sm:text-[10px] sm:block italic font-bold text-[#949494]">{`${
+                      scheduleDataFinal[team1.user_id].wins
+                    } - ${scheduleDataFinal[team1.user_id].losses}`}</p>
+                  </div>
+                </div>
+                <p
+                  className={`text-[12px] md:text-[16px] italic font-bold text-[#949494] mr-2`}
+                >
+                  {`${scheduleDataFinal[team1.user_id].wins} - ${
+                    scheduleDataFinal[team1.user_id].losses
+                  }`}
+                </p>
+              </div>
+              <div className="team2 flex justify-between items-center  w-[45vw] xl:w-[25vw]">
+                <div className="flex items-center">
+                  <Image
+                    className="rounded-full mr-2 md:w-[40px] md:h-[40px]"
+                    src={team2.avatar}
+                    alt="avatar"
+                    width={30}
+                    height={30}
+                  />
+                  <div className="text-[12px] md:text-[20px] font-bold flex gap-2 items-center">
+                    {team2.name.length >= 9
+                      ? (team2.name.match(/[A-Z]/g) || []).length > 3
+                        ? team2.name.slice(0, 10).toLowerCase()
+                        : team2.name.slice(0, 10)
+                      : team2.name}
+                    <p className="hidden sm:text-[10px] sm:block italic font-bold text-[#949494]">{`${
+                      scheduleDataFinal[team2.user_id].wins
+                    } - ${scheduleDataFinal[team2.user_id].losses}`}</p>
+                  </div>
+                </div>
+                <p
+                  className={`text-[12px] md:text-[16px] italic font-bold text-[#949494] mr-2`}
+                >
+                  {`${scheduleDataFinal[team2.user_id].wins} - ${
+                    scheduleDataFinal[team2.user_id].losses
+                  }`}
+                </p>
+              </div>
+              <p className="text-[12px] text-[#af1222] flex items-center">
+                <BsDot /> LIVE
+              </p>
+              {shouldDisplay && (
+                <p className="text-center text-[14px] font-bold">{"FINAL"}</p>
+              )}
+            </div>
+            <p
+              className={
+                counter === nflState?.display_week
+                  ? `hidden md:h-full border-r-[1px] border-dashed border-[#1a1a1a] ml-5 md:block`
+                  : `hidden`
+              }
+            ></p>
+            {/* for previous matches as well not only for current week */}
+            {parseFloat(team1.team_points) > 0 &&
+              parseFloat(team2.team_points) > 0 &&
+              (shouldDisplay ? (
+                <p className="text-center text-[14px] font-bold">{"FINAL"}</p>
+              ) : (
+                <p className="hidden">{"FINAL"}</p>
+              ))}
+            <div
+              className={
+                counter === nflState?.display_week
+                  ? `w-[45vw] xl:w-[35vw] flex justify-center overflow-y-scroll`
+                  : `hidden`
+              }
+            >
+              <SchedulePoll
+                team1Name={team1.name}
+                team2Name={team2.name}
+                weekCounter={counter}
+                nflWeek={nflState?.display_week}
+              />
+            </div>
           </div>
-        </div>
+        </Element>
       </div>
     );
   });
 
   return (
-    <div className=" flex flex-col items-center">
-      <div className="flex">
-        <p onClick={() => setCounter(counter + 1)}>+</p>
-        <p onClick={() => setCounter(counter - 1)}>-</p>
-        {`Week: ${counter}`}
+    <div className=" flex flex-col items-center mt-4">
+      <div className="flex flex-col items-center">
+        <p className="font-bold italic">{`Week: ${counter}`}</p>
+
+        <div className="flex">
+          <p className="cursor-pointer" onClick={() => setCounter(counter - 1)}>
+            <HiOutlineArrowSmLeft size={38} />
+          </p>{" "}
+          <p className="cursor-pointer" onClick={() => setCounter(counter + 1)}>
+            <HiOutlineArrowSmRight size={38} />
+          </p>
+        </div>
       </div>
       {matchupText}
     </div>

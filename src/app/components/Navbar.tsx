@@ -214,7 +214,7 @@ function NavBar(props: MyProps) {
               showScore ? " xl:p-0 block duration-500 ease-in" : "hidden"
             }
           >
-            <ScoreboardNav />
+            <ScoreboardNav setShowScore={setShowScore} />
           </div>
         </div>
         <div>

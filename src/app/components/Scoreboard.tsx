@@ -18,6 +18,18 @@ import {
 import { QuerySnapshot, onSnapshot, doc } from "firebase/firestore";
 import getMatchupMap from "../../app/libs/getMatchupData";
 import { useRouter } from "next/navigation";
+import * as Scroll from "react-scroll";
+import Link from "next/link";
+import {
+  Link as SmoothLink,
+  Button,
+  Element,
+  Events,
+  animateScroll as scroll,
+  scrollSpy,
+  scroller,
+} from "react-scroll";
+
 interface ScheduleData {
   [userId: string]: {
     avatar?: string;
@@ -292,68 +304,84 @@ export default function Scoreboard() {
             : `hidden xl:flex flex-wrap  justify-center mb-2 text-[9px] font-bold xl:h-[13vh] xl:w-[10vw] hover:bg-[#c4bfbf] dark:hover:bg-[#1a1a1c] cursor-pointer hover:scale-105 hover:duration-200`
         }
       >
-        <div className="border-r dark:border-[#1a1a1a] border-[#af1222] border-opacity-10 p-2 rounded-md flex flex-col items-start justify-center h-[13vh] w-[10vw]">
-          <div className="team1 flex justify-between items-center  w-[9vw]">
-            <span className="flex items-center">
-              <Image
-                src={team1.avatar}
-                alt="avatar"
-                height={28}
-                width={28}
-                className="rounded-full mr-1"
-              />
+        {/* need to navigate to schedule page THEN smooth scroll to appropriate matchup */}
+        <SmoothLink
+          activeClass="active"
+          spy={true}
+          delay={100}
+          smooth={true}
+          offset={50}
+          duration={700}
+          onClick={() => {
+            router.push(
+              `/league/${localStorage.getItem("selectedLeagueID")}/schedule`
+            );
+          }}
+          to={matchupID}
+        >
+          <div className="border-r dark:border-[#1a1a1a] border-[#af1222] border-opacity-10 p-2 rounded-md flex flex-col items-start justify-center h-[13vh] w-[10vw]">
+            <div className="team1 flex justify-between items-center  w-[9vw] mb-1">
+              <span className="flex items-center">
+                <Image
+                  src={team1.avatar}
+                  alt="avatar"
+                  height={28}
+                  width={28}
+                  className="rounded-full mr-1"
+                />
+                <p>
+                  {team1.name.length >= 9
+                    ? (team1.name.match(/[A-Z]/g) || []).length > 3
+                      ? team1.name.slice(0, 10).toLowerCase()
+                      : team1.name.slice(0, 10)
+                    : team1.name}
+                </p>
+              </span>
               <p>
-                {team1.name.length >= 9
-                  ? (team1.name.match(/[A-Z]/g) || []).length > 3
-                    ? team1.name.slice(0, 10).toLowerCase()
-                    : team1.name.slice(0, 10)
-                  : team1.name}
+                {parseFloat(team1.team_points) > 0 ||
+                parseFloat(team2.team_points) > 0
+                  ? team1.team_points
+                  : `${scheduleDataFinal[team1.user_id].wins} - ${
+                      scheduleDataFinal[team1.user_id].losses
+                    }`}
               </p>
-            </span>
-            <p>
-              {parseFloat(team1.team_points) > 0 ||
-              parseFloat(team2.team_points) > 0
-                ? team1.team_points
-                : `${scheduleDataFinal[team1.user_id].wins} - ${
-                    scheduleDataFinal[team1.user_id].losses
-                  }`}
+            </div>
+            <div className="team2 flex justify-between items-center w-[9vw]">
+              <span className="flex items-center">
+                <Image
+                  src={team2.avatar}
+                  alt="avatar"
+                  height={28}
+                  width={28}
+                  className="rounded-full mr-1"
+                />
+                <p>
+                  {team2.name.length >= 9
+                    ? (team2.name.match(/[A-Z]/g) || []).length > 3
+                      ? team2.name.slice(0, 10).toLowerCase()
+                      : team2.name.slice(0, 10)
+                    : team2.name}
+                </p>
+              </span>
+              <p>
+                {parseFloat(team1.team_points) > 0 ||
+                parseFloat(team2.team_points) > 0
+                  ? team2.team_points
+                  : `${scheduleDataFinal[team2.user_id].wins} - ${
+                      scheduleDataFinal[team2.user_id].losses
+                    }`}
+              </p>
+            </div>
+            <p className="w-[9vw] text-center text-[9px]">
+              O/U: {Math.round(team1Proj + team2Proj)}
+            </p>
+            <p className="w-[9vw] text-center text-[9px] text-[grey]">
+              {team1Proj > team2Proj
+                ? team1?.name + " -" + Math.round(team1Proj - team2Proj)
+                : team2?.name + " -" + Math.round(team2Proj - team1Proj)}
             </p>
           </div>
-          <div className="team2 flex justify-between items-center w-[9vw]">
-            <span className="flex items-center">
-              <Image
-                src={team2.avatar}
-                alt="avatar"
-                height={28}
-                width={28}
-                className="rounded-full mr-1"
-              />
-              <p>
-                {team2.name.length >= 9
-                  ? (team2.name.match(/[A-Z]/g) || []).length > 3
-                    ? team2.name.slice(0, 10).toLowerCase()
-                    : team2.name.slice(0, 10)
-                  : team2.name}
-              </p>
-            </span>
-            <p>
-              {parseFloat(team1.team_points) > 0 ||
-              parseFloat(team2.team_points) > 0
-                ? team2.team_points
-                : `${scheduleDataFinal[team2.user_id].wins} - ${
-                    scheduleDataFinal[team2.user_id].losses
-                  }`}
-            </p>
-          </div>
-          <p className="w-[9vw] text-center text-[9px]">
-            O/U: {Math.round(team1Proj + team2Proj)}
-          </p>
-          <p className="w-[9vw] text-center text-[9px] text-[grey]">
-            {team1Proj > team2Proj
-              ? team1?.name + " -" + Math.round(team1Proj - team2Proj)
-              : team2?.name + " -" + Math.round(team2Proj - team1Proj)}
-          </p>
-        </div>
+        </SmoothLink>
       </div>
     );
   });

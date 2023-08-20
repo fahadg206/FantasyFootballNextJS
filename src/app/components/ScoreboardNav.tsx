@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import Link from "next/link";
+
 import axios from "axios";
 
 import uuid from "uuid";
@@ -9,6 +9,15 @@ import Image from "next/image";
 import Scoreboard from "./Scoreboard";
 import Schedule from "../league/[leagueID]/schedule/page";
 import getMatchupMap from "../libs/getMatchupData";
+import {
+  Link,
+  Button,
+  Element,
+  Events,
+  animateScroll as scroll,
+  scrollSpy,
+  scroller,
+} from "react-scroll";
 
 interface ScheduleData {
   [userId: string]: {
@@ -45,13 +54,14 @@ interface MatchupMapData {
   matchup_id?: string;
 }
 
-export default function ScoreboardNav() {
+export default function ScoreboardNav({ setShowScore }) {
   //object that contains userId, avatar, team name, & roster_id
 
   const [schedule, setSchedule] = useState<Matchup[]>([]);
   const [loading, setLoading] = useState(true);
   const [scheduleDataFinal, setScheduleDataFinal] = useState<ScheduleData>({});
   const [shouldDisplay, setShouldDisplay] = useState(false);
+  const [selectedMatchup, setSelectedMatchup] = useState(false);
 
   const [matchupMap, setMatchupMap] = useState<Map<string, MatchupMapData[]>>(
     new Map()
@@ -113,64 +123,78 @@ export default function ScoreboardNav() {
     const team2 = matchupData[1];
 
     return (
-      <div className=" flex flex-col items-center gap-5 mt-2 duration-500">
-        <div className="border border-black p-[30px] dark:bg-[#202123] rounded w-[85vw] flex flex-col">
-          <div className="team1 flex items-center justify-between mb-2">
-            <div className="flex items-center">
-              <Image
-                className="rounded-full mr-2"
-                src={team1.avatar}
-                alt="avatar"
-                width={30}
-                height={30}
-              />
-              <p className="text-[14px] font-bold">{team1.name}</p>
-            </div>
-            <p
-              className={
-                parseFloat(team1.team_points) > 0
-                  ? `text-[14px]`
-                  : `text-[11px] italic font-bold text-[#949494]`
-              }
-            >
-              {parseFloat(team1.team_points) > 0 ||
-              parseFloat(team2.team_points) > 0
-                ? team1.team_points
-                : `${scheduleDataFinal[team1.user_id].wins} - ${
-                    scheduleDataFinal[team1.user_id].losses
-                  }`}
-            </p>
-          </div>
-          <div className="team2 flex items-center justify-between">
-            <div className="flex items-center">
-              <Image
-                className="rounded-full mr-2"
-                src={team2.avatar}
-                alt="avatar"
-                width={30}
-                height={30}
-              />
-              <p className="text-[14px] font-bold">{team2.name}</p>
-            </div>
-            <p
-              className={
+      <div
+        key={matchupID}
+        className=" flex flex-col items-center gap-5 mt-2 duration-500"
+      >
+        <Link
+          activeClass="active"
+          to={matchupID}
+          spy={true}
+          smooth={true}
+          offset={50}
+          delay={100}
+          duration={900}
+          onClick={() => setShowScore(false)}
+        >
+          <div className="border border-black p-[30px] dark:bg-[#202123] rounded w-[85vw] flex flex-col">
+            <div className="team1 flex items-center justify-between mb-2">
+              <div className="flex items-center">
+                <Image
+                  className="rounded-full mr-2"
+                  src={team1.avatar}
+                  alt="avatar"
+                  width={30}
+                  height={30}
+                />
+                <p className="text-[14px] font-bold">{team1.name}</p>
+              </div>
+              <p
+                className={
+                  parseFloat(team1.team_points) > 0
+                    ? `text-[14px]`
+                    : `text-[11px] italic font-bold text-[#949494]`
+                }
+              >
+                {parseFloat(team1.team_points) > 0 ||
                 parseFloat(team2.team_points) > 0
-                  ? `text-[14px]`
-                  : `text-[11px] italic font-bold text-[#949494]`
-              }
-            >
-              {parseFloat(team1.team_points) > 0 ||
-              parseFloat(team2.team_points) > 0
-                ? team2.team_points
-                : `${scheduleDataFinal[team2.user_id].wins} - ${
-                    scheduleDataFinal[team2.user_id].losses
-                  }`}
-            </p>
+                  ? team1.team_points
+                  : `${scheduleDataFinal[team1.user_id].wins} - ${
+                      scheduleDataFinal[team1.user_id].losses
+                    }`}
+              </p>
+            </div>
+            <div className="team2 flex items-center justify-between">
+              <div className="flex items-center">
+                <Image
+                  className="rounded-full mr-2"
+                  src={team2.avatar}
+                  alt="avatar"
+                  width={30}
+                  height={30}
+                />
+                <p className="text-[14px] font-bold">{team2.name}</p>
+              </div>
+              <p
+                className={
+                  parseFloat(team2.team_points) > 0
+                    ? `text-[14px]`
+                    : `text-[11px] italic font-bold text-[#949494]`
+                }
+              >
+                {parseFloat(team1.team_points) > 0 ||
+                parseFloat(team2.team_points) > 0
+                  ? team2.team_points
+                  : `${scheduleDataFinal[team2.user_id].wins} - ${
+                      scheduleDataFinal[team2.user_id].losses
+                    }`}
+              </p>
+            </div>
+            {shouldDisplay && (
+              <p className="text-center text-[14px] font-bold">{"FINAL"}</p>
+            )}
           </div>
-          {shouldDisplay && (
-            <p className="text-center text-[14px] font-bold">{"FINAL"}</p>
-          )}
-        </div>
+        </Link>
       </div>
     );
   });

@@ -120,7 +120,7 @@ const Options = ({ votes, setVotes }) => {
 
   return (
     <div className="col-span-1 ">
-      <h3 className="mb-2 text-[12px] xl:text-[15px] text-center font-semibold text-slate-50">
+      <h3 className="mb-2 text-[12px] xl:text-[15px] text-center font-semibold ">
         Who will win?
       </h3>
       <div className="mb-2 flex justify-center">
@@ -134,7 +134,7 @@ const Options = ({ votes, setVotes }) => {
                 //addVotes(votes);
               }}
               key={vote.title}
-              className={`w-[70px] sm:w-[100px] md:w-[160px] rounded-xl ${vote.color} py-2 text-[11px] xl:text-[15px] text-white mr-2`}
+              className={`w-[70px] sm:w-[100px] md:w-[160px] rounded-xl ${vote.color} py-2 text-[11px] xl:text-[15px]  mr-2 text-white`}
             >
               {vote.title.length >= 9
                 ? (vote.title.match(/[A-Z]/g) || []).length > 3
@@ -146,7 +146,7 @@ const Options = ({ votes, setVotes }) => {
         })}
       </div>
       <div className="flex justify-center">
-        <span className="mb-1 text-[11px] xl:text-[15px] italic  text-slate-400">
+        <span className="mb-1 text-[11px] xl:text-[15px] italic">
           {totalVotes} votes
         </span>
       </div>
@@ -179,10 +179,8 @@ const Bars = ({ votes }) => {
                 className={`relative z-0 w-full ${vote.color}`}
                 transition={{ type: "spring" }}
               />
-              <span className="absolute bottom-0 left-[50%] mt-2 inline-block w-full -translate-x-[50%] p-2 text-center text-sm text-slate-50">
-                <span className="text-xs text-slate-200">
-                  {vote.votes} votes
-                </span>
+              <span className="absolute bottom-0 left-[50%] mt-2 inline-block w-full -translate-x-[50%] p-2 text-center text-sm text-[#8d8787] dark:text-white">
+                <span className="text-xs ">{vote.votes} votes</span>
               </span>
             </div>
           </div>
