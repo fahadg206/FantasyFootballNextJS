@@ -108,7 +108,7 @@ const TabsFeatures = () => {
         };
       }
 
-      console.log(newManagerInfo);
+      //console.log(newManagerInfo);
       setManagerInfo(newManagerInfo);
 
       const matchupMapData = await getMatchupMap(REACT_APP_LEAGUE_ID, 1);
@@ -139,7 +139,7 @@ const TabsFeatures = () => {
       });
   }, []);
 
-  console.log("Manager Info:", managerInfo);
+  //console.log("Manager Info:", managerInfo);
 
   //console.log(matchupMap);
   // Convert the userData object into an array of objects

@@ -113,7 +113,7 @@ export default function Scoreboard() {
         }
       }
 
-      console.log("data ", articleMatchupData);
+      //console.log("data ", articleMatchupData);
 
       const textContent = JSON.stringify(articleMatchupData);
 
@@ -166,7 +166,7 @@ export default function Scoreboard() {
               // If existingContent is empty or different from new content, upload the new content
               uploadNewContent(newContent, readingRef);
             } else {
-              console.log("New content is the same as existing content.");
+              //console.log("New content is the same as existing content.");
             }
           })
           .catch(function (error) {
@@ -310,7 +310,14 @@ export default function Scoreboard() {
                   : team1.name}
               </p>
             </span>
-            <p>{team1.team_points || "0"}</p>
+            <p>
+              {parseFloat(team1.team_points) > 0 ||
+              parseFloat(team2.team_points) > 0
+                ? team1.team_points
+                : `${scheduleDataFinal[team1.user_id].wins} - ${
+                    scheduleDataFinal[team1.user_id].losses
+                  }`}
+            </p>
           </div>
           <div className="team2 flex justify-between items-center w-[9vw]">
             <span className="flex items-center">
@@ -329,7 +336,14 @@ export default function Scoreboard() {
                   : team2.name}
               </p>
             </span>
-            <p>{team2.team_points || "0"}</p>
+            <p>
+              {parseFloat(team1.team_points) > 0 ||
+              parseFloat(team2.team_points) > 0
+                ? team2.team_points
+                : `${scheduleDataFinal[team2.user_id].wins} - ${
+                    scheduleDataFinal[team2.user_id].losses
+                  }`}
+            </p>
           </div>
           <p className="w-[9vw] text-center text-[9px]">
             O/U: {Math.round(team1Proj + team2Proj)}

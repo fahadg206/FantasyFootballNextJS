@@ -214,7 +214,7 @@ export default function Page() {
 
     fetchAllData();
   }, [REACT_APP_LEAGUE_ID, selectedManagerr]);
-  console.log("kabo", selectedManagerr);
+  //console.log("kabo", selectedManagerr);
 
   // useEffect(() => {
   //   // Update selectedManagerName when scheduleDataFinal or selectedManager changes
@@ -268,7 +268,7 @@ export default function Page() {
     );
   }
 
-  console.log(selectedManagerMatchups.get(defaultManager));
+  //console.log(selectedManagerMatchups.get(defaultManager));
 
   const selectedManagerWeeklyResults = !selectedManager
     ? selectedManagerMatchups.get(defaultManager)

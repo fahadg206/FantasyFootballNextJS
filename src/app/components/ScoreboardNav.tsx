@@ -51,12 +51,37 @@ export default function ScoreboardNav() {
   const [schedule, setSchedule] = useState<Matchup[]>([]);
   const [loading, setLoading] = useState(true);
   const [scheduleDataFinal, setScheduleDataFinal] = useState<ScheduleData>({});
+  const [shouldDisplay, setShouldDisplay] = useState(false);
 
   const [matchupMap, setMatchupMap] = useState<Map<string, MatchupMapData[]>>(
     new Map()
   );
   const REACT_APP_LEAGUE_ID: string | null =
     localStorage.getItem("selectedLeagueID");
+
+  useEffect(() => {
+    const checkTime = () => {
+      const now = new Date();
+      const dayOfWeek = now.getUTCDay(); // Sunday is 0, Monday is 1, ..., Saturday is 6
+      const hours = now.getUTCHours();
+      const minutes = now.getUTCMinutes();
+
+      if (
+        (dayOfWeek === 1 && hours === 22 && minutes >= 30) || // Monday after 10:30 PM
+        (dayOfWeek === 2 && hours < 0) || // Tuesday
+        (dayOfWeek === 3 && hours === 0 && minutes === 0) // Wednesday before 12:00 AM
+      ) {
+        setShouldDisplay(true);
+      } else {
+        setShouldDisplay(false);
+      }
+    };
+
+    checkTime(); // Initial check
+    const intervalId = setInterval(checkTime, 60000); // Check every minute
+
+    return () => clearInterval(intervalId); // Cleanup interval when component unmounts
+  }, []);
 
   useEffect(() => {
     async function fetchMatchupData() {
@@ -74,6 +99,7 @@ export default function ScoreboardNav() {
         }
         const matchupMapData = await getMatchupMap(REACT_APP_LEAGUE_ID, 1);
         setMatchupMap(matchupMapData.matchupMap);
+        setScheduleDataFinal(matchupMapData.updatedScheduleData);
       } catch (error) {
         console.error("Error fetching matchup data:", error);
       }
@@ -89,7 +115,7 @@ export default function ScoreboardNav() {
     return (
       <div className=" flex flex-col items-center gap-5 mt-2 duration-500">
         <div className="border border-black p-[30px] dark:bg-[#202123] rounded w-[85vw] flex flex-col">
-          <div className="team1 flex items-center justify-between">
+          <div className="team1 flex items-center justify-between mb-2">
             <div className="flex items-center">
               <Image
                 className="rounded-full mr-2"
@@ -100,8 +126,19 @@ export default function ScoreboardNav() {
               />
               <p className="text-[14px] font-bold">{team1.name}</p>
             </div>
-            <p className="text-[14px]">
-              {!team1.team_points ? "0" : team1.team_points}
+            <p
+              className={
+                parseFloat(team1.team_points) > 0
+                  ? `text-[14px]`
+                  : `text-[11px] italic font-bold text-[#949494]`
+              }
+            >
+              {parseFloat(team1.team_points) > 0 ||
+              parseFloat(team2.team_points) > 0
+                ? team1.team_points
+                : `${scheduleDataFinal[team1.user_id].wins} - ${
+                    scheduleDataFinal[team1.user_id].losses
+                  }`}
             </p>
           </div>
           <div className="team2 flex items-center justify-between">
@@ -115,11 +152,24 @@ export default function ScoreboardNav() {
               />
               <p className="text-[14px] font-bold">{team2.name}</p>
             </div>
-            <p className="text-[14px]">
-              {!team2.team_points ? "0" : team2.team_points}
+            <p
+              className={
+                parseFloat(team2.team_points) > 0
+                  ? `text-[14px]`
+                  : `text-[11px] italic font-bold text-[#949494]`
+              }
+            >
+              {parseFloat(team1.team_points) > 0 ||
+              parseFloat(team2.team_points) > 0
+                ? team2.team_points
+                : `${scheduleDataFinal[team2.user_id].wins} - ${
+                    scheduleDataFinal[team2.user_id].losses
+                  }`}
             </p>
           </div>
-          <p className="text-center text-[14px] font-bold">{"FINAL"}</p>
+          {shouldDisplay && (
+            <p className="text-center text-[14px] font-bold">{"FINAL"}</p>
+          )}
         </div>
       </div>
     );

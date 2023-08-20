@@ -158,11 +158,12 @@ export default async function getMatchupData(league_id: any, week: number) {
 
       // Update the scheduleData map with roster data
       for (const roster of rostersData) {
+        console.log(roster);
         if (updatedScheduleData[roster.owner_id]) {
           updatedScheduleData[roster.owner_id].roster_id = roster.roster_id;
           updatedScheduleData[roster.owner_id].wins = roster.settings.wins;
           updatedScheduleData[roster.owner_id].losses = roster.settings.losses;
-          updatedScheduleData[roster.owner_id].streak = roster.metadata.streak;
+          // updatedScheduleData[roster.owner_id].streak = roster.metadata.streak;
         }
       }
 
@@ -257,6 +258,7 @@ export default async function getMatchupData(league_id: any, week: number) {
     } catch (error) {
       console.error("Error fetching data:", error);
     }
+    console.log(updatedScheduleData);
 
     return { matchupMap, updatedScheduleData };
   };

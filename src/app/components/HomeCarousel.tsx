@@ -186,8 +186,6 @@ const CardCarousel = () => {
           )
         );
 
-        console.log("H");
-
         if (!querySnapshot.empty) {
           querySnapshot.forEach((doc) => {
             const docData = doc.data();
