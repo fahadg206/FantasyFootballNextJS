@@ -49,27 +49,46 @@ interface MatchupMapData {
 
 interface ScheduleData {
   [userId: string]: {
-    avatar: string;
+    avatar?: string;
     name: string;
     roster_id?: string;
     user_id?: string;
     starters?: string[];
+    starters_points?: string[];
+    players?: string[];
+    players_points?: string[];
+    starters_full_data?: Starter[];
     team_points?: string;
     opponent?: string;
     matchup_id?: string;
+    wins?: string;
+    losses?: string;
+    streak?: string;
   };
+}
+
+interface Starter {
+  fname?: string;
+  lname?: string;
+  avatar?: string;
+  scored_points?: string;
+  projected_points?: string;
+  position?: string;
 }
 
 export default function Schedule(props: any) {
   const [loading, setLoading] = useState(true);
+
   const [matchupMap, setMatchupMap] = useState<Map<
     string,
     MatchupMapData[]
   > | null>(null);
   const [counter, setCounter] = useState(1);
   const [scheduleDataFinal, setScheduleDataFinal] = useState<ScheduleData>({});
-  const [shouldDisplay, setShouldDisplay] = useState(false);
+
+  const [showPostGame, setShowPostGame] = useState(false);
   const [nflState, setNflState] = useState<NflState>();
+  const [playersData, setPlayersData] = React.useState([]);
 
   const REACT_APP_LEAGUE_ID = localStorage.getItem("selectedLeagueID");
 
@@ -95,6 +114,20 @@ export default function Schedule(props: any) {
   };
 
   useEffect(() => {
+    axios
+      .get("http://localhost:3001/api/players")
+      .then((response) => {
+        const playersData = response.data;
+
+        setPlayersData(playersData);
+        // Process and use the data as needed
+      })
+      .catch((error) => {
+        console.error("Error while fetching players data:", error);
+      });
+  }, []);
+
+  useEffect(() => {
     const checkTime = () => {
       const now = new Date();
       const dayOfWeek = now.getUTCDay(); // Sunday is 0, Monday is 1, ..., Saturday is 6
@@ -106,9 +139,9 @@ export default function Schedule(props: any) {
         (dayOfWeek === 2 && hours < 0) || // Tuesday
         (dayOfWeek === 3 && hours === 0 && minutes === 0) // Wednesday before 12:00 AM
       ) {
-        setShouldDisplay(true);
+        setShowPostGame(true);
       } else {
-        setShouldDisplay(false);
+        setShowPostGame(false);
       }
     };
 
@@ -143,10 +176,48 @@ export default function Schedule(props: any) {
     const team1 = matchupData[0];
     const team2 = matchupData[1];
 
+    let team1Proj = 0.0;
+    let team2Proj = 0.0;
+    //console.log("team 1, ", team1.starters);
+    // ...
+
+    if (team1?.starters) {
+      for (const currPlayer of team1.starters) {
+        if (
+          playersData[currPlayer] &&
+          playersData[currPlayer].wi &&
+          playersData[currPlayer].wi[counter?.toString()] &&
+          playersData[currPlayer].wi[counter?.toString()].p !== undefined
+        ) {
+          team1Proj += parseFloat(
+            playersData[currPlayer].wi[counter?.toString()].p
+          );
+        }
+      }
+    }
+
+    if (team2?.starters) {
+      for (const currPlayer of team2.starters) {
+        if (
+          playersData[currPlayer] &&
+          playersData[currPlayer].wi &&
+          playersData[currPlayer].wi[counter?.toString()] &&
+          playersData[currPlayer].wi[counter?.toString()].p !== undefined
+        ) {
+          team2Proj += parseFloat(
+            playersData[currPlayer].wi[counter?.toString()].p
+          );
+        }
+      }
+    }
+
     const starters1 =
       scheduleDataFinal[team1.user_id]?.starters_full_data || [];
     const starters2 =
       scheduleDataFinal[team2.user_id]?.starters_full_data || [];
+
+    const starters1Points = scheduleDataFinal[team1.user_id]?.starters_points;
+    const starters2Points = scheduleDataFinal[team2.user_id]?.starters_points;
 
     // Remove empty objects from starters arrays
     const nonEmptyStarters1 = starters1.filter(
@@ -172,6 +243,176 @@ export default function Schedule(props: any) {
     console.log("Top two scores for team 1:", topTwoScorers1);
     console.log("Top two scores for team 2:", topTwoScorers2);
 
+    let preGame;
+    let liveGame;
+    let postGame;
+
+    //check if we're in current week. If we are, display poll. Else, display over/under.
+    if (
+      parseFloat(team1.team_points) === 0 &&
+      parseFloat(team2.team_points) === 0
+    ) {
+      preGame = true;
+      postGame = false;
+      liveGame = false;
+    }
+
+    //live game
+    if (
+      (parseFloat(team1.team_points) > 0 ||
+        parseFloat(team2.team_points) > 0) &&
+      (starters1Points.includes(0) || starters2Points.includes(0))
+    ) {
+      liveGame = true;
+      preGame = false;
+      postGame = false;
+    }
+
+    //postgame
+    if (nflState?.display_week > counter) {
+      postGame = true;
+      preGame = false;
+      liveGame = false;
+    }
+
+    let overUnderText = (
+      <div className="">
+        <p className="w-[40vw] xl:w-[30vw] text-center text-[15px]">
+          O/U: {Math.round(team1Proj + team2Proj)}
+        </p>
+        <p className="w-[40vw] xl:w-[30vw] text-center text-[15px] text-[grey]">
+          {team1Proj > team2Proj
+            ? team1?.name + " -" + Math.round(team1Proj - team2Proj)
+            : team2?.name + " -" + Math.round(team2Proj - team1Proj)}
+        </p>
+      </div>
+    );
+
+    let showPoll = (
+      <div className="w-[50vw] xl:w-[35vw] flex justify-center overflow-y-scroll ">
+        <SchedulePoll
+          team1Name={team1.name}
+          team2Name={team2.name}
+          weekCounter={counter}
+          nflWeek={nflState?.display_week}
+        />
+      </div>
+    );
+
+    let showLiveText = (
+      <div className="w-[50vw] xl:w-[35vw] flex flex-col h-[150px] justify-around items-center">
+        <p className="italic text-[14px] text-[#1a1a1a] dark:text-[#979090] text-center">
+          Kabo was voted to win by 70% of league members!
+        </p>{" "}
+        <p className="text-[12px] text-[#af1222] flex items-center">
+          <BsDot /> LIVE
+        </p>
+      </div>
+    );
+
+    let team1TopScorers = (
+      <div className="team1 topscorers">
+        {
+          <div className="top-scorers">
+            <ul className=" flex w-[40vw] xl:w-[20vw] justify-center ">
+              {topTwoScorers1.map((player, index) => {
+                const playerName =
+                  player.fname?.charAt(0) + ". " + player.lname;
+                const points = player.scored_points;
+
+                // Calculate the length of the player name and points
+                const totalContentLength =
+                  playerName.length + (points && points.toString().length);
+
+                // Calculate the scale factor based on content length
+                const scaleFactor = Math.min(1, 100 / totalContentLength);
+
+                // Calculate adjusted font size and image size
+
+                let imageSize = scaleFactor * 100;
+                if (player.position === "DEF") {
+                  imageSize = scaleFactor * 55;
+                }
+
+                return (
+                  <li
+                    key={index}
+                    className="flex flex-col  items-center justify-center space-x-2 w-[160px] h-[80px] xl:w-[100px] xl:h-[100px]  "
+                  >
+                    <Image
+                      src={player.avatar}
+                      alt="Player Avatar"
+                      width={imageSize}
+                      height={imageSize}
+                      className={`rounded-full w-[${imageSize}] h-[${imageSize}]`}
+                    />
+                    <div className="flex flex-col text-[9px] xl:text-[12px]">
+                      <p>{playerName}</p>
+                      <p className="text-[8px] xl:text-[10px] w-full text-center">
+                        {points}
+                      </p>
+                    </div>
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
+        }
+      </div>
+    );
+
+    let team2TopScorers = (
+      <div className="team2 topscorers">
+        {
+          <div className="top-scorers mt-4">
+            <p className="font-bold mb-2"></p>
+            <ul className=" flex justify-center w-[40vw] xl:w-[20vw] ">
+              {topTwoScorers2.map((player, index) => {
+                const playerName =
+                  player.fname?.charAt(0) + ". " + player.lname;
+                const points = player.scored_points;
+
+                // Calculate the length of the player name and points
+                const totalContentLength =
+                  playerName.length + (points && points.toString().length);
+
+                // Calculate the scale factor based on content length
+                const scaleFactor = Math.min(1, 100 / totalContentLength);
+
+                // Calculate adjusted font size and image size
+
+                let imageSize = scaleFactor * 100;
+                if (player.position === "DEF") {
+                  imageSize = scaleFactor * 55;
+                }
+
+                return (
+                  <li
+                    key={index}
+                    className="flex flex-col items-center justify-center space-x-2 w-[160px] h-[80px] xl:w-[100px] xl:h-[100px] "
+                  >
+                    <Image
+                      src={player.avatar}
+                      alt="Player Avatar"
+                      width={imageSize}
+                      height={imageSize}
+                      className={`w-[${imageSize}] h-[${imageSize}]`}
+                    />
+                    <div className="flex flex-col text-[9px] xl:text-[12px]">
+                      <p>{playerName}</p>
+                      <p className="text-[8px] xl:text-[10px] w-full text-center">
+                        {points}
+                      </p>
+                    </div>
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
+        }
+      </div>
+    );
+
     return (
       <div
         key={matchupID}
@@ -182,153 +423,116 @@ export default function Schedule(props: any) {
             className={
               counter === nflState?.display_week
                 ? `border border-black  dark:border-[#1a1a1a] rounded w-[95vw] xl:w-[60vw] flex items-center justify-center md:h-[20vw] xl:h-[15vw]`
-                : `border border-black  dark:border-[#1a1a1a] rounded w-[95vw] xl:w-[60vw] flex items-center justify-center h-[25vh] md:h-[20vw] xl:h-[15vw]`
+                : `border border-black  dark:border-[#1a1a1a] rounded w-[95vw] xl:w-[60vw] flex items-center justify-center h-[25vh] md:h-[25vw] xl:h-[17vw]`
             }
           >
-            <div className="flex flex-col w-[45vw] xl:w-[25vw] items-center mr-1 xl:ml-5">
-              <div className="team1 flex justify-between items-center mb-3 w-[45vw] xl:w-[25vw]">
-                <div className="flex items-center">
-                  <Image
-                    className="rounded-full mr-2 md:w-[40px] md:h-[40px] "
-                    src={team1.avatar}
-                    alt="avatar"
-                    width={30}
-                    height={30}
-                  />
-                  <div className="text-[12px] md:text-[20px] font-bold flex gap-2 items-center">
-                    {team1.name.length >= 9
-                      ? (team1.name.match(/[A-Z]/g) || []).length > 3
-                        ? team1.name.slice(0, 10).toLowerCase()
-                        : team1.name.slice(0, 10)
-                      : team1.name}
-                    <p className="hidden sm:text-[10px] sm:block italic font-bold text-[#949494]">{`${
-                      scheduleDataFinal[team1.user_id].wins
-                    } - ${scheduleDataFinal[team1.user_id].losses}`}</p>
+            <div className="flex flex-col w-[45vw] xl:w-[25vw] items-center mr-1 xl:ml-5 ">
+              {/* 1 styling is for polls, 2 is for postgame players*/}
+              <div
+                className={
+                  preGame || liveGame
+                    ? `1 team1 flex justify-between items-center  w-[45vw] xl:w-[25vw] mb-5`
+                    : `2 team1 flex justify-around items-center  w-[95vw] xl:w-[60vw] `
+                }
+              >
+                <div className="flex items-center w-full justify-around">
+                  <div className="flex">
+                    {" "}
+                    <Image
+                      className="rounded-full mr-2 md:w-[40px] md:h-[40px] "
+                      src={team1.avatar}
+                      alt="avatar"
+                      width={30}
+                      height={30}
+                    />
+                    <div className="text-[12px] md:text-[20px] font-bold flex gap-2 items-center">
+                      {team1.name.length >= 9
+                        ? (team1.name.match(/[A-Z]/g) || []).length > 3
+                          ? team1.name.slice(0, 10).toLowerCase()
+                          : team1.name.slice(0, 10)
+                        : team1.name}
+                      <p className="text-[10px] sm:block italic font-bold text-[#949494]">{`${
+                        scheduleDataFinal[team1.user_id].wins
+                      } - ${scheduleDataFinal[team1.user_id].losses}`}</p>
+                    </div>
+                  </div>
+
+                  <div
+                    className={
+                      postGame
+                        ? `block text-[11px] md:text-[14px] italic`
+                        : `hidden`
+                    }
+                  >
+                    {team1.team_points}
                   </div>
                 </div>
-                <p
-                  className={`text-[12px] md:text-[16px] italic font-bold text-[#949494] mr-2`}
-                >
-                  {`${scheduleDataFinal[team1.user_id].wins} - ${
-                    scheduleDataFinal[team1.user_id].losses
-                  }`}
-                </p>
+
+                {/* TopScorers */}
+
+                {postGame && team1TopScorers}
               </div>
-              <div className="team2 flex justify-between items-center  w-[45vw] xl:w-[25vw]">
-                <div className="flex items-center">
-                  <Image
-                    className="rounded-full mr-2 md:w-[40px] md:h-[40px]"
-                    src={team2.avatar}
-                    alt="avatar"
-                    width={30}
-                    height={30}
-                  />
-                  <div className="text-[12px] md:text-[20px] font-bold flex gap-2 items-center">
-                    {team2.name.length >= 9
-                      ? (team2.name.match(/[A-Z]/g) || []).length > 3
-                        ? team2.name.slice(0, 10).toLowerCase()
-                        : team2.name.slice(0, 10)
-                      : team2.name}
-                    <p className="hidden sm:text-[10px] sm:block italic font-bold text-[#949494]">{`${
-                      scheduleDataFinal[team2.user_id].wins
-                    } - ${scheduleDataFinal[team2.user_id].losses}`}</p>
+              <div
+                className={
+                  preGame || liveGame
+                    ? `1 team2 flex justify-between items-center  w-[45vw] xl:w-[25vw] `
+                    : `2 team2 flex justify-around items-center  w-[95vw] xl:w-[60vw] `
+                }
+              >
+                <div className="flex items-center w-full justify-around ">
+                  <div className="flex">
+                    {" "}
+                    <Image
+                      className="rounded-full mr-2 md:w-[40px] md:h-[40px]"
+                      src={team2.avatar}
+                      alt="avatar"
+                      width={30}
+                      height={30}
+                    />
+                    <div className="text-[12px] md:text-[20px] font-bold flex gap-2 items-center">
+                      {team2.name.length >= 9
+                        ? (team2.name.match(/[A-Z]/g) || []).length > 3
+                          ? team2.name.slice(0, 10).toLowerCase()
+                          : team2.name.slice(0, 10)
+                        : team2.name}
+                      <p className="text-[10px] sm:block italic font-bold text-[#949494]">{`${
+                        scheduleDataFinal[team2.user_id].wins
+                      } - ${scheduleDataFinal[team2.user_id].losses}`}</p>
+                    </div>
+                  </div>
+
+                  <div
+                    className={
+                      postGame
+                        ? `block text-[11px] md:text-[14px] italic`
+                        : `hidden`
+                    }
+                  >
+                    {team2.team_points}
                   </div>
                 </div>
-                <p
-                  className={`text-[12px] md:text-[16px] italic font-bold text-[#949494] mr-2`}
-                >
-                  {`${scheduleDataFinal[team2.user_id].wins} - ${
-                    scheduleDataFinal[team2.user_id].losses
-                  }`}
-                </p>
+                {/* TopScorers team 2 */}
+                {postGame && team2TopScorers}
               </div>
-              <p className="text-[12px] text-[#af1222] flex items-center">
-                <BsDot /> LIVE
-              </p>
-              {shouldDisplay && (
-                <p className="text-center text-[14px] font-bold">{"FINAL"}</p>
-              )}
-            </div>
-            <p
-              className={
-                counter === nflState?.display_week
-                  ? `hidden md:h-full border-r-[1px] border-dashed border-[#1a1a1a] ml-5 md:block`
-                  : `hidden`
-              }
-            ></p>
-            {/* for previous matches as well not only for current week */}
-            {parseFloat(team1.team_points) > 0 &&
-              parseFloat(team2.team_points) > 0 &&
-              (shouldDisplay ? (
-                <p className="text-center text-[14px] font-bold">{"FINAL"}</p>
+
+              {showPostGame || postGame ? (
+                <p className="text-[12px] w-[75vw] xl:w-[40vw] flex  font-bold">
+                  {"FINAL"}
+                </p>
               ) : (
                 <p className="hidden">{"FINAL"}</p>
-              ))}
-            <div
-              className={
-                counter === nflState?.display_week
-                  ? `w-[45vw] xl:w-[35vw] flex justify-center overflow-y-scroll`
-                  : `hidden`
-              }
-            >
-              <SchedulePoll
-                team1Name={team1.name}
-                team2Name={team2.name}
-                weekCounter={counter}
-                nflWeek={nflState?.display_week}
-              />
+              )}
             </div>
-            {/* Display top scorers for team 1 */}
-            {!shouldDisplay && (
-              <div className="top-scorers mt-4">
-                <p className="font-bold mb-2">
-                  Points Leaders for {team1.name}:
-                </p>
-                <ul className="space-y-2">
-                  {topTwoScorers1.map((player, index) => (
-                    <li key={index} className="flex items-center space-x-2">
-                      <img
-                        src={player.avatar}
-                        alt="Player Avatar"
-                        className="w-8 h-8 rounded-full"
-                      />
-                      <div className="flex flex-col">
-                        <p>{`${player.fname} ${player.lname}`}</p>
-                        <p className="text-sm">
-                          Points: {player.scored_points}
-                        </p>
-                      </div>
-                    </li>
-                  ))}
-                </ul>
-              </div>
+
+            {preGame && nflState?.display_week === counter ? (
+              showPoll
+            ) : preGame && nflState?.display_week < counter ? (
+              overUnderText
+            ) : (
+              <div className="hidden"></div>
             )}
 
-            {/* Display top scorers for team 2 */}
-            {!shouldDisplay && (
-              <div className="top-scorers mt-4">
-                <p className="font-bold mb-2">
-                  Points Leaders for {team2.name}:
-                </p>
-                <ul className="space-y-2">
-                  {topTwoScorers2.map((player, index) => (
-                    <li key={index} className="flex items-center space-x-2">
-                      <img
-                        src={player.avatar}
-                        alt="Player Avatar"
-                        className="w-8 h-8 rounded-full"
-                      />
-                      <div className="flex flex-col">
-                        <p>{`${player.fname} ${player.lname}`}</p>
-                        <p className="text-sm">
-                          Points: {player.scored_points}
-                        </p>
-                      </div>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
+            {liveGame && showLiveText}
           </div>
         </Element>
       </div>
