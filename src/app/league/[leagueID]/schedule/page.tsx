@@ -143,6 +143,35 @@ export default function Schedule(props: any) {
     const team1 = matchupData[0];
     const team2 = matchupData[1];
 
+    const starters1 =
+      scheduleDataFinal[team1.user_id]?.starters_full_data || [];
+    const starters2 =
+      scheduleDataFinal[team2.user_id]?.starters_full_data || [];
+
+    // Remove empty objects from starters arrays
+    const nonEmptyStarters1 = starters1.filter(
+      (starter) => Object.keys(starter).length > 0
+    );
+    const nonEmptyStarters2 = starters2.filter(
+      (starter) => Object.keys(starter).length > 0
+    );
+
+    // Sort the non-empty starters by scored_points in descending order
+    const sortedStarters1 = [...nonEmptyStarters1].sort(
+      (a, b) => b.scored_points - a.scored_points
+    );
+
+    const sortedStarters2 = [...nonEmptyStarters2].sort(
+      (a, b) => b.scored_points - a.scored_points
+    );
+
+    // Extract the top two highest scorers
+    const topTwoScorers1 = sortedStarters1.slice(0, 2);
+    const topTwoScorers2 = sortedStarters2.slice(0, 2);
+
+    console.log("Top two scores for team 1:", topTwoScorers1);
+    console.log("Top two scores for team 2:", topTwoScorers2);
+
     return (
       <div
         key={matchupID}
@@ -249,6 +278,57 @@ export default function Schedule(props: any) {
                 nflWeek={nflState?.display_week}
               />
             </div>
+            {/* Display top scorers for team 1 */}
+            {!shouldDisplay && (
+              <div className="top-scorers mt-4">
+                <p className="font-bold mb-2">
+                  Points Leaders for {team1.name}:
+                </p>
+                <ul className="space-y-2">
+                  {topTwoScorers1.map((player, index) => (
+                    <li key={index} className="flex items-center space-x-2">
+                      <img
+                        src={player.avatar}
+                        alt="Player Avatar"
+                        className="w-8 h-8 rounded-full"
+                      />
+                      <div className="flex flex-col">
+                        <p>{`${player.fname} ${player.lname}`}</p>
+                        <p className="text-sm">
+                          Points: {player.scored_points}
+                        </p>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
+            {/* Display top scorers for team 2 */}
+            {!shouldDisplay && (
+              <div className="top-scorers mt-4">
+                <p className="font-bold mb-2">
+                  Points Leaders for {team2.name}:
+                </p>
+                <ul className="space-y-2">
+                  {topTwoScorers2.map((player, index) => (
+                    <li key={index} className="flex items-center space-x-2">
+                      <img
+                        src={player.avatar}
+                        alt="Player Avatar"
+                        className="w-8 h-8 rounded-full"
+                      />
+                      <div className="flex flex-col">
+                        <p>{`${player.fname} ${player.lname}`}</p>
+                        <p className="text-sm">
+                          Points: {player.scored_points}
+                        </p>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
           </div>
         </Element>
       </div>
