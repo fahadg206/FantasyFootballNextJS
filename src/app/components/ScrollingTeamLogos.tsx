@@ -5,6 +5,7 @@ import { useState, useEffect } from "react";
 import Image from "next/image";
 import getMatchupData from "../libs/getMatchupData";
 import { useRouter } from "next/navigation";
+import { ReactNode } from "react";
 
 interface ScheduleData {
   [userId: string]: {
@@ -51,7 +52,13 @@ const ScrollingTeamLogos = () => {
 
   const userDataArray = Object.values(userData || {});
 
-  const TranslateWrapper = ({ children, reverse }) => {
+  const TranslateWrapper = ({
+    children,
+    reverse,
+  }: {
+    children: ReactNode;
+    reverse: boolean;
+  }) => {
     return (
       <motion.div
         initial={{ translateX: reverse ? "-100%" : "0%" }}
@@ -84,7 +91,10 @@ const ScrollingTeamLogos = () => {
       {userDataArray.map((user, index) => (
         <button
           onClick={() => {
-            localStorage.setItem("selectedManager", user.user_id);
+            localStorage.setItem(
+              "selectedManager",
+              user.user_id ?? "UserID doesn't exist"
+            );
             router.push(
               `/league/${localStorage.getItem(
                 "selectedLeagueID"
@@ -93,7 +103,7 @@ const ScrollingTeamLogos = () => {
             router.refresh();
           }}
         >
-          <LogoItem key={index} avatar={user.avatar} name={user.name} />
+          <LogoItem key={index} avatar={user.avatar ?? ""} name={user.name} />
         </button>
       ))}
     </>
@@ -104,7 +114,10 @@ const ScrollingTeamLogos = () => {
       {userDataArray.map((user, index) => (
         <button
           onClick={() => {
-            localStorage.setItem("selectedManager", user.user_id);
+            localStorage.setItem(
+              "selectedManager",
+              user.user_id ?? "UserID doesn't exist"
+            );
             router.push(
               `/league/${localStorage.getItem(
                 "selectedLeagueID"
@@ -113,7 +126,7 @@ const ScrollingTeamLogos = () => {
             router.refresh();
           }}
         >
-          <LogoItem key={index} avatar={user.avatar} name={user.name} />
+          <LogoItem key={index} avatar={user.avatar ?? ""} name={user.name} />
         </button>
       ))}
     </>
@@ -121,13 +134,13 @@ const ScrollingTeamLogos = () => {
   return (
     <section className="bg-[#EDEDED] dark:bg-[black] py-4 w-[95vw] xl:w-[60vw]">
       <div className="flex  overflow-hidden">
-        <TranslateWrapper>
+        <TranslateWrapper reverse={false}>
           <LogoItemsTop />
         </TranslateWrapper>
-        <TranslateWrapper>
+        <TranslateWrapper reverse={false}>
           <LogoItemsTop />
         </TranslateWrapper>
-        <TranslateWrapper>
+        <TranslateWrapper reverse={false}>
           <LogoItemsTop />
         </TranslateWrapper>
       </div>

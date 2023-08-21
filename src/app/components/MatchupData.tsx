@@ -136,9 +136,5 @@ export default async function MatchupData() {
   }
 
   console.log("Server: ", matchupMap);
-  return (
-    <div>
-      <Scoreboard matchup={"HEY"} />
-    </div>
-  );
+  return <div>{/* <Scoreboard matchup={"HEY"} /> */}</div>;
 }

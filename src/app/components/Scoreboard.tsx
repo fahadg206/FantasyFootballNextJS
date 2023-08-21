@@ -44,6 +44,8 @@ interface ScheduleData {
     team_points?: string;
     opponent?: string;
     matchup_id?: string;
+    wins?: string;
+    losses?: string;
   };
 }
 
@@ -83,12 +85,22 @@ interface Starter {
   projected_points?: string;
 }
 
+interface PlayerData {
+  wi?: {
+    [week: string]: {
+      p?: string;
+    };
+  };
+  // Add other properties if needed
+}
+
 export default function Scoreboard() {
   const [schedule, setSchedule] = useState<Matchup[]>([]);
   const [loading, setLoading] = useState(true);
   const [loadingData, setLoadingData] = useState(true);
   const [scheduleDataFinal, setScheduleDataFinal] = useState<ScheduleData>({});
-  const [playersData, setPlayersData] = React.useState([]);
+  const [playersData, setPlayersData] =
+    React.useState<Record<string, PlayerData>>();
   const [week, setWeek] = useState<number>();
 
   const weeklyInfo: WeeklyInformation = {};
@@ -111,17 +123,23 @@ export default function Scoreboard() {
         JSON.stringify(weeklyData)
       );
 
-      for (const matchupData in articleMatchupData) {
-        delete articleMatchupData[matchupData].starters;
-        delete articleMatchupData[matchupData].starters_points;
-        delete articleMatchupData[matchupData].players;
-        delete articleMatchupData[matchupData].players_points;
-        delete articleMatchupData[matchupData].roster_id;
-        delete articleMatchupData[matchupData].user_id;
-        delete articleMatchupData[matchupData].avatar;
-        for (const starter of articleMatchupData[matchupData]
-          .starters_full_data) {
-          delete starter.avatar;
+      for (const matchupId in articleMatchupData) {
+        const matchup = articleMatchupData[matchupId];
+
+        // Delete properties from the matchup object
+        delete matchup.starters;
+        delete matchup.starters_points;
+        delete matchup.players;
+        delete matchup.players_points;
+        delete matchup.roster_id;
+        delete matchup.user_id;
+        delete matchup.avatar;
+
+        // Check if starters_full_data exists before iterating over it
+        if (matchup.starters_full_data) {
+          for (const starter of matchup.starters_full_data) {
+            delete starter.avatar;
+          }
         }
       }
 
@@ -254,6 +272,8 @@ export default function Scoreboard() {
     router.refresh();
   }
 
+  const weekString = week?.toString();
+
   // MATCHUP TEXT
 
   const matchupText = Array.from(matchupMap).map(([matchupID, matchupData]) => {
@@ -262,35 +282,36 @@ export default function Scoreboard() {
 
     let team1Proj = 0.0;
     let team2Proj = 0.0;
-    //console.log("team 1, ", team1.starters);
-    // ...
 
     if (team1?.starters) {
       for (const currPlayer of team1.starters) {
+        const playerData = playersData && playersData[currPlayer];
         if (
-          playersData[currPlayer] &&
-          playersData[currPlayer].wi &&
-          playersData[currPlayer].wi[week?.toString()] &&
-          playersData[currPlayer].wi[week?.toString()].p !== undefined
+          playerData &&
+          playerData.wi &&
+          weekString !== undefined && // Check if weekString is defined
+          typeof weekString === "string" && // Check if weekString is a string
+          playerData.wi[weekString] &&
+          playerData.wi[weekString]?.p !== undefined
         ) {
-          team1Proj += parseFloat(
-            playersData[currPlayer].wi[week?.toString()].p
-          );
+          if (playerData.wi[weekString].p)
+            team1Proj += parseFloat(playerData.wi[weekString].p || "0");
         }
       }
     }
 
     if (team2?.starters) {
       for (const currPlayer of team2.starters) {
+        const playerData = playersData && playersData[currPlayer];
         if (
-          playersData[currPlayer] &&
-          playersData[currPlayer].wi &&
-          playersData[currPlayer].wi[week?.toString()] &&
-          playersData[currPlayer].wi[week?.toString()].p !== undefined
+          playerData &&
+          playerData.wi &&
+          weekString !== undefined && // Check if weekString is defined
+          typeof weekString === "string" && // Check if weekString is a string
+          playerData.wi[weekString] &&
+          playerData.wi[weekString]?.p !== undefined
         ) {
-          team2Proj += parseFloat(
-            playersData[currPlayer].wi[week?.toString()].p
-          );
+          team2Proj += parseFloat(playerData.wi[weekString].p || "0");
         }
       }
     }
@@ -338,12 +359,16 @@ export default function Scoreboard() {
                 </p>
               </span>
               <p>
-                {parseFloat(team1.team_points) > 0 ||
-                parseFloat(team2.team_points) > 0
+                {parseFloat(team1.team_points || "0") > 0 ||
+                parseFloat(team2.team_points || "0") > 0
                   ? team1.team_points
-                  : `${scheduleDataFinal[team1.user_id].wins} - ${
-                      scheduleDataFinal[team1.user_id].losses
-                    }`}
+                  : team1.user_id &&
+                    scheduleDataFinal[team1.user_id]?.wins !== undefined &&
+                    scheduleDataFinal[team1.user_id]?.losses !== undefined
+                  ? `${scheduleDataFinal[team1.user_id]?.wins} - ${
+                      scheduleDataFinal[team1.user_id]?.losses
+                    }`
+                  : "N/A"}
               </p>
             </div>
             <div className="team2 flex justify-between items-center w-[9vw]">
@@ -364,12 +389,16 @@ export default function Scoreboard() {
                 </p>
               </span>
               <p>
-                {parseFloat(team1.team_points) > 0 ||
-                parseFloat(team2.team_points) > 0
+                {parseFloat(team1.team_points || "0") > 0 ||
+                parseFloat(team2.team_points || "0") > 0
                   ? team2.team_points
-                  : `${scheduleDataFinal[team2.user_id].wins} - ${
-                      scheduleDataFinal[team2.user_id].losses
-                    }`}
+                  : team2.user_id &&
+                    scheduleDataFinal[team2.user_id]?.wins !== undefined &&
+                    scheduleDataFinal[team2.user_id]?.losses !== undefined
+                  ? `${scheduleDataFinal[team2.user_id]?.wins} - ${
+                      scheduleDataFinal[team2.user_id]?.losses
+                    }`
+                  : "N/A"}
               </p>
             </div>
             <p className="w-[9vw] text-center text-[9px]">

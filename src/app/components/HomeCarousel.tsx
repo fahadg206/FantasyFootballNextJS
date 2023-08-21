@@ -6,7 +6,7 @@ import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
 import useMeasure from "react-use-measure";
 import Logo from "../images/Transparent.png";
 import Image from "next/image";
-import uuid from "uuid";
+import { v4 as uuidv4 } from "uuid";
 import {
   collection,
   query,
@@ -17,6 +17,14 @@ import {
   limit,
 } from "firebase/firestore/lite";
 import { db, storage } from "../../app/firebase";
+
+interface HeadlineItem {
+  id: number;
+  url: string;
+  category: string;
+  title: string;
+  description: string;
+}
 
 const CARD_WIDTH = 350;
 const CARD_HEIGHT = 350;
@@ -225,7 +233,7 @@ const CardCarousel = () => {
 
   //console.log("Headlines: ", headlines);
 
-  const Card = ({ url, category, title, description }) => {
+  const Card = ({ url, category, title, description }: HeadlineItem) => {
     return (
       <div
         className="relative shrink-0 cursor-pointer rounded-2xl bg-white shadow-md transition-all hover:scale-[1.015] hover:shadow-xl"
@@ -233,7 +241,7 @@ const CardCarousel = () => {
           width: CARD_WIDTH,
           height: CARD_HEIGHT,
           marginRight: MARGIN,
-          backgroundImage: `url("../images/Transparent.png")`,
+          backgroundImage: `url("https://img.freepik.com/premium-vector/vector-background-concept-technology_49459-308.jpg")`,
           backgroundPosition: "center",
           backgroundSize: "cover",
         }}
@@ -274,7 +282,7 @@ const CardCarousel = () => {
                 className="flex"
               >
                 {headlines.map((item) => {
-                  return <Card key={uuid} {...item} />;
+                  return <Card key={uuidv4()} {...item} />;
                 })}
               </motion.div>
             )}

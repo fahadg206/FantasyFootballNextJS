@@ -49,8 +49,8 @@ interface Starter {
 
 interface ManagerInfo {
   [userId: string]: {
-    avatar: string;
-    name: string;
+    avatar?: string;
+    name?: string;
     roster_id?: string;
     user_id?: string;
     starters?: string[];
@@ -63,9 +63,23 @@ interface ManagerInfo {
   };
 }
 
+interface TabsProps {
+  selected: number;
+  setSelected: React.Dispatch<React.SetStateAction<number>>;
+}
+
+interface TabProps {
+  selected: number;
+  avatar: string;
+  name: string;
+  setSelected: (value: number) => void;
+  tabNum: number;
+  selectedManager: string;
+}
+
 const TabsFeatures = () => {
   const [selected, setSelected] = useState(0);
-  const [selectedManager, setSelectedManager] = useState("");
+  const [selectedManager, setSelectedManager] = useState<string | null>(null);
   const [managerInfo, setManagerInfo] = useState<ManagerInfo>({});
   const { selectedManagerr, setSelectedManagerr } = useSelectedManager();
   const [matchupMap, setMatchupMap] = useState<Map<string, MatchupMapData[]>>(
@@ -112,7 +126,7 @@ const TabsFeatures = () => {
       setManagerInfo(newManagerInfo);
 
       const matchupMapData = await getMatchupMap(REACT_APP_LEAGUE_ID, 1);
-      setUserData(matchupMapData.updatedScheduleData);
+      setUserData(matchupMapData.updatedScheduleData as ScheduleData);
       setMatchupMap(matchupMapData.matchupMap);
       setSelectedManager(localStorage.getItem("selectedManager"));
     } catch (error) {
@@ -147,10 +161,10 @@ const TabsFeatures = () => {
   //console.log("sdhf", userData);
   const userDataArray = Object.values(userData || {}).map((user) => ({
     ...user,
-    Feature: () => <ExampleFeature avatar={user.avatar} />,
+    Feature: () => <ExampleFeature />,
   }));
 
-  const ExampleFeature = ({ avatar }) => (
+  const ExampleFeature = () => (
     <div className="w-full px-0 py-8 md:px-8">
       <div className="flex flex-col  relative items-center justify-center h-96 w-full rounded-xl shadow-xl shadow-[#af1222] overflow-x-scroll ">
         <div className="flex w-full gap-1.5 absolute top-0 rounded-t-xl bg-[#A29F9F] dark:bg-[#1a1a1a] p-3 items-center">
@@ -168,8 +182,13 @@ const TabsFeatures = () => {
               const points = starter.scored_points;
 
               // Calculate the length of the player name and points
-              const totalContentLength =
-                playerName.length + (points && points.toString().length);
+              const playerNameLength = playerName.length;
+
+              // Convert points to a string if it's a number
+              const pointsLength =
+                points != null ? points.toString().length : 0;
+
+              const totalContentLength = playerNameLength + pointsLength;
 
               // Calculate the scale factor based on content length
               const scaleFactor = Math.min(1, 100 / totalContentLength);
@@ -187,7 +206,7 @@ const TabsFeatures = () => {
                   style={{ fontSize }}
                 >
                   <Image
-                    src={starter.avatar}
+                    src={starter?.avatar ?? ""}
                     alt="player"
                     width={imageSize}
                     height={imageSize}
@@ -209,7 +228,7 @@ const TabsFeatures = () => {
     </div>
   );
 
-  const Tabs = ({ selected, setSelected }) => {
+  const Tabs = ({ selected, setSelected }: TabsProps) => {
     return (
       <div className="flex overflow-x-scroll">
         {userDataArray.map((user, index) => {
@@ -222,10 +241,10 @@ const TabsFeatures = () => {
               key={index}
               setSelected={setSelected}
               selected={selected === index}
-              avatar={user.avatar}
+              avatar={user.avatar ?? ""}
               name={user.name}
               tabNum={index}
-              selectedManager={user.user_id}
+              selectedManager={user.user_id ?? ""}
             />
           );
         })}
@@ -240,7 +259,7 @@ const TabsFeatures = () => {
     setSelected,
     tabNum,
     selectedManager,
-  }) => {
+  }: TabProps) => {
     return (
       <div className="relative w-full">
         <button
@@ -302,11 +321,13 @@ const TabsFeatures = () => {
                 <>
                   <div className="w-full flex flex-col justify-center items-center text-xl font-bold mt-3">
                     <p>{user.name}</p>
-                    <p className="text-lg">{`${
-                      managerInfo[user.user_id].wins
-                    }-${managerInfo[user.user_id].losses}`}</p>
+                    {user.user_id && managerInfo[user.user_id] && (
+                      <p className="text-lg">{`${
+                        managerInfo[user.user_id]?.wins
+                      }-${managerInfo[user.user_id]?.losses}`}</p>
+                    )}
                   </div>
-                  {user.Feature && user.Feature(user.avatar)}
+                  {user.Feature && user.Feature()}
                 </>
               </motion.div>
             ) : undefined;

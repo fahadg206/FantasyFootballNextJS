@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 
 import axios from "axios";
 
-import uuid from "uuid";
+import { v4 as uuidv4 } from "uuid";
 import Image from "next/image";
 import Scoreboard from "./Scoreboard";
 import Schedule from "../league/[leagueID]/schedule/page";
@@ -30,6 +30,8 @@ interface ScheduleData {
     team_points?: string;
     opponent?: string;
     matchup_id?: string;
+    wins?: number;
+    losses?: number;
   };
 }
 
@@ -112,7 +114,9 @@ export default function ScoreboardNav({ setShowScore }) {
         }
         const matchupMapData = await getMatchupMap(REACT_APP_LEAGUE_ID, 1);
         setMatchupMap(matchupMapData.matchupMap);
-        setScheduleDataFinal(matchupMapData.updatedScheduleData);
+        setScheduleDataFinal(
+          matchupMapData.updatedScheduleData as ScheduleData
+        );
       } catch (error) {
         console.error("Error fetching matchup data:", error);
       }
@@ -125,10 +129,26 @@ export default function ScoreboardNav({ setShowScore }) {
     const team1 = matchupData[0];
     const team2 = matchupData[1];
 
+    const team1UserId = team1.user_id;
+    const team2UserId = team2.user_id;
+
+    const team1Wins = team1UserId
+      ? scheduleDataFinal[team1UserId]?.wins
+      : undefined;
+    const team1Losses = team1UserId
+      ? scheduleDataFinal[team1UserId]?.losses
+      : undefined;
+    const team2Wins = team2UserId
+      ? scheduleDataFinal[team2UserId]?.wins
+      : undefined;
+    const team2Losses = team2UserId
+      ? scheduleDataFinal[team2UserId]?.losses
+      : undefined;
+
     return (
       <div
         key={matchupID}
-        className=" flex flex-col items-center gap-5 mt-2 duration-500"
+        className="flex flex-col items-center gap-5 mt-2 duration-500"
       >
         <Link
           activeClass="active"
@@ -159,17 +179,17 @@ export default function ScoreboardNav({ setShowScore }) {
               </div>
               <p
                 className={
-                  parseFloat(team1.team_points) > 0
+                  parseFloat(team1.team_points || "0") > 0
                     ? `text-[14px]`
                     : `text-[11px] italic font-bold text-[#949494]`
                 }
               >
-                {parseFloat(team1.team_points) > 0 ||
-                parseFloat(team2.team_points) > 0
+                {parseFloat(team1.team_points || "0") > 0 ||
+                parseFloat(team2.team_points || "0") > 0
                   ? team1.team_points
-                  : `${scheduleDataFinal[team1.user_id].wins} - ${
-                      scheduleDataFinal[team1.user_id].losses
-                    }`}
+                  : team1Wins !== undefined
+                  ? `${team1Wins} - ${team1Losses}`
+                  : "N/A"}
               </p>
             </div>
             <div className="team2 flex items-center justify-between">
@@ -185,17 +205,17 @@ export default function ScoreboardNav({ setShowScore }) {
               </div>
               <p
                 className={
-                  parseFloat(team2.team_points) > 0
+                  parseFloat(team2.team_points || "0") > 0
                     ? `text-[14px]`
                     : `text-[11px] italic font-bold text-[#949494]`
                 }
               >
-                {parseFloat(team1.team_points) > 0 ||
-                parseFloat(team2.team_points) > 0
+                {parseFloat(team1.team_points || "0") > 0 ||
+                parseFloat(team2.team_points || "0") > 0
                   ? team2.team_points
-                  : `${scheduleDataFinal[team2.user_id].wins} - ${
-                      scheduleDataFinal[team2.user_id].losses
-                    }`}
+                  : team2Wins !== undefined
+                  ? `${team2Wins} - ${team2Losses}`
+                  : "N/A"}
               </p>
             </div>
             {shouldDisplay && (
@@ -211,7 +231,7 @@ export default function ScoreboardNav({ setShowScore }) {
     <div>
       <div>
         {matchupText.map((matchup) => (
-          <div key={uuid}>{matchup}</div>
+          <div key={uuidv4()}>{matchup}</div>
         ))}
       </div>
     </div>

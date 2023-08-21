@@ -68,6 +68,31 @@ interface WaiverInfo {
   };
 }
 
+interface Transaction {
+  id: string;
+  status: string;
+  type: string;
+  consenter_ids: string[];
+  adds: Record<string, string>;
+  drops: Record<string, string>;
+  transaction_id: string;
+  draft_picks?: DraftPicks[];
+  // Add any other properties you might have in the transaction
+}
+
+interface ManagerData {
+  avatar?: string;
+  name?: string;
+  roster_id?: string;
+  user_id?: string;
+  players_recieved?: string[];
+  players_sent?: string[];
+  draft_picks?: DraftPicks[];
+  draft_picks_recieved?: DraftPickInfo[];
+  draft_picks_sent?: DraftPickInfo[];
+  // Additional properties...
+}
+
 const ScrollingTestimonials = () => {
   const [leagueTransactions, setLeagueTransactions] = useState([]);
   const [playersData, setPlayersData] = useState([]);
@@ -214,7 +239,7 @@ const ScrollingTestimonials = () => {
   );
 };
 
-const tradeInfoObj: TradeInfo = {};
+const tradeInfoObj: Record<string, ManagerData[]> = {};
 const waiverInfoObj: WaiverInfo = {};
 function areObjectsEqual(obj1: any, obj2: any) {
   return (
@@ -232,7 +257,7 @@ const TestimonialList = ({
   managerMap,
   playersData,
 }: {
-  list: string[];
+  list: Transaction[];
   reverse: boolean;
   duration: number;
   managerMap: ScheduleData;
@@ -454,11 +479,20 @@ const TestimonialList = ({
           // ) {
           // }
           if (tradeInfoObj[transaction.transaction_id]) {
-            let team1 = tradeInfoObj[transaction.transaction_id][0];
-            let team2 = tradeInfoObj[transaction.transaction_id][1];
-            let team3;
-            if (tradeInfoObj[transaction.transaction_id])
-              team3 = tradeInfoObj[transaction.transaction_id][2];
+            const teams = tradeInfoObj[transaction.transaction_id];
+            let team1, team2, team3;
+
+            if (teams.length >= 1) {
+              team1 = teams[0];
+            }
+
+            if (teams.length >= 2) {
+              team2 = teams[1];
+            }
+
+            if (teams.length >= 3) {
+              team3 = teams[2];
+            }
             return (
               <div
                 key={transaction.id}
@@ -482,16 +516,16 @@ const TestimonialList = ({
                       <span className="border-b-2 border-[#1a1a1a] border-opacity-80 text-center mb-1 flex justify-center items-center">
                         <Image
                           className="rounded-full mr-2"
-                          src={team1.avatar}
+                          src={team1?.avatar ?? ""}
                           alt="manager"
                           width={22}
                           height={22}
                         />
-                        {team1.name}
+                        {team1?.name}
                       </span>
                       <div>
                         <div className="players-added1 mb-1">
-                          {team1.players_recieved?.map((player) => {
+                          {team1?.players_recieved?.map((player) => {
                             return (
                               <span className="flex items-center">
                                 <LuUserPlus className="text-[green] mr-1" />
@@ -511,7 +545,7 @@ const TestimonialList = ({
                               </span>
                             );
                           })}
-                          {team1.draft_picks_recieved?.map((pick) => {
+                          {team1?.draft_picks_recieved?.map((pick) => {
                             return (
                               <div className="">
                                 <span className="flex items-center">
@@ -537,7 +571,7 @@ const TestimonialList = ({
                           })}
                         </div>
                         <div className="players-sent1 mb-1">
-                          {team1.players_sent?.map((player) => {
+                          {team1?.players_sent?.map((player) => {
                             return (
                               <span className="flex items-center">
                                 <LuUserMinus className="text-[#af1222] mr-1" />
@@ -557,7 +591,7 @@ const TestimonialList = ({
                               </span>
                             );
                           })}
-                          {team1.draft_picks_sent?.map((pick) => {
+                          {team1?.draft_picks_sent?.map((pick) => {
                             return (
                               <div className="">
                                 <span className="flex items-center">
@@ -594,17 +628,17 @@ const TestimonialList = ({
                       <span className="border-b-2 border-[#1a1a1a] border-opacity-80 text-center mb-1 flex justify-center items-center">
                         <Image
                           className="rounded-full mr-2"
-                          src={team2.avatar}
+                          src={team2?.avatar ?? ""}
                           alt="manager"
                           width={22}
                           height={22}
                         />
-                        {team2.name}
+                        {team2?.name}
                       </span>
 
                       <div>
                         <div className="players-added2 mb-1">
-                          {team2.players_recieved?.map((player) => {
+                          {team2?.players_recieved?.map((player) => {
                             return (
                               <span className="flex items-center">
                                 <LuUserPlus className="text-[green] mr-1" />
@@ -624,7 +658,7 @@ const TestimonialList = ({
                               </span>
                             );
                           })}
-                          {team2.draft_picks_recieved?.map((pick) => {
+                          {team2?.draft_picks_recieved?.map((pick) => {
                             return (
                               <div className="">
                                 <span className="flex items-center">
@@ -651,7 +685,7 @@ const TestimonialList = ({
                         </div>
                         <div className="players-sent2 mb-1">
                           {" "}
-                          {team2.players_sent?.map((player) => {
+                          {team2?.players_sent?.map((player) => {
                             return (
                               <span className="flex items-center">
                                 <LuUserMinus className="text-[#af1222] mr-1" />
@@ -671,7 +705,7 @@ const TestimonialList = ({
                               </span>
                             );
                           })}
-                          {team2.draft_picks_sent?.map((pick) => {
+                          {team2?.draft_picks_sent?.map((pick) => {
                             return (
                               <div className="">
                                 <span className="flex items-center">
@@ -708,7 +742,7 @@ const TestimonialList = ({
                       <span className="border-b-2 border-[#1a1a1a] border-opacity-80 text-center mb-1 flex justify-center items-center">
                         <Image
                           className={team3 ? "rounded-full mr-2" : "hidden"}
-                          src={team3?.avatar}
+                          src={team3?.avatar ?? ""}
                           alt="manager"
                           width={22}
                           height={22}
@@ -836,7 +870,7 @@ const TestimonialList = ({
                 className="w-screen md:w-[60vw] h-[27vh] lg:w-[25vw] flex flex-wrap justify-center rounded-lg overflow-hidden relative border-2 border-[#af1222] dark:border-[#1a1a1a] border-opacity-80"
               >
                 <div>
-                  <div className=" text-[13px] xl:text-[20px] text-white font-bold p-2 flex justify-center bg-[#af1222] w-screen md:w-[60vw] lg:w-[25vw]">
+                  <div className="text-[13px] xl:text-[20px] text-white font-bold p-2 flex justify-center bg-[#af1222] w-screen md:w-[60vw] lg:w-[25vw]">
                     <span className="block capitalize font-semibold  mb-1">
                       {`${transaction.type}   :    ${transaction.status}`}
                     </span>
@@ -845,74 +879,69 @@ const TestimonialList = ({
                     <span className="border-b-2 border-[#1a1a1a] border-opacity-80 text-center mb-1 flex justify-center items-center">
                       <Image
                         className="rounded-full mr-2"
-                        src={player.avatar}
+                        src={player.avatar ?? ""}
                         alt="manager"
                         width={22}
                         height={22}
                       />
                       <p className="text-[14px]">{player.name}</p>
                     </span>
-                    <div className="flex flex-col items-center  ">
-                      <div className="player-added ">
-                        <span className="flex items-center">
-                          <LuUserPlus className="text-[green] mr-1" />{" "}
-                          <Image
-                            src={
-                              playersData[player.player_added]?.pos == "DEF"
-                                ? `https://sleepercdn.com/images/team_logos/nfl/${player.player_added.toLowerCase()}.png`
-                                : `https://sleepercdn.com/content/nfl/players/thumb/${player.player_added}.jpg`
-                            }
-                            alt="player image"
-                            width={30}
-                            height={30}
-                          />
-                          <p className="text-[14px]">
-                            {" "}
-                            {`${
-                              playersData[player.player_added]?.fn || "Unknown"
-                            }
-                          ${playersData[player.player_added]?.ln || "Player"}`}
-                          </p>
-                        </span>
+                    <div className="flex flex-col items-center">
+                      <div className="player-added">
+                        {player.player_added && (
+                          <span className="flex items-center">
+                            <LuUserPlus className="text-[green] mr-1" />{" "}
+                            <Image
+                              src={
+                                playersData[player.player_added]?.pos === "DEF"
+                                  ? `https://sleepercdn.com/images/team_logos/nfl/${player.player_added.toLowerCase()}.png`
+                                  : `https://sleepercdn.com/content/nfl/players/thumb/${player.player_added}.jpg`
+                              }
+                              alt="player image"
+                              width={30}
+                              height={30}
+                            />
+                            <p className="text-[14px]">
+                              {`${
+                                playersData[player.player_added]?.fn ||
+                                "Unknown"
+                              } ${
+                                playersData[player.player_added]?.ln || "Player"
+                              }`}
+                            </p>
+                          </span>
+                        )}
                       </div>
-                      <div
-                        className={
-                          playersData[player.player_dropped]
-                            ? "player-dropped "
-                            : "player-dropped hidden"
-                        }
-                      >
-                        <span className="flex items-center">
-                          <LuUserMinus className="text-[#af1222] mr-1" />{" "}
-                          <Image
-                            src={
-                              playersData[player.player_dropped]?.pos == "DEF"
-                                ? `https://sleepercdn.com/images/team_logos/nfl/${player.player_dropped.toLowerCase()}.png`
-                                : `https://sleepercdn.com/content/nfl/players/thumb/${player.player_dropped}.jpg`
-                            }
-                            alt="player image"
-                            width={30}
-                            height={30}
-                          />
-                          <p className="text-[14px]">
-                            {" "}
-                            {`${
-                              playersData[player.player_dropped]?.fn ||
-                              "Unknown"
-                            }
-                          ${
-                            playersData[player.player_dropped]?.ln || "Player"
-                          }`}
-                          </p>
-                        </span>
-                      </div>
+                      {player.player_dropped && (
+                        <div className="player-dropped">
+                          <span className="flex items-center">
+                            <LuUserMinus className="text-[#af1222] mr-1" />{" "}
+                            <Image
+                              src={
+                                playersData[player.player_dropped]?.pos ===
+                                "DEF"
+                                  ? `https://sleepercdn.com/images/team_logos/nfl/${player.player_dropped.toLowerCase()}.png`
+                                  : `https://sleepercdn.com/content/nfl/players/thumb/${player.player_dropped}.jpg`
+                              }
+                              alt="player image"
+                              width={30}
+                              height={30}
+                            />
+                            <p className="text-[14px]">
+                              {`${
+                                playersData[player.player_dropped]?.fn ||
+                                "Unknown"
+                              } ${
+                                playersData[player.player_dropped]?.ln ||
+                                "Player"
+                              }`}
+                            </p>
+                          </span>
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>
-
-                <span className="text-3xl absolute top-2 right-2 text-white dark:text-[black]">
-                  <IoPulseSharp />
-                </span>
               </div>
             );
           }
