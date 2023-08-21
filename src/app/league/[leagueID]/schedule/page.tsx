@@ -76,7 +76,7 @@ interface Starter {
   position?: string;
 }
 
-export default function Schedule(props: any) {
+export default function Schedule() {
   const [loading, setLoading] = useState(true);
 
   const [matchupMap, setMatchupMap] = useState<Map<
@@ -87,6 +87,9 @@ export default function Schedule(props: any) {
   const [scheduleDataFinal, setScheduleDataFinal] = useState<ScheduleData>({});
 
   const [showPostGame, setShowPostGame] = useState(false);
+  const [morningSlateEnd, setMorningSlateEnd] = useState(false);
+  const [afternoonSlateEnd, setAfternoonSlateEnd] = useState(false);
+  const [snfEnd, setSnfEnd] = useState(false);
   const [nflState, setNflState] = useState<NflState>();
   const [playersData, setPlayersData] = React.useState([]);
 
@@ -135,13 +138,34 @@ export default function Schedule(props: any) {
       const minutes = now.getUTCMinutes();
 
       if (
-        (dayOfWeek === 1 && hours === 22 && minutes >= 30) || // Monday after 10:30 PM
+        (dayOfWeek === 1 && hours === 21 && minutes >= 30) || // Monday after 9:30 PM
         (dayOfWeek === 2 && hours < 0) || // Tuesday
         (dayOfWeek === 3 && hours === 0 && minutes === 0) // Wednesday before 12:00 AM
       ) {
         setShowPostGame(true);
       } else {
         setShowPostGame(false);
+      }
+
+      //check the matchup after morning slate to see if any players still havent played
+      if (dayOfWeek === 0 && hours === 13 && minutes >= 40) {
+        setMorningSlateEnd(true);
+      } else if (dayOfWeek === 0 && hours === 10 && minutes >= 0) {
+        setMorningSlateEnd(false);
+      }
+
+      //check the matchup after afternoon slate to see if any players still havent played
+      if (dayOfWeek === 0 && hours === 17 && minutes >= 0) {
+        setAfternoonSlateEnd(true);
+      } else if (dayOfWeek === 0 && hours === 13 && minutes >= 15) {
+        setAfternoonSlateEnd(false);
+      }
+
+      //check the matchup after SNF to see if any players still havent played
+      if (dayOfWeek === 0 && hours === 21 && minutes >= 30) {
+        setSnfEnd(true);
+      } else if (dayOfWeek === 0 && hours === 17 && minutes >= 15) {
+        setSnfEnd(false);
       }
     };
 
@@ -218,6 +242,18 @@ export default function Schedule(props: any) {
 
     const starters1Points = scheduleDataFinal[team1.user_id]?.starters_points;
     const starters2Points = scheduleDataFinal[team2.user_id]?.starters_points;
+
+    //check to see if every player on BOTH teams have more points than 0
+    const team1Played = scheduleDataFinal[team1.user_id].starters_points.every(
+      (starterPoints) => {
+        return starterPoints > 0;
+      }
+    );
+    const team2Played = scheduleDataFinal[team2.user_id].starters_points.every(
+      (starterPoints) => {
+        return starterPoints > 0;
+      }
+    );
 
     // Remove empty objects from starters arrays
     const nonEmptyStarters1 = starters1.filter(
@@ -539,16 +575,28 @@ export default function Schedule(props: any) {
     );
   });
 
+  const handleCounterChange = (newCounter: number) => {
+    if (newCounter >= 1 && newCounter <= 14) {
+      setCounter(newCounter);
+    }
+  };
+
   return (
     <div className=" flex flex-col items-center mt-4">
       <div className="flex flex-col items-center">
         <p className="font-bold italic">{`Week: ${counter}`}</p>
 
         <div className="flex">
-          <p className="cursor-pointer" onClick={() => setCounter(counter - 1)}>
+          <p
+            className="cursor-pointer"
+            onClick={() => handleCounterChange(counter - 1)}
+          >
             <HiOutlineArrowSmLeft size={38} />
           </p>{" "}
-          <p className="cursor-pointer" onClick={() => setCounter(counter + 1)}>
+          <p
+            className="cursor-pointer"
+            onClick={() => handleCounterChange(counter + 1)}
+          >
             <HiOutlineArrowSmRight size={38} />
           </p>
         </div>

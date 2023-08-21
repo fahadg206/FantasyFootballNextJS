@@ -18,6 +18,7 @@ import {
   scrollSpy,
   scroller,
 } from "react-scroll";
+import { useRouter } from "next/navigation";
 
 interface ScheduleData {
   [userId: string]: {
@@ -66,6 +67,8 @@ export default function ScoreboardNav({ setShowScore }) {
   const [matchupMap, setMatchupMap] = useState<Map<string, MatchupMapData[]>>(
     new Map()
   );
+
+  const router = useRouter();
   const REACT_APP_LEAGUE_ID: string | null =
     localStorage.getItem("selectedLeagueID");
 
@@ -135,7 +138,12 @@ export default function ScoreboardNav({ setShowScore }) {
           offset={50}
           delay={100}
           duration={900}
-          onClick={() => setShowScore(false)}
+          onClick={() => {
+            setShowScore(false);
+            router.push(
+              `/league/${localStorage.getItem("selectedLeagueID")}/schedule`
+            );
+          }}
         >
           <div className="border border-black p-[30px] dark:bg-[#202123] rounded w-[85vw] flex flex-col">
             <div className="team1 flex items-center justify-between mb-2">
