@@ -17,6 +17,15 @@ interface VoteInfo {
   color: string;
 }
 
+interface OptionsProps {
+  votes: VoteInfo[];
+  setVotes: React.Dispatch<React.SetStateAction<VoteInfo[]>>;
+}
+
+interface BarsProps {
+  votes: VoteInfo[];
+}
+
 const BarPoll = () => {
   const [votes, setVotes] = useState<VoteInfo[]>([
     {
@@ -46,7 +55,7 @@ const BarPoll = () => {
   );
 };
 
-const Options = ({ votes, setVotes }) => {
+const Options: React.FC<OptionsProps> = ({ votes, setVotes }) => {
   const addVotes = async (newVotes: VoteInfo[]) => {
     try {
       const voteInfo = collection(db, "Home Poll");
@@ -78,7 +87,7 @@ const Options = ({ votes, setVotes }) => {
 
   const totalVotes = votes.reduce((acc, cv) => (acc += cv.votes), 0);
 
-  const handleIncrementVote = async (vote) => {
+  const handleIncrementVote = async (vote: VoteInfo) => {
     const newVote = { ...vote, votes: vote.votes + 1 };
 
     setVotes((prevVotes) =>
@@ -143,7 +152,7 @@ const Options = ({ votes, setVotes }) => {
   );
 };
 
-const Bars = ({ votes }) => {
+const Bars: React.FC<BarsProps> = ({ votes }) => {
   const totalVotes = votes.reduce((acc, cv) => (acc += cv.votes), 0);
 
   return (
