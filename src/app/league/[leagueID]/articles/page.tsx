@@ -12,6 +12,16 @@ import {
   updateDoc,
   limit,
 } from "firebase/firestore/lite";
+import {
+  Link as SmoothLink,
+  Button,
+  Element,
+  Events,
+  animateScroll as scroll,
+  scrollSpy,
+  scroller,
+} from "react-scroll";
+import ArticleDropdown from "../../../components/ArticleDropdown";
 
 const JsonBigInt = require("json-bigint");
 
@@ -163,46 +173,51 @@ const articles = () => {
 
   return (
     <div className="flex flex-col justify-center items-center container w-[60vw]">
-      <div className="mb-2">
-        {" "}
-        <ArticleTemplate
-          title={articles.title}
-          image={imran}
-          author={"imran"}
-          authorImg={imran}
-          jobtitle="RCL Insider"
-          date="Sep 14th, 2023"
-          p1={articles.paragraph1}
-          p2={articles.paragraph2}
-          p3={articles.paragraph3}
-          p4={articles.paragraph4}
-          p5={articles.paragraph5}
-          p6={articles.paragraph6}
-          p7={articles.paragraph7}
-          p8={articles.paragraph8}
-          name="1"
-        />
-      </div>
       <div>
-        {" "}
-        <ArticleTemplate
-          title={articles2.title}
-          image={imran}
-          author={"imran"}
-          authorImg={imran}
-          jobtitle="RCL Insider"
-          date="Sep 14th, 2023"
-          p1={articles2.paragraph1}
-          p2={articles2.paragraph2}
-          p3={articles2.paragraph3}
-          p4={articles2.paragraph4}
-          p5={articles2.paragraph5}
-          p6={articles2.paragraph6}
-          p7={articles2.paragraph7}
-          p8={articles2.paragraph8}
-          name="1"
-        />
+        <ArticleDropdown title1={articles.title} title2={articles2.title} />
       </div>
+      <Element name={articles.title}>
+        <div className="mb-2">
+          <ArticleTemplate
+            title={articles.title}
+            image={imran}
+            author={"imran"}
+            authorImg={imran}
+            jobtitle="RCL Insider"
+            date="Sep 14th, 2023"
+            p1={articles.paragraph1}
+            p2={articles.paragraph2}
+            p3={articles.paragraph3}
+            p4={articles.paragraph4}
+            p5={articles.paragraph5}
+            p6={articles.paragraph6}
+            p7={articles.paragraph7}
+            p8={articles.paragraph8}
+            name="1"
+          />
+        </div>
+      </Element>
+      <Element name={articles2.title}>
+        <div>
+          <ArticleTemplate
+            title={articles2.title}
+            image={imran}
+            author={"imran"}
+            authorImg={imran}
+            jobtitle="RCL Insider"
+            date="Sep 14th, 2023"
+            p1={articles2.paragraph1}
+            p2={articles2.paragraph2}
+            p3={articles2.paragraph3}
+            p4={articles2.paragraph4}
+            p5={articles2.paragraph5}
+            p6={articles2.paragraph6}
+            p7={articles2.paragraph7}
+            p8={articles2.paragraph8}
+            name="1"
+          />
+        </div>
+      </Element>
     </div>
   );
 };
