@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { motion } from "framer-motion";
+import { m, motion } from "framer-motion";
 import { db } from "../firebase";
 import {
   collection,
@@ -22,11 +22,14 @@ const BarPoll = ({
   team2Name,
   weekCounter,
   nflWeek,
+
+  matchup_id,
 }: {
   team1Name: string;
   team2Name: string;
   weekCounter: number;
   nflWeek: number;
+  matchup_id: string;
 }) => {
   const [votes, setVotes] = useState<VoteInfo[]>([
     {
@@ -44,42 +47,53 @@ const BarPoll = ({
   return (
     <section className=" px-4 w-[70vw] xl:w-[35vw] md:h-[20vw] xl:h-[10vw] p-2">
       <div className="">
-        <Options votes={votes} setVotes={setVotes} />
+        <Options
+          matchup_id={matchup_id}
+          weekCounter={weekCounter}
+          votes={votes}
+          setVotes={setVotes}
+        />
         <Bars votes={votes} />
       </div>
     </section>
   );
 };
 
-const Options = ({ votes, setVotes }) => {
-  // const addVotes = async (newVotes: VoteInfo[]) => {
-  //   try {
-  //     const voteInfo = collection(db, "Home Poll");
-  //     const queryRef = query(voteInfo, where("id", "==", "homepoll"));
+const Options = ({ votes, setVotes, matchup_id, weekCounter }) => {
+  const leagueID = localStorage.getItem("selectedLeagueID");
+  const addVotes = async (votes: VoteInfo[]) => {
+    try {
+      const voteInfo = collection(db, "Matchup Polls");
+      const queryRef = query(
+        voteInfo,
+        where("league_id", "==", leagueID),
+        where("matchup_id", "==", matchup_id)
+      );
 
-  //     const querySnapshot = await getDocs(queryRef);
+      const querySnapshot = await getDocs(queryRef);
 
-  //     // Add or update the document based on whether it already exists
-  //     if (!querySnapshot.empty) {
-  //       // Document exists, update it
-  //       querySnapshot.forEach(async (doc) => {
-  //         await updateDoc(doc.ref, {
-  //           votes: newVotes, // Use the updated local newVotes array
-  //         });
-  //       });
-  //     } else {
-  //       // Document does not exist, add a new one
-  //       await addDoc(voteInfo, {
-  //         votes: newVotes, // Use the updated local newVotes array
-  //         id: "homepoll",
-  //       });
-  //     }
+      // Add or update the document based on whether it already exists
+      if (!querySnapshot.empty) {
+        // Document exists, update it
+        querySnapshot.forEach(async (doc) => {
+          await updateDoc(doc.ref, {
+            votes: votes, // Use the updated local newVotes array
+          });
+        });
+      } else {
+        // Document does not exist, add a new one
+        await addDoc(voteInfo, {
+          league_id: leagueID,
+          matchup_id: matchup_id,
+          votes: votes,
+        });
+      }
 
-  //     console.log("Votes added to the database successfully");
-  //   } catch (error) {
-  //     console.error("Error adding votes to the database:", error);
-  //   }
-  // };
+      console.log("Votes added to the database successfully");
+    } catch (error) {
+      console.error("Error adding votes to the database:", error);
+    }
+  };
 
   const totalVotes = votes.reduce((acc, cv) => (acc += cv.votes), 0);
 
@@ -92,31 +106,36 @@ const Options = ({ votes, setVotes }) => {
   };
 
   const getVotes = async () => {
-    const voteInfo = collection(db, "Home Poll");
+    const voteInfo = collection(db, "Matchup Polls");
     try {
       const querySnapshot = await getDocs(
-        query(voteInfo, where("id", "==", "homepoll"), limit(1))
+        query(
+          voteInfo,
+          where("league_id", "==", leagueID),
+          where("matchup_id", "==", matchup_id),
+          limit(6)
+        )
       );
 
       if (!querySnapshot.empty) {
         querySnapshot.forEach((doc) => {
           const docData = doc.data();
           setVotes(docData.votes);
-          console.log("votes returned", docData.votes);
+          console.log("matchup votes returned", docData.votes);
         });
       } else {
-        console.log("votes do not exist");
+        console.log("hey");
       }
     } catch (error) {
       console.error("Error adding votes to the database:", error);
     }
   };
 
-  // useEffect(() => {
-  //   getVotes(); // Fetch votes from the database when the component mounts
-  // }, []); // Empty dependency array to trigger the effect once
+  useEffect(() => {}, [weekCounter]);
 
-  // Rest of your component code
+  useEffect(() => {
+    getVotes(); // Fetch votes from the database when the component mounts
+  }, []); // Empty dependency array to trigger the effect once
 
   return (
     <div className="col-span-1 ">
@@ -131,7 +150,7 @@ const Options = ({ votes, setVotes }) => {
               whileTap={{ scale: 0.985 }}
               onClick={() => {
                 handleIncrementVote(vote);
-                //addVotes(votes);
+                addVotes(votes);
               }}
               key={vote.title}
               className={`w-[70px] sm:w-[100px] md:w-[160px] rounded-xl ${vote.color} py-2 text-[11px] xl:text-[15px]  mr-2 text-white`}

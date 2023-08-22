@@ -200,6 +200,15 @@ const TabsFeatures = () => {
                 imageSize = scaleFactor * 55;
               }
 
+              const colorObj: { [key: string]: string } = {
+                QB: "#DE3449",
+                RB: "#00CEB8",
+                WR: "#588EBA",
+                TE: "#F1AE58",
+                DEF: "#798898",
+                K: "#BD66FF",
+              };
+
               return (
                 <div
                   className="player flex flex-col justify-center items-center p-2 w-[100px] h-[100px]  md:w-[140px] md:h-[140px]  hover:scale-105 hover:duration-200 cursor-pointer"
@@ -216,7 +225,11 @@ const TabsFeatures = () => {
                   <p className="text-[10px]  w-full text-center overflow-hidden">
                     {playerName}
                   </p>
-                  <p className="text-[10px] font-bold w-full text-center overflow-hidden">
+                  <p
+                    className={`text-[11px] text-[${
+                      colorObj[starter.position]
+                    }] font-bold w-full text-center overflow-hidden`}
+                  >
                     {starter.position}
                   </p>
                 </div>
@@ -320,7 +333,15 @@ const TabsFeatures = () => {
               >
                 <>
                   <div className="w-full flex flex-col justify-center items-center text-xl font-bold mt-3">
-                    <p>{user.name}</p>
+                    <div className="flex items-center">
+                      <Image
+                        className="mr-2 rounded-full"
+                        src={user.avatar}
+                        width={40}
+                        height={40}
+                      />
+                      {user.name}
+                    </div>
                     {user.user_id && managerInfo[user.user_id] && (
                       <p className="text-lg">{`${
                         managerInfo[user.user_id]?.wins

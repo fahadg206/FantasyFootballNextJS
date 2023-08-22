@@ -341,7 +341,13 @@ export default function Scoreboard() {
           to={matchupID}
         >
           <div className="border-r dark:border-[#1a1a1a] border-[#af1222] border-opacity-10 p-2 rounded-md flex flex-col items-start justify-center h-[13vh] w-[10vw]">
-            <div className="team1 flex justify-between items-center  w-[9vw] mb-1">
+            <div
+              className={
+                team2.team_points > team1.team_points
+                  ? `team1 flex justify-between items-center  w-[9vw] mb-1 text-[#adaeaf]`
+                  : `team1 flex justify-between items-center  w-[9vw] mb-1 `
+              }
+            >
               <span className="flex items-center">
                 <Image
                   src={team1.avatar}
@@ -371,7 +377,13 @@ export default function Scoreboard() {
                   : "N/A"}
               </p>
             </div>
-            <div className="team2 flex justify-between items-center w-[9vw]">
+            <div
+              className={
+                team1.team_points > team2.team_points
+                  ? `team2 flex justify-between items-center w-[9vw] text-[#adaeaf]`
+                  : `team2 flex justify-between items-center w-[9vw] `
+              }
+            >
               <span className="flex items-center">
                 <Image
                   src={team2.avatar}

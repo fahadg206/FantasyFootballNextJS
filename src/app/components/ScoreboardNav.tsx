@@ -166,7 +166,13 @@ export default function ScoreboardNav({ setShowScore }) {
           }}
         >
           <div className="border border-black p-[30px] dark:bg-[#202123] rounded w-[85vw] flex flex-col">
-            <div className="team1 flex items-center justify-between mb-2">
+            <div
+              className={
+                team2.team_points > team1.team_points
+                  ? `team1 flex items-center justify-between mb-2 text-[#adaeaf]`
+                  : `team1 flex items-center justify-between mb-2`
+              }
+            >
               <div className="flex items-center">
                 <Image
                   className="rounded-full mr-2"
@@ -192,7 +198,13 @@ export default function ScoreboardNav({ setShowScore }) {
                   : "N/A"}
               </p>
             </div>
-            <div className="team2 flex items-center justify-between">
+            <div
+              className={
+                team1.team_points > team2.team_points
+                  ? `team2 flex items-center justify-between text-[#adaeaf]`
+                  : `team2 flex items-center justify-between`
+              }
+            >
               <div className="flex items-center">
                 <Image
                   className="rounded-full mr-2"
