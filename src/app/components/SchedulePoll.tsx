@@ -45,7 +45,7 @@ const BarPoll = ({
   ]);
 
   return (
-    <section className=" px-4 w-[70vw] xl:w-[35vw] md:h-[20vw] xl:h-[10vw] p-2">
+    <section className=" px-4 w-[70vw] xl:w-[35vw] md:h-[20vw] xl:h-[10vw]  p-2">
       <div className="">
         <Options
           matchup_id={matchup_id}
@@ -61,37 +61,61 @@ const BarPoll = ({
 
 const Options = ({ votes, setVotes, matchup_id, weekCounter }) => {
   const leagueID = localStorage.getItem("selectedLeagueID");
-  const addVotes = async (votes: VoteInfo[]) => {
+  const addVotes = async (votes) => {
     try {
       const voteInfo = collection(db, "Matchup Polls");
-      const queryRef = query(
-        voteInfo,
-        where("league_id", "==", leagueID),
-        where("matchup_id", "==", matchup_id)
-      );
+      const queryRef = query(voteInfo, where("league_id", "==", leagueID));
 
       const querySnapshot = await getDocs(queryRef);
 
-      // Add or update the document based on whether it already exists
       if (!querySnapshot.empty) {
-        // Document exists, update it
-        querySnapshot.forEach(async (doc) => {
+        const doc = querySnapshot.docs[0];
+        const existingData = doc.data();
+        const existingMatchups = existingData.matchups || [];
+
+        // Check if the matchup with the same ID already exists
+        const existingMatchupIndex = existingMatchups.findIndex(
+          (matchup) => matchup.matchup_id === matchup_id
+        );
+
+        // if matchup index exists
+        if (existingMatchupIndex !== -1) {
+          // Update the existing matchup's votes
+          const updatedMatchups = [...existingMatchups];
+          // go to the index of the matchup we're trying to update and replace its votes array with the new and updated one
+          updatedMatchups[existingMatchupIndex].votes = votes;
+          //then pass the updated matchups array to the key matchups
           await updateDoc(doc.ref, {
-            votes: votes, // Use the updated local newVotes array
+            matchups: updatedMatchups,
           });
-        });
+
+          console.log(
+            "Votes updated successfully for existing matchup",
+            matchup_id
+          );
+        } else {
+          // if matchup doesn't exist then add this new matchup to the existing ones and then pass the new updated array into matchups key
+          // Add a new matchup
+          const newMatchup = { matchup_id: matchup_id, votes: votes };
+          const updatedMatchups = [...existingMatchups, newMatchup];
+
+          await updateDoc(doc.ref, {
+            matchups: updatedMatchups,
+          });
+
+          console.log("New matchup added successfully with votes", votes);
+        }
       } else {
-        // Document does not exist, add a new one
+        // Document does not exist, so initialize the array with the first matchup that was voted on by any user.
         await addDoc(voteInfo, {
           league_id: leagueID,
-          matchup_id: matchup_id,
-          votes: votes,
+          matchups: [{ matchup_id: matchup_id, votes: votes }],
         });
-      }
 
-      console.log("Votes added to the database successfully");
+        console.log("New document created with matchup and votes", votes);
+      }
     } catch (error) {
-      console.error("Error adding votes to the database:", error);
+      console.error("Error adding or updating matchup:", error);
     }
   };
 
@@ -109,25 +133,28 @@ const Options = ({ votes, setVotes, matchup_id, weekCounter }) => {
     const voteInfo = collection(db, "Matchup Polls");
     try {
       const querySnapshot = await getDocs(
-        query(
-          voteInfo,
-          where("league_id", "==", leagueID),
-          where("matchup_id", "==", matchup_id),
-          limit(6)
-        )
+        query(voteInfo, where("league_id", "==", leagueID), limit(1))
       );
 
       if (!querySnapshot.empty) {
         querySnapshot.forEach((doc) => {
           const docData = doc.data();
-          setVotes(docData.votes);
-          console.log("matchup votes returned", docData.votes);
+          const matchups = docData.matchups || []; // Retrieve the matchups array
+          const matchup = matchups.find(
+            (matchup) => matchup.matchup_id === matchup_id
+          ); // Find the specific matchup
+          if (matchup) {
+            setVotes(matchup.votes); // Set the votes for the specific matchup
+            console.log("Matchup votes returned", matchup.votes);
+          } else {
+            console.log("Matchup not found.");
+          }
         });
       } else {
-        console.log("hey");
+        console.log("Document not found.");
       }
     } catch (error) {
-      console.error("Error adding votes to the database:", error);
+      console.error("Error retrieving votes from the database:", error);
     }
   };
 

@@ -342,7 +342,7 @@ export default function Schedule() {
 
     if (counter === nflState?.display_week) {
       showPoll = (
-        <div className="w-[50vw] xl:w-[35vw] flex justify-center overflow-y-scroll ">
+        <div className="w-[50vw] xl:w-[35vw] flex justify-center  ">
           <SchedulePoll
             team1Name={team1.name}
             team2Name={team2.name}
