@@ -120,21 +120,25 @@ const page = () => {
         // Set the updated scheduleData map to state
         setManagerInfo(managerInfo);
         const teamArray = Object.entries(managerInfo);
-        const sortByWins = [...teamArray].sort((a, b) => b[1].wins - a[1].wins);
+        //const sortByWins = [...teamArray].sort((a, b) => b[1].wins - a[1].wins);
 
-        const sortedTeamData = sortByWins.sort((a, b) => {
-          if (b[1].wins === a[1].wins) {
+        const sortedTeamData = Object.entries(managerInfo)
+          .sort((a, b) => {
+            const winsA = parseInt(a[1].wins || "0");
+            const winsB = parseInt(b[1].wins || "0");
+            return winsB - winsA;
+          })
+          .sort((a, b) => {
             const bPoints =
-              parseFloat(b[1].team_points_for as string) +
-              parseFloat(b[1].team_points_for_dec as string) / 100;
+              (parseFloat(b[1].team_points_for || "0") || 0) +
+              (parseFloat(b[1].team_points_for_dec || "0") || 0) / 100;
 
             const aPoints =
-              parseFloat(a[1].team_points_for as string) +
-              parseFloat(a[1].team_points_for_dec as string) / 100;
+              (parseFloat(a[1].team_points_for || "0") || 0) +
+              (parseFloat(a[1].team_points_for_dec || "0") || 0) / 100;
 
             return bPoints - aPoints;
-          }
-        });
+          });
 
         setSortedTeamDataFinal(sortedTeamData);
       } catch (error) {
@@ -187,13 +191,16 @@ const page = () => {
     );
   };
 
-  const TableRows = ({ user, index }) => {
+  const TableRows: React.FC<{ user: ManagerInfo[string]; index: number }> = ({
+    user,
+    index,
+  }) => {
     const rankOrdinal = numberToOrdinal(index + 1);
-    const maxRankOrdinal = numberToOrdinal(user.maxRank);
+    //const maxRankOrdinal = numberToOrdinal(user.maxRank);
 
     return (
       <motion.tr
-        layoutId={`row-${user.id}`}
+        layoutId={`row-${user.user_id}`}
         className=" border-[1px] dark:border-[#1a1a1a]"
       >
         <td className="p-4 flex items-center gap-3 overflow-hidden ">
@@ -225,20 +232,36 @@ const page = () => {
         <td className="p-4 font-medium">{user.losses}</td>
 
         <td className="p-4">
-          {user.team_points_for + user.team_points_for_dec / 100}
+          {user.team_points_for !== undefined
+            ? parseFloat(user.team_points_for) +
+              (user.team_points_for_dec !== undefined
+                ? parseFloat(user.team_points_for_dec) / 100
+                : 0)
+            : ""}
         </td>
         <td className="p-4">
-          {user.team_points_against + user.team_points_against_dec / 100}
+          {user.team_points_against !== undefined
+            ? parseFloat(user.team_points_against) +
+              (user.team_points_against_dec !== undefined
+                ? parseFloat(user.team_points_against_dec) / 100
+                : 0)
+            : ""}
         </td>
         <td className="p-4 font-medium">
-          <span className="">{user.streak.slice(0, -1)}</span>
-          <span
-            className={`p-1 font-bold ${
-              user.streak.slice(-1) === "L" ? "text-[red]" : "text-[green]"
-            }`}
-          >
-            {user.streak.slice(-1)}
-          </span>
+          {user.streak !== undefined ? (
+            <span>
+              {user.streak.slice(0, -1)}
+              <span
+                className={`p-1 font-bold ${
+                  user.streak.slice(-1) === "L" ? "text-[red]" : "text-[green]"
+                }`}
+              >
+                {user.streak.slice(-1)}
+              </span>
+            </span>
+          ) : (
+            ""
+          )}
         </td>
       </motion.tr>
     );
@@ -256,7 +279,7 @@ const page = () => {
 
 export default page;
 
-const numberToOrdinal = (n) => {
+const numberToOrdinal = (n: number) => {
   let ord = "th";
 
   if (n % 10 == 1 && n % 100 != 11) {

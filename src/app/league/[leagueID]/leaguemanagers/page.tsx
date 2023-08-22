@@ -1,5 +1,6 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, ReactNode } from "react";
+
 import { motion } from "framer-motion";
 import axios from "axios";
 import LeagueManagersSelection from "../../../components/LeagueManagersSelection";
@@ -140,8 +141,8 @@ export default function Page() {
 
         setScheduleDataFinal(updatedScheduleData);
 
-        for (const userId in updatedScheduleData) {
-          const userData = updatedScheduleData[userId];
+        for (const user in updatedScheduleData) {
+          const userData = updatedScheduleData[user];
           if (userData.matchup_id) {
             if (!matchupMap.has(userData.matchup_id)) {
               matchupMap.set(userData.matchup_id, [userData]);
@@ -157,27 +158,23 @@ export default function Page() {
             }
           }
         }
-
         //console.log("ayo", matchupMap);
 
         for (const userId in updatedScheduleData) {
           const user = updatedScheduleData[userId];
-          const filteredMatchupData = matchupMap.get(user.matchup_id);
-          if (filteredMatchupData) {
-            if (user.user_id) {
-              if (selectedManagerMatchups.has(user.user_id)) {
-                const existingMatchups = selectedManagerMatchups.get(
-                  user.user_id
-                );
-                existingMatchups?.push({
+          if (user.matchup_id) {
+            // Check if matchup_id is not undefined
+            const filteredMatchupData = matchupMap.get(user.matchup_id);
+            if (filteredMatchupData) {
+              if (user.user_id) {
+                // Initialize existingMatchups with an empty array
+                const existingMatchups: ManagerMatchup[] =
+                  selectedManagerMatchups.get(user.user_id) || [];
+                existingMatchups.push({
                   week: week.toString(),
                   matchup: filteredMatchupData,
                 });
                 selectedManagerMatchups.set(user.user_id, existingMatchups);
-              } else {
-                selectedManagerMatchups.set(user.user_id, [
-                  { week: week.toString(), matchup: filteredMatchupData },
-                ]);
               }
             }
           }
@@ -274,7 +271,13 @@ export default function Page() {
     ? selectedManagerMatchups.get(defaultManager)
     : selectedManagerMatchups.get(selectedManager);
 
-  const TranslateWrapper = ({ children, reverse }) => {
+  const TranslateWrapper = ({
+    children,
+    reverse,
+  }: {
+    children: ReactNode;
+    reverse: boolean;
+  }) => {
     return (
       <motion.div
         initial={{ translateX: reverse ? "-100%" : "0%" }}
@@ -318,9 +321,11 @@ export default function Page() {
             <p className="text-[11px] font-bold mb-1">{` Week ${week.week}`}</p>
             <div
               className={
-                selectedPlayer.team_points === opponent.team_points
+                (selectedPlayer.team_points ?? 0) ===
+                (opponent.team_points ?? 0)
                   ? `flex flex-col justify-center items-center w-[100px] h-[80px] border-[1px] border-[#727070] rounded-2xl`
-                  : selectedPlayer.team_points > opponent.team_points
+                  : (selectedPlayer.team_points ?? 0) >
+                    (opponent.team_points ?? 0)
                   ? `flex flex-col justify-center items-center w-[100px] h-[80px] border-[1px] border-[green] rounded-2xl`
                   : `flex flex-col justify-center items-center w-[100px] h-[80px] border-[1px] border-[#af1222] rounded-2xl`
               }

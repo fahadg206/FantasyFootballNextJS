@@ -92,7 +92,8 @@ const matchups = () => {
     new Set<RivalsManager>()
   );
 
-  const REACT_APP_LEAGUE_ID: string = localStorage.getItem("selectedLeagueID");
+  const REACT_APP_LEAGUE_ID: string | null =
+    localStorage.getItem("selectedLeagueID");
 
   const { setVisible, bindings } = useModal();
 
@@ -104,7 +105,7 @@ const matchups = () => {
 
   const usersDropdown2: Set<User> = new Set();
 
-  const rivalsMap = new Map();
+  const rivalsMap: Map<string, Rivalry> = new Map();
 
   const getNflState = async (): Promise<NflState> => {
     try {
@@ -128,7 +129,7 @@ const matchups = () => {
   };
 
   const getLeagueData = async (
-    queryLeagueID: string = REACT_APP_LEAGUE_ID
+    queryLeagueID: string = REACT_APP_LEAGUE_ID || ""
   ): Promise<LeagueData | null> => {
     try {
       const res = await axios.get<LeagueData>(
@@ -352,9 +353,9 @@ const matchups = () => {
           const userTemp: User = { managerID, rosterID, userName };
 
           const usersMap = new Map();
-          for (const user of usersDropdown) {
-            usersMap.set(user.managerID, user);
-          }
+          usersDropdown.forEach((userTemp) => {
+            usersMap.set(userTemp.managerID, userTemp);
+          });
           if (!usersMap.has(userTemp.managerID)) {
             usersDropdown.add(userTemp);
             setUsers(usersDropdown);
@@ -547,9 +548,10 @@ const matchups = () => {
     fetchData();
   }, [JSON.stringify(usersDropdown), selected, selected2]);
 
-  for (const rival of rivalry) {
+  rivalry.forEach((rival) => {
     rivalsMap.set("Rival", rival);
-  }
+  });
+
   // Define callback functions to handle selection changes
   const handleSelectionChange = (selection: any) => {
     setSelected(selection);
@@ -604,7 +606,7 @@ const matchups = () => {
 
   //console.log("Work ", rivalManagers);
   const slate =
-    rivalsMap.get("Rival") && rivalsMap.get("Rival").matchups[weekCount];
+    rivalsMap.get("Rival") && rivalsMap.get("Rival")?.matchups[weekCount];
   return (
     <div className="h-screen border-[1px] border-[#1a1a1a] w-[95vw] xl:w-[60vw]">
       <div className="bg-[purple] flex-col flex items-center md:flex-row md:justify-center md:items-start  h-screen mt-5">
@@ -713,10 +715,9 @@ const matchups = () => {
                       <div className="text-center mb-10">
                         <div
                           className={
-                            rivalsMap.get("Rival") &&
-                            rivalsMap.get("Rival").matchups.length <= 1
-                              ? `hidden`
-                              : `flex justify-center text-[#af1222] text-[25px]`
+                            (rivalsMap.get("Rival")?.matchups.length ?? 0) <= 1
+                              ? "hidden"
+                              : "flex justify-center text-[#af1222] text-[25px]"
                           }
                         >
                           <BsArrowBarLeft
@@ -729,7 +730,8 @@ const matchups = () => {
                               setWeekCount(
                                 Math.min(
                                   weekCount + 1,
-                                  rivalsMap.get("Rival").matchups.length - 1
+                                  (rivalsMap.get("Rival")?.matchups.length ??
+                                    0) - 1
                                 )
                               )
                             }
@@ -744,17 +746,19 @@ const matchups = () => {
                             <div className="flex items-center justify-center border-b-[1px] border-[#1a1a1a] border-opacity-80 mb-2 w-full ">
                               <div className="flex items-center mr-1 sm:mr-3">
                                 {" "}
-                                <Image
-                                  src={`https://sleepercdn.com/avatars/thumbs/${
-                                    rivalManagers[slate?.year][
-                                      slate.matchup[0].roster_id
-                                    ].team.avatar
-                                  }`}
-                                  alt="player"
-                                  width={38}
-                                  height={38}
-                                  className="rounded-full mr-2 w-[25px] h-[25px] sm:w-full sm:h-full"
-                                />
+                                {slate && slate.matchup[0] && (
+                                  <Image
+                                    src={`https://sleepercdn.com/avatars/thumbs/${
+                                      rivalManagers[slate.year][
+                                        slate.matchup[0].roster_id
+                                      ].team.avatar
+                                    }`}
+                                    alt="player"
+                                    width={38}
+                                    height={38}
+                                    className="rounded-full mr-2 w-[25px] h-[25px] sm:w-full sm:h-full"
+                                  />
+                                )}
                                 <Text
                                   css={{
                                     color: "#E9EBEA",

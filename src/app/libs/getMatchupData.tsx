@@ -130,7 +130,7 @@ export default async function getMatchupData(league_id: any, week: number) {
       return false;
     }
 
-    for (const key of keys1) {
+    for (const key of keys1 as Array<keyof Starter>) {
       if (obj1[key] !== obj2[key]) {
         return false;
       }

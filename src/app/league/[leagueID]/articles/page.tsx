@@ -18,9 +18,69 @@ const JsonBigInt = require("json-bigint");
 import { db } from "../../../firebase";
 
 const articles = () => {
-  const [articles, setArticles] = useState({});
-  const [articles2, setArticles2] = useState({});
-  const [articles3, setArticles3] = useState({});
+  const [articles, setArticles] = useState<{
+    title: string;
+    paragraph1: string;
+    paragraph2: string;
+    paragraph3: string;
+    paragraph4: string;
+    paragraph5: string;
+    paragraph6: string;
+    paragraph7: string;
+    paragraph8: string;
+  }>({
+    title: "",
+    paragraph1: "",
+    paragraph2: "",
+    paragraph3: "",
+    paragraph4: "",
+    paragraph5: "",
+    paragraph6: "",
+    paragraph7: "",
+    paragraph8: "",
+  });
+  const [articles2, setArticles2] = useState<{
+    title: string;
+    paragraph1: string;
+    paragraph2: string;
+    paragraph3: string;
+    paragraph4: string;
+    paragraph5: string;
+    paragraph6: string;
+    paragraph7: string;
+    paragraph8: string;
+  }>({
+    title: "",
+    paragraph1: "",
+    paragraph2: "",
+    paragraph3: "",
+    paragraph4: "",
+    paragraph5: "",
+    paragraph6: "",
+    paragraph7: "",
+    paragraph8: "",
+  });
+  const [articles3, setArticles3] = useState<{
+    title: string;
+    paragraph1: string;
+    paragraph2: string;
+    paragraph3: string;
+    paragraph4: string;
+    paragraph5: string;
+    paragraph6: string;
+    paragraph7: string;
+    paragraph8: string;
+  }>({
+    title: "",
+    paragraph1: "",
+    paragraph2: "",
+    paragraph3: "",
+    paragraph4: "",
+    paragraph5: "",
+    paragraph6: "",
+    paragraph7: "",
+    paragraph8: "",
+  });
 
   const REACT_APP_LEAGUE_ID: string | null =
     localStorage.getItem("selectedLeagueID");
