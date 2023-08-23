@@ -90,9 +90,23 @@ export default function ScoreboardNav({ setShowScore }) {
   useEffect(() => {
     const checkTime = () => {
       const now = new Date();
-      const dayOfWeek = now.getUTCDay(); // Sunday is 0, Monday is 1, ..., Saturday is 6
-      const hours = now.getUTCHours();
+      const pacificTimeOffset = -7; // PDT offset is -7 hours (Daylight Saving Time)
+      const utcOffset = now.getTimezoneOffset() / 60; // Get the current UTC offset in hours
+
+      let hours = now.getUTCHours() + pacificTimeOffset;
       const minutes = now.getUTCMinutes();
+
+      if (hours < 0) {
+        hours += 24; // Adjust for negative hours due to time zone conversion
+      }
+
+      const dayOfWeek = now.getUTCDay() - 1;
+
+      if (dayOfWeek === 2 && hours === 21 && minutes == 55) console.log("JEFE");
+
+      console.log(`Hours: ${hours}`);
+      console.log(`Minutes: ${minutes}`);
+      console.log("day of the week", dayOfWeek);
 
       if (
         (dayOfWeek === 1 && hours === 22 && minutes >= 30) || // Monday after 10:30 PM
@@ -109,7 +123,7 @@ export default function ScoreboardNav({ setShowScore }) {
     const intervalId = setInterval(checkTime, 60000); // Check every minute
 
     return () => clearInterval(intervalId); // Cleanup interval when component unmounts
-  }, []);
+  }, [shouldDisplay]);
 
   useEffect(() => {
     async function fetchMatchupData() {
@@ -125,7 +139,7 @@ export default function ScoreboardNav({ setShowScore }) {
         } else if (nflState.season_type === "post") {
           week = 18;
         }
-        setWeek(week);
+        setWeek(nflState.display_week);
         const matchupMapData = await getMatchupMap(REACT_APP_LEAGUE_ID, week);
         setMatchupMap(matchupMapData.matchupMap);
         setScheduleDataFinal(
