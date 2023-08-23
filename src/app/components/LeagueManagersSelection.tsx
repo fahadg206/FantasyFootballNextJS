@@ -208,6 +208,9 @@ const TabsFeatures = () => {
                 DEF: "#798898",
                 K: "#BD66FF",
               };
+              let color = "#DE3449";
+
+              console.log("color ");
 
               return (
                 <div
@@ -226,9 +229,9 @@ const TabsFeatures = () => {
                     {playerName}
                   </p>
                   <p
-                    className={`text-[11px] text-[${
-                      colorObj[starter.position]
-                    }] font-bold w-full text-center overflow-hidden`}
+                    className={`text-[11px] ${
+                      "text-" + colorObj["QB"]
+                    } font-bold w-full text-center overflow-hidden`}
                   >
                     {starter.position}
                   </p>

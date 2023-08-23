@@ -126,58 +126,26 @@ const CardCarousel = () => {
     {
       id: 10,
       url: "/imgs/computer/mouse.png",
-      category: "Mice",
-      title: "Just feels right",
+      category: "News",
+      title: "Our news department is hard at work!!",
       description:
-        "Lorem ipsum dolor sit amet consectetur adipisicing elit. Sequi, dolor.",
+        "Our news department is hard at work!! We'll publish your league headlines soon!",
     },
     {
       id: 21,
       url: "/imgs/computer/keyboard.png",
-      category: "Keyboards",
-      title: "Type in style",
-      description:
-        "Lorem ipsum dolor sit amet consectetur adipisicing elit. Sequi, dolor.",
+      category: "News",
+      title:
+        "Article's are being worked on too, check out that page to see if they're done",
+      description: "Check out some of the other pages while you're at it too!",
     },
     {
       id: 34,
       url: "/imgs/computer/monitor.png",
-      category: "Monitors",
-      title: "Looks like a win",
-      description:
-        "Lorem ipsum dolor sit amet consectetur adipisicing elit. Sequi, dolor.",
-    },
-    {
-      id: 45,
-      url: "/imgs/computer/chair.png",
-      category: "Chairs",
-      title: "Back feels great",
-      description:
-        "Lorem ipsum dolor sit amet consectetur adipisicing elit. Sequi, dolor.",
-    },
-    {
-      id: 56,
-      url: "/imgs/computer/lights.png",
-      category: "Lights",
-      title: "It's lit",
-      description:
-        "Lorem ipsum dolor sit amet consectetur adipisicing elit. Sequi, dolor.",
-    },
-    {
-      id: 67,
-      url: "/imgs/computer/desk.png",
-      category: "Desks",
-      title: "Stand up straight",
-      description:
-        "Lorem ipsum dolor sit amet consectetur adipisicing elit. Sequi, dolor.",
-    },
-    {
-      id: 78,
-      url: "/imgs/computer/headphones.png",
-      category: "Headphones",
-      title: "Sounds good",
-      description:
-        "Lorem ipsum dolor sit amet consectetur adipisicing elit. Sequi, dolor.",
+      category: "Question of the Week",
+      title:
+        "Have you voted on this weeks question? Scroll down and let us know!",
+      description: "We really value your feedback!",
     },
   ];
 
@@ -213,8 +181,15 @@ const CardCarousel = () => {
             );
 
             const data = await response.json();
+
+            if (Array.isArray(data) && data.length > 0) {
+              // If data is valid, update headlines state
+              setHeadlines(data);
+            } else {
+              console.log("Using default headlines");
+              setHeadlines(defaultHeadlines); // Set default headlines here
+            }
             //console.log("parsed ", data);
-            setHeadlines(data);
           } catch (error) {
             console.error("Error fetching data:", error);
           }

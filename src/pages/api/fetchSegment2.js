@@ -99,7 +99,7 @@ export default async function handler(req, res) {
     };
 
     const articleTemplate = JSON.stringify(article);
-    const question = `give me an article about this league's data, make the style a jokingly condescending and sarcastic way where you pick on the teams and make fun of their players and choices for some light fun and banter. Keep the content within 450 words maximum. The format of the JSON response should strictly adhere to RFC8259 compliance, without any deviations or errors. The JSON structure should match this template: {
+    const question = `Please give me an article where you're making fun of teams that made questionable decisions and giving the bare minimum of compliments to teams that did good, you can make fun of their lineups, points, their teamnames or anything that would be funny and entertaining. maintain a sarcastic and comedic tone. Keep the content within 450 words maximum. The format of the JSON response should strictly adhere to RFC8259 compliance, without any deviations or errors. The JSON structure should match this template: {
   "title": "",
   "paragraph1": "",
   "paragraph2": "",

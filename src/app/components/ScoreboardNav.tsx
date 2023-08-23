@@ -57,6 +57,15 @@ interface MatchupMapData {
   matchup_id?: string;
 }
 
+interface PlayerData {
+  wi?: {
+    [week: string]: {
+      p?: string;
+    };
+  };
+  // Add other properties if needed
+}
+
 export default function ScoreboardNav({ setShowScore }) {
   //object that contains userId, avatar, team name, & roster_id
 
@@ -65,10 +74,14 @@ export default function ScoreboardNav({ setShowScore }) {
   const [scheduleDataFinal, setScheduleDataFinal] = useState<ScheduleData>({});
   const [shouldDisplay, setShouldDisplay] = useState(false);
   const [selectedMatchup, setSelectedMatchup] = useState(false);
+  const [week, setWeek] = useState<number>();
 
   const [matchupMap, setMatchupMap] = useState<Map<string, MatchupMapData[]>>(
     new Map()
   );
+
+  const [playersData, setPlayersData] =
+    React.useState<Record<string, PlayerData>>();
 
   const router = useRouter();
   const REACT_APP_LEAGUE_ID: string | null =
@@ -83,7 +96,7 @@ export default function ScoreboardNav({ setShowScore }) {
 
       if (
         (dayOfWeek === 1 && hours === 22 && minutes >= 30) || // Monday after 10:30 PM
-        (dayOfWeek === 2 && hours < 0) || // Tuesday
+        (dayOfWeek === 2 && hours > 0) || // Tuesday
         (dayOfWeek === 3 && hours === 0 && minutes === 0) // Wednesday before 12:00 AM
       ) {
         setShouldDisplay(true);
@@ -112,7 +125,8 @@ export default function ScoreboardNav({ setShowScore }) {
         } else if (nflState.season_type === "post") {
           week = 18;
         }
-        const matchupMapData = await getMatchupMap(REACT_APP_LEAGUE_ID, 1);
+        setWeek(week);
+        const matchupMapData = await getMatchupMap(REACT_APP_LEAGUE_ID, week);
         setMatchupMap(matchupMapData.matchupMap);
         setScheduleDataFinal(
           matchupMapData.updatedScheduleData as ScheduleData
@@ -125,9 +139,61 @@ export default function ScoreboardNav({ setShowScore }) {
     fetchMatchupData();
   }, [REACT_APP_LEAGUE_ID]);
 
+  useEffect(() => {
+    axios
+      .get("http://localhost:3001/api/players")
+      .then((response) => {
+        const playersData = response.data;
+
+        setPlayersData(playersData);
+        // Process and use the data as needed
+      })
+      .catch((error) => {
+        console.error("Error while fetching players data:", error);
+      });
+  }, []);
+
+  const weekString = week?.toString();
+
   const matchupText = Array.from(matchupMap).map(([matchupID, matchupData]) => {
     const team1 = matchupData[0];
     const team2 = matchupData[1];
+
+    let team1Proj = 0.0;
+    let team2Proj = 0.0;
+
+    if (team1?.starters) {
+      for (const currPlayer of team1.starters) {
+        const playerData = playersData && playersData[currPlayer];
+        if (
+          playerData &&
+          playerData.wi &&
+          weekString !== undefined && // Check if weekString is defined
+          typeof weekString === "string" && // Check if weekString is a string
+          playerData.wi[weekString] &&
+          playerData.wi[weekString]?.p !== undefined
+        ) {
+          if (playerData.wi[weekString].p)
+            team1Proj += parseFloat(playerData.wi[weekString].p || "0");
+        }
+      }
+    }
+
+    if (team2?.starters) {
+      for (const currPlayer of team2.starters) {
+        const playerData = playersData && playersData[currPlayer];
+        if (
+          playerData &&
+          playerData.wi &&
+          weekString !== undefined && // Check if weekString is defined
+          typeof weekString === "string" && // Check if weekString is a string
+          playerData.wi[weekString] &&
+          playerData.wi[weekString]?.p !== undefined
+        ) {
+          team2Proj += parseFloat(playerData.wi[weekString].p || "0");
+        }
+      }
+    }
 
     const team1UserId = team1.user_id;
     const team2UserId = team2.user_id;
@@ -230,8 +296,20 @@ export default function ScoreboardNav({ setShowScore }) {
                   : "N/A"}
               </p>
             </div>
-            {shouldDisplay && (
+
+            {shouldDisplay ? (
               <p className="text-center text-[14px] font-bold">{"FINAL"}</p>
+            ) : (
+              <div className="flex items-center justify-around mt-5">
+                <p className="flex-shrink-0 w-[9vw] text-center text-[9px] text-grey italic">
+                  {team1Proj > team2Proj
+                    ? team1?.name + " -" + Math.round(team1Proj - team2Proj)
+                    : team2?.name + " -" + Math.round(team2Proj - team1Proj)}
+                </p>
+                <p className="flex-shrink-0 w-[9vw] text-center text-[9px] ml-2 italic">
+                  O/U: {Math.round(team1Proj + team2Proj)}
+                </p>
+              </div>
             )}
           </div>
         </Link>
