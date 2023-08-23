@@ -33,9 +33,9 @@ const StaggeredDropDown = ({
       <motion.div animate={open ? "open" : "closed"} className="relative">
         <button
           onClick={() => setOpen((pv) => !pv)}
-          className="flex items-center gap-2 px-3 py-2 rounded-md text-indigo-50 bg-indigo-500 hover:bg-indigo-500 transition-colors"
+          className="flex items-center gap-2 px-3 py-2 rounded-md text-white font-bold bg-[#1a1a1a] transition-colors"
         >
-          <span className="font-medium text-sm">Post actions</span>
+          <span className="font-medium text-sm">Pick an Article!</span>
           <motion.span variants={iconVariants}>
             <FiChevronDown />
           </motion.span>
@@ -45,7 +45,7 @@ const StaggeredDropDown = ({
           initial={wrapperVariants.closed}
           variants={wrapperVariants}
           style={{ originY: "top", translateX: "-50%" }}
-          className="flex flex-col gap-2 p-2 rounded-lg bg-white shadow-xl absolute top-[120%] left-[50%] w-48 overflow-hidden"
+          className="flex flex-col gap-2 p-2 rounded-lg bg-[#1a1a1a] shadow-xl absolute top-[120%] left-[50%] w-48 overflow-hidden"
         >
           <SmoothLink
             to={title1}
@@ -56,7 +56,11 @@ const StaggeredDropDown = ({
             offset={50}
             duration={700}
           >
-            <Option setOpen={setOpen} Icon={FiEdit} text="Edit" />
+            <Option
+              setOpen={setOpen}
+              Icon={FiEdit}
+              text={title1.substring(0, 20) + "..."}
+            />
           </SmoothLink>
           <SmoothLink
             to={title2}
@@ -67,7 +71,11 @@ const StaggeredDropDown = ({
             offset={50}
             duration={700}
           >
-            <Option setOpen={setOpen} Icon={FiPlusSquare} text="Duplicate" />
+            <Option
+              setOpen={setOpen}
+              Icon={FiPlusSquare}
+              text={title2.substring(0, 20) + "..."}
+            />
           </SmoothLink>
 
           <Option setOpen={setOpen} Icon={FiShare} text="Share" />
@@ -83,7 +91,7 @@ const Option = ({ text, Icon, setOpen }) => {
     <motion.li
       variants={itemVariants}
       onClick={() => setOpen(false)}
-      className="flex items-center gap-2 w-full p-2 text-xs font-medium whitespace-nowrap rounded-md hover:bg-indigo-100 text-slate-700 hover:text-indigo-500 transition-colors cursor-pointer"
+      className="flex items-center gap-2 w-full p-2 text-xs font-medium whitespace-nowrap rounded-md hover:bg-indigo-100  hover:text-[#af1222] transition-colors cursor-pointer"
     >
       <motion.span variants={actionIconVariants}>
         <Icon />
