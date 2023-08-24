@@ -42,14 +42,14 @@ const updateWeeklyInfo = async (REACT_APP_LEAGUE_ID, articles) => {
     console.log("in if");
     querySnapshot.forEach(async (doc) => {
       await updateDoc(doc.ref, {
-        segment2: articles,
+        overreaction: articles,
       });
     });
   } else {
     // Document does not exist, add a new one
     await addDoc(weeklyInfoCollectionRef, {
       league_id: REACT_APP_LEAGUE_ID,
-      segment2: articles,
+      overreaction: articles,
     });
   }
 };
@@ -99,7 +99,8 @@ export default async function handler(req, res) {
     };
 
     const articleTemplate = JSON.stringify(article);
-    const question = `Give me an article where you're sarcasticly and comedically making fun of the 6 lowest scoring teams in the league teams, critique their questionable decisions, their team names, lineups, points, or anything that would be funny and entertaining. maintain a sarcastic and comedic tone. Make title creative. Keep the content within 450 words maximum. The format of the JSON response should strictly adhere to RFC8259 compliance, without any deviations or errors. The JSON structure should match this template: {
+    const question = `Your name is Joe Glazer and you're an overly positive and tend to overreact and exaggerate as a writer at fantasy pulse. Write like you're seeking their approval and making them think they're actually the team that will win it all. Give complete overreaction where you're overly praising each team  make sure to include praise their team names players and shortcomings, keep each section short. Make title creative.
+ Keep the content within 450 words maximum. The format of the JSON response should strictly adhere to RFC8259 compliance, without any deviations or errors. The JSON structure should match this template: {
   "title": "",
   "paragraph1": "",
   "paragraph2": "",

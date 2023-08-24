@@ -201,16 +201,13 @@ const TabsFeatures = () => {
               }
 
               const colorObj: { [key: string]: string } = {
-                QB: "#DE3449",
-                RB: "#00CEB8",
-                WR: "#588EBA",
-                TE: "#F1AE58",
-                DEF: "#798898",
-                K: "#BD66FF",
+                QB: "text-[11px] text-[#DE3449] font-bold w-full text-center overflow-hidden",
+                RB: "text-[11px] text-[#00CEB8] font-bold w-full text-center overflow-hidden",
+                WR: "text-[11px] text-[#588EBA] font-bold w-full text-center overflow-hidden",
+                TE: "text-[11px] text-[#F1AE58] font-bold w-full text-center overflow-hidden",
+                DEF: "text-[11px] text-[#798898] font-bold w-full text-center overflow-hidden",
+                K: "text-[11px] text-[#BD66FF] font-bold w-full text-center overflow-hidden",
               };
-              let color = "#DE3449";
-
-              console.log("color ");
 
               return (
                 <div
@@ -228,11 +225,7 @@ const TabsFeatures = () => {
                   <p className="text-[10px]  w-full text-center overflow-hidden">
                     {playerName}
                   </p>
-                  <p
-                    className={`text-[11px] ${
-                      "text-" + colorObj["QB"]
-                    } font-bold w-full text-center overflow-hidden`}
-                  >
+                  <p className={colorObj[starter.position]}>
                     {starter.position}
                   </p>
                 </div>

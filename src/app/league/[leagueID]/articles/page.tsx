@@ -92,6 +92,28 @@ const articles = () => {
     paragraph8: "",
   });
 
+  const [articles4, setArticles4] = useState<{
+    title: string;
+    paragraph1: string;
+    paragraph2: string;
+    paragraph3: string;
+    paragraph4: string;
+    paragraph5: string;
+    paragraph6: string;
+    paragraph7: string;
+    paragraph8: string;
+  }>({
+    title: "",
+    paragraph1: "",
+    paragraph2: "",
+    paragraph3: "",
+    paragraph4: "",
+    paragraph5: "",
+    paragraph6: "",
+    paragraph7: "",
+    paragraph8: "",
+  });
+
   const REACT_APP_LEAGUE_ID: string | null =
     localStorage.getItem("selectedLeagueID");
 
@@ -124,6 +146,8 @@ const articles = () => {
             //setArticles3(JsonBigInt.parse(segment2p2));
             setArticles(docData.articles);
             setArticles2(docData.segment2);
+            setArticles3(docData.overreaction);
+            setArticles4(docData.pulse_check);
             console.log(articles3);
           });
         } else {
@@ -146,13 +170,52 @@ const articles = () => {
               }
             );
 
+            const overreaction = await fetch(
+              "http://localhost:3000/api/fetchOverreaction",
+              {
+                method: "POST",
+                body: REACT_APP_LEAGUE_ID,
+              }
+            );
+
+            // const preview = await fetch(
+            //   "http://localhost:3000/api/fetchPreview.js",
+            //   {
+            //     method: "POST",
+            //     body: REACT_APP_LEAGUE_ID,
+            //   }
+            // );
+
+            // const trashTalk = await fetch(
+            //   "http://localhost:3000/api/fetchTrashTalk.js",
+            //   {
+            //     method: "POST",
+            //     body: REACT_APP_LEAGUE_ID,
+            //   }
+            // );
+
+            const pulseCheck = await fetch(
+              "http://localhost:3000/api/fetchPulseCheck",
+              {
+                method: "POST",
+                body: REACT_APP_LEAGUE_ID,
+              }
+            );
+
             const data = await response.json();
             const seg2Data = await segment2.json();
+            const overreactionData = await overreaction.json();
+            //const previewData = await preview.json();
+            //const trashTalkData = await trashTalk.json();
+            const pulseData = await pulseCheck.json();
+
             console.log("parsed ", data);
             console.log("parsed ", seg2Data);
 
             setArticles(data);
             setArticles2(seg2Data);
+            setArticles3(overreactionData);
+            setArticles4(pulseData);
           } catch (error) {
             console.error("Error fetching data:", error);
           }
@@ -176,7 +239,7 @@ const articles = () => {
       <div>
         <ArticleDropdown title1={articles.title} title2={articles2.title} />
       </div>
-      <Element name={articles.title}>
+      <Element name={articles.title || ""}>
         <div className="mb-2">
           <ArticleTemplate
             title={
@@ -200,7 +263,7 @@ const articles = () => {
           />
         </div>
       </Element>
-      <Element name={articles2.title}>
+      <Element name={articles2.title || ""}>
         <div>
           <ArticleTemplate
             title={articles2.title || ""}
@@ -217,6 +280,48 @@ const articles = () => {
             p6={articles2.paragraph6 || ""}
             p7={articles2.paragraph7 || ""}
             p8={articles2.paragraph8 || ""}
+            name="1"
+          />
+        </div>
+      </Element>
+      <Element name={articles3.title || ""}>
+        <div>
+          <ArticleTemplate
+            title={articles3.title || ""}
+            image={imran}
+            author={"imran"}
+            authorImg={imran}
+            jobtitle="RCL Insider"
+            date="Sep 14th, 2023"
+            p1={articles3.paragraph1 || ""}
+            p2={articles3.paragraph2 || ""}
+            p3={articles3.paragraph3 || ""}
+            p4={articles3.paragraph4 || ""}
+            p5={articles3.paragraph5 || ""}
+            p6={articles3.paragraph6 || ""}
+            p7={articles3.paragraph7 || ""}
+            p8={articles3.paragraph8 || ""}
+            name="1"
+          />
+        </div>
+      </Element>
+      <Element name={articles4.title}>
+        <div>
+          <ArticleTemplate
+            title={articles4.title || ""}
+            image={imran}
+            author={"imran"}
+            authorImg={imran}
+            jobtitle="RCL Insider"
+            date="Sep 14th, 2023"
+            p1={articles4.paragraph1 || ""}
+            p2={articles4.paragraph2 || ""}
+            p3={articles4.paragraph3 || ""}
+            p4={articles4.paragraph4 || ""}
+            p5={articles4.paragraph5 || ""}
+            p6={articles4.paragraph6 || ""}
+            p7={articles4.paragraph7 || ""}
+            p8={articles4.paragraph8 || ""}
             name="1"
           />
         </div>

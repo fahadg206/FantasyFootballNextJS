@@ -81,9 +81,9 @@ export default async function handler(req, res) {
       new OpenAIEmbeddings()
     );
     //await vectorStore.addDocuments(articles.article1);
-    await vectorStore.addDocuments(articles.article2);
+    //await vectorStore.addDocuments(articles.article2);
     //await vectorStore.addDocuments(articles.article3);
-    await vectorStore.addDocuments(articles.article4);
+    //await vectorStore.addDocuments(articles.article4);
     const model = new ChatOpenAI({
       temperature: 0.9,
       model: "gpt-4",
@@ -99,7 +99,7 @@ export default async function handler(req, res) {
     };
 
     const articleTemplate = JSON.stringify(article);
-    const question = `using my style of writing give me a sports breakdown recapping all the league's matchups, include the scores, who won by comparing their team_points to their opponent's team_points and their star players include a bit of humor as well. it should be 450 words max. Give me the response in this exact format ${articleTemplate} with 8 paragraphs that are concise and it should be a valid json array. The format of the JSON response should strictly adhere to RFC8259 compliance, without any deviations or errors.`;
+    const question = `using a funny and exciting style of writing give me a sports breakdown recapping all the league's matchups, include the scores, who won by comparing their team_points to their opponent's team_points and their star players include a bit of humor as well. it should be 450 words max. Give me the response in this exact format ${articleTemplate} with 8 paragraphs that are concise and it should be a valid json array. Make sure to include all league matchups. The format of the JSON response should strictly adhere to RFC8259 compliance, without any deviations or errors.`;
     const chain = RetrievalQAChain.fromLLM(model, vectorStore.asRetriever());
     const apiResponse = await chain.call({ query: question });
     const cleanUp = await model.call([

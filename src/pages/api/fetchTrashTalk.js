@@ -42,14 +42,14 @@ const updateWeeklyInfo = async (REACT_APP_LEAGUE_ID, articles) => {
     console.log("in if");
     querySnapshot.forEach(async (doc) => {
       await updateDoc(doc.ref, {
-        segment2: articles,
+        trash_talk: articles,
       });
     });
   } else {
     // Document does not exist, add a new one
     await addDoc(weeklyInfoCollectionRef, {
       league_id: REACT_APP_LEAGUE_ID,
-      segment2: articles,
+      trash_talk: articles,
     });
   }
 };
@@ -99,15 +99,12 @@ export default async function handler(req, res) {
     };
 
     const articleTemplate = JSON.stringify(article);
-    const question = `Give me an article where you're sarcasticly and comedically making fun of the 6 lowest scoring teams in the league teams, critique their questionable decisions, their team names, lineups, points, or anything that would be funny and entertaining. maintain a sarcastic and comedic tone. Make title creative. Keep the content within 450 words maximum. The format of the JSON response should strictly adhere to RFC8259 compliance, without any deviations or errors. The JSON structure should match this template: {
+    const question = `Using the league data I provided you Write a short article about The Art of Trash Talk: Showcase the best and wittiest trash talk exchanges between managers, celebrating the creativity and competitiveness within the league. make up fake quotes if you need to. Pick one random matchup
+ Keep the content within 150 words maximum. The format of the JSON response should strictly adhere to RFC8259 compliance, without any deviations or errors. The JSON structure should match this template: {
   "title": "",
   "paragraph1": "",
   "paragraph2": "",
   "paragraph3": "",
-  "paragraph4": "",
-  "paragraph5": "",
-  "paragraph6": "",
-  "paragraph7": ""
 }
 Please ensure that the generated JSON response meets the specified criteria without any syntax issues or inconsistencies.`;
     const chain = RetrievalQAChain.fromLLM(model, vectorStore.asRetriever());

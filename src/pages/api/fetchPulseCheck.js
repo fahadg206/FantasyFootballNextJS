@@ -17,9 +17,9 @@ import { JSONLoader } from "langchain/document_loaders";
 import { FaissStore } from "langchain/vectorstores/faiss";
 import { OpenAIEmbeddings } from "langchain/embeddings/openai";
 import { ChatOpenAI } from "langchain/chat_models/openai";
+import { RetrievalQAChain } from "langchain/chains";
 import { SystemMessage } from "langchain/schema";
 import { HumanMessage } from "langchain/schema";
-import { RetrievalQAChain } from "langchain/chains";
 import fs from "fs";
 import path from "path";
 import { db, storage } from "../../app/firebase";
@@ -42,14 +42,14 @@ const updateWeeklyInfo = async (REACT_APP_LEAGUE_ID, articles) => {
     console.log("in if");
     querySnapshot.forEach(async (doc) => {
       await updateDoc(doc.ref, {
-        segment2: articles,
+        pulse_check: articles,
       });
     });
   } else {
     // Document does not exist, add a new one
     await addDoc(weeklyInfoCollectionRef, {
       league_id: REACT_APP_LEAGUE_ID,
-      segment2: articles,
+      pulse_check: articles,
     });
   }
 };
@@ -86,7 +86,7 @@ export default async function handler(req, res) {
     //await vectorStore.addDocuments(articles.article4);
     const model = new ChatOpenAI({
       temperature: 0.9,
-      model: "gpt-4.0",
+      model: "gpt-4",
       max_tokens: 8000,
     });
     await vectorStore.save("leagueData");
@@ -99,21 +99,9 @@ export default async function handler(req, res) {
     };
 
     const articleTemplate = JSON.stringify(article);
-    const question = `Give me an article where you're sarcasticly and comedically making fun of the 6 lowest scoring teams in the league teams, critique their questionable decisions, their team names, lineups, points, or anything that would be funny and entertaining. maintain a sarcastic and comedic tone. Make title creative. Keep the content within 450 words maximum. The format of the JSON response should strictly adhere to RFC8259 compliance, without any deviations or errors. The JSON structure should match this template: {
-  "title": "",
-  "paragraph1": "",
-  "paragraph2": "",
-  "paragraph3": "",
-  "paragraph4": "",
-  "paragraph5": "",
-  "paragraph6": "",
-  "paragraph7": ""
-}
-Please ensure that the generated JSON response meets the specified criteria without any syntax issues or inconsistencies.`;
+    const question = `Using this league's data write an article thats titled Pulse Check: Teams Under Duress, the article should give out "pulse checks" for each teams situation and what their chances of making the playoffs are, "Steady Pulse" for average chance, "Strong Pulse" for strong chance, "Weak Pulse" for slightly below average chance, "Flatlined" for low chance. Don't  mention the pulses categories in the explanation. Give a pulse check for every team,. it should be 450 words max. Give me the response in this exact format ${articleTemplate} with 8 paragraphs that are concise and it should be a valid json array. The format of the JSON response should strictly adhere to RFC8259 compliance, without any deviations or errors.`;
     const chain = RetrievalQAChain.fromLLM(model, vectorStore.asRetriever());
     const apiResponse = await chain.call({ query: question });
-    console.log(apiResponse);
-    console.log(typeof apiResponse.text);
     const cleanUp = await model.call([
       new SystemMessage(
         "Turn the following string into valid JSON format that strictly adhere to RFC8259 compliance"
