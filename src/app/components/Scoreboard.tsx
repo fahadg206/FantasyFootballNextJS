@@ -268,7 +268,9 @@ export default function Scoreboard() {
   }, []);
 
   if (localStorage.getItem("usernameSubmitted") === "false") {
-    localStorage.clear();
+    localStorage.removeItem("selectedLeagueID");
+    localStorage.removeItem("selectedLeagueName");
+    localStorage.removeItem("usernameSubmitted");
     router.refresh();
   }
 

@@ -22,6 +22,15 @@ interface ScheduleData {
   };
 }
 
+interface Starter {
+  fname?: string;
+  lname?: string;
+  avatar?: string;
+  scored_points?: string;
+  projected_points?: string;
+  position?: string;
+}
+
 interface ManagerMatchup {
   week?: string;
   matchup: MatchupMapData[];
@@ -198,6 +207,7 @@ export default function Page() {
     const fetchAllData = async () => {
       selectedManagerMatchups.clear();
       try {
+        setLoading(true);
         for (let i = 1; i < 17; i++) {
           const weekMatchupMap = await fetchDataForWeek(i);
           // Handle additional processing or state updates if needed

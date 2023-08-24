@@ -162,36 +162,12 @@ function NavBar(props: MyProps) {
   const MobileNav = () => {
     const [showScore, setShowScore] = useState(false);
     const [navbar, setNavbar] = useState(false);
-    const [navbarMobile, setNavbarMobile] = useState(true);
-
-    const [prevScrollPos, setPrevScrollPos] = useState(window.pageYOffset);
-
-    useEffect(() => {
-      const handleScroll = () => {
-        const currentScrollPos = window.pageYOffset;
-
-        if (currentScrollPos > prevScrollPos) {
-          setNavbarMobile(false);
-        } else {
-          setNavbarMobile(true);
-        }
-
-        setPrevScrollPos(currentScrollPos);
-      };
-
-      window.addEventListener("scroll", handleScroll);
-      return () => {
-        window.removeEventListener("scroll", handleScroll);
-      };
-    }, [prevScrollPos]);
 
     return (
       <div className=" px-4 mx-auto w-screen 2xl:hidden ">
         <div className="flex-items-center">
           <div
-            className={` mobilenavbar flex items-center justify-between py-3 border-b-2 border-b-1 border-[#af1222] border-opacity-10 h-[110px] xl:hidden ${
-              navbarMobile ? "translate-y-0" : "-translate-y-full"
-            }`}
+            className={`mobilenavbar flex items-center justify-between py-3 border-b-2 border-b-1 border-[#af1222] border-opacity-10 h-[110px] xl:hidden sticky top-0 z-50`}
           >
             <button
               className="xl:hidden  text-[#af1222] rounded-xl outline-none focus:border-gray-400 focus:border cursor-pointer "
@@ -354,7 +330,9 @@ function NavBar(props: MyProps) {
   };
 
   if (localStorage.getItem("usernameSubmitted") === "false") {
-    localStorage.clear();
+    localStorage.removeItem("selectedLeagueID");
+    localStorage.removeItem("selectedLeagueName");
+    localStorage.removeItem("usernameSubmitted");
     router.refresh();
   }
   const showNav = () => {

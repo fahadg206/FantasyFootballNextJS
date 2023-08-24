@@ -43,6 +43,9 @@ const BarPoll = ({
       color: "bg-[#1a1a1a]",
     },
   ]);
+  const [winningTeamName, setWinningTeamName] = useState("");
+  const [winningTeamVotes, setWinningTeamVotes] = useState(0);
+  const [userVoted, setUserVoted] = useState(false);
 
   return (
     <section className=" px-4 w-[70vw] xl:w-[35vw] md:h-[20vw] xl:h-[10vw]  p-2">
@@ -52,6 +55,12 @@ const BarPoll = ({
           weekCounter={weekCounter}
           votes={votes}
           setVotes={setVotes}
+          setWinningTeamName={setWinningTeamName}
+          setWinningTeamVotes={setWinningTeamVotes}
+          winningTeamName={winningTeamName}
+          winningTeamVotes={winningTeamVotes}
+          setUserVoted={setUserVoted}
+          userVoted={userVoted}
         />
         <Bars votes={votes} />
       </div>
@@ -59,9 +68,22 @@ const BarPoll = ({
   );
 };
 
-const Options = ({ votes, setVotes, matchup_id, weekCounter }) => {
+const Options = ({
+  votes,
+  setVotes,
+  matchup_id,
+  weekCounter,
+  setWinningTeamName,
+  setWinningTeamVotes,
+  winningTeamName,
+  winningTeamVotes,
+  setUserVoted,
+  userVoted,
+}) => {
   const leagueID = localStorage.getItem("selectedLeagueID");
+
   const addVotes = async (votes) => {
+    console.log(votes);
     try {
       const voteInfo = collection(db, "Matchup Polls");
       const queryRef = query(voteInfo, where("league_id", "==", leagueID));
@@ -120,13 +142,22 @@ const Options = ({ votes, setVotes, matchup_id, weekCounter }) => {
   };
 
   const totalVotes = votes.reduce((acc, cv) => (acc += cv.votes), 0);
+  const league_id = localStorage.getItem("selectedLeagueID");
 
   const handleIncrementVote = async (vote) => {
     const newVote = { ...vote, votes: vote.votes + 1 };
 
+    const newVotes = (prevVotes) =>
+      prevVotes.map((v) => (v.title === newVote.title ? newVote : v));
+
+    addVotes(newVotes(votes));
+
     setVotes((prevVotes) =>
       prevVotes.map((v) => (v.title === newVote.title ? newVote : v))
     );
+    setUserVoted(true);
+    localStorage.setItem(`${league_id} ${matchup_id} userVoted`, userVoted);
+    console.log(votes);
   };
 
   const getVotes = async () => {
@@ -145,7 +176,23 @@ const Options = ({ votes, setVotes, matchup_id, weekCounter }) => {
           ); // Find the specific matchup
           if (matchup) {
             setVotes(matchup.votes); // Set the votes for the specific matchup
-            console.log("Matchup votes returned", matchup.votes);
+
+            let team1 = matchup.votes[0];
+            let team2 = matchup.votes[1];
+
+            if (team1.votes > team2.votes) {
+              setWinningTeamName(team1.title);
+              setWinningTeamVotes(
+                Math.round((team1.votes / (team1.votes + team2.votes)) * 100)
+              );
+            } else if (team2.votes > team1.votes) {
+              setWinningTeamName(team2.title);
+              setWinningTeamVotes(
+                Math.round((team2.votes / (team1.votes + team2.votes)) * 100)
+              );
+            } else {
+              setWinningTeamName("DRAW");
+            }
           } else {
             console.log("Matchup not found.");
           }
@@ -164,6 +211,16 @@ const Options = ({ votes, setVotes, matchup_id, weekCounter }) => {
     getVotes(); // Fetch votes from the database when the component mounts
   }, []); // Empty dependency array to trigger the effect once
 
+  if (winningTeamName) {
+    if (winningTeamName === "DRAW") {
+      console.log(`${matchup_id}: Votes Resulted in a DRAW!`);
+    } else {
+      console.log(
+        `${matchup_id}: ${winningTeamName} was voted to win by ${winningTeamVotes}% of league members!`
+      );
+    }
+  }
+
   return (
     <div className="col-span-1 ">
       <h3 className="mb-2 text-[12px] xl:text-[15px] text-center font-semibold ">
@@ -177,10 +234,16 @@ const Options = ({ votes, setVotes, matchup_id, weekCounter }) => {
               whileTap={{ scale: 0.985 }}
               onClick={() => {
                 handleIncrementVote(vote);
-                addVotes(votes);
               }}
               key={vote.title}
-              className={`w-[70px] sm:w-[100px] md:w-[160px] rounded-xl ${vote.color} py-2 text-[11px] xl:text-[15px]  mr-2 text-white`}
+              className={
+                localStorage.getItem(
+                  `${league_id} ${matchup_id} userVoted`,
+                  userVoted
+                )
+                  ? `hidden`
+                  : ` block w-[70px] sm:w-[100px] md:w-[160px] rounded-xl ${vote.color} py-2 text-[11px] xl:text-[15px]  mr-2 text-white`
+              }
             >
               {vote.title.length >= 9
                 ? (vote.title.match(/[A-Z]/g) || []).length > 3
@@ -192,7 +255,19 @@ const Options = ({ votes, setVotes, matchup_id, weekCounter }) => {
         })}
       </div>
       <div className="flex justify-center">
-        <span className="mb-1 text-[11px] xl:text-[15px] italic">
+        <span className="mb-1 text-[11px] xl:text-[15px] italic flex flex-col items-center">
+          <p
+            className={
+              localStorage.getItem(
+                `${league_id} ${matchup_id} userVoted`,
+                userVoted
+              )
+                ? `block text-[12px] italic`
+                : `hidden`
+            }
+          >
+            Thanks for voting!
+          </p>
           {totalVotes} votes
         </span>
       </div>

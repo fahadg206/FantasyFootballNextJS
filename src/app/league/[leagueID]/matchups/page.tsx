@@ -10,6 +10,7 @@ import { useDropdown } from "@nextui-org/react/types/dropdown/use-dropdown";
 import { M_PLUS_1 } from "next/font/google";
 import Image from "next/image";
 import { BsArrowBarLeft, BsArrowBarRight } from "react-icons/bs";
+import { HiOutlineArrowSmLeft, HiOutlineArrowSmRight } from "react-icons/hi";
 import {
   getFirestore,
   collection,
@@ -19,6 +20,7 @@ import {
   query,
   where,
 } from "firebase/firestore/lite";
+import MatchupsImg from "../../../images/matchupsImage.png";
 import { db, storage } from "../../../firebase";
 
 interface NflState {
@@ -76,15 +78,20 @@ interface Rivalry {
   ties: number;
   matchups: RivalryMatchup[];
 }
+interface Starter {
+  fn?: string;
+  ln?: string;
+  pos: string;
+}
 
 const REACT_APP_LEAGUE_ID: string =
   process.env.REACT_APP_LEAGUE_ID || "872659020144656384";
 
 const matchups = () => {
-  const [selected, setSelected] = React.useState(new Set(["text"]));
+  const [selected, setSelected] = React.useState(new Set(["Select User"]));
   const [weekCount, setWeekCount] = useState(0);
-  const [selected2, setSelected2] = React.useState(new Set(["text"]));
-  const [playersData, setPlayersData] = React.useState([]);
+  const [selected2, setSelected2] = React.useState(new Set(["Select User"]));
+  const [playersData, setPlayersData] = React.useState<Starter[]>([]);
   const [users, setUsers] = React.useState(new Set<User>());
   const [users2, setUsers2] = React.useState(new Set<User>());
   const [rivalry, setRivalry] = React.useState(new Set<Rivalry>());
@@ -607,12 +614,18 @@ const matchups = () => {
   //console.log("Work ", rivalManagers);
   const slate =
     rivalsMap.get("Rival") && rivalsMap.get("Rival")?.matchups[weekCount];
+  const colorObj: { [key: string]: string } = {
+    QB: "text-[10px]  p-1 rounded-xl bg-[#DE3449] font-bold  text-center ",
+    RB: "text-[10px]  p-1 rounded-xl bg-[#00CEB8] font-bold  text-center ",
+    WR: "text-[10px]  p-1 rounded-xl bg-[#588EBA] font-bold  text-center ",
+    TE: "text-[10px]  p-1 rounded-xl bg-[#F1AE58] font-bold  text-center ",
+    DEF: "text-[10px]  p-1 rounded-xl bg-[#798898] font-bold  text-center ",
+    K: "text-[10px]  p-1 rounded-xl bg-[#BD66FF] font-bold  text-center ",
+  };
   return (
-    <div className="h-screen border-[1px] border-[#1a1a1a] w-[95vw] xl:w-[60vw]">
-      <div className="bg-[purple] flex-col flex items-center md:flex-row md:justify-center md:items-start  h-screen mt-5">
-        <div className="mr-10">
-          <p className="text-center text-[14px]">Select User:</p>
-
+    <div className="mt-3 flex flex-col items-center  h-screen w-[95vw] xl:w-[60vw]">
+      <div className="flex-col flex items-center ml-5 md:flex-row md:justify-center md:items-start md:ml-0  mt-5">
+        <div className="mr-10 mb-5 md:mb-0">
           <Dropdown>
             <Dropdown.Button flat css={{ tt: "capitalize", color: "#af1222" }}>
               {selectedValue}
@@ -635,7 +648,6 @@ const matchups = () => {
           </Dropdown>
         </div>
         <div className="mr-10">
-          <p className="text-center text-[14px]">Select User:</p>
           <Dropdown>
             <Dropdown.Button flat css={{ tt: "capitalize", color: "#af1222" }}>
               {selectedValue2}
@@ -658,27 +670,21 @@ const matchups = () => {
           </Dropdown>
         </div>
 
-        <div className="mr-10 md:mr-0 mt-6">
-          <Button
-            onPress={() => {
-              console.log(input);
-              setVisible(true);
-            }}
-            css={{
-              backgroundImage:
-                "linear-gradient(black, black, #af1222, #af1222)",
-              color: "#ffffff",
-              borderStyle: "solid",
-              borderColor: "#af1222",
-              // Set the text color to white or any desired color
-              // Add other styles as needed
-            }}
-            // bg-gradient-to-b border border-[#af1222] from-black to-[#af1222] p-1 rounded
-            auto
-          >
-            <FaSearch />
-          </Button>
-        </div>
+        <button
+          className="mr-10 md:mr-0 mt-6 md:mt-1 bg-[#CEE4FE] text-[#af1222]  rounded-xl px-5 py-2"
+          onClick={() => setVisible(true)}
+        >
+          <FaSearch />
+        </button>
+      </div>
+      <div>
+        <Image
+          src={MatchupsImg}
+          alt="matchup image"
+          className="mt-[120px] opacity-80"
+          width={600}
+          height={600}
+        />
       </div>
       {/* Modal */}
       <div>
@@ -705,7 +711,7 @@ const matchups = () => {
             >
               <Modal.Header>
                 <Text id="modal-title" size={18} css={{ color: "#E9EBEA" }}>
-                  Matchup Summary
+                  Rivarly Summary
                 </Text>
               </Modal.Header>
               <Modal.Body css={{ color: "#190103" }}>
@@ -720,12 +726,13 @@ const matchups = () => {
                               : "flex justify-center text-[#af1222] text-[25px]"
                           }
                         >
-                          <BsArrowBarLeft
+                          <HiOutlineArrowSmLeft
                             onClick={() =>
                               setWeekCount(Math.max(0, weekCount - 1))
                             }
+                            size={30}
                           />
-                          <BsArrowBarRight
+                          <HiOutlineArrowSmRight
                             onClick={() =>
                               setWeekCount(
                                 Math.min(
@@ -735,6 +742,7 @@ const matchups = () => {
                                 )
                               )
                             }
+                            size={30}
                           />
                         </div>
                         <Text className="mb-10" css={{ color: "#E9EBEA" }}>
@@ -798,7 +806,17 @@ const matchups = () => {
                             </div>
 
                             {slate?.matchup[0].starters.map(
-                              (starter, starterIndex) => {
+                              (starter: string, starterIndex: number) => {
+                                if (starter === "0") {
+                                  return (
+                                    <div
+                                      key={starterIndex}
+                                      className="flex flex-col text-white text-[13px] items-center justify-center w-[164px] h-[71px] border-[1px] border-[#1a1a1a] mb-1"
+                                    >
+                                      Start your player buddy!
+                                    </div>
+                                  );
+                                }
                                 const playerFirstName =
                                   playersData[starter.toString()].fn.charAt(0) +
                                   ".";
@@ -814,17 +832,26 @@ const matchups = () => {
                                   >
                                     <div className="flex justify-between items-center w-full p-2">
                                       <div className="flex flex-col items-center justify-center">
-                                        <Image
-                                          src={
-                                            playersData[starter.toString()]
-                                              .pos === "DEF"
-                                              ? `https://sleepercdn.com/images/team_logos/nfl/${starter.toLowerCase()}.png`
-                                              : `https://sleepercdn.com/content/nfl/players/thumb/${starter}.jpg`
-                                          }
-                                          alt="player"
-                                          width={57}
-                                          height={57}
-                                        />
+                                        <div className="flex items-center">
+                                          <p
+                                            className={`${
+                                              colorObj[playersData[starter].pos]
+                                            }`}
+                                          >
+                                            {playersData[starter].pos}
+                                          </p>
+                                          <Image
+                                            src={
+                                              playersData[starter.toString()]
+                                                .pos === "DEF"
+                                                ? `https://sleepercdn.com/images/team_logos/nfl/${starter.toLowerCase()}.png`
+                                                : `https://sleepercdn.com/content/nfl/players/thumb/${starter}.jpg`
+                                            }
+                                            alt="player"
+                                            width={57}
+                                            height={57}
+                                          />
+                                        </div>
 
                                         <Text
                                           css={{
@@ -932,6 +959,16 @@ const matchups = () => {
 
                             {slate.matchup[1].starters.map(
                               (starter, starterIndex) => {
+                                if (starter === "0") {
+                                  return (
+                                    <div
+                                      key={starterIndex}
+                                      className="flex flex-col text-white text[13px] items-center justify-center w-[164px] h-[71px] border-[1px] border-[#1a1a1a] mb-1"
+                                    >
+                                      Start your player buddy!
+                                    </div>
+                                  );
+                                }
                                 const playerFirstName =
                                   playersData[starter.toString()].fn.charAt(0) +
                                   ".";
@@ -947,17 +984,26 @@ const matchups = () => {
                                   >
                                     <div className="flex justify-between items-center w-full p-2">
                                       <div className="flex flex-col items-center justify-center">
-                                        <Image
-                                          src={
-                                            playersData[starter.toString()]
-                                              .pos === "DEF"
-                                              ? `https://sleepercdn.com/images/team_logos/nfl/${starter.toLowerCase()}.png`
-                                              : `https://sleepercdn.com/content/nfl/players/thumb/${starter}.jpg`
-                                          }
-                                          alt="player"
-                                          width={57}
-                                          height={57}
-                                        />
+                                        <div className="flex items-center">
+                                          <p
+                                            className={`${
+                                              colorObj[playersData[starter].pos]
+                                            }`}
+                                          >
+                                            {playersData[starter].pos}
+                                          </p>
+                                          <Image
+                                            src={
+                                              playersData[starter.toString()]
+                                                .pos === "DEF"
+                                                ? `https://sleepercdn.com/images/team_logos/nfl/${starter.toLowerCase()}.png`
+                                                : `https://sleepercdn.com/content/nfl/players/thumb/${starter}.jpg`
+                                            }
+                                            alt="player"
+                                            width={57}
+                                            height={57}
+                                          />
+                                        </div>
 
                                         <Text
                                           css={{
@@ -1015,7 +1061,7 @@ const matchups = () => {
                     </div>
                   ) : (
                     <Text id="modal-description" css={{ color: "#E9EBEA" }}>
-                      Nice try buddy
+                      Invalid Submission
                     </Text>
                   )}
                 </div>

@@ -48,7 +48,9 @@ export default function Home() {
   }, []);
 
   const onStorageCleared = () => {
-    localStorage.clear();
+    localStorage.removeItem("selectedLeagueID");
+    localStorage.removeItem("selectedLeagueName");
+    localStorage.removeItem("usernameSubmitted");
     setStoredUsernames([]);
     setText("");
   };
