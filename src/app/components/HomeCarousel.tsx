@@ -17,13 +17,42 @@ import {
   limit,
 } from "firebase/firestore/lite";
 import { db, storage } from "../../app/firebase";
+import getMatchupData from "../libs/getMatchupData";
+import axios from "axios";
 
 interface HeadlineItem {
   id: number;
   url: string;
   category: string;
   title: string;
-  description: string;
+  description: string | number;
+  scorerStyle: boolean;
+}
+
+interface ScheduleData {
+  [userId: string]: {
+    avatar?: string;
+    name: string;
+    roster_id?: string;
+    user_id?: string;
+    starters?: string[];
+    starters_points?: string[];
+    players?: string[];
+    players_points?: string[];
+    starters_full_data?: Starter[];
+    team_points?: number;
+    opponent?: string;
+    matchup_id?: string;
+    Feature?: (arg: any) => JSX.Element;
+  };
+}
+
+interface Starter {
+  fname?: string;
+  lname?: string;
+  avatar?: string;
+  scored_points?: string;
+  projected_points?: string;
 }
 
 const CARD_WIDTH = 350;
@@ -41,6 +70,7 @@ const BREAKPOINTS = {
 const CardCarousel = () => {
   const [ref, { width }] = useMeasure();
   const [offset, setOffset] = useState(0);
+  const [userData, setUserData] = useState<ScheduleData>();
   const [headlines, setHeadlines] = useState([
     {
       id: 10,
@@ -206,9 +236,49 @@ const CardCarousel = () => {
     fetchData();
   }, []);
 
-  //console.log("Headlines: ", headlines);
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get(
+          `https://api.sleeper.app/v1/state/nfl`
+        );
 
-  const Card = ({ url, category, title, description }: HeadlineItem) => {
+        const nflState = response.data;
+        let week = 1;
+        if (nflState.season_type === "regular") {
+          week = nflState.display_week;
+        } else if (nflState.season_type === "post") {
+          week = 18;
+        }
+        const userData = await getMatchupData(REACT_APP_LEAGUE_ID, week);
+
+        setUserData(userData.updatedScheduleData);
+      } catch (error) {
+        console.log("Error:", error);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  //console.log("Headlines: ", headlines);
+  let topScorer;
+  if (userData) {
+    console.log("U", userData);
+    const userArray = Object.values(userData);
+    const sortedUserData = userArray.sort((a, b) => {
+      return b.team_points - a.team_points;
+    });
+    topScorer = sortedUserData[0];
+  }
+
+  const Card = ({
+    url,
+    category,
+    title,
+    description,
+    scorerStyle,
+  }: HeadlineItem) => {
     return (
       <div
         className="relative shrink-0 cursor-pointer rounded-2xl bg-white shadow-md transition-all hover:scale-[1.015] hover:shadow-xl"
@@ -221,13 +291,33 @@ const CardCarousel = () => {
           backgroundSize: "cover",
         }}
       >
-        <div className="absolute inset-0 z-20 rounded-2xl bg-gradient-to-b from-black/90 via-black/60 to-black/0 p-6 text-white transition-[backdrop-filter] hover:backdrop-blur-sm">
+        <div
+          className={
+            scorerStyle
+              ? `flex flex-col justify-around items-center absolute inset-0 z-20 rounded-2xl bg-gradient-to-b from-black/90 via-black/60 to-black/0 p-6 text-white transition-[backdrop-filter] hover:backdrop-blur-sm`
+              : `absolute inset-0 z-20 rounded-2xl bg-gradient-to-b from-black/90 via-black/60 to-black/0 p-6 text-white transition-[backdrop-filter] hover:backdrop-blur-sm`
+          }
+        >
           <span className="text-xs font-semibold uppercase text-violet-300">
             {category}
           </span>
           <p className="my-2 text-2xl font-bold">{title}</p>
-          <Image src={Logo} alt="image" width={50} height={50} />
-          <p className="text-[12px] text-slate-300">{description}</p>
+          <Image
+            className="rounded-full"
+            src={url || Logo}
+            alt="image"
+            width={120}
+            height={120}
+          />
+          <p
+            className={`${
+              typeof description === "number"
+                ? "font-bold text-[25px] text-slate-300"
+                : "text-[12px] text-slate-300"
+            }`}
+          >
+            {description}
+          </p>
         </div>
       </div>
     );
@@ -235,7 +325,7 @@ const CardCarousel = () => {
 
   return (
     <section className="w-[95vw] xl:w-[60vw]" ref={ref}>
-      <div className="relative overflow-hidden p-4">
+      <div className="relative overflow-x-scroll p-4">
         {/* CARDS */}
         <div className="mx-auto max-w-6xl">
           <p className="mb-4 text-2xl font-semibold">
@@ -256,6 +346,14 @@ const CardCarousel = () => {
                 }}
                 className="flex"
               >
+                <Card
+                  key={uuidv4()}
+                  title={topScorer?.name}
+                  description={topScorer?.team_points}
+                  url={topScorer?.avatar}
+                  scorerStyle={true}
+                  category="Top Scorer of the Week"
+                />
                 {headlines.map((item) => {
                   return <Card key={uuidv4()} {...item} />;
                 })}

@@ -99,7 +99,12 @@ export default async function handler(req, res) {
     };
 
     const articleTemplate = JSON.stringify(article);
-    const question = `Using this league's data write an article thats titled Pulse Check: Teams Under Duress, the article should give out "pulse checks" for each teams situation and what their chances of making the playoffs are, "Steady Pulse" for average chance, "Strong Pulse" for strong chance, "Weak Pulse" for slightly below average chance, "Flatlined" for low chance. Don't  mention the pulses categories in the explanation. Give a pulse check for every team,. it should be 450 words max. Give me the response in this exact format ${articleTemplate} with 8 paragraphs that are concise and it should be a valid json array. The format of the JSON response should strictly adhere to RFC8259 compliance, without any deviations or errors.`;
+    const question = `Using this league's data write an article thats titled Pulse Check: Teams Under Duress, the article should give out "pulse checks" for each teams situation and what their chances of making the playoffs are, "Steady Pulse" for average chance, "Strong Pulse" for strong chance, "Weak Pulse" for slightly below average chance, "Flatlined" for low chance. Don't  mention the pulses categories in the explanation. Give a pulse check for every team, and group all the teams by their pulse category, each category should be one paragraph. it should be 450 words max. Give me the response in this exact format  "title": "",
+  "paragraph1": "",
+  "paragraph2": "",
+  "paragraph3": "",
+  "paragraph4": "",
+} with 8 paragraphs that are concise and it should be a valid json array. The format of the JSON response should strictly adhere to RFC8259 compliance, without any deviations or errors.`;
     const chain = RetrievalQAChain.fromLLM(model, vectorStore.asRetriever());
     const apiResponse = await chain.call({ query: question });
     const cleanUp = await model.call([
