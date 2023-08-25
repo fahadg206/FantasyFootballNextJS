@@ -77,6 +77,7 @@ interface Starter {
 }
 
 let initialize = false;
+let pollNamesSet = false;
 
 export default function Schedule() {
   const [loading, setLoading] = useState(true);
@@ -85,8 +86,14 @@ export default function Schedule() {
     string,
     MatchupMapData[]
   > | null>(null);
+  const [matchupMapPoll, setMatchupMapPoll] = useState<Map<
+    string,
+    MatchupMapData[]
+  > | null>(null);
   const [counter, setCounter] = useState(1);
   const [scheduleDataFinal, setScheduleDataFinal] = useState<ScheduleData>({});
+  const [team1Name, setTeam1Name] = useState("");
+  const [team2Name, setTeam2Name] = useState("");
 
   const [showPostGame, setShowPostGame] = useState(false);
   const [morningSlateEnd, setMorningSlateEnd] = useState(false);
@@ -135,9 +142,17 @@ export default function Schedule() {
   useEffect(() => {
     const checkTime = () => {
       const now = new Date();
-      const dayOfWeek = now.getUTCDay(); // Sunday is 0, Monday is 1, ..., Saturday is 6
-      const hours = now.getUTCHours();
+      const pacificTimeOffset = -7; // PDT offset is -7 hours (Daylight Saving Time)
+      const utcOffset = now.getTimezoneOffset() / 60; // Get the current UTC offset in hours
+
+      let hours = now.getUTCHours() + pacificTimeOffset;
       const minutes = now.getUTCMinutes();
+
+      if (hours < 0) {
+        hours += 24; // Adjust for negative hours due to time zone conversion
+      }
+
+      const dayOfWeek = now.getUTCDay() - 1;
 
       if (
         (dayOfWeek === 1 && hours === 21 && minutes === 30) || // Monday after 9:30 PM
@@ -153,7 +168,7 @@ export default function Schedule() {
       }
 
       //check the matchup after morning slate to see if any players still havent played
-      if (dayOfWeek === 0 && hours === 13 && minutes === 40) {
+      if (dayOfWeek === 4 && hours >= 21 && minutes >= 18) {
         setMorningSlateEnd(true);
       } else if (dayOfWeek === 3 && hours === 0 && minutes === 0) {
         setMorningSlateEnd(false);
@@ -185,18 +200,26 @@ export default function Schedule() {
   useEffect(() => {
     async function fetchMatchupData() {
       try {
-        const matchupMapData = await getMatchupMap(
-          REACT_APP_LEAGUE_ID,
-          counter
-        );
-        setMatchupMap(matchupMapData.matchupMap);
-        setScheduleDataFinal(matchupMapData.updatedScheduleData);
+        if (counter) {
+          const matchupMapData = await getMatchupMap(
+            REACT_APP_LEAGUE_ID,
+            counter
+          );
+          setMatchupMap(matchupMapData.matchupMap);
+          setScheduleDataFinal(matchupMapData.updatedScheduleData);
+        }
+
         const nflState = await getNflState();
         if (!initialize) {
           setCounter(nflState.display_week);
           initialize = true;
         }
         setNflState(nflState);
+        const matchupMapDataPoll = await getMatchupMap(
+          REACT_APP_LEAGUE_ID,
+          nflState?.display_week
+        );
+        setMatchupMapPoll(matchupMapDataPoll.matchupMap);
       } catch (error) {
         console.error("Error fetching matchup data:", error);
       }
@@ -209,6 +232,9 @@ export default function Schedule() {
     const team1 = matchupData[0];
     const team2 = matchupData[1];
 
+    if (counter === nflState?.display_week) {
+      console.log("kaboooooooooooo");
+    }
     let team1Proj = 0.0;
     let team2Proj = 0.0;
     //console.log("team 1, ", team1.starters);
@@ -255,20 +281,20 @@ export default function Schedule() {
     //check to see if every player on BOTH teams have more points than 0
     const team1Played = scheduleDataFinal[team1.user_id].starters_points.every(
       (starterPoints) => {
-        return starterPoints > 0;
+        return starterPoints !== 0;
       }
     );
     const team2Played = scheduleDataFinal[team2.user_id].starters_points.every(
       (starterPoints) => {
-        return starterPoints > 0;
+        return starterPoints !== 0;
       }
     );
 
-    // (morningSlateEnd || afternoonSlateEnd || snfEnd || showPostGame) &&
-    // team1Played &&
-    // team2Played
-    //   ? "show final and top scorers"
-    //   : "match still live";
+    team1Played &&
+    team2Played &&
+    (morningSlateEnd || afternoonSlateEnd || snfEnd || showPostGame)
+      ? "show final and top scorers"
+      : "match still live";
 
     // Remove empty objects from starters arrays
     const nonEmptyStarters1 = starters1.filter(
@@ -310,8 +336,8 @@ export default function Schedule() {
 
     //live game
     if (
-      (parseFloat(team1.team_points) > 0 ||
-        parseFloat(team2.team_points) > 0) &&
+      (parseFloat(team1.team_points) !== 0 ||
+        parseFloat(team2.team_points) !== 0) &&
       (starters1Points.includes(0) || starters2Points.includes(0))
     ) {
       liveGame = true;
@@ -320,7 +346,12 @@ export default function Schedule() {
     }
 
     //postgame
-    if (nflState?.display_week > counter) {
+    if (
+      nflState?.display_week > counter ||
+      (team1Played &&
+        team2Played &&
+        (morningSlateEnd || afternoonSlateEnd || snfEnd || showPostGame))
+    ) {
       postGame = true;
       preGame = false;
       liveGame = false;
@@ -340,18 +371,28 @@ export default function Schedule() {
     );
     let showPoll;
 
-    if (counter === nflState?.display_week) {
+    const matchupPoll = matchupMapPoll?.get(matchupID);
+
+    if (matchupPoll) {
+      let team1Poll = matchupPoll[0];
+      let team2Poll = matchupPoll[1];
+      console.log(team1Poll.name, team2Poll.name);
+
       showPoll = (
         <div className="w-[50vw] xl:w-[35vw] flex justify-center  ">
           <SchedulePoll
-            team1Name={team1.name}
-            team2Name={team2.name}
+            team1Name={team1Poll.name}
+            team2Name={team2Poll.name}
             matchup_id={matchupID}
-            weekCounter={counter}
             nflWeek={nflState?.display_week}
+            liveGame={liveGame}
           />
         </div>
       );
+
+      // Continue using team1Poll and team2Poll as needed
+    } else {
+      // Handle the case when matchupPoll is undefined
     }
 
     let showLiveText = (
@@ -581,13 +622,14 @@ export default function Schedule() {
 
             {preGame && counter && nflState?.display_week === counter ? (
               showPoll
-            ) : preGame && nflState?.display_week < counter ? (
+            ) : (preGame || liveGame || postGame) &&
+              nflState?.display_week < counter ? (
               overUnderText
             ) : (
-              <div className="hidden"></div>
+              <div className={postGame ? `hidden` : "block"}>{showPoll}</div>
             )}
 
-            {liveGame && showLiveText}
+            {/* {liveGame && showLiveText} */}
           </div>
         </Element>
       </div>
@@ -599,6 +641,7 @@ export default function Schedule() {
       setCounter(newCounter);
     }
   };
+  //console.log("counter", counter);
 
   return (
     <div className=" flex flex-col items-center mt-4">

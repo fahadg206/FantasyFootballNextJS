@@ -10,6 +10,7 @@ import {
   updateDoc,
   limit,
 } from "firebase/firestore/lite";
+import { BsDot } from "react-icons/bs";
 
 interface VoteInfo {
   title: string;
@@ -20,16 +21,15 @@ interface VoteInfo {
 const BarPoll = ({
   team1Name,
   team2Name,
-  weekCounter,
-  nflWeek,
-
+  liveGame,
   matchup_id,
+  nflWeek,
 }: {
   team1Name: string;
   team2Name: string;
-  weekCounter: number;
-  nflWeek: number;
+  liveGame: boolean;
   matchup_id: string;
+  nflWeek: number;
 }) => {
   const [votes, setVotes] = useState<VoteInfo[]>([
     {
@@ -46,13 +46,13 @@ const BarPoll = ({
   const [winningTeamName, setWinningTeamName] = useState("");
   const [winningTeamVotes, setWinningTeamVotes] = useState(0);
   const [userVoted, setUserVoted] = useState(false);
+  //console.log("SP", team1Name, team2Name);
 
   return (
     <section className=" px-4 w-[70vw] xl:w-[35vw] md:h-[20vw] xl:h-[10vw]  p-2">
       <div className="">
         <Options
           matchup_id={matchup_id}
-          weekCounter={weekCounter}
           votes={votes}
           setVotes={setVotes}
           setWinningTeamName={setWinningTeamName}
@@ -61,8 +61,10 @@ const BarPoll = ({
           winningTeamVotes={winningTeamVotes}
           setUserVoted={setUserVoted}
           userVoted={userVoted}
+          liveGame={liveGame}
+          nflWeek={nflWeek}
         />
-        <Bars votes={votes} />
+        <Bars votes={votes} liveGame={liveGame} />
       </div>
     </section>
   );
@@ -72,13 +74,14 @@ const Options = ({
   votes,
   setVotes,
   matchup_id,
-  weekCounter,
+  liveGame,
   setWinningTeamName,
   setWinningTeamVotes,
   winningTeamName,
   winningTeamVotes,
   setUserVoted,
   userVoted,
+  nflWeek,
 }) => {
   const leagueID = localStorage.getItem("selectedLeagueID");
 
@@ -157,8 +160,14 @@ const Options = ({
     );
     setUserVoted(true);
     localStorage.setItem(`${league_id} ${matchup_id} userVoted`, userVoted);
+    localStorage.setItem("currentWeek", nflWeek);
     console.log(votes);
   };
+
+  if (localStorage.getItem("currentWeek") < nflWeek) {
+    localStorage.removeItem(`${league_id} ${matchup_id} userVoted`);
+    localStorage.removeItem("currentWeek");
+  }
 
   const getVotes = async () => {
     const voteInfo = collection(db, "Matchup Polls");
@@ -171,6 +180,7 @@ const Options = ({
         querySnapshot.forEach((doc) => {
           const docData = doc.data();
           const matchups = docData.matchups || []; // Retrieve the matchups array
+          console.log(matchups);
           const matchup = matchups.find(
             (matchup) => matchup.matchup_id === matchup_id
           ); // Find the specific matchup
@@ -198,89 +208,104 @@ const Options = ({
           }
         });
       } else {
-        console.log("Document not found.");
+        //console.log("Document not found.");
       }
     } catch (error) {
       console.error("Error retrieving votes from the database:", error);
     }
   };
 
-  useEffect(() => {}, [weekCounter]);
+  useEffect(() => {}, []);
 
   useEffect(() => {
     getVotes(); // Fetch votes from the database when the component mounts
   }, []); // Empty dependency array to trigger the effect once
 
-  if (winningTeamName) {
-    if (winningTeamName === "DRAW") {
-      console.log(`${matchup_id}: Votes Resulted in a DRAW!`);
-    } else {
-      console.log(
-        `${matchup_id}: ${winningTeamName} was voted to win by ${winningTeamVotes}% of league members!`
-      );
-    }
-  }
-
   return (
     <div className="col-span-1 ">
-      <h3 className="mb-2 text-[12px] xl:text-[15px] text-center font-semibold ">
-        Who will win?
-      </h3>
-      <div className="mb-2 flex justify-center">
-        {votes.map((vote: VoteInfo) => {
-          return (
-            <motion.button
-              whileHover={{ scale: 1.015 }}
-              whileTap={{ scale: 0.985 }}
-              onClick={() => {
-                handleIncrementVote(vote);
-              }}
-              key={vote.title}
+      <div className={liveGame ? `hidden` : `block`}>
+        <h3 className="mb-2 text-[12px] xl:text-[15px] text-center font-semibold ">
+          Who will win?
+        </h3>
+        <div className="mb-2 flex justify-center">
+          {votes.map((vote: VoteInfo) => {
+            return (
+              <motion.button
+                whileHover={{ scale: 1.015 }}
+                whileTap={{ scale: 0.985 }}
+                onClick={() => {
+                  handleIncrementVote(vote);
+                }}
+                key={vote.title}
+                className={
+                  localStorage.getItem(
+                    `${league_id} ${matchup_id} userVoted`,
+                    userVoted
+                  )
+                    ? `hidden`
+                    : ` block w-[70px] sm:w-[100px] md:w-[160px] rounded-xl ${vote.color} py-2 text-[11px] xl:text-[15px]  mr-2 text-white`
+                }
+              >
+                {vote.title.length >= 9
+                  ? (vote.title.match(/[A-Z]/g) || []).length > 3
+                    ? vote.title.slice(0, 10).toLowerCase()
+                    : vote.title.slice(0, 10)
+                  : vote.title}
+              </motion.button>
+            );
+          })}
+        </div>
+        <div className="flex justify-center">
+          <span className="mb-1 text-[11px] xl:text-[15px] italic flex flex-col items-center">
+            <p
               className={
                 localStorage.getItem(
                   `${league_id} ${matchup_id} userVoted`,
                   userVoted
                 )
-                  ? `hidden`
-                  : ` block w-[70px] sm:w-[100px] md:w-[160px] rounded-xl ${vote.color} py-2 text-[11px] xl:text-[15px]  mr-2 text-white`
+                  ? `block text-[12px] italic`
+                  : `hidden`
               }
             >
-              {vote.title.length >= 9
-                ? (vote.title.match(/[A-Z]/g) || []).length > 3
-                  ? vote.title.slice(0, 10).toLowerCase()
-                  : vote.title.slice(0, 10)
-                : vote.title}
-            </motion.button>
-          );
-        })}
+              Thanks for voting!
+            </p>
+            {totalVotes} votes
+          </span>
+        </div>
       </div>
-      <div className="flex justify-center">
-        <span className="mb-1 text-[11px] xl:text-[15px] italic flex flex-col items-center">
-          <p
-            className={
-              localStorage.getItem(
-                `${league_id} ${matchup_id} userVoted`,
-                userVoted
-              )
-                ? `block text-[12px] italic`
-                : `hidden`
-            }
-          >
-            Thanks for voting!
-          </p>
-          {totalVotes} votes
-        </span>
+
+      <div
+        className={
+          liveGame
+            ? ` w-[50vw] xl:w-[35vw] flex flex-col h-[150px] justify-around items-center`
+            : `hidden`
+        }
+      >
+        <p className="italic text-[14px] text-[#1a1a1a] dark:text-[#979090] text-center">
+          {winningTeamName ? (
+            winningTeamName === "DRAW" ? (
+              <div>Votes Resulted in a DRAW!</div>
+            ) : (
+              ` ${winningTeamName} was voted to win by ${winningTeamVotes}% of league members!`
+            )
+          ) : (
+            "No Vote Results to display."
+          )}
+        </p>{" "}
+        <p className="text-[12px] text-[#af1222] flex items-center">
+          <BsDot /> LIVE
+        </p>
       </div>
     </div>
   );
 };
 
-const Bars = ({ votes }) => {
+const Bars = ({ votes, liveGame }) => {
   const totalVotes = votes.reduce((acc, cv) => (acc += cv.votes), 0);
 
   return (
     <div
-      className="flex h-[60px] justify-center gap-2 "
+      className={liveGame ? `hidden ` : `flex h-[60px] justify-center gap-2 `}
       style={{
         gridTemplateColumns: `repeat(${votes.length}, minmax(0, 1fr))`,
       }}

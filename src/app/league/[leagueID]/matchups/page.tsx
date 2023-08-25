@@ -681,7 +681,7 @@ const matchups = () => {
         <Image
           src={MatchupsImg}
           alt="matchup image"
-          className="mt-[120px] opacity-80"
+          className="mt-[120px] dark:opacity-80"
           width={600}
           height={600}
         />

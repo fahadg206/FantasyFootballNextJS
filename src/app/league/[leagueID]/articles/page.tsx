@@ -114,6 +114,36 @@ const articles = () => {
     paragraph7: "",
     paragraph8: "",
   });
+  const [dropdownVisible, setDropdownVisible] = useState(true);
+  let scrollChanger = 0;
+  let scrollUp = 0;
+
+  // useEffect(() => {
+  //   const handleScroll = () => {
+  //     const currentScrollPos = window.scrollY;
+
+  //     if (currentScrollPos > scrollChanger) {
+  //       setDropdownVisible(false);
+  //     }
+
+  //     if (
+  //       currentScrollPos < scrollChanger &&
+  //       Math.abs(scrollChanger - scrollUp) > 30
+  //     ) {
+  //       setDropdownVisible(true);
+  //       console.log("it worked");
+  //       scrollUp = scrollChanger;
+  //     }
+  //     console.log("SCC", scrollChanger);
+  //     scrollChanger = currentScrollPos;
+  //     console.log("SU", scrollUp);
+  //   };
+
+  //   window.addEventListener("scroll", handleScroll);
+  //   return () => {
+  //     window.removeEventListener("scroll", handleScroll);
+  //   };
+  // }, []);
 
   const REACT_APP_LEAGUE_ID: string | null =
     localStorage.getItem("selectedLeagueID");
@@ -267,8 +297,8 @@ const articles = () => {
   }
 
   return (
-    <div className="flex flex-col justify-center items-center container w-[60vw]">
-      <div>
+    <div className="relative flex flex-col justify-center items-center container w-[60vw]">
+      <div className={`  "block sticky top-0 z-50"  "hidden"}`}>
         <ArticleDropdown
           title1={articles?.title || ""}
           title2={articles2?.title || ""}

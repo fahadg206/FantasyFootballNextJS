@@ -104,9 +104,9 @@ export default function ScoreboardNav({ setShowScore }) {
 
       if (dayOfWeek === 2 && hours === 21 && minutes == 55) console.log("JEFE");
 
-      console.log(`Hours: ${hours}`);
-      console.log(`Minutes: ${minutes}`);
-      console.log("day of the week", dayOfWeek);
+      //console.log(`Hours: ${hours}`);
+      //console.log(`Minutes: ${minutes}`);
+      //console.log("day of the week", dayOfWeek);
 
       if (
         (dayOfWeek === 1 && hours === 22 && minutes >= 30) || // Monday after 10:30 PM
