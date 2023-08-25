@@ -269,7 +269,8 @@ const Options = ({
             >
               Thanks for voting!
             </p>
-            {totalVotes} votes
+
+            {`${totalVotes} ${totalVotes === 1 ? "vote" : "votes"}`}
           </span>
         </div>
       </div>

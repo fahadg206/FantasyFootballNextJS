@@ -41,7 +41,7 @@ const BarPoll = () => {
     {
       title: "League Managers Page",
       votes: 0,
-      color: "bg-black",
+      color: "bg-slate-500",
     },
   ]);
 
@@ -124,7 +124,7 @@ const Options: React.FC<OptionsProps> = ({ votes, setVotes }) => {
 
   return (
     <div className="col-span-1 py-12">
-      <h3 className="mb-6 text-2xl font-semibold text-slate-50">
+      <h3 className="mb-6 text-2xl font-semibold text-slate-50 text-center">
         What is your favorite page from Fantasy Pulse so far?
       </h3>
       <div className="mb-6 space-y-2">
@@ -145,8 +145,10 @@ const Options: React.FC<OptionsProps> = ({ votes, setVotes }) => {
           );
         })}
       </div>
-      <div className="flex items-center justify-between">
-        <span className="mb-2 italic text-slate-400">{totalVotes} votes</span>
+      <div className="flex items-center justify-center">
+        <span className="mb-2 italic text-slate-400 text-center">
+          {totalVotes} votes
+        </span>
       </div>
     </div>
   );

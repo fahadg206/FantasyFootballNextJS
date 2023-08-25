@@ -29,11 +29,11 @@ const StaggeredDropDown = ({
   const [open, setOpen] = useState(false);
 
   return (
-    <div className="my-3 flex items-center justify-center bg-white">
+    <div className="my-3 flex items-center justify-center">
       <motion.div animate={open ? "open" : "closed"} className="relative">
         <button
           onClick={() => setOpen((pv) => !pv)}
-          className="flex items-center gap-2 px-3 py-2 rounded-md text-white font-bold bg-[#1a1a1a] transition-colors"
+          className="flex items-center gap-2 px-3 py-2 rounded-xl text-white font-bold bg-[#1a1a1a] transition-colors"
         >
           <span className="font-medium text-sm">Pick an Article!</span>
           <motion.span variants={iconVariants}>

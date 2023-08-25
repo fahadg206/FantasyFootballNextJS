@@ -18,11 +18,11 @@ export default function page() {
           consequatur reprehenderit.
         </p>
       </div>
-      <div>
+      <div className="mb-2 xl:mb-5">
         <HomeCarousel />
       </div>
-      <ScrollingTestimonials />
       <HomePoll />
+      <ScrollingTestimonials />
       <ScrollingTeamLogos />
     </div>
   );

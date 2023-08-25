@@ -8,6 +8,7 @@ import Image from "next/image";
 import { useSelectedManager } from "../../../context/SelectedManagerContext";
 import { useRouter } from "next/navigation";
 import { Spinner } from "@nextui-org/react";
+import { BsDot } from "react-icons/bs";
 
 interface ScheduleData {
   [userId: string]: {
@@ -270,7 +271,7 @@ export default function Page() {
             fill="currentFill"
           />
         </svg>
-        <span className="sr-only">Loading...</span>
+        <span>Loading Manager Data...</span>
       </div>
     );
   }
@@ -364,7 +365,23 @@ export default function Page() {
   return (
     <div className="w-[95vw] xl:w-[60vw]">
       <LeagueManagersSelection />
-      <h2 className="text-center font-bold mb-2">Weekly Results</h2>
+      <div className="text-center font-bold mb-2 flex justify-center items-center">
+        <p>Weekly Results</p>
+        {/* <div className="flex flex-col justify-center items-center text-[9px] font-bold">
+          <div className="flex items-center">
+            Win
+            <BsDot size={20} className=" text-[green]" />
+          </div>
+          <div className="flex items-center">
+            Loss
+            <BsDot size={20} className=" text-[#af1222]" />
+          </div>
+          <div className="flex items-center">
+            Not Played Yet
+            <BsDot size={20} className=" text-[#727070]" />
+          </div>
+        </div> */}
+      </div>
       <div className="flex overflow-hidden py-1">
         <TranslateWrapper>
           <LogoItemsTop />

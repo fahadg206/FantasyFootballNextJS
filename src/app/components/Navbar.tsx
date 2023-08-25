@@ -43,8 +43,14 @@ function NavBar(props: MyProps) {
     return (
       <nav className="hidden  2xl:ml-[80px] xl:fixed left-10 top-0 p-4 text-[13px] xl:flex flex-col items-center  gap-2 h-screen  ">
         <Link href={`/league/${localStorage.getItem("selectedLeagueID")}`}>
-          <div className="  ">
-            <Image src={Logo} alt="logo" width={250} height={250} />
+          <div className="">
+            <Image
+              className="ml-10"
+              src={Logo}
+              alt="logo"
+              width={250}
+              height={250}
+            />
           </div>
         </Link>
         <div className=" h-[46vh] flex flex-col justify-around">
