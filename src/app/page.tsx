@@ -81,6 +81,27 @@ export default function Home() {
     );
   }, [usernameSubmitted]);
 
+  const usernames = JSON.parse(localStorage.getItem("usernames"));
+  console.log(usernames);
+
+  let showUsernames;
+
+  if (usernames) {
+    showUsernames = usernames.map((username) => {
+      return (
+        <div
+          onClick={() => {
+            setUsernameSubmitted(false);
+            setText(username);
+          }}
+          className=" text-[#af1222] border-b-[1px] border-[#af1222] text-[12px]  hover:bg-[#1a1a1a] mr-2 cursor-pointer"
+        >
+          {username}
+        </div>
+      );
+    });
+  }
+
   // Retrieve the usernameSubmitted from local storage on component mount
   useEffect(() => {
     const savedUsernameSubmitted = JSON.parse(
@@ -103,24 +124,23 @@ export default function Home() {
               size="lg"
               width="60vw"
               type="text"
-              labelPlaceholder="Search owners, matchups, or stats"
+              labelPlaceholder="Search Sleeper Username"
               css={{
-                color: "white",
                 fontSize: "40px",
                 "@smMax": {
                   width: "90vw",
                 },
               }}
               value={text}
-              className="p-1 rounded-lg  focus:rounded-lg border-rounded focus:ring focus:ring-[#af1222] focus:border-[#af1222]  bg-[#050505] text-[11px] md:text-[16px]"
+              className="p-1 rounded-lg  focus:rounded-lg border-rounded focus:ring focus:ring-[#af1222] focus:border-[#af1222] border-[#af1222] border-[1px] dark:border-none text-[11px] md:text-[16px]"
             />
             <div className="w-[screen] flex justify-center items-center mt-3 ">
-              <button className="mr-2 text-[15px] bg-[#af1222] p-[2px] rounded">
+              <button className="text-[#af1222] border-2 border-[#af1222] p-1  rounded hover:bg-[#1a1a1a] cursor-pointer mr-2 text-[14px]">
                 Submit
               </button>
               <button
                 onClick={onStorageCleared}
-                className="mr-2 text-[15px] bg-[#af1222] p-[2px] px-2 rounded"
+                className="text-[#af1222] border-2 border-[#af1222] p-1  rounded hover:bg-[#1a1a1a] cursor-pointer mr-2 text-[14px]"
               >
                 Clear
               </button>
@@ -136,6 +156,12 @@ export default function Home() {
                   ))}
                 </select>
               </div>
+            </div>
+            <div className="flex  justify-center items-center mt-3">
+              <p className="text-[#807c7c] italic text-[12px] mr-5">
+                Recent Searches:
+              </p>
+              {showUsernames}
             </div>
           </form>
         </div>

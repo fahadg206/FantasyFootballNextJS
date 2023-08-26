@@ -66,8 +66,15 @@ export default function page(props: myProps) {
     <div>
       {leagueData.length > 0 ? (
         leagueData.map((league: any) => (
-          <div className="flex p-1">
-            <h1 className="mr-2" key={league.name}>
+          <div
+            className={
+              props.usernameSubmitted ? `flex items-center p-1 mt-3` : `hidden`
+            }
+          >
+            <h1
+              className="mr-2 text-[15px] font-bold text-black dark:text-white"
+              key={league.name}
+            >
               {league.name}
             </h1>
             <button
@@ -82,7 +89,7 @@ export default function page(props: myProps) {
                 );
                 router.refresh();
               }}
-              className="text-[15px] text-[#af1222] border-2 border-[#af1222] p-1 bg-[black] rounded hover:bg-[#1a1a1a]"
+              className="text-[12px] text-[#af1222] border-2 border-[#af1222] p-1  rounded hover:bg-[#1a1a1a] cursor-pointer"
             >
               Select League
             </button>
@@ -94,7 +101,6 @@ export default function page(props: myProps) {
 
       {/* {setSelectedLeagueContext(selectedLeague)} */}
       {/* {console.log(selectedLeague.league_id)} */}
-      <NavBar usernameSubmitted={props.usernameSubmitted} leagueID="" />
     </div>
   );
 }
