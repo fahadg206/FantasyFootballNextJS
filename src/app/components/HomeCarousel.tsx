@@ -328,8 +328,9 @@ const CardCarousel = () => {
       <div className="relative overflow-x-scroll p-4">
         {/* CARDS */}
         <div className="mx-auto max-w-6xl">
-          <p className="mb-4 text-2xl font-semibold">
-            Everything. <span className="text-slate-500">Yes, even that.</span>
+          <p className="mb-4 text-xl font-semibold">
+            League Buzz :
+            <span className="text-slate-500"> Catch Up on All the Action</span>
           </p>
           <motion.div
             animate={{

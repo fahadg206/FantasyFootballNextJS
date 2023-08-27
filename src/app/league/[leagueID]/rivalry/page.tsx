@@ -82,6 +82,7 @@ interface Starter {
   fn?: string;
   ln?: string;
   pos: string;
+  wi: string;
 }
 
 const REACT_APP_LEAGUE_ID: string =
@@ -90,6 +91,7 @@ const REACT_APP_LEAGUE_ID: string =
 const matchups = () => {
   const [selected, setSelected] = React.useState(new Set(["Select User"]));
   const [weekCount, setWeekCount] = useState(0);
+  const [week, setWeek] = useState<number>();
   const [selected2, setSelected2] = React.useState(new Set(["Select User"]));
   const [playersData, setPlayersData] = React.useState<Starter[]>([]);
   const [users, setUsers] = React.useState(new Set<User>());
@@ -182,6 +184,8 @@ const matchups = () => {
     } else if (nflState.season_type === "post") {
       week = 18;
     }
+
+    setWeek(week);
 
     const rivalry: Rivalry = {
       points: {
@@ -614,6 +618,7 @@ const matchups = () => {
   //console.log("Work ", rivalManagers);
   const slate =
     rivalsMap.get("Rival") && rivalsMap.get("Rival")?.matchups[weekCount];
+
   const colorObj: { [key: string]: string } = {
     QB: "text-[10px]  p-1 rounded-xl bg-[#DE3449] font-bold  text-center ",
     RB: "text-[10px]  p-1 rounded-xl bg-[#00CEB8] font-bold  text-center ",
@@ -622,6 +627,55 @@ const matchups = () => {
     DEF: "text-[10px]  p-1 rounded-xl bg-[#798898] font-bold  text-center ",
     K: "text-[10px]  p-1 rounded-xl bg-[#BD66FF] font-bold  text-center ",
   };
+
+  const weekString = week?.toString();
+
+  let team1Proj = 0.0;
+  let team2Proj = 0.0;
+
+  if (slate?.matchup[0]?.starters) {
+    for (const currPlayer of slate.matchup[0].starters) {
+      const playerData = playersData && playersData[currPlayer];
+      if (
+        playerData &&
+        playerData.wi &&
+        weekString !== undefined && // Check if weekString is defined
+        typeof weekString === "string" && // Check if weekString is a string
+        playerData.wi[weekString] &&
+        playerData.wi[weekString]?.p !== undefined
+      ) {
+        if (playerData.wi[weekString].p)
+          team1Proj += parseFloat(playerData.wi[weekString].p || "0");
+      }
+    }
+  }
+
+  if (slate?.matchup[1]?.starters) {
+    for (const currPlayer of slate.matchup[1].starters) {
+      const playerData = playersData && playersData[currPlayer];
+      if (
+        playerData &&
+        playerData.wi &&
+        weekString !== undefined && // Check if weekString is defined
+        typeof weekString === "string" && // Check if weekString is a string
+        playerData.wi[weekString] &&
+        playerData.wi[weekString]?.p !== undefined
+      ) {
+        team2Proj += parseFloat(playerData.wi[weekString].p || "0");
+        console.log(team2Proj);
+      }
+    }
+  }
+
+  if (playersData["4046"]) {
+    console.log(playersData["4046"].wi[1]);
+  }
+
+  // if (playersData["4018"]) {
+  //   console.log(playersData["4018"].wi["1"].p);
+  // // }
+  // console.log(team1Proj, team2Proj);
+
   return (
     <div className="mt-3 flex flex-col items-center  h-screen w-[95vw] xl:w-[60vw]">
       <div className="flex-col flex items-center ml-5 md:flex-row md:justify-center md:items-start md:ml-0  mt-5">
@@ -783,7 +837,7 @@ const matchups = () => {
                                   }
                                 </Text>
                               </div>
-                              <div className="flex items-center">
+                              <div className="flex flex-col justify-center items-center">
                                 <Text
                                   css={{
                                     color: "#E9EBEA",
@@ -802,6 +856,9 @@ const matchups = () => {
                                     )
                                     .toFixed(2)}
                                 </Text>
+                                <p className="text-[#A6A6A6] text-[8px] md:text-[10px] font-bold italic">
+                                  {team1Proj.toFixed(2)}
+                                </p>
                               </div>
                             </div>
 
@@ -906,7 +963,7 @@ const matchups = () => {
                           </div>
                           <div className=" team2 flex flex-col items-center">
                             <div className="flex items-center justify-center border-b-[1px] border-[#1a1a1a] border-opacity-80 mb-2 w-full ">
-                              <div className="flex items-center mr-1 sm:mr-3">
+                              <div className="flex flex-col justify-center items-center mr-1 sm:mr-3">
                                 <Text
                                   css={{
                                     color: "#E9EBEA",
@@ -925,6 +982,9 @@ const matchups = () => {
                                     )
                                     .toFixed(2)}
                                 </Text>
+                                <p className="text-[#A6A6A6] text-[8px] md:text-[10px] font-bold italic">
+                                  {team2Proj.toFixed(2)}
+                                </p>
                               </div>
                               <div className="flex items-center ">
                                 {" "}

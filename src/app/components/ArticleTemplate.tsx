@@ -3,6 +3,24 @@ import React from "react";
 import { StaticImageData } from "next/image";
 import Image from "next/image";
 
+interface ArticleTemplate {
+  title: string;
+  image: StaticImageData;
+  author: string;
+  authorImg: StaticImageData;
+  jobtitle: string;
+  date: string;
+  p1: string;
+  p2: string;
+  p3: string;
+  p4: string;
+  p5: string;
+  p6: string;
+  p7: string;
+  p8: string;
+  name: string;
+}
+
 const ArticleTemplate = ({
   title,
   image,
@@ -18,27 +36,10 @@ const ArticleTemplate = ({
   p6,
   p7,
   p8,
-}: {
-  title: string;
-  image: StaticImageData;
-  author: string;
-  authorImg: StaticImageData;
-  jobtitle: string;
-  date: string;
-  p1: string;
-  p2: string;
-  p3: string;
-  p4: string;
-  p5: string;
-  p6: string;
-  p7: string;
-  p8: string;
-
-  name: string;
-}) => {
+}: ArticleTemplate) => {
   return (
-    <div className="flex flex-col items-center justify-end sm:flex sm:flex-row sm:justify-around sm:items-start  w-[95vw] xl:w-[60vw] md:rounded md:border-2 md:border-[#1a1a1a] border-opacity-10 mb-2">
-      <div className="mt-5 md:sticky md:top-5 bg-green-300 ">
+    <div className="flex flex-col items-center justify-end sm:flex sm:flex-row sm:justify-around sm:items-start  w-[95vw] xl:w-[60vw] md:rounded md:border-b-2 md:border-[#1a1a1a] border-opacity-10 mb-2">
+      <div className="mt-5 md:sticky md:top-5  ">
         <Image
           className="rounded-[10px] "
           src={image}

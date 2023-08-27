@@ -505,7 +505,7 @@ const TestimonialList = ({
                     </span>
                   </div>
 
-                  <div className="teams  p-5 w-screen md:w-[60vw] h-[27vh] lg:w-[25vw] flex justify-around text-[11px] xl:text-[13px] font-bold ">
+                  <div className="teams overflow-y-scroll  p-5 w-screen md:w-[60vw] h-[27vh] lg:w-[25vw] flex justify-around text-[11px] xl:text-[13px] font-bold ">
                     <div
                       className={
                         team3

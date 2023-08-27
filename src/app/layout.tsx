@@ -28,7 +28,7 @@ export default function RootLayout({
         <Providers>
           <SelectedManagerProvider>
             <div className="flex flex-col xl:grid xl:grid-cols-8">
-              <div className="block xl:col-start-1  ">
+              <div className="block xl:col-start-1 sticky top-0 z-50 xl:static ">
                 <NavBar usernameSubmitted={true} leagueID="" />
               </div>
               <div className="block xl:col-start-3 xl:col-end-8 ">

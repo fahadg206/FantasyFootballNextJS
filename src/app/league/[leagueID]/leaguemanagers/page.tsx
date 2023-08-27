@@ -367,20 +367,20 @@ export default function Page() {
       <LeagueManagersSelection />
       <div className="text-center font-bold mb-2 flex justify-center items-center">
         <p>Weekly Results</p>
-        {/* <div className="flex flex-col justify-center items-center text-[9px] font-bold">
+        <div className="ml-10 flex  justify-center items-center text-[9px] font-bold">
           <div className="flex items-center">
-            Win
             <BsDot size={20} className=" text-[green]" />
+            Win
           </div>
           <div className="flex items-center">
-            Loss
             <BsDot size={20} className=" text-[#af1222]" />
+            Loss
           </div>
           <div className="flex items-center">
-            Not Played Yet
             <BsDot size={20} className=" text-[#727070]" />
+            Not Played Yet
           </div>
-        </div> */}
+        </div>
       </div>
       <div className="flex overflow-hidden py-1">
         <TranslateWrapper>

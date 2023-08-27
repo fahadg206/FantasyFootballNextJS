@@ -82,8 +82,9 @@ function NavBar(props: MyProps) {
               <p className="ml-2">Articles</p>
             </div>
           </Link>
+
           <Link
-            href={`/league/${localStorage.getItem("selectedLeagueID")}/stats`}
+            href={`/league/${localStorage.getItem("selectedLeagueID")}/rivalry`}
           >
             <div className="flex items-center w-[90px]">
               <NavItem
@@ -91,15 +92,15 @@ function NavBar(props: MyProps) {
                 id={2}
                 setSelected={setSelected}
               >
-                <FaSearch />
+                <IoPulseSharp />
               </NavItem>
-              <p className="ml-2">Stats</p>
+              <p className="ml-2">Rivalry</p>
             </div>
           </Link>
           <Link
             href={`/league/${localStorage.getItem(
               "selectedLeagueID"
-            )}/matchups`}
+            )}/schedule`}
           >
             <div className="flex items-center w-[90px]">
               <NavItem
@@ -107,9 +108,9 @@ function NavBar(props: MyProps) {
                 id={3}
                 setSelected={setSelected}
               >
-                <IoPulseSharp />
+                <FaCalendarAlt />
               </NavItem>
-              <p className="ml-2">Matchups</p>
+              <p className="ml-2">Schedule</p>
             </div>
           </Link>
           <Link
@@ -128,22 +129,7 @@ function NavBar(props: MyProps) {
               <p className="ml-2">Standings</p>
             </div>
           </Link>
-          <Link
-            href={`/league/${localStorage.getItem(
-              "selectedLeagueID"
-            )}/schedule`}
-          >
-            <div className="flex items-center w-[90px]">
-              <NavItem
-                selected={selected === 6}
-                id={6}
-                setSelected={setSelected}
-              >
-                <FaCalendarAlt />
-              </NavItem>
-              <p className="ml-2">Schedule</p>
-            </div>
-          </Link>
+
           <Link
             href={`/league/${localStorage.getItem(
               "selectedLeagueID"
@@ -151,8 +137,8 @@ function NavBar(props: MyProps) {
           >
             <div className="flex items-center w-[90px]">
               <NavItem
-                selected={selected === 7}
-                id={7}
+                selected={selected === 5}
+                id={5}
                 setSelected={setSelected}
               >
                 <RiTeamFill />
@@ -169,11 +155,39 @@ function NavBar(props: MyProps) {
     const [showScore, setShowScore] = useState(false);
     const [navbar, setNavbar] = useState(false);
 
+    useEffect(() => {
+      const handleOutsideClick = (event) => {
+        if (showScore && !event.target.closest(".mobilenavbar")) {
+          setShowScore(false);
+        }
+      };
+
+      document.addEventListener("click", handleOutsideClick);
+
+      return () => {
+        document.removeEventListener("click", handleOutsideClick);
+      };
+    }, [showScore]);
+
+    useEffect(() => {
+      const handleOutsideClick = (event) => {
+        if (navbar && event.target.closest(".mobilenavbar") === null) {
+          setNavbar(false);
+        }
+      };
+
+      document.addEventListener("click", handleOutsideClick);
+
+      return () => {
+        document.removeEventListener("click", handleOutsideClick);
+      };
+    }, [navbar]);
+
     return (
-      <div className=" px-4 mx-auto w-screen 2xl:hidden ">
+      <div className=" bg-[#EDEDED] dark:bg-black px-4 mx-auto w-screen 2xl:hidden opacity-90">
         <div className="flex-items-center">
           <div
-            className={`mobilenavbar flex items-center justify-between py-3 border-b-2 border-b-1 border-[#af1222] border-opacity-10 h-[110px] xl:hidden sticky top-0 z-50`}
+            className={`mobilenavbar flex items-center justify-between py-3 border-b-2 border-b-1 border-[#af1222] border-opacity-10 h-[110px] xl:hidden `}
           >
             <button
               className="xl:hidden  text-[#af1222] rounded-xl outline-none focus:border-gray-400 focus:border cursor-pointer "
@@ -229,12 +243,12 @@ function NavBar(props: MyProps) {
         <div>
           {/* MOBILE NAVBAR */}
           <div
-            className={`flex z-50 w-[95vw] bg-[green] h-screen ${
+            className={`flex z-50 w-[95vw]  h-screen ${
               navbar ? "block " : "hidden"
             }`}
           >
-            <ul className="xl:h-auto xl:hidden mt-10 bg-[red] flex flex-col justify-start">
-              <li className="pb-6 hover:bg-[#AF1222] hover:transition hover:ease-in-out hover:rounded bg-[purple]">
+            <ul className="xl:h-auto xl:hidden mt-10  flex flex-col justify-start">
+              <li className="pb-6 hover:bg-[#AF1222] hover:transition hover:ease-in-out hover:rounded ">
                 <Link
                   href={`/league/${localStorage.getItem("selectedLeagueID")}`}
                   onClick={() => setNavbar(!navbar)}
@@ -244,18 +258,7 @@ function NavBar(props: MyProps) {
                   </span>
                 </Link>
               </li>
-              <li className="pb-6 text-center  hover:bg-[#AF1222] ]  hover:transition  hover:ease-in-out hover:rounded ">
-                <Link
-                  href={`/league/${localStorage.getItem(
-                    "selectedLeagueID"
-                  )}/stats`}
-                  onClick={() => setNavbar(!navbar)}
-                >
-                  <span className="text-[18px]  flex items-center  xl:text-[14px]">
-                    <FaSearch size={18} className="mr-1 " /> Stats
-                  </span>
-                </Link>
-              </li>
+
               <li className="pb-6 text-center  hover:bg-[#AF1222]    hover:transition  hover:ease-in-out hover:rounded ">
                 <Link
                   href={`/league/${localStorage.getItem(
@@ -272,11 +275,23 @@ function NavBar(props: MyProps) {
                 <Link
                   href={`/league/${localStorage.getItem(
                     "selectedLeagueID"
-                  )}/matchups`}
+                  )}/rivalry`}
                   onClick={() => setNavbar(!navbar)}
                 >
                   <span className="text-[18px]  flex items-center   xl:text-[14px]">
-                    <FaCalendarAlt size={18} className="mr-1 " /> Matchups
+                    <IoPulseSharp size={18} className="mr-1 " /> Rivalry
+                  </span>
+                </Link>
+              </li>
+              <li className="pb-6 text-center    hover:bg-[#AF1222]  hover:transition hover:ease-in-out hover:rounded ">
+                <Link
+                  href={`/league/${localStorage.getItem(
+                    "selectedLeagueID"
+                  )}/schedule`}
+                  onClick={() => setNavbar(!navbar)}
+                >
+                  <span className="text-[18px]  flex items-center xl:text-[14px]">
+                    <FaCalendarAlt size={18} className="mr-1 " /> Schedule
                   </span>
                 </Link>
               </li>
@@ -297,11 +312,11 @@ function NavBar(props: MyProps) {
                 <Link
                   href={`/league/${localStorage.getItem(
                     "selectedLeagueID"
-                  )}/powerrankings`}
+                  )}/leaguemanagers`}
                   onClick={() => setNavbar(!navbar)}
                 >
                   <span className="text-[18px]  flex items-center  xl:text-[14px]">
-                    <FaRankingStar size={18} className="mr-1 " /> Power Rankings
+                    <RiTeamFill size={18} className="mr-1 " /> League Managers
                   </span>
                 </Link>
               </li>

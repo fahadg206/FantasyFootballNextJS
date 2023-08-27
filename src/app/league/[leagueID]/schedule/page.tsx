@@ -626,7 +626,15 @@ export default function Schedule() {
               nflState?.display_week < counter ? (
               overUnderText
             ) : (
-              <div className={postGame ? `hidden` : "block"}>{showPoll}</div>
+              <div
+                className={
+                  postGame || nflState?.display_week < counter
+                    ? `hidden`
+                    : "block"
+                }
+              >
+                {showPoll}
+              </div>
             )}
 
             {/* {liveGame && showLiveText} */}

@@ -87,7 +87,7 @@ export default function Home() {
   let showUsernames;
 
   if (usernames) {
-    showUsernames = usernames.map((username) => {
+    showUsernames = usernames.map((username: string) => {
       return (
         <div
           onClick={() => {

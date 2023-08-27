@@ -27,19 +27,21 @@ const JsonBigInt = require("json-bigint");
 
 import { db } from "../../../firebase";
 
+interface Article {
+  title: string;
+  paragraph1: string;
+  paragraph2: string;
+  paragraph3: string;
+  paragraph4: string;
+  paragraph5: string;
+  paragraph6: string;
+  paragraph7: string;
+  paragraph8: string;
+}
+
 const articles = () => {
   const [loading, setLoading] = useState<Boolean>(true);
-  const [articles, setArticles] = useState<{
-    title: string;
-    paragraph1: string;
-    paragraph2: string;
-    paragraph3: string;
-    paragraph4: string;
-    paragraph5: string;
-    paragraph6: string;
-    paragraph7: string;
-    paragraph8: string;
-  }>({
+  const [articles, setArticles] = useState<Article>({
     title: "",
     paragraph1: "",
     paragraph2: "",
@@ -50,17 +52,7 @@ const articles = () => {
     paragraph7: "",
     paragraph8: "",
   });
-  const [articles2, setArticles2] = useState<{
-    title: string;
-    paragraph1: string;
-    paragraph2: string;
-    paragraph3: string;
-    paragraph4: string;
-    paragraph5: string;
-    paragraph6: string;
-    paragraph7: string;
-    paragraph8: string;
-  }>({
+  const [articles2, setArticles2] = useState<Article>({
     title: "",
     paragraph1: "",
     paragraph2: "",
@@ -71,17 +63,7 @@ const articles = () => {
     paragraph7: "",
     paragraph8: "",
   });
-  const [articles3, setArticles3] = useState<{
-    title: string;
-    paragraph1: string;
-    paragraph2: string;
-    paragraph3: string;
-    paragraph4: string;
-    paragraph5: string;
-    paragraph6: string;
-    paragraph7: string;
-    paragraph8: string;
-  }>({
+  const [articles3, setArticles3] = useState<Article>({
     title: "",
     paragraph1: "",
     paragraph2: "",
@@ -93,17 +75,7 @@ const articles = () => {
     paragraph8: "",
   });
 
-  const [articles4, setArticles4] = useState<{
-    title: string;
-    paragraph1: string;
-    paragraph2: string;
-    paragraph3: string;
-    paragraph4: string;
-    paragraph5: string;
-    paragraph6: string;
-    paragraph7: string;
-    paragraph8: string;
-  }>({
+  const [articles4, setArticles4] = useState<Article>({
     title: "",
     paragraph1: "",
     paragraph2: "",
