@@ -82,6 +82,11 @@ const page = () => {
 
         const rostersData = await getRoster();
 
+        // Filter users with no roster id (They don't have a team)
+        const usersWithRoster = usersData.filter((user) =>
+          rostersData.some((roster) => roster.owner_id === user.user_id)
+        );
+
         // Create a new map to store the updated schedule data
         const managerInfo: ManagerInfo = {};
         console.log(
@@ -89,7 +94,7 @@ const page = () => {
           selectedLeagueID
         );
         // Update the managerInfo map with user data
-        for (const user of usersData) {
+        for (const user of usersWithRoster) {
           managerInfo[user.user_id] = {
             avatar: `https://sleepercdn.com/avatars/thumbs/${user.avatar}`,
             name: user.display_name,

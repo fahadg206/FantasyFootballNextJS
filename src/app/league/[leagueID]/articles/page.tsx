@@ -148,121 +148,91 @@ const articles = () => {
   const REACT_APP_LEAGUE_ID: string | null =
     localStorage.getItem("selectedLeagueID");
 
-  useEffect(() => {
-    console.log(REACT_APP_LEAGUE_ID);
-    async function fetchData() {
-      try {
-        console.log(REACT_APP_LEAGUE_ID);
-        // Retrieve data from the database based on league_id
-        const querySnapshot = await getDocs(
-          query(
-            collection(db, "Weekly Articles"),
-            where("league_id", "==", REACT_APP_LEAGUE_ID),
-            limit(1)
-          )
-        );
-
-        if (!querySnapshot.empty) {
-          querySnapshot.forEach((doc) => {
-            const docData = doc.data();
-
-            console.log("DB returned", docData);
-            // let segment2split = docData.segment2.split('"paragraph4"');
-            // let segment2p2 = '"paragraph4"' + segment2split[1];
-            // let segment2p1 = segment2split[0] + "}";
-
-            //setArticles(JsonBigInt.parse(docData.articles));
-            // console.log(segment2p1);
-            // setArticles3(JSON.parse(segment2p1));
-            //setArticles3(JsonBigInt.parse(segment2p2));
-            setArticles(docData.articles);
-            setArticles2(docData.segment2);
-            setArticles3(docData.overreaction);
-            setArticles4(docData.pulse_check);
-            console.log(articles3);
-          });
-        } else {
-          console.log("Document does not exist");
-
-          try {
-            const response = await fetch(
-              "http://localhost:3000/api/fetchData",
-              {
-                method: "POST",
-                body: REACT_APP_LEAGUE_ID,
-              }
-            );
-
-            const segment2 = await fetch(
-              "http://localhost:3000/api/fetchSegment2",
-              {
-                method: "POST",
-                body: REACT_APP_LEAGUE_ID,
-              }
-            );
-
-            const overreaction = await fetch(
-              "http://localhost:3000/api/fetchOverreaction",
-              {
-                method: "POST",
-                body: REACT_APP_LEAGUE_ID,
-              }
-            );
-
-            // const preview = await fetch(
-            //   "http://localhost:3000/api/fetchPreview.js",
-            //   {
-            //     method: "POST",
-            //     body: REACT_APP_LEAGUE_ID,
-            //   }
-            // );
-
-            // const trashTalk = await fetch(
-            //   "http://localhost:3000/api/fetchTrashTalk.js",
-            //   {
-            //     method: "POST",
-            //     body: REACT_APP_LEAGUE_ID,
-            //   }
-            // );
-
-            const pulseCheck = await fetch(
-              "http://localhost:3000/api/fetchPulseCheck",
-              {
-                method: "POST",
-                body: REACT_APP_LEAGUE_ID,
-              }
-            );
-
-            const data = await response.json();
-            const seg2Data = await segment2.json();
-            const overreactionData = await overreaction.json();
-            //const previewData = await preview.json();
-            //const trashTalkData = await trashTalk.json();
-            const pulseData = await pulseCheck.json();
-
-            console.log("parsed ", data);
-            console.log("parsed ", seg2Data);
-
-            setArticles(data);
-            setArticles2(seg2Data);
-            setArticles3(overreactionData);
-            setArticles4(pulseData);
-          } catch (error) {
-            console.error("Error fetching data:", error);
-          }
-        }
-
-        if (querySnapshot.empty) {
-          console.error("No documents found in 'Article Info' collection");
-        }
-      } catch (error) {
-        console.error("Error:", error);
-      }
-      setLoading(false);
+  const fetchDataFromApi = async (endpoint, stateSetter) => {
+    try {
+      const response = await fetch(endpoint, {
+        method: "POST",
+        body: REACT_APP_LEAGUE_ID,
+      });
+      const data = await response.json();
+      stateSetter(data);
+    } catch (error) {
+      console.error("Error fetching data:", error);
     }
+  };
 
-    fetchData();
-  }, [JSON.stringify(articles)]);
+  const fetchData = async () => {
+    try {
+      // Fetch data from the database based on league_id
+      const querySnapshot = await getDocs(
+        query(
+          collection(db, "Weekly Articles"),
+          where("league_id", "==", REACT_APP_LEAGUE_ID),
+          limit(1)
+        )
+      );
+
+      if (!querySnapshot.empty) {
+        querySnapshot.forEach((doc) => {
+          const docData = doc.data();
+          setArticles(docData.articles);
+          if (!docData.segment2) {
+            fetchDataFromApi(
+              "http://localhost:3000/api/fetchSegment2",
+              setArticles2
+            );
+          } else {
+            setArticles2(docData.segment2);
+          }
+          if (!docData.overreaction) {
+            fetchDataFromApi(
+              "http://localhost:3000/api/fetchOverreaction",
+              setArticles3
+            );
+          } else {
+            setArticles3(docData.overreaction);
+          }
+          if (!docData.pulse_check) {
+            fetchDataFromApi(
+              "http://localhost:3000/api/fetchPulseCheck",
+              setArticles4
+            );
+          } else {
+            setArticles4(docData.pulse_check);
+          }
+        });
+      } else {
+        fetchDataFromApi("http://localhost:3000/api/fetchData", setArticles);
+        fetchDataFromApi(
+          "http://localhost:3000/api/fetchSegment2",
+          setArticles2
+        );
+        fetchDataFromApi(
+          "http://localhost:3000/api/fetchOverreaction",
+          setArticles3
+        );
+        fetchDataFromApi(
+          "http://localhost:3000/api/fetchPulseCheck",
+          setArticles4
+        );
+      }
+    } catch (error) {
+      console.error("Error:", error);
+    }
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    // Fetch data only if any of the articles is not populated
+    if (
+      !articles.title ||
+      !articles2.title ||
+      !articles3.title ||
+      !articles4.title
+    ) {
+      fetchData();
+    }
+  }, [articles, articles2, articles3, articles4]);
 
   console.log("a", articles3);
 

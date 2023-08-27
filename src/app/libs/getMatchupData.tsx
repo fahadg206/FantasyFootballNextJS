@@ -147,8 +147,12 @@ export default async function getMatchupData(league_id: any, week: number) {
 
       // Create a new map to store the updated schedule data
 
+      const usersWithRoster = usersData.filter((user) =>
+        rostersData.some((roster) => roster.owner_id === user.user_id)
+      );
+
       // Update the scheduleData map with user data
-      for (const user of usersData) {
+      for (const user of usersWithRoster) {
         updatedScheduleData[user.user_id] = {
           avatar: `https://sleepercdn.com/avatars/thumbs/${user.avatar}`,
           name: user.display_name,
