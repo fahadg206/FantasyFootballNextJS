@@ -10,6 +10,7 @@ import {
   addDoc,
 } from "firebase/firestore/lite";
 import { getStorage } from "firebase/storage";
+import { getAuth, signInAnonymously } from "firebase/auth";
 
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
@@ -25,7 +26,21 @@ const firebaseConfig = {
   measurementId: "G-B885Y5X02R",
 };
 
-// Initialize Firebase
 const app = initializeApp(firebaseConfig);
-export const db = getFirestore(app);
-export const storage = getStorage(app);
+const auth = getAuth(app);
+const db = getFirestore(app);
+const storage = getStorage(app);
+
+let currentUser; // Declare currentUser variable
+
+signInAnonymously(auth)
+  .then((userCredential) => {
+    currentUser = userCredential.user;
+    console.log("Anonymous user ID: ", currentUser.uid);
+    // Perform actions after successful login
+  })
+  .catch((error) => {
+    console.error("Anonymous sign-in error: ", error);
+  });
+
+export { auth, db, storage };
