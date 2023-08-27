@@ -23,6 +23,7 @@ export default function Home() {
   const [text, setText] = useState("");
   const [usernameSubmitted, setUsernameSubmitted] = useState(false);
   const [storedUsernames, setStoredUsernames] = useState(new Array());
+  const [cleared, setCleared] = useState(false);
 
   const [selectedSeason, setSelectedSeason] = useState(options[0]);
 
@@ -51,8 +52,10 @@ export default function Home() {
     localStorage.removeItem("selectedLeagueID");
     localStorage.removeItem("selectedLeagueName");
     localStorage.removeItem("usernameSubmitted");
+    localStorage.removeItem("usernames");
     setStoredUsernames([]);
     setText("");
+    setCleared(true);
   };
 
   const onFormSubmit = (e: React.SyntheticEvent) => {
@@ -170,6 +173,7 @@ export default function Home() {
             usernameSubmitted={usernameSubmitted}
             username={text}
             selectedSeason={selectedSeason}
+            onClear={onStorageCleared}
           />
         </div>
       </div>
