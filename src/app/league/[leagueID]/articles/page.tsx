@@ -3,6 +3,13 @@
 import React, { useState, useEffect } from "react";
 import ArticleTemplate from "../../../components/ArticleTemplate";
 import imran from "../../../images/scary_imran.png";
+import steve from "../../../images/finger.jpg";
+import boogie from "../../../images/boogie.png";
+import pulseDr from "../../../images/pulsecheck.jpg";
+import doctor from "../../../images/Doctor.jpg";
+import glazer from "../../../images/Glazer.jpg";
+import boo from "../../../images/boo.png";
+import weekly_recap from "../../../images/week_recap.png";
 import {
   collection,
   query,
@@ -247,10 +254,10 @@ const articles = () => {
               articles?.title ||
               "Our editors are hard at work! Come back soon to see your league's articles"
             }
-            image={imran}
-            author={"imran"}
-            authorImg={imran}
-            jobtitle="RCL Insider"
+            image={weekly_recap}
+            author={"Boogie The Writer"}
+            authorImg={boogie}
+            jobtitle="Fantasy Pulse Senior Staff Writer"
             date="Sep 14th, 2023"
             p1={articles?.paragraph1 || ""}
             p2={articles?.paragraph2 || ""}
@@ -268,10 +275,10 @@ const articles = () => {
         <div>
           <ArticleTemplate
             title={articles2?.title || ""}
-            image={imran}
-            author={"imran"}
-            authorImg={imran}
-            jobtitle="RCL Insider"
+            image={boo}
+            author={"Savage Steve"}
+            authorImg={steve}
+            jobtitle="Independent Journalist"
             date="Sep 14th, 2023"
             p1={articles2?.paragraph1 || ""}
             p2={articles2?.paragraph2 || ""}
@@ -290,9 +297,9 @@ const articles = () => {
           <ArticleTemplate
             title={articles3?.title || ""}
             image={imran}
-            author={"imran"}
-            authorImg={imran}
-            jobtitle="RCL Insider"
+            author={"Joe Glazer"}
+            authorImg={glazer}
+            jobtitle="Fantasy Pulse Insider"
             date="Sep 14th, 2023"
             p1={articles3?.paragraph1 || ""}
             p2={articles3?.paragraph2 || ""}
@@ -310,10 +317,10 @@ const articles = () => {
         <div>
           <ArticleTemplate
             title={articles4?.title || ""}
-            image={imran}
-            author={"imran"}
-            authorImg={imran}
-            jobtitle="RCL Insider"
+            image={pulseDr}
+            author={"Greg Roberts"}
+            authorImg={doctor}
+            jobtitle="Fantasy Pulse Medical Director"
             date="Sep 14th, 2023"
             p1={articles4?.paragraph1 || ""}
             p2={articles4?.paragraph2 || ""}

@@ -99,7 +99,7 @@ export default async function handler(req, res) {
     };
 
     const articleTemplate = JSON.stringify(article);
-    const question = `Your name is Joe Glazer and you're an overly positive and tend to overreact and exaggerate as a writer at fantasy pulse. Write like you're seeking their approval and making them think they're actually the team that will win it all. Give complete overreaction where you're overly praising each team and being extremely positive make sure to include praise their team names players and shortcomings, keep each section short. Make title creative.
+    const question = `Write an article that is overly praising each team, making each team seem like they're the CLEAR best team in the league and will win it all. Write like you're seeking the team owner's approval while comedically turning a blind eye to their shortcomings. keep each section short. Make title creative. Use a casual and entertaining tone when writing the article.  Don't select teams in the order you read them but in random instead
  Keep the content within 450 words maximum. The format of the JSON response should strictly adhere to RFC8259 compliance, without any deviations or errors. The JSON structure should match this template: {
   "title": "",
   "paragraph1": "",

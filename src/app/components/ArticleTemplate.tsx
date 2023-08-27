@@ -38,8 +38,8 @@ const ArticleTemplate = ({
   p8,
 }: ArticleTemplate) => {
   return (
-    <div className="flex flex-col items-center justify-end sm:flex sm:flex-row sm:justify-around sm:items-start  w-[95vw] xl:w-[60vw] md:rounded md:border-b-2 md:border-[#1a1a1a] border-opacity-10 mb-2">
-      <div className="mt-5 md:sticky md:top-5  ">
+    <div className="flex flex-col items-center justify-end sm:flex sm:flex-row sm:justify-around sm:items-start  w-[95vw] xl:w-[60vw] md:rounded md:border-2 md:border-[#1a1a1a] border-opacity-10 mb-2">
+      <div className="mt-5 md:sticky md:top-5">
         <Image
           className="rounded-[10px] "
           src={image}
@@ -58,8 +58,8 @@ const ArticleTemplate = ({
               className="rounded-full mr-2"
               src={authorImg}
               alt="author images"
-              height={30}
-              width={30}
+              height={40}
+              width={40}
             />
             <div className="flex flex-col">
               <p>{author}</p>
