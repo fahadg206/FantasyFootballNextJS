@@ -129,21 +129,24 @@ const articles = () => {
   const REACT_APP_LEAGUE_ID: string | null =
     localStorage.getItem("selectedLeagueID");
 
-  const fetchDataFromApi = async (endpoint, stateSetter) => {
+  const fetchDataFromApi = async (endpoint) => {
     try {
       const response = await fetch(endpoint, {
         method: "POST",
         body: REACT_APP_LEAGUE_ID,
       });
       const data = await response.json();
-      stateSetter(data);
+      return data; // Return the fetched data
     } catch (error) {
       console.error("Error fetching data:", error);
+      return null; // Return null to handle errors
     }
   };
 
   const fetchData = async () => {
     try {
+      const promises = [];
+
       // Fetch data from the database based on league_id
       const querySnapshot = await getDocs(
         query(
@@ -157,45 +160,58 @@ const articles = () => {
         querySnapshot.forEach((doc) => {
           const docData = doc.data();
           setArticles(docData.articles);
+
           if (!docData.segment2) {
-            fetchDataFromApi(
-              "http://localhost:3000/api/fetchSegment2",
-              setArticles2
+            promises.push(
+              fetchDataFromApi("http://localhost:3000/api/fetchSegment2")
             );
           } else {
             setArticles2(docData.segment2);
           }
+
           if (!docData.overreaction) {
-            fetchDataFromApi(
-              "http://localhost:3000/api/fetchOverreaction",
-              setArticles3
+            promises.push(
+              fetchDataFromApi("http://localhost:3000/api/fetchOverreaction")
             );
           } else {
             setArticles3(docData.overreaction);
           }
+
           if (!docData.pulse_check) {
-            fetchDataFromApi(
-              "http://localhost:3000/api/fetchPulseCheck",
-              setArticles4
+            promises.push(
+              fetchDataFromApi("http://localhost:3000/api/fetchPulseCheck")
             );
           } else {
             setArticles4(docData.pulse_check);
           }
         });
+
+        // Wait for all promises to resolve
+        const results = await Promise.all(promises);
+
+        // Set the fetched data using the state setters
+        results.forEach((data, index) => {
+          if (index === 0) {
+            setArticles2(data);
+          } else if (index === 1) {
+            setArticles3(data);
+          } else if (index === 2) {
+            setArticles4(data);
+          }
+        });
       } else {
-        fetchDataFromApi("http://localhost:3000/api/fetchData", setArticles);
-        fetchDataFromApi(
-          "http://localhost:3000/api/fetchSegment2",
-          setArticles2
-        );
-        fetchDataFromApi(
-          "http://localhost:3000/api/fetchOverreaction",
-          setArticles3
-        );
-        fetchDataFromApi(
-          "http://localhost:3000/api/fetchPulseCheck",
-          setArticles4
-        );
+        // Fetch all data from APIs
+        const [data1, data2, data3, data4] = await Promise.all([
+          fetchDataFromApi("http://localhost:3000/api/fetchData"),
+          fetchDataFromApi("http://localhost:3000/api/fetchSegment2"),
+          fetchDataFromApi("http://localhost:3000/api/fetchOverreaction"),
+          fetchDataFromApi("http://localhost:3000/api/fetchPulseCheck"),
+        ]);
+
+        setArticles(data1);
+        setArticles2(data2);
+        setArticles3(data3);
+        setArticles4(data4);
       }
     } catch (error) {
       console.error("Error:", error);
@@ -204,15 +220,19 @@ const articles = () => {
   };
 
   useEffect(() => {
-    // Fetch data only if any of the articles is not populated
-    if (
-      !articles.title ||
-      !articles2.title ||
-      !articles3.title ||
-      !articles4.title
-    ) {
-      fetchData();
-    }
+    const fetchDataIfNeeded = async () => {
+      // Fetch data only if any of the articles is not populated
+      if (
+        !articles.title ||
+        !articles2.title ||
+        !articles3.title ||
+        !articles4.title
+      ) {
+        await fetchData();
+      }
+    };
+
+    fetchDataIfNeeded();
   }, [articles, articles2, articles3, articles4]);
 
   console.log("a", articles3);

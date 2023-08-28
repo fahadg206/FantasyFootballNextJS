@@ -99,7 +99,7 @@ export default async function handler(req, res) {
     };
 
     const articleTemplate = JSON.stringify(article);
-    const question = `Give me an article where you're sarcasticly and comedically making fun of 6 random teams from this league's data,   Make title creative. Keep the content within 450 words maximum. The format of the JSON response should strictly adhere to RFC8259 compliance, without any deviations or errors. The JSON structure should match this template: {
+    const question = `Give me an article where you're sarcasticly and comedically making fun of 6 random teams from this league's data, Make title short and creative. Keep the content within 450 words maximum. The format of the JSON response should strictly adhere to RFC8259 compliance, without any deviations or errors. The JSON structure should match this template: {
   "title": "",
   "paragraph1": "",
   "paragraph2": "",

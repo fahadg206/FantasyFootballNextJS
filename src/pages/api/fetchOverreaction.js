@@ -99,7 +99,7 @@ export default async function handler(req, res) {
     };
 
     const articleTemplate = JSON.stringify(article);
-    const question = `Write an article that is overly praising each team, making each team seem like they're the CLEAR best team in the league and will win it all. Write like you're seeking the team owner's approval while comedically turning a blind eye to their shortcomings. keep each section short. Make title creative. Use a casual and entertaining tone when writing the article.  Don't select teams in the order you read them but in random instead
+    const question = `Write an article that is overly praising each team, making each team seem like they're the CLEAR best team in the league and will win it all. Write like you're seeking the team owner's approval while comedically turning a blind eye to their shortcomings. keep each section short. Make title short and creative. Use a casual and entertaining tone when writing the article.  Don't select teams in the order you read them but in random instead
  Keep the content within 450 words maximum. The format of the JSON response should strictly adhere to RFC8259 compliance, without any deviations or errors. The JSON structure should match this template: {
   "title": "",
   "paragraph1": "",
