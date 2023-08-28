@@ -1,5 +1,3 @@
-"use client";
-
 import { motion } from "framer-motion";
 import React, { useState, useEffect } from "react";
 import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
@@ -105,7 +103,7 @@ const CardCarousel = () => {
   const CAN_SHIFT_LEFT = offset < 0;
 
   const CAN_SHIFT_RIGHT =
-    Math.abs(offset) < CARD_SIZE * (headlines.length - CARD_BUFFER);
+    Math.abs(offset) < CARD_SIZE * (headlines.length + 1 - CARD_BUFFER);
 
   const shiftLeft = () => {
     if (!CAN_SHIFT_LEFT) {
@@ -214,62 +212,11 @@ const CardCarousel = () => {
     topScorer = sortedUserData[0];
   }
 
-  const Card = ({
-    url,
-    category,
-    title,
-    description,
-    scorerStyle,
-  }: HeadlineItem) => {
-    return (
-      <div
-        className="relative shrink-0 cursor-pointer rounded-2xl bg-white shadow-md transition-all hover:scale-[1.015] hover:shadow-xl"
-        style={{
-          width: CARD_WIDTH,
-          height: CARD_HEIGHT,
-          marginRight: MARGIN,
-          backgroundImage: `url("https://img.freepik.com/premium-vector/vector-background-concept-technology_49459-308.jpg")`,
-          backgroundPosition: "center",
-          backgroundSize: "cover",
-        }}
-      >
-        <div
-          className={
-            scorerStyle
-              ? `flex flex-col justify-around items-center absolute inset-0 z-20 rounded-2xl bg-gradient-to-b from-black/90 via-black/60 to-black/0 p-6 text-white transition-[backdrop-filter] hover:backdrop-blur-sm`
-              : `absolute inset-0 z-20 rounded-2xl bg-gradient-to-b from-black/90 via-black/60 to-black/0 p-6 text-white transition-[backdrop-filter] hover:backdrop-blur-sm`
-          }
-        >
-          <span className="text-xs font-semibold uppercase text-violet-300">
-            {category}
-          </span>
-          <p className="my-2 text-2xl font-bold">{title}</p>
-          <Image
-            className="rounded-full"
-            src={url || Logo}
-            alt="image"
-            width={120}
-            height={120}
-          />
-          <p
-            className={`${
-              typeof description === "number"
-                ? "font-bold text-[25px] text-slate-300"
-                : "text-[12px] text-slate-300"
-            }`}
-          >
-            {description}
-          </p>
-        </div>
-      </div>
-    );
-  };
-
   return (
     <section className="w-[95vw] xl:w-[60vw]" ref={ref}>
-      <div className="relative overflow-x-scroll snap-x p-4">
+      <div className="relative overflow-hidden p-4">
         {/* CARDS */}
-        <div className="mx-auto snap-center max-w-6xl">
+        <div className="mx-auto max-w-6xl">
           <p className="mb-4 text-lg md:text-xl font-semibold text-center md:text-start">
             League Buzz :
             <span className="text-slate-500"> Catch Up on All the Action</span>
@@ -280,33 +227,22 @@ const CardCarousel = () => {
             }}
             className="flex"
           >
-            {headlines.length === 0 ? (
-              <p>Loading...</p>
-            ) : (
-              <motion.div
-                animate={{
-                  x: offset,
-                }}
-                className="flex"
-              >
-                <Card
-                  key={uuidv4()}
-                  title={topScorer?.name}
-                  description={topScorer?.team_points}
-                  url={topScorer?.avatar}
-                  scorerStyle={true}
-                  category="Top Scorer of the Week"
-                />
-                {headlines.map((item) => {
-                  return <Card key={uuidv4()} {...item} />;
-                })}
-              </motion.div>
-            )}
+            <Card
+              key={uuidv4()}
+              title={topScorer?.name}
+              description={topScorer?.team_points}
+              url={topScorer?.avatar}
+              scorerStyle={true}
+              category="Top Scorer of the Week"
+            />
+            {headlines.map((item) => {
+              return <Card key={item.id} {...item} />;
+            })}
           </motion.div>
         </div>
 
-        {/* BUTTONS
-        <div>
+        {/* BUTTONS */}
+        <>
           <motion.button
             initial={false}
             animate={{
@@ -315,8 +251,8 @@ const CardCarousel = () => {
             className="absolute left-0 top-[60%] z-30 rounded-r-xl bg-slate-100/30 p-3 pl-2 text-4xl text-white backdrop-blur-sm transition-[padding] hover:pl-3"
             onClick={shiftLeft}
           >
-            {/* <FiChevronLeft /> */}
-        {/* </motion.button>
+            <FiChevronLeft />
+          </motion.button>
           <motion.button
             initial={false}
             animate={{
@@ -325,11 +261,62 @@ const CardCarousel = () => {
             className="absolute right-0 top-[60%] z-30 rounded-l-xl bg-slate-100/30 p-3 pr-2 text-4xl text-white backdrop-blur-sm transition-[padding] hover:pr-3"
             onClick={shiftRight}
           >
-            {/* <FiChevronRight /> */}
-        {/* </motion.button>
-        </div>  */}
+            <FiChevronRight />
+          </motion.button>
+        </>
       </div>
     </section>
+  );
+};
+
+const Card = ({
+  url,
+  category,
+  title,
+  description,
+  scorerStyle,
+}: HeadlineItem) => {
+  return (
+    <div
+      className="relative shrink-0 cursor-pointer rounded-2xl bg-white shadow-md transition-all hover:scale-[1.015] hover:shadow-xl"
+      style={{
+        width: CARD_WIDTH,
+        height: CARD_HEIGHT,
+        marginRight: MARGIN,
+        backgroundImage: `url("https://img.freepik.com/premium-vector/vector-background-concept-technology_49459-308.jpg")`,
+        backgroundPosition: "center",
+        backgroundSize: "cover",
+      }}
+    >
+      <div
+        className={
+          scorerStyle
+            ? `flex flex-col justify-around items-center absolute inset-0 z-20 rounded-2xl bg-gradient-to-b from-black/90 via-black/60 to-black/0 p-6 text-white transition-[backdrop-filter] hover:backdrop-blur-sm`
+            : `absolute inset-0 z-20 rounded-2xl bg-gradient-to-b from-black/90 via-black/60 to-black/0 p-6 text-white transition-[backdrop-filter] hover:backdrop-blur-sm`
+        }
+      >
+        <span className="text-xs font-semibold uppercase text-violet-300">
+          {category}
+        </span>
+        <p className="my-2 text-2xl font-bold">{title}</p>
+        <Image
+          className="rounded-full"
+          src={url || Logo}
+          alt="image"
+          width={120}
+          height={120}
+        />
+        <p
+          className={`${
+            typeof description === "number"
+              ? "font-bold text-[25px] text-slate-300"
+              : "text-[12px] text-slate-300"
+          }`}
+        >
+          {description}
+        </p>
+      </div>
+    </div>
   );
 };
 

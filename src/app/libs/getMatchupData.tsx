@@ -145,8 +145,7 @@ export default async function getMatchupData(league_id: any, week: number) {
       const rostersData = await getRoster();
       const scheduleData = await getSchedule();
 
-      // Create a new map to store the updated schedule data
-
+      // Filter users with no roster id (They don't have a team)
       const usersWithRoster = usersData.filter((user) =>
         rostersData.some((roster) => roster.owner_id === user.user_id)
       );
