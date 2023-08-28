@@ -920,8 +920,18 @@ const matchups = () => {
                                                 : `https://sleepercdn.com/content/nfl/players/thumb/${starter}.jpg`
                                             }
                                             alt="player"
-                                            width={57}
-                                            height={57}
+                                            width={
+                                              playersData[starter.toString()]
+                                                .pos === "DEF"
+                                                ? 40
+                                                : 57
+                                            }
+                                            height={
+                                              playersData[starter.toString()]
+                                                .pos === "DEF"
+                                                ? 40
+                                                : 57
+                                            }
                                           />
                                         </div>
 
@@ -1083,8 +1093,18 @@ const matchups = () => {
                                                 : `https://sleepercdn.com/content/nfl/players/thumb/${starter}.jpg`
                                             }
                                             alt="player"
-                                            width={57}
-                                            height={57}
+                                            width={
+                                              playersData[starter.toString()]
+                                                .pos === "DEF"
+                                                ? 40
+                                                : 57
+                                            }
+                                            height={
+                                              playersData[starter.toString()]
+                                                .pos === "DEF"
+                                                ? 40
+                                                : 57
+                                            }
                                           />
                                         </div>
 

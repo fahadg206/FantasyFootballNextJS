@@ -29,6 +29,8 @@ import {
   scrollSpy,
   scroller,
 } from "react-scroll";
+import useTimeChecks from "../libs/getTimes";
+import { BsDot } from "react-icons/bs";
 
 interface ScheduleData {
   [userId: string]: {
@@ -98,6 +100,10 @@ export default function Scoreboard() {
   const [schedule, setSchedule] = useState<Matchup[]>([]);
   const [loading, setLoading] = useState(true);
   const [loadingData, setLoadingData] = useState(true);
+  const [mnfEnd, setMnfEnd] = useState(false);
+  const [morningSlateEnd, setMorningSlateEnd] = useState(false);
+  const [afternoonSlateEnd, setAfternoonSlateEnd] = useState(false);
+  const [snfEnd, setSnfEnd] = useState(false);
   const [scheduleDataFinal, setScheduleDataFinal] = useState<ScheduleData>({});
   const [playersData, setPlayersData] =
     React.useState<Record<string, PlayerData>>();
@@ -112,6 +118,16 @@ export default function Scoreboard() {
     localStorage.getItem("selectedLeagueID");
 
   const router = useRouter();
+
+  const { isSundayAfternoon, isSundayEvening, isSundayNight, isMondayNight } =
+    useTimeChecks();
+
+  useEffect(() => {
+    setMnfEnd(isMondayNight);
+    setSnfEnd(isSundayNight);
+    setAfternoonSlateEnd(isSundayEvening);
+    setMorningSlateEnd(isSundayAfternoon);
+  }, [isMondayNight, isSundayNight, isSundayEvening, isSundayAfternoon]);
 
   function updateDbStorage(weeklyData: ScheduleData) {
     if (REACT_APP_LEAGUE_ID) {
@@ -318,6 +334,80 @@ export default function Scoreboard() {
       }
     }
 
+    const starters1Points = scheduleDataFinal[team1.user_id]?.starters_points;
+    const starters2Points = scheduleDataFinal[team2.user_id]?.starters_points;
+
+    //check to see if every player on BOTH teams have more points than 0
+    const team1Played = scheduleDataFinal[team1.user_id].starters_points.every(
+      (starterPoints) => {
+        return starterPoints !== 0;
+      }
+    );
+    const team2Played = scheduleDataFinal[team2.user_id].starters_points.every(
+      (starterPoints) => {
+        return starterPoints !== 0;
+      }
+    );
+
+    let preGame;
+    let liveGame;
+    let postGame;
+
+    //check if we're in current week. If we are, display poll. Else, display over/under.
+    if (
+      parseFloat(team1.team_points) === 0 &&
+      parseFloat(team2.team_points) === 0
+    ) {
+      preGame = true;
+      postGame = false;
+      liveGame = false;
+    }
+
+    //live game
+    if (
+      (parseFloat(team1.team_points) !== 0 ||
+        parseFloat(team2.team_points) !== 0) &&
+      (starters1Points.includes(0) || starters2Points.includes(0))
+    ) {
+      liveGame = true;
+      preGame = false;
+      postGame = false;
+    }
+
+    //postgame
+    if (
+      team1Played &&
+      team2Played &&
+      (morningSlateEnd || afternoonSlateEnd || snfEnd || mnfEnd)
+    ) {
+      postGame = true;
+      preGame = false;
+      liveGame = false;
+    }
+
+    const overUnderText = (
+      <div>
+        <p className="w-[9vw] text-center text-[9px]">
+          O/U: {Math.round(team1Proj + team2Proj)}
+        </p>
+        <p className="w-[9vw] text-center text-[9px] text-[grey]">
+          {team1Proj > team2Proj
+            ? team1?.name + " -" + Math.round(team1Proj - team2Proj)
+            : team2?.name + " -" + Math.round(team2Proj - team1Proj)}
+        </p>
+      </div>
+    );
+
+    const finalText = (
+      <p className="text-center self-center text-[9px] ">FINAL</p>
+    );
+
+    const liveText = (
+      <p className=" animate-pulse text-[9px] font-bold  w-min self-center pr-2 rounded-lg text-[#af1222] flex items-center justify-center ">
+        <BsDot className="" size={20} /> LIVE
+      </p>
+    );
+
     return (
       <div
         key={matchupID}
@@ -415,14 +505,13 @@ export default function Scoreboard() {
                   : "N/A"}
               </p>
             </div>
-            <p className="w-[9vw] text-center text-[9px]">
-              O/U: {Math.round(team1Proj + team2Proj)}
-            </p>
-            <p className="w-[9vw] text-center text-[9px] text-[grey]">
-              {team1Proj > team2Proj
-                ? team1?.name + " -" + Math.round(team1Proj - team2Proj)
-                : team2?.name + " -" + Math.round(team2Proj - team1Proj)}
-            </p>
+            {preGame
+              ? overUnderText
+              : liveGame
+              ? liveText
+              : postGame
+              ? finalText
+              : ""}
           </div>
         </SmoothLink>
       </div>

@@ -17,7 +17,7 @@ import {
   scrollSpy,
   scroller,
 } from "react-scroll";
-import getTimes from "../../../libs/getTimes";
+import useTimeChecks from "../../../libs/getTimes";
 
 interface NflState {
   season: string;
@@ -96,7 +96,7 @@ export default function Schedule() {
   const [team1Name, setTeam1Name] = useState("");
   const [team2Name, setTeam2Name] = useState("");
 
-  const [showPostGame, setShowPostGame] = useState(false);
+  const [mnfEnd, setMnfEnd] = useState(false);
   const [morningSlateEnd, setMorningSlateEnd] = useState(false);
   const [afternoonSlateEnd, setAfternoonSlateEnd] = useState(false);
   const [snfEnd, setSnfEnd] = useState(false);
@@ -143,33 +143,15 @@ export default function Schedule() {
       });
   }, []);
 
+  const { isSundayAfternoon, isSundayEvening, isSundayNight, isMondayNight } =
+    useTimeChecks();
+
   useEffect(() => {
-    async function fetchTimes() {
-      try {
-        const times = await getTimes();
-        setCheckTimeFunction(() => times.checkTime);
-        setMorningSlateEnd(times.morningSlateEnd);
-        setAfternoonSlateEnd(times.afternoonSlateEnd);
-        setSnfEnd(times.snfEnd);
-        setShowPostGame(times.showPostGame);
-      } catch (error) {
-        console.error("Error fetching times data:", error);
-      }
-    }
-    fetchTimes();
-
-    // Initial check
-    const intervalId = setInterval(() => {
-      if (checkTimeFunction) {
-        checkTimeFunction();
-      }
-    }, 60000); // Check every minute
-
-    return () => {
-      clearInterval(intervalId);
-      setCheckTimeFunction(undefined);
-    }; // Cleanup interval when component unmounts
-  }, []);
+    setMnfEnd(isMondayNight);
+    setSnfEnd(isSundayNight);
+    setAfternoonSlateEnd(isSundayEvening);
+    setMorningSlateEnd(isSundayAfternoon);
+  }, [isMondayNight, isSundayNight, isSundayEvening, isSundayAfternoon]);
 
   // useEffect(() => {
   //   checkTime(); // Initial check
@@ -276,7 +258,7 @@ export default function Schedule() {
 
     team1Played &&
     team2Played &&
-    (morningSlateEnd || afternoonSlateEnd || snfEnd || showPostGame)
+    (morningSlateEnd || afternoonSlateEnd || snfEnd || mnfEnd)
       ? "show final and top scorers"
       : "match still live";
 
@@ -334,7 +316,7 @@ export default function Schedule() {
       nflState?.display_week > counter ||
       (team1Played &&
         team2Played &&
-        (morningSlateEnd || afternoonSlateEnd || snfEnd || showPostGame))
+        (morningSlateEnd || afternoonSlateEnd || snfEnd || mnfEnd))
     ) {
       postGame = true;
       preGame = false;
@@ -342,7 +324,9 @@ export default function Schedule() {
     }
 
     let overUnderText = (
-      <div className="">
+      <div
+        className={team1.team_points && team2.team_points ? `hidden` : `block`}
+      >
         <p className="w-[40vw] xl:w-[30vw] text-center text-[15px]">
           O/U: {Math.round(team1Proj + team2Proj)}
         </p>
@@ -385,7 +369,7 @@ export default function Schedule() {
           Kabo was voted to win by 70% of league members!
         </p>{" "}
         <p className="text-[12px] text-[#af1222] flex items-center">
-          <BsDot /> LIVE
+          <BsDot className="animate-ping" /> LIVE
         </p>
       </div>
     );
@@ -595,7 +579,7 @@ export default function Schedule() {
                 {postGame && team2TopScorers}
               </div>
 
-              {showPostGame || postGame ? (
+              {mnfEnd || postGame ? (
                 <p className="text-[12px] w-[75vw] xl:w-[40vw] flex  font-bold">
                   {"FINAL"}
                 </p>
@@ -636,7 +620,7 @@ export default function Schedule() {
   //console.log("counter", counter);
 
   return (
-    <div className=" flex flex-col items-center mt-4">
+    <div className=" flex flex-col items-center mt-1">
       <div className="flex flex-col items-center">
         <p className="font-bold italic">{`Week: ${counter}`}</p>
 

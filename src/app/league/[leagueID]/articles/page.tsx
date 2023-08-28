@@ -36,6 +36,10 @@ const JsonBigInt = require("json-bigint");
 
 import { db } from "../../../firebase";
 
+export const metadata = {
+  title: "Articles",
+};
+
 interface Article {
   title: string;
   paragraph1: string;

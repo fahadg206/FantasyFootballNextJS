@@ -71,87 +71,6 @@ const CardCarousel = () => {
   const [ref, { width }] = useMeasure();
   const [offset, setOffset] = useState(0);
   const [userData, setUserData] = useState<ScheduleData>();
-  const [headlines, setHeadlines] = useState([
-    {
-      id: 10,
-      url: "/imgs/computer/mouse.png",
-      category: "Mice",
-      title: "Just feels right",
-      description:
-        "Lorem ipsum dolor sit amet consectetur adipisicing elit. Sequi, dolor.",
-    },
-    {
-      id: 21,
-      url: "/imgs/computer/keyboard.png",
-      category: "Keyboards",
-      title: "Type in style",
-      description:
-        "Lorem ipsum dolor sit amet consectetur adipisicing elit. Sequi, dolor.",
-    },
-    {
-      id: 34,
-      url: "/imgs/computer/monitor.png",
-      category: "Monitors",
-      title: "Looks like a win",
-      description:
-        "Lorem ipsum dolor sit amet consectetur adipisicing elit. Sequi, dolor.",
-    },
-    {
-      id: 45,
-      url: "/imgs/computer/chair.png",
-      category: "Chairs",
-      title: "Back feels great",
-      description:
-        "Lorem ipsum dolor sit amet consectetur adipisicing elit. Sequi, dolor.",
-    },
-    {
-      id: 56,
-      url: "/imgs/computer/lights.png",
-      category: "Lights",
-      title: "It's lit",
-      description:
-        "Lorem ipsum dolor sit amet consectetur adipisicing elit. Sequi, dolor.",
-    },
-    {
-      id: 67,
-      url: "/imgs/computer/desk.png",
-      category: "Desks",
-      title: "Stand up straight",
-      description:
-        "Lorem ipsum dolor sit amet consectetur adipisicing elit. Sequi, dolor.",
-    },
-    {
-      id: 78,
-      url: "/imgs/computer/headphones.png",
-      category: "Headphones",
-      title: "Sounds good",
-      description:
-        "Lorem ipsum dolor sit amet consectetur adipisicing elit. Sequi, dolor.",
-    },
-  ]);
-
-  const CARD_BUFFER =
-    width > BREAKPOINTS.lg ? 3 : width > BREAKPOINTS.sm ? 2 : 1;
-
-  const CAN_SHIFT_LEFT = offset < 0;
-
-  const CAN_SHIFT_RIGHT =
-    Math.abs(offset) < CARD_SIZE * (headlines.length - CARD_BUFFER);
-
-  const shiftLeft = () => {
-    if (!CAN_SHIFT_LEFT) {
-      return;
-    }
-    setOffset((pv) => (pv += CARD_SIZE));
-  };
-
-  const shiftRight = () => {
-    if (!CAN_SHIFT_RIGHT) {
-      return;
-    }
-    setOffset((pv) => (pv -= CARD_SIZE));
-  };
-
   const defaultHeadlines = [
     {
       id: 10,
@@ -178,6 +97,29 @@ const CardCarousel = () => {
       description: "We really value your feedback!",
     },
   ];
+  const [headlines, setHeadlines] = useState(defaultHeadlines);
+
+  const CARD_BUFFER =
+    width > BREAKPOINTS.lg ? 3 : width > BREAKPOINTS.sm ? 2 : 1;
+
+  const CAN_SHIFT_LEFT = offset < 0;
+
+  const CAN_SHIFT_RIGHT =
+    Math.abs(offset) < CARD_SIZE * (headlines.length - CARD_BUFFER);
+
+  const shiftLeft = () => {
+    if (!CAN_SHIFT_LEFT) {
+      return;
+    }
+    setOffset((pv) => (pv += CARD_SIZE));
+  };
+
+  const shiftRight = () => {
+    if (!CAN_SHIFT_RIGHT) {
+      return;
+    }
+    setOffset((pv) => (pv -= CARD_SIZE));
+  };
 
   useEffect(() => {
     async function fetchData() {
@@ -325,9 +267,9 @@ const CardCarousel = () => {
 
   return (
     <section className="w-[95vw] xl:w-[60vw]" ref={ref}>
-      <div className="relative overflow-x-scroll p-4">
+      <div className="relative overflow-x-scroll snap-x p-4">
         {/* CARDS */}
-        <div className="mx-auto max-w-6xl">
+        <div className="mx-auto snap-center max-w-6xl">
           <p className="mb-4 text-lg md:text-xl font-semibold text-center md:text-start">
             League Buzz :
             <span className="text-slate-500"> Catch Up on All the Action</span>
@@ -363,8 +305,8 @@ const CardCarousel = () => {
           </motion.div>
         </div>
 
-        {/* BUTTONS */}
-        <>
+        {/* BUTTONS
+        <div>
           <motion.button
             initial={false}
             animate={{
@@ -373,8 +315,8 @@ const CardCarousel = () => {
             className="absolute left-0 top-[60%] z-30 rounded-r-xl bg-slate-100/30 p-3 pl-2 text-4xl text-white backdrop-blur-sm transition-[padding] hover:pl-3"
             onClick={shiftLeft}
           >
-            <FiChevronLeft />
-          </motion.button>
+            {/* <FiChevronLeft /> */}
+        {/* </motion.button>
           <motion.button
             initial={false}
             animate={{
@@ -383,9 +325,9 @@ const CardCarousel = () => {
             className="absolute right-0 top-[60%] z-30 rounded-l-xl bg-slate-100/30 p-3 pr-2 text-4xl text-white backdrop-blur-sm transition-[padding] hover:pr-3"
             onClick={shiftRight}
           >
-            <FiChevronRight />
-          </motion.button>
-        </>
+            {/* <FiChevronRight /> */}
+        {/* </motion.button>
+        </div>  */}
       </div>
     </section>
   );

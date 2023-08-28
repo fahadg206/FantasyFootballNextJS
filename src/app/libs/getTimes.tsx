@@ -1,65 +1,77 @@
+"use client";
 import React, { useState, useEffect } from "react";
 
-export default function getTimes() {
-  const [showPostGame, setShowPostGame] = useState(false);
-  const [morningSlateEnd, setMorningSlateEnd] = useState(false);
-  const [afternoonSlateEnd, setAfternoonSlateEnd] = useState(false);
-  const [snfEnd, setSnfEnd] = useState(false);
+export default function useTimeChecks() {
+  const [isSundayAfternoon, setIsSundayAfternoon] = useState(false);
+  const [isSundayEvening, setIsSundayEvening] = useState(false);
+  const [isSundayNight, setIsSundayNight] = useState(false);
+  const [isMondayNight, setIsMondayNight] = useState(false);
 
-  const checkTime = () => {
-    const now = new Date();
-    const pacificTimeOffset = -7; // PDT offset is -7 hours (Daylight Saving Time)
-    const utcOffset = now.getTimezoneOffset() / 60; // Get the current UTC offset in hours
+  const checkTimes = () => {
+    const pacificTime = new Date().toLocaleString("en-US", {
+      timeZone: "America/Los_Angeles",
+    });
 
-    let hours = now.getUTCHours() + pacificTimeOffset;
-    const minutes = now.getUTCMinutes();
+    const currentTime = new Date(pacificTime);
 
-    if (hours < 0) {
-      hours += 24; // Adjust for negative hours due to time zone conversion
-    }
+    //REMEMBER GET RID OF -7
+    const sundayAfternoon = new Date(currentTime);
+    sundayAfternoon.setDate(
+      currentTime.getDate() + ((7 - currentTime.getDay() + 0 - 7) % 7)
+    );
+    sundayAfternoon.setHours(13, 30, 0, 0);
 
-    const dayOfWeek = now.getUTCDay() - 1;
+    const sundayEvening = new Date(currentTime);
+    sundayEvening.setDate(
+      currentTime.getDate() + ((7 - currentTime.getDay() + 0) % 7)
+    );
+    sundayEvening.setHours(16, 50, 0, 0);
 
+    const sundayNight = new Date(currentTime);
+    sundayNight.setDate(
+      currentTime.getDate() + ((7 - currentTime.getDay() + 0) % 7)
+    );
+    sundayNight.setHours(21, 30, 0, 0);
+
+    const mondayNight = new Date(currentTime);
+    mondayNight.setDate(
+      currentTime.getDate() + ((1 + 7 - currentTime.getDay()) % 7)
+    );
+    mondayNight.setHours(21, 30, 0, 0);
+
+    setIsSundayAfternoon(currentTime >= sundayAfternoon);
+    setIsSundayEvening(currentTime >= sundayEvening);
+    setIsSundayNight(currentTime >= sundayNight);
+    setIsMondayNight(currentTime >= mondayNight);
+
+    // Reset all states to false on Wednesday at midnight
     if (
-      (dayOfWeek === 1 && hours === 21 && minutes === 30) || // Monday after 9:30 PM
-      (dayOfWeek === 2 && hours === 0) || // Tuesday
-      (dayOfWeek === 3 && hours === 0 && minutes === 0) // Wednesday before 12:00 AM
+      currentTime.getDay() === 3 &&
+      currentTime.getHours() === 0 &&
+      currentTime.getMinutes() === 0
     ) {
-      setShowPostGame(true);
-      setMorningSlateEnd(false);
-      setAfternoonSlateEnd(false);
-      setSnfEnd(false);
-    } else {
-      setShowPostGame(false);
+      setIsSundayAfternoon(false);
+      setIsSundayEvening(false);
+      setIsSundayNight(false);
+      setIsMondayNight(false);
     }
-
-    //check the matchup after morning slate to see if any players still havent played
-    if (dayOfWeek === 4 && hours >= 21 && minutes >= 18) {
-      setMorningSlateEnd(true);
-    } else if (dayOfWeek === 3 && hours === 0 && minutes === 0) {
-      setMorningSlateEnd(false);
-    }
-
-    //check the matchup after afternoon slate to see if any players still havent played
-    if (dayOfWeek === 0 && hours === 17 && minutes >= 0) {
-      setAfternoonSlateEnd(true);
-    } else if (dayOfWeek === 3 && hours === 0 && minutes === 0) {
-      setAfternoonSlateEnd(false);
-    }
-
-    //check the matchup after SNF to see if any players still havent played
-    if (dayOfWeek === 0 && hours === 21 && minutes >= 30) {
-      setSnfEnd(true);
-    } else if (dayOfWeek === 3 && hours === 0 && minutes === 0) {
-      setSnfEnd(false);
-    }
+    console.log(sundayAfternoon);
   };
+  console.log(isSundayAfternoon);
+
+  useEffect(() => {
+    const interval = setInterval(checkTimes, 1000 * 60); // Check every minute
+    checkTimes(); // Check immediately when the component mounts
+
+    return () => {
+      clearInterval(interval); // Clean up the interval on unmount
+    };
+  }, []);
 
   return {
-    checkTime,
-    showPostGame,
-    morningSlateEnd,
-    afternoonSlateEnd,
-    snfEnd,
+    isSundayAfternoon,
+    isSundayEvening,
+    isSundayNight,
+    isMondayNight,
   };
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, lazy } from "react";
 
 import axios from "axios";
 
@@ -9,6 +9,7 @@ import Image from "next/image";
 import Scoreboard from "./Scoreboard";
 import Schedule from "../league/[leagueID]/schedule/page";
 import getMatchupMap from "../libs/getMatchupData";
+import useTimeChecks from "../libs/getTimes";
 import {
   Link,
   Button,
@@ -19,6 +20,7 @@ import {
   scroller,
 } from "react-scroll";
 import { useRouter } from "next/navigation";
+import { BsDot } from "react-icons/bs";
 
 interface ScheduleData {
   [userId: string]: {
@@ -75,6 +77,10 @@ export default function ScoreboardNav({ setShowScore }) {
   const [shouldDisplay, setShouldDisplay] = useState(false);
   const [selectedMatchup, setSelectedMatchup] = useState(false);
   const [week, setWeek] = useState<number>();
+  const [mnfEnd, setMnfEnd] = useState(false);
+  const [morningSlateEnd, setMorningSlateEnd] = useState(false);
+  const [afternoonSlateEnd, setAfternoonSlateEnd] = useState(false);
+  const [snfEnd, setSnfEnd] = useState(false);
 
   const [matchupMap, setMatchupMap] = useState<Map<string, MatchupMapData[]>>(
     new Map()
@@ -87,43 +93,15 @@ export default function ScoreboardNav({ setShowScore }) {
   const REACT_APP_LEAGUE_ID: string | null =
     localStorage.getItem("selectedLeagueID");
 
+  const { isSundayAfternoon, isSundayEvening, isSundayNight, isMondayNight } =
+    useTimeChecks();
+
   useEffect(() => {
-    const checkTime = () => {
-      const now = new Date();
-      const pacificTimeOffset = -7; // PDT offset is -7 hours (Daylight Saving Time)
-      const utcOffset = now.getTimezoneOffset() / 60; // Get the current UTC offset in hours
-
-      let hours = now.getUTCHours() + pacificTimeOffset;
-      const minutes = now.getUTCMinutes();
-
-      if (hours < 0) {
-        hours += 24; // Adjust for negative hours due to time zone conversion
-      }
-
-      const dayOfWeek = now.getUTCDay() - 1;
-
-      if (dayOfWeek === 2 && hours === 21 && minutes == 55) console.log("JEFE");
-
-      //console.log(`Hours: ${hours}`);
-      //console.log(`Minutes: ${minutes}`);
-      //console.log("day of the week", dayOfWeek);
-
-      if (
-        (dayOfWeek === 1 && hours === 22 && minutes >= 30) || // Monday after 10:30 PM
-        (dayOfWeek === 2 && hours > 0) || // Tuesday
-        (dayOfWeek === 3 && hours === 0 && minutes === 0) // Wednesday before 12:00 AM
-      ) {
-        setShouldDisplay(true);
-      } else {
-        setShouldDisplay(false);
-      }
-    };
-
-    checkTime(); // Initial check
-    const intervalId = setInterval(checkTime, 60000); // Check every minute
-
-    return () => clearInterval(intervalId); // Cleanup interval when component unmounts
-  }, [shouldDisplay]);
+    setMnfEnd(isMondayNight);
+    setSnfEnd(isSundayNight);
+    setAfternoonSlateEnd(isSundayEvening);
+    setMorningSlateEnd(isSundayAfternoon);
+  }, [isMondayNight, isSundayNight, isSundayEvening, isSundayAfternoon]);
 
   useEffect(() => {
     async function fetchMatchupData() {
@@ -225,6 +203,84 @@ export default function ScoreboardNav({ setShowScore }) {
       ? scheduleDataFinal[team2UserId]?.losses
       : undefined;
 
+    const starters1Points = scheduleDataFinal[team1.user_id]?.starters_points;
+    const starters2Points = scheduleDataFinal[team2.user_id]?.starters_points;
+
+    //check to see if every player on BOTH teams have more points than 0
+    const team1Played = scheduleDataFinal[team1.user_id].starters_points.every(
+      (starterPoints) => {
+        return starterPoints !== 0;
+      }
+    );
+    const team2Played = scheduleDataFinal[team2.user_id].starters_points.every(
+      (starterPoints) => {
+        return starterPoints !== 0;
+      }
+    );
+
+    let preGame;
+    let liveGame;
+    let postGame;
+
+    //check if we're in current week. If we are, display poll. Else, display over/under.
+    if (
+      parseFloat(team1.team_points) === 0 &&
+      parseFloat(team2.team_points) === 0
+    ) {
+      preGame = true;
+      postGame = false;
+      liveGame = false;
+    }
+
+    //live game
+    if (
+      (parseFloat(team1.team_points) !== 0 ||
+        parseFloat(team2.team_points) !== 0) &&
+      (starters1Points.includes(0) || starters2Points.includes(0))
+    ) {
+      liveGame = true;
+      preGame = false;
+      postGame = false;
+    }
+
+    //postgame
+    if (
+      team1Played &&
+      team2Played &&
+      (morningSlateEnd || afternoonSlateEnd || snfEnd || mnfEnd)
+    ) {
+      postGame = true;
+      preGame = false;
+      liveGame = false;
+    }
+    console.log("morning", morningSlateEnd);
+    console.log("AN", afternoonSlateEnd);
+    console.log("SNF", snfEnd);
+    console.log("MNF", mnfEnd);
+
+    //O/U jsx
+
+    const overUnderText = (
+      <div className="flex items-center justify-around mt-5">
+        <p className="flex-shrink-0 w-[9vw] text-center text-[12px] font-bold dark:text-[#949494]  ">
+          {team1Proj > team2Proj
+            ? team1?.name + " -" + Math.round(team1Proj - team2Proj)
+            : team2?.name + " -" + Math.round(team2Proj - team1Proj)}
+        </p>
+        <p className="flex-shrink-0 w-[9vw] text-center text-[12px] dark:text-[#949494] font-bold ml-2 ">
+          O/U: {Math.round(team1Proj + team2Proj)}
+        </p>
+      </div>
+    );
+
+    const finalText = <p className="text-center text-[12px] mt-2">FINAL</p>;
+
+    const liveText = (
+      <p className=" animate-pulse text-[12px] font-bold border-[1px] border-[#af1222] w-min self-center pr-2 rounded-lg text-[#af1222] flex items-center justify-center mt-2">
+        <BsDot className="" size={20} /> LIVE
+      </p>
+    );
+
     return (
       <div
         key={matchupID}
@@ -245,12 +301,12 @@ export default function ScoreboardNav({ setShowScore }) {
             );
           }}
         >
-          <div className="border border-black p-[30px] dark:bg-[#202123] rounded w-[85vw] flex flex-col">
+          <div className="border-[1px] border-[#af1222] border-opacity-10 p-[30px] dark:bg-[#0a0a0a] bg-[#e0dfdf] rounded w-[85vw] flex flex-col">
             <div
               className={
-                team2.team_points > team1.team_points
+                team2.team_points > team1.team_points && postGame
                   ? `team1 flex items-center justify-between mb-2 text-[#adaeaf]`
-                  : `team1 flex items-center justify-between mb-2`
+                  : `team1 flex items-center justify-between mb-2 font-bold`
               }
             >
               <div className="flex items-center">
@@ -267,7 +323,7 @@ export default function ScoreboardNav({ setShowScore }) {
                 className={
                   parseFloat(team1.team_points || "0") > 0
                     ? `text-[14px]`
-                    : `text-[11px] italic font-bold text-[#949494]`
+                    : `text-[11px] italic font-bold dark:text-[#949494]`
                 }
               >
                 {parseFloat(team1.team_points || "0") > 0 ||
@@ -280,9 +336,9 @@ export default function ScoreboardNav({ setShowScore }) {
             </div>
             <div
               className={
-                team1.team_points > team2.team_points
+                team1.team_points > team2.team_points && postGame
                   ? `team2 flex items-center justify-between text-[#adaeaf]`
-                  : `team2 flex items-center justify-between`
+                  : `team2 flex items-center justify-between font-bold`
               }
             >
               <div className="flex items-center">
@@ -299,7 +355,7 @@ export default function ScoreboardNav({ setShowScore }) {
                 className={
                   parseFloat(team2.team_points || "0") > 0
                     ? `text-[14px]`
-                    : `text-[11px] italic font-bold text-[#949494]`
+                    : `text-[11px] italic font-bold dark:text-[#949494]`
                 }
               >
                 {parseFloat(team1.team_points || "0") > 0 ||
@@ -311,20 +367,13 @@ export default function ScoreboardNav({ setShowScore }) {
               </p>
             </div>
 
-            {shouldDisplay ? (
-              <p className="text-center text-[14px] font-bold">{"FINAL"}</p>
-            ) : (
-              <div className="flex items-center justify-around mt-5">
-                <p className="flex-shrink-0 w-[9vw] text-center text-[9px] text-grey italic">
-                  {team1Proj > team2Proj
-                    ? team1?.name + " -" + Math.round(team1Proj - team2Proj)
-                    : team2?.name + " -" + Math.round(team2Proj - team1Proj)}
-                </p>
-                <p className="flex-shrink-0 w-[9vw] text-center text-[9px] ml-2 italic">
-                  O/U: {Math.round(team1Proj + team2Proj)}
-                </p>
-              </div>
-            )}
+            {preGame
+              ? overUnderText
+              : liveGame
+              ? liveText
+              : postGame
+              ? finalText
+              : ""}
           </div>
         </Link>
       </div>
@@ -333,7 +382,10 @@ export default function ScoreboardNav({ setShowScore }) {
 
   return (
     <div>
-      <div>
+      <div className="flex flex-col items-center">
+        <div className="font-bold text-center mt-2 border-b-[1px] border-[#af1222] border-opacity-10 w-min flex ">
+          Scoreboard
+        </div>
         {matchupText.map((matchup) => (
           <div key={uuidv4()}>{matchup}</div>
         ))}
