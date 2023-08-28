@@ -279,10 +279,10 @@ const TabsFeatures = () => {
             setSelectedManagerr(selectedManager);
             setSelected(tabNum);
           }}
-          className="relative z-0  w-full  gap-2 border-b-4 border-[#1a1a1a] p-3  transition-colors hover:bg-[#A29F9F] dark:hover:bg-[#1a1a1a] items-center justify-center flex flex-col"
+          className="relative z-0  w-full  gap-2 border-b-4 border-[#1a1a1a] p-3  transition-colors hover:bg-[#A29F9F] dark:hover:bg-[#1a1a1a] hover:rounded-2xl items-center justify-center flex flex-col"
         >
           <span
-            className={`rounded-lg  p-1  text-white shadow-[#af1222] transition-all duration-300 ${
+            className={`rounded-full  text-white shadow-[#af1222] transition-all duration-300 ${
               selected
                 ? "scale-100 opacity-100 shadow-lg"
                 : "scale-90 opacity-50 shadow"

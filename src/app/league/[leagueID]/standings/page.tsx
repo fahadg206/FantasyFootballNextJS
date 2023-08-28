@@ -128,11 +128,7 @@ const page = () => {
         //const sortByWins = [...teamArray].sort((a, b) => b[1].wins - a[1].wins);
 
         const sortedTeamData = Object.entries(managerInfo)
-          .sort((a, b) => {
-            const winsA = parseInt(a[1].wins || "0");
-            const winsB = parseInt(b[1].wins || "0");
-            return winsB - winsA;
-          })
+
           .sort((a, b) => {
             const bPoints =
               (parseFloat(b[1].team_points_for || "0") || 0) +
@@ -143,6 +139,11 @@ const page = () => {
               (parseFloat(a[1].team_points_for_dec || "0") || 0) / 100;
 
             return bPoints - aPoints;
+          })
+          .sort((a, b) => {
+            const winsA = parseInt(a[1].wins || "0");
+            const winsB = parseInt(b[1].wins || "0");
+            return winsB - winsA;
           });
 
         setSortedTeamDataFinal(sortedTeamData);

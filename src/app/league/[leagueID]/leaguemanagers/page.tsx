@@ -209,7 +209,7 @@ export default function Page() {
       selectedManagerMatchups.clear();
       try {
         setLoading(true);
-        for (let i = 1; i < 17; i++) {
+        for (let i = 1; i < 15; i++) {
           const weekMatchupMap = await fetchDataForWeek(i);
           // Handle additional processing or state updates if needed
         }

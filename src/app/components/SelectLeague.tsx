@@ -36,11 +36,11 @@ export default function page(props: myProps) {
     const response = await axios.get(
       `https://api.sleeper.app/v1/user/${props.username}`
     );
-    const data = response.data;
-    setUserId(data.user_id);
-    if (!userId || userId === null) {
+    if (!response || response === null) {
       setUserFound(false);
     }
+    const data = response.data;
+    setUserId(data.user_id);
   };
 
   // Grabbing users league data (all the leagues they are in) and passing it into array

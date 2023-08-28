@@ -56,6 +56,7 @@ const StaggeredDropDown = ({
           className="flex flex-col gap-2 p-2 rounded-lg text-[#1a1a1a]  bg-[#A39F9F] dark:bg-[#1a1a1a] dark:text-white shadow-xl absolute top-[120%] left-[50%] w-48 overflow-hidden"
         >
           <SmoothLink
+            className={!title1 ? `hidden` : `block`}
             to={title1}
             activeClass="active"
             spy={true}
@@ -71,6 +72,7 @@ const StaggeredDropDown = ({
             />
           </SmoothLink>
           <SmoothLink
+            className={!title2 ? `hidden` : `block`}
             to={title2}
             activeClass="active"
             spy={true}
@@ -86,6 +88,7 @@ const StaggeredDropDown = ({
             />
           </SmoothLink>
           <SmoothLink
+            className={!title3 ? `hidden` : `block`}
             to={title3}
             activeClass="active"
             spy={true}
@@ -101,6 +104,7 @@ const StaggeredDropDown = ({
             />
           </SmoothLink>
           <SmoothLink
+            className={!title4 ? `hidden` : `block`}
             to={title4}
             activeClass="active"
             spy={true}

@@ -368,7 +368,7 @@ const articles = () => {
         duration={700}
       >
         <BsArrowUpCircleFill
-          className="fixed bottom-5 right-3 opacity-40"
+          className="block animate-bounce fixed bottom-5 right-3 opacity-40 xl:hidden"
           size={20}
         />
       </SmoothLink>

@@ -41,7 +41,7 @@ const BarPoll = () => {
     {
       title: "League Managers Page",
       votes: 0,
-      color: "bg-slate-500",
+      color: "bg-[#58667A]",
     },
   ]);
 
@@ -127,7 +127,7 @@ const Options: React.FC<OptionsProps> = ({ votes, setVotes }) => {
       <h3 className="mb-6 text-2xl font-semibold  text-center">
         What is your favorite page from Fantasy Pulse so far?
       </h3>
-      <div className="mb-6 space-y-2">
+      <div className="mb-6 space-y-2 text-center">
         {votes.map((vote: VoteInfo) => {
           return (
             <motion.button
@@ -138,7 +138,7 @@ const Options: React.FC<OptionsProps> = ({ votes, setVotes }) => {
                 addVotes(votes);
               }}
               key={vote.title}
-              className={`w-full rounded-md ${vote.color} py-2 font-medium `}
+              className={`w-[80%] rounded-md ${vote.color} text-white text-center py-2 font-medium `}
             >
               {vote.title}
             </motion.button>
@@ -146,7 +146,7 @@ const Options: React.FC<OptionsProps> = ({ votes, setVotes }) => {
         })}
       </div>
       <div className="flex items-center justify-center">
-        <span className="mb-2 italic text-slate-400 text-center">
+        <span className="mb-2 italic text-black dark:text-slate-400 text-center">
           {totalVotes} votes
         </span>
       </div>

@@ -515,7 +515,7 @@ const TestimonialList = ({
                     >
                       <span className="border-b-2 border-[#1a1a1a] border-opacity-80 text-center mb-1 flex justify-center items-center">
                         <Image
-                          className="rounded-full mr-2"
+                          className="rounded-full mr-2 mb-1"
                           src={team1?.avatar ?? ""}
                           alt="manager"
                           width={22}
@@ -627,7 +627,7 @@ const TestimonialList = ({
                     >
                       <span className="border-b-2 border-[#1a1a1a] border-opacity-80 text-center mb-1 flex justify-center items-center">
                         <Image
-                          className="rounded-full mr-2"
+                          className="rounded-full mr-2 mb-1"
                           src={team2?.avatar ?? ""}
                           alt="manager"
                           width={22}
@@ -741,7 +741,9 @@ const TestimonialList = ({
                     >
                       <span className="border-b-2 border-[#1a1a1a] border-opacity-80 text-center mb-1 flex justify-center items-center">
                         <Image
-                          className={team3 ? "rounded-full mr-2" : "hidden"}
+                          className={
+                            team3 ? "rounded-full mr-2 mb-1" : "hidden"
+                          }
                           src={team3?.avatar ?? ""}
                           alt="manager"
                           width={22}
@@ -867,7 +869,7 @@ const TestimonialList = ({
             return (
               <div
                 key={transaction.id}
-                className="w-screen md:w-[60vw] h-[27vh] lg:w-[25vw] flex flex-wrap justify-center rounded-lg overflow-hidden relative border-2 border-[#af1222] dark:border-[#1a1a1a] border-opacity-80"
+                className="w-screen md:w-[60vw] h-[27vh] font-bold lg:w-[25vw] flex flex-wrap justify-center rounded-lg overflow-hidden relative border-2 border-[#af1222] dark:border-[#1a1a1a] border-opacity-80"
               >
                 <div>
                   <div className="text-[13px] xl:text-[20px] text-white font-bold p-2 flex justify-center bg-[#af1222] w-screen md:w-[60vw] lg:w-[25vw]">
@@ -878,7 +880,7 @@ const TestimonialList = ({
                   <div className="waiver mt-3">
                     <span className="border-b-2 border-[#1a1a1a] border-opacity-80 text-center mb-1 flex justify-center items-center">
                       <Image
-                        className="rounded-full mr-2"
+                        className="rounded-full mr-2 mb-1"
                         src={player.avatar ?? ""}
                         alt="manager"
                         width={22}
@@ -942,6 +944,9 @@ const TestimonialList = ({
                     </div>
                   </div>
                 </div>
+                <span className="text-3xl absolute top-2 right-2 text-white dark:text-[black]">
+                  <IoPulseSharp />
+                </span>
               </div>
             );
           }

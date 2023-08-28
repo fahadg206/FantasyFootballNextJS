@@ -52,14 +52,14 @@ const ArticleTemplate = ({
         <p className="text-3xl md:text-[32px] uppercase font-sans font-bold w-full text-center">
           {title}
         </p>
-        <div className="flex md:flex items-center w-full justify-between border-b-2 dark:border-[#EDEDED] border-[#af1222] border-opacity-10 dark:border-opacity-10 ">
+        <div className="flex md:flex items-center w-full justify-between border-b-2 border-spacing-y-8 dark:border-[#EDEDED] border-[#af1222] border-opacity-10 dark:border-opacity-10 ">
           <div className="flex items-center">
             <Image
-              className="rounded-full mr-2"
+              className="rounded-full mr-2 mb-2"
               src={authorImg}
               alt="author images"
-              height={40}
-              width={40}
+              height={35}
+              width={35}
             />
             <div className="flex flex-col">
               <p className="text-[13px]">{author}</p>
@@ -68,35 +68,35 @@ const ArticleTemplate = ({
           </div>
           <p className="text-[10px] md:text-[11px] ">{date}</p>
         </div>
-        <p className=" w-[90%]  break-words text-[12px] md:indent-12 sm:text-[13px] md:text-[14px]">
+        <p className="mt-3 w-[90%]  break-words text-[12px] md:indent-12 sm:text-[13px] md:text-[14px]">
           {p1}
           <br />
         </p>
-        <p className=" w-[90%]  break-words text-[12px] md:indent-12 sm:text-[13px] md:text-[14px]">
+        <p className=" w-[90%]  break-words text-[12px] sm:text-[13px] md:text-[14px]">
           {p2}
           <br />
         </p>
-        <p className="w-[90%]  break-words text-[12px] md:indent-12 sm:text-[13px] md:text-[14px]">
+        <p className="w-[90%]  break-words text-[12px] sm:text-[13px] md:text-[14px]">
           {p3}
           <br />
         </p>
-        <p className=" w-[90%]  break-words text-[12px] md:indent-12 sm:text-[13px] md:text-[14px]">
+        <p className=" w-[90%]  break-words text-[12px] sm:text-[13px] md:text-[14px]">
           {p4}
           <br />
         </p>
-        <p className=" w-[90%]  break-words text-[12px] md:indent-12 sm:text-[13px] md:text-[14px]">
+        <p className=" w-[90%]  break-words text-[12px] sm:text-[13px] md:text-[14px]">
           {p5}
           <br />
         </p>
-        <p className="w-[90%]  break-words text-[12px] md:indent-12 sm:text-[13px] md:text-[14px]">
+        <p className="w-[90%]  break-words text-[12px] sm:text-[13px] md:text-[14px]">
           {p6}
           <br />
         </p>
-        <p className="w-[90%]  break-words text-[12px] md:indent-12 sm:text-[13px] md:text-[14px]">
+        <p className="w-[90%]  break-words text-[12px] sm:text-[13px] md:text-[14px]">
           {p7}
           <br />
         </p>
-        <p className="w-[90%]  break-words text-[12px] md:indent-12 sm:text-[13px] md:text-[14px]">
+        <p className="w-[90%]  break-words text-[12px] sm:text-[13px] md:text-[14px]">
           {p8}
           <br />
         </p>
