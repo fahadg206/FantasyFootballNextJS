@@ -328,7 +328,7 @@ const CardCarousel = () => {
       <div className="relative overflow-x-scroll p-4">
         {/* CARDS */}
         <div className="mx-auto max-w-6xl">
-          <p className="mb-4 text-xl font-semibold">
+          <p className="mb-4 text-lg md:text-xl font-semibold text-center md:text-start">
             League Buzz :
             <span className="text-slate-500"> Catch Up on All the Action</span>
           </p>

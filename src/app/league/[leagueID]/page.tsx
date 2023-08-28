@@ -51,7 +51,7 @@ export default function page() {
   return (
     <div>
       <div className=" px-4">
-        <div className="dark:text-slate-50 text-2xl font-semibold flex items-center justify-center">
+        <div className="dark:text-slate-50 text-lg md:text-2xl font-semibold flex items-center justify-center w-full">
           <div>
             <Image
               src={`https://sleepercdn.com/avatars/thumbs/${leagueInfo.avatar}`}

@@ -32,7 +32,10 @@ export default function RootLayout({
                 <NavBar usernameSubmitted={true} leagueID="" />
               </div>
               <div className="block xl:col-start-3 xl:col-end-8 ">
-                <Themechanger />
+                <div className="hidden xl:block">
+                  <Themechanger />
+                </div>
+
                 <div className="flex w-[60vw]">
                   <Scoreboard />
                 </div>

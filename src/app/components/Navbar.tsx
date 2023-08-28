@@ -28,6 +28,7 @@ import Link from "next/link";
 import SelectedLeagueContext from "../context/SelectedLeagueContext";
 import ScoreboardNav from "./ScoreboardNav";
 import Router from "next/router";
+import Themechanger from "./ThemeChanger";
 
 interface MyProps {
   leagueID: string;
@@ -319,6 +320,9 @@ function NavBar(props: MyProps) {
                     <RiTeamFill size={18} className="mr-1 " /> League Managers
                   </span>
                 </Link>
+              </li>
+              <li>
+                <Themechanger />
               </li>
             </ul>
           </div>

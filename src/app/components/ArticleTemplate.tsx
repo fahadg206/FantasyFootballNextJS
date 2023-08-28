@@ -52,7 +52,7 @@ const ArticleTemplate = ({
         <p className="text-2xl md:text-[32px] font-bold w-full text-center">
           {title}
         </p>
-        <div className="flex md:flex items-center w-full justify-around border-b-2 dark:border-[#EDEDED] border-[#000000] dark:border-opacity-10 border-opacity-20">
+        <div className="flex md:flex items-center w-full justify-between border-b-2 dark:border-[#EDEDED] border-[#000000] dark:border-opacity-10 border-opacity-20">
           <div className="flex items-center">
             <Image
               className="rounded-full mr-2"
