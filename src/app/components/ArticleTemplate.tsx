@@ -38,7 +38,7 @@ const ArticleTemplate = ({
   p8,
 }: ArticleTemplate) => {
   return (
-    <div className="flex flex-col items-center justify-end sm:flex sm:flex-row sm:justify-around sm:items-start  w-[95vw] xl:w-[60vw] md:rounded md:border-2 md:border-[#1a1a1a] border-opacity-10 mb-2">
+    <div className="flex flex-col items-center justify-end sm:flex sm:flex-row sm:justify-around sm:items-start  w-[95vw] xl:w-[60vw] rounded border-b-2 border-dotted border-[#af1222] dark:border-[white] border-opacity-10 mb-2">
       <div className="mt-5 md:sticky md:top-5">
         <Image
           className="rounded-[10px] "
@@ -49,10 +49,10 @@ const ArticleTemplate = ({
         />
       </div>
       <div className="grid grid-cols-1 gap-y-3 justify-items-center mt-10 w-[90%] sm:w-[60%] ">
-        <p className="text-2xl md:text-[32px] font-bold w-full text-center">
+        <p className="text-3xl md:text-[32px] uppercase font-sans font-bold w-full text-center">
           {title}
         </p>
-        <div className="flex md:flex items-center w-full justify-between border-b-2 dark:border-[#EDEDED] border-[#000000] dark:border-opacity-10 border-opacity-20">
+        <div className="flex md:flex items-center w-full justify-between border-b-2 dark:border-[#EDEDED] border-[#af1222] border-opacity-10 dark:border-opacity-10 ">
           <div className="flex items-center">
             <Image
               className="rounded-full mr-2"
@@ -62,35 +62,43 @@ const ArticleTemplate = ({
               width={40}
             />
             <div className="flex flex-col">
-              <p>{author}</p>
+              <p className="text-[13px]">{author}</p>
               <p className="text-[10px] font-bold">{jobtitle}</p>
             </div>
           </div>
-          <p className="text-[10px] md:text-[12px] font-bold">{date}</p>
+          <p className="text-[10px] md:text-[11px] ">{date}</p>
         </div>
-        <p className=" w-[90%]  break-words text-[11px] sm:text-[13px] md:text-[15px]">
+        <p className=" w-[90%]  break-words text-[12px] md:indent-12 sm:text-[13px] md:text-[14px]">
           {p1}
+          <br />
         </p>
-        <p className=" w-[90%]  break-words text-[11px] sm:text-[13px] md:text-[15px]">
+        <p className=" w-[90%]  break-words text-[12px] md:indent-12 sm:text-[13px] md:text-[14px]">
           {p2}
+          <br />
         </p>
-        <p className="w-[90%]  break-words text-[11px] sm:text-[13px] md:text-[15px]">
+        <p className="w-[90%]  break-words text-[12px] md:indent-12 sm:text-[13px] md:text-[14px]">
           {p3}
+          <br />
         </p>
-        <p className=" w-[90%]  break-words text-[11px] sm:text-[13px] md:text-[15px]">
+        <p className=" w-[90%]  break-words text-[12px] md:indent-12 sm:text-[13px] md:text-[14px]">
           {p4}
+          <br />
         </p>
-        <p className=" w-[90%]  break-words text-[11px] sm:text-[13px] md:text-[15px]">
+        <p className=" w-[90%]  break-words text-[12px] md:indent-12 sm:text-[13px] md:text-[14px]">
           {p5}
+          <br />
         </p>
-        <p className="w-[90%]  break-words text-[11px] sm:text-[13px] md:text-[15px]">
+        <p className="w-[90%]  break-words text-[12px] md:indent-12 sm:text-[13px] md:text-[14px]">
           {p6}
+          <br />
         </p>
-        <p className="w-[90%]  break-words text-[11px] sm:text-[13px] md:text-[15px]">
+        <p className="w-[90%]  break-words text-[12px] md:indent-12 sm:text-[13px] md:text-[14px]">
           {p7}
+          <br />
         </p>
-        <p className="w-[90%]  break-words text-[11px] sm:text-[13px] md:text-[15px]">
+        <p className="w-[90%]  break-words text-[12px] md:indent-12 sm:text-[13px] md:text-[14px]">
           {p8}
+          <br />
         </p>
         <br />
         <br />

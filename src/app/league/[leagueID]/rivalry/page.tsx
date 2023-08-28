@@ -616,8 +616,15 @@ const matchups = () => {
   //   .matchups[0].matchup[0].starters[0].toString();
 
   //console.log("Work ", rivalManagers);
+
+  rivalsMap.get("Rival")?.matchups.sort((a, b) => {
+    return a.week - b.week;
+  });
+
   const slate =
     rivalsMap.get("Rival") && rivalsMap.get("Rival")?.matchups[weekCount];
+
+  console.log(rivalsMap.get("Rival"));
 
   const colorObj: { [key: string]: string } = {
     QB: "text-[10px]  p-1 rounded-xl bg-[#DE3449] font-bold  text-center ",
@@ -628,7 +635,7 @@ const matchups = () => {
     K: "text-[10px]  p-1 rounded-xl bg-[#BD66FF] font-bold  text-center ",
   };
 
-  const weekString = week?.toString();
+  const weekString = slate?.week?.toString();
 
   let team1Proj = 0.0;
   let team2Proj = 0.0;
@@ -854,7 +861,15 @@ const matchups = () => {
                                         total + parseFloat(currentValue),
                                       0
                                     )
-                                    .toFixed(2)}
+                                    .toFixed(2) === "0.00"
+                                    ? "-"
+                                    : slate?.matchup[0].points
+                                        .reduce(
+                                          (total, currentValue) =>
+                                            total + parseFloat(currentValue),
+                                          0
+                                        )
+                                        .toFixed(2)}
                                 </Text>
                                 <p className="text-[#A6A6A6] text-[8px] md:text-[10px] font-bold italic">
                                   {team1Proj.toFixed(2)}
@@ -974,13 +989,21 @@ const matchups = () => {
                                     },
                                   }}
                                 >
-                                  {slate.matchup[1].points
+                                  {slate?.matchup[1].points
                                     .reduce(
                                       (total, currentValue) =>
                                         total + parseFloat(currentValue),
                                       0
                                     )
-                                    .toFixed(2)}
+                                    .toFixed(2) === "0.00"
+                                    ? "-"
+                                    : slate?.matchup[1].points
+                                        .reduce(
+                                          (total, currentValue) =>
+                                            total + parseFloat(currentValue),
+                                          0
+                                        )
+                                        .toFixed(2)}
                                 </Text>
                                 <p className="text-[#A6A6A6] text-[8px] md:text-[10px] font-bold italic">
                                   {team2Proj.toFixed(2)}

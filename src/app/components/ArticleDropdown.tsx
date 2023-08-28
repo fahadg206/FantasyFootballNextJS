@@ -18,13 +18,21 @@ import {
   scroller,
 } from "react-scroll";
 import { title } from "process";
+import { GiTeamIdea } from "react-icons/gi";
+import { FaFaceSadCry } from "react-icons/fa6";
+import { GiDonut } from "react-icons/gi";
+import { FaUserDoctor } from "react-icons/fa6";
 
 const StaggeredDropDown = ({
   title1,
   title2,
+  title3,
+  title4,
 }: {
   title1: string;
   title2: string;
+  title3: string;
+  title4: string;
 }) => {
   const [open, setOpen] = useState(false);
 
@@ -33,9 +41,9 @@ const StaggeredDropDown = ({
       <motion.div animate={open ? "open" : "closed"} className="relative">
         <button
           onClick={() => setOpen((pv) => !pv)}
-          className="flex items-center gap-2 px-3 py-2 rounded-xl text-white font-bold bg-[#1a1a1a] transition-colors"
+          className="flex items-center gap-2 px-3 py-2 rounded-xl text-[#1a1a1a] font-bold bg-[#A39F9F] dark:bg-[#1a1a1a] dark:text-white transition-colors"
         >
-          <span className="font-medium text-sm">Pick an Article!</span>
+          <span className="text-[12px]">Pick an Article!</span>
           <motion.span variants={iconVariants}>
             <FiChevronDown />
           </motion.span>
@@ -45,7 +53,7 @@ const StaggeredDropDown = ({
           initial={wrapperVariants.closed}
           variants={wrapperVariants}
           style={{ originY: "top", translateX: "-50%" }}
-          className="flex flex-col gap-2 p-2 rounded-lg bg-[#1a1a1a] shadow-xl absolute top-[120%] left-[50%] w-48 overflow-hidden"
+          className="flex flex-col gap-2 p-2 rounded-lg text-[#1a1a1a]  bg-[#A39F9F] dark:bg-[#1a1a1a] dark:text-white shadow-xl absolute top-[120%] left-[50%] w-48 overflow-hidden"
         >
           <SmoothLink
             to={title1}
@@ -58,7 +66,7 @@ const StaggeredDropDown = ({
           >
             <Option
               setOpen={setOpen}
-              Icon={FiEdit}
+              Icon={GiTeamIdea}
               text={title1.substring(0, 20) + "..."}
             />
           </SmoothLink>
@@ -73,13 +81,40 @@ const StaggeredDropDown = ({
           >
             <Option
               setOpen={setOpen}
-              Icon={FiPlusSquare}
+              Icon={FaFaceSadCry}
               text={title2.substring(0, 20) + "..."}
             />
           </SmoothLink>
-
-          <Option setOpen={setOpen} Icon={FiShare} text="Share" />
-          <Option setOpen={setOpen} Icon={FiTrash} text="Remove" />
+          <SmoothLink
+            to={title3}
+            activeClass="active"
+            spy={true}
+            delay={100}
+            smooth={true}
+            offset={50}
+            duration={700}
+          >
+            <Option
+              setOpen={setOpen}
+              Icon={GiDonut}
+              text={title3.substring(0, 20) + "..."}
+            />
+          </SmoothLink>
+          <SmoothLink
+            to={title4}
+            activeClass="active"
+            spy={true}
+            delay={100}
+            smooth={true}
+            offset={50}
+            duration={700}
+          >
+            <Option
+              setOpen={setOpen}
+              Icon={FaUserDoctor}
+              text={title4.substring(0, 20) + "..."}
+            />
+          </SmoothLink>
         </motion.ul>
       </motion.div>
     </div>
@@ -91,7 +126,7 @@ const Option = ({ text, Icon, setOpen }) => {
     <motion.li
       variants={itemVariants}
       onClick={() => setOpen(false)}
-      className="flex items-center gap-2 w-full p-2 text-xs font-medium whitespace-nowrap rounded-md text-white hover:bg-indigo-100  hover:text-[#af1222] transition-colors cursor-pointer"
+      className="flex items-center gap-2 w-full p-2 text-xs font-medium whitespace-nowrap rounded-md  hover:bg-indigo-100  hover:text-[#af1222] transition-colors cursor-pointer"
     >
       <motion.span variants={actionIconVariants}>
         <Icon />

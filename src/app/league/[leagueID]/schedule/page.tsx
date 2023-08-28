@@ -17,6 +17,7 @@ import {
   scrollSpy,
   scroller,
 } from "react-scroll";
+import getTimes from "../../../libs/getTimes";
 
 interface NflState {
   season: string;
@@ -101,6 +102,9 @@ export default function Schedule() {
   const [snfEnd, setSnfEnd] = useState(false);
   const [nflState, setNflState] = useState<NflState>();
   const [playersData, setPlayersData] = React.useState([]);
+  const [checkTimeFunction, setCheckTimeFunction] = useState<
+    (() => void) | undefined
+  >(undefined);
 
   const REACT_APP_LEAGUE_ID = localStorage.getItem("selectedLeagueID");
 
@@ -140,60 +144,39 @@ export default function Schedule() {
   }, []);
 
   useEffect(() => {
-    const checkTime = () => {
-      const now = new Date();
-      const pacificTimeOffset = -7; // PDT offset is -7 hours (Daylight Saving Time)
-      const utcOffset = now.getTimezoneOffset() / 60; // Get the current UTC offset in hours
-
-      let hours = now.getUTCHours() + pacificTimeOffset;
-      const minutes = now.getUTCMinutes();
-
-      if (hours < 0) {
-        hours += 24; // Adjust for negative hours due to time zone conversion
+    async function fetchTimes() {
+      try {
+        const times = await getTimes();
+        setCheckTimeFunction(() => times.checkTime);
+        setMorningSlateEnd(times.morningSlateEnd);
+        setAfternoonSlateEnd(times.afternoonSlateEnd);
+        setSnfEnd(times.snfEnd);
+        setShowPostGame(times.showPostGame);
+      } catch (error) {
+        console.error("Error fetching times data:", error);
       }
+    }
+    fetchTimes();
 
-      const dayOfWeek = now.getUTCDay() - 1;
-
-      if (
-        (dayOfWeek === 1 && hours === 21 && minutes === 30) || // Monday after 9:30 PM
-        (dayOfWeek === 2 && hours === 0) || // Tuesday
-        (dayOfWeek === 3 && hours === 0 && minutes === 0) // Wednesday before 12:00 AM
-      ) {
-        setShowPostGame(true);
-        setMorningSlateEnd(false);
-        setAfternoonSlateEnd(false);
-        setSnfEnd(false);
-      } else {
-        setShowPostGame(false);
+    // Initial check
+    const intervalId = setInterval(() => {
+      if (checkTimeFunction) {
+        checkTimeFunction();
       }
+    }, 60000); // Check every minute
 
-      //check the matchup after morning slate to see if any players still havent played
-      if (dayOfWeek === 4 && hours >= 21 && minutes >= 18) {
-        setMorningSlateEnd(true);
-      } else if (dayOfWeek === 3 && hours === 0 && minutes === 0) {
-        setMorningSlateEnd(false);
-      }
-
-      //check the matchup after afternoon slate to see if any players still havent played
-      if (dayOfWeek === 0 && hours === 17 && minutes >= 0) {
-        setAfternoonSlateEnd(true);
-      } else if (dayOfWeek === 3 && hours === 0 && minutes === 0) {
-        setAfternoonSlateEnd(false);
-      }
-
-      //check the matchup after SNF to see if any players still havent played
-      if (dayOfWeek === 0 && hours === 21 && minutes >= 30) {
-        setSnfEnd(true);
-      } else if (dayOfWeek === 3 && hours === 0 && minutes === 0) {
-        setSnfEnd(false);
-      }
-    };
-
-    checkTime(); // Initial check
-    const intervalId = setInterval(checkTime, 60000); // Check every minute
-
-    return () => clearInterval(intervalId); // Cleanup interval when component unmounts
+    return () => {
+      clearInterval(intervalId);
+      setCheckTimeFunction(undefined);
+    }; // Cleanup interval when component unmounts
   }, []);
+
+  // useEffect(() => {
+  //   checkTime(); // Initial check
+  //   const intervalId = setInterval(checkTime, 60000); // Check every minute
+
+  //   return () => clearInterval(intervalId); // Cleanup interval when component unmounts
+  // }, []);
 
   let matchupText;
 
@@ -211,9 +194,10 @@ export default function Schedule() {
 
         const nflState = await getNflState();
         if (!initialize) {
-          setCounter(nflState.display_week);
+          setCounter(!nflState.display_week ? 1 : nflState.display_week);
           initialize = true;
         }
+        console.log(nflState.display_week);
         setNflState(nflState);
         const matchupMapDataPoll = await getMatchupMap(
           REACT_APP_LEAGUE_ID,

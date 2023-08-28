@@ -9,6 +9,7 @@ import pulseDr from "../../../images/pulsecheck.jpg";
 import doctor from "../../../images/Doctor.jpg";
 import glazer from "../../../images/Glazer.jpg";
 import boo from "../../../images/boo.png";
+import PulseCheck from "../../../images/Pulse Check.jpg";
 import weekly_recap from "../../../images/week_recap.png";
 import {
   collection,
@@ -29,6 +30,7 @@ import {
   scroller,
 } from "react-scroll";
 import ArticleDropdown from "../../../components/ArticleDropdown";
+import { BsArrowUpCircleFill } from "react-icons/bs";
 
 const JsonBigInt = require("json-bigint");
 
@@ -245,6 +247,8 @@ const articles = () => {
         <ArticleDropdown
           title1={articles?.title || ""}
           title2={articles2?.title || ""}
+          title3={articles3?.title || ""}
+          title4={articles4?.title || ""}
         />
       </div>
       <Element name={articles?.title || ""}>
@@ -317,9 +321,9 @@ const articles = () => {
         <div>
           <ArticleTemplate
             title={articles4?.title || ""}
-            image={pulseDr}
+            image={PulseCheck}
             author={"Greg Roberts"}
-            authorImg={doctor}
+            authorImg={pulseDr}
             jobtitle="Fantasy Pulse Medical Director"
             date="Sep 14th, 2023"
             p1={articles4?.paragraph1 || ""}
@@ -334,6 +338,20 @@ const articles = () => {
           />
         </div>
       </Element>
+      <SmoothLink
+        to={articles.title}
+        activeClass="active"
+        spy={true}
+        delay={100}
+        smooth={true}
+        offset={50}
+        duration={700}
+      >
+        <BsArrowUpCircleFill
+          className="fixed bottom-5 right-3 opacity-40"
+          size={20}
+        />
+      </SmoothLink>
     </div>
   );
 };

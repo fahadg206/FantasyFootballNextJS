@@ -28,7 +28,7 @@ export default function RootLayout({
         <Providers>
           <SelectedManagerProvider>
             <div className="flex flex-col xl:grid xl:grid-cols-8">
-              <div className="block xl:col-start-1 sticky top-0 z-50 xl:static ">
+              <div className="block xl:col-start-1  ">
                 <NavBar usernameSubmitted={true} leagueID="" />
               </div>
               <div className="block xl:col-start-3 xl:col-end-8 ">
@@ -39,7 +39,7 @@ export default function RootLayout({
                 <div className="flex w-[60vw]">
                   <Scoreboard />
                 </div>
-                <div className=" w-screen xl:w-[60vw] flex justify-center">
+                <div className=" w-screen xl:w-[60vw] flex justify-center mt-2">
                   {children}
                 </div>
               </div>
