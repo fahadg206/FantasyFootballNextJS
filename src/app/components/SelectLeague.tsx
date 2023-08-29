@@ -129,7 +129,7 @@ export default function Page(props: myProps) {
         }
       >
         <p className="italic text-[13px] text-[#807c7c] mr-2">
-          Don't have a Sleeper account?
+          {"Don't have a Sleeper account?"}
         </p>
         <button
           onClick={() => {
@@ -143,7 +143,7 @@ export default function Page(props: myProps) {
           }}
           className="text-[12px] text-[#af1222] border-2 border-[#af1222] p-1  rounded hover:bg-[#1a1a1a] cursor-pointer"
         >
-          Demo
+          {"Demo"}
         </button>
       </div>
     </div>

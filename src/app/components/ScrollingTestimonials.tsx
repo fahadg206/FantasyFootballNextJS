@@ -18,6 +18,7 @@ import {
 import { db, storage } from "../firebase";
 
 import { LuUserPlus, LuUserMinus } from "react-icons/lu";
+import { v4 as uuidv4 } from "uuid";
 
 interface ScheduleData {
   [userId: string]: {
@@ -556,7 +557,7 @@ const TestimonialList = ({
                           })}
                           {team1?.draft_picks_recieved?.map((pick) => {
                             return (
-                              <div className="">
+                              <div className="" key={uuidv4()}>
                                 <span className="flex items-center">
                                   <LuUserPlus className="text-[green] mr-1" />
                                   {` ${pick.season} ${`${pick.round}${
@@ -675,7 +676,7 @@ const TestimonialList = ({
                           })}
                           {team2?.draft_picks_recieved?.map((pick) => {
                             return (
-                              <div className="">
+                              <div className="" key={uuidv4()}>
                                 <span className="flex items-center">
                                   <LuUserPlus className="text-[green] mr-1" />
                                   {` ${pick.season} ${`${pick.round}${
@@ -724,7 +725,7 @@ const TestimonialList = ({
                           })}
                           {team2?.draft_picks_sent?.map((pick) => {
                             return (
-                              <div className="">
+                              <div className="" key={uuidv4()}>
                                 <span className="flex items-center">
                                   <LuUserMinus className="text-[#af1222] mr-1" />
                                   {` ${pick.season} ${`${pick.round}${
@@ -795,7 +796,7 @@ const TestimonialList = ({
                           })}
                           {team3?.draft_picks_recieved?.map((pick) => {
                             return (
-                              <div className="">
+                              <div className="" key={uuidv4()}>
                                 <span className="flex items-center">
                                   <LuUserPlus className="text-[green] mr-1" />
                                   {` ${pick.season} ${`${pick.round}${

@@ -5,6 +5,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import { useState, useEffect } from "react";
 import getMatchupMap from "../libs/getMatchupData";
 import { useSelectedManager } from "../context/SelectedManagerContext";
+import { v4 as uuidv4 } from "uuid";
 
 import axios from "axios";
 import Image from "next/image";
@@ -220,6 +221,7 @@ const TabsFeatures = () => {
 
               return (
                 <div
+                  key={uuidv4()}
                   className="player flex flex-col justify-center items-center p-2 w-[100px] h-[100px]  md:w-[140px] md:h-[140px]  hover:scale-105 hover:duration-200 cursor-pointer"
                   style={{ fontSize }}
                 >
@@ -331,10 +333,10 @@ const TabsFeatures = () => {
           {userDataArray.map((user, index) => {
             return selected === index ? (
               <motion.div
+                key={index}
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: 10 }}
-                key={index}
               >
                 <>
                   <div className="w-full flex flex-col justify-center items-center text-xl font-bold mt-3">

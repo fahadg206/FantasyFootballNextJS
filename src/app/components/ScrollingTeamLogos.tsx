@@ -90,6 +90,7 @@ const ScrollingTeamLogos = () => {
     <>
       {userDataArray.map((user, index) => (
         <button
+          key={index}
           onClick={() => {
             localStorage.setItem(
               "selectedManager",
@@ -113,6 +114,7 @@ const ScrollingTeamLogos = () => {
     <>
       {userDataArray.map((user, index) => (
         <button
+          key={index}
           onClick={() => {
             localStorage.setItem(
               "selectedManager",
