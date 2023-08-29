@@ -7,7 +7,7 @@ import HomePoll from "../../components/HomePoll";
 import axios from "axios";
 import Image from "next/image";
 
-export default function page() {
+export default function Page() {
   const [leagueInfo, setLeagueInfo] = useState({});
   const [playersData, setPlayersData] = useState([]);
   const leagueID = localStorage.getItem("selectedLeagueID");

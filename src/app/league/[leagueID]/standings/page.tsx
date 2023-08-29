@@ -42,7 +42,7 @@ interface TeamData {
 
 type SortedTeamData = [string, TeamData][];
 
-const page = () => {
+const Page = () => {
   const [managerInfo, setManagerInfo] = useState<ManagerInfo>({});
   const [sortedTeamDataFinal, setSortedTeamDataFinal] =
     useState<SortedTeamData>([]);
@@ -283,7 +283,7 @@ const page = () => {
   );
 };
 
-export default page;
+export default Page;
 
 const numberToOrdinal = (n: number) => {
   let ord = "th";

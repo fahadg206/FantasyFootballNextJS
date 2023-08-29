@@ -96,6 +96,7 @@ export default function Home() {
     showUsernames = usernames.map((username: string) => {
       return (
         <div
+          key={username}
           onClick={() => {
             setUsernameSubmitted(false);
             setText(username);

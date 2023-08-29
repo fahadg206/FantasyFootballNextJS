@@ -88,7 +88,7 @@ interface Starter {
 const REACT_APP_LEAGUE_ID: string =
   process.env.REACT_APP_LEAGUE_ID || "872659020144656384";
 
-const matchups = () => {
+const Matchups = () => {
   const [selected, setSelected] = React.useState(new Set(["Select User"]));
   const [weekCount, setWeekCount] = useState(0);
   const [week, setWeek] = useState<number>();
@@ -1195,4 +1195,4 @@ const matchups = () => {
   );
 };
 
-export default matchups;
+export default Matchups;

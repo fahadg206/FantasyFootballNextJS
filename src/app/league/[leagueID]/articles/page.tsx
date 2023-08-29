@@ -48,7 +48,7 @@ interface Article {
   paragraph8: string;
 }
 
-const articles = () => {
+const Articles = () => {
   const [loading, setLoading] = useState<Boolean>(true);
   const [articles, setArticles] = useState<Article>({
     title: "",
@@ -376,4 +376,4 @@ const articles = () => {
   );
 };
 
-export default articles;
+export default Articles;

@@ -18,7 +18,7 @@ interface LeagueState {
   league_id: string;
 }
 
-export default function page(props: myProps) {
+export default function Page(props: myProps) {
   const [leagueData, setLeagueData] = useState([]);
   const [userFound, setUserFound] = useState(true);
   const [userId, setUserId] = useState("");
@@ -78,6 +78,7 @@ export default function page(props: myProps) {
       {leagueData.length > 0 ? (
         leagueData.map((league: any) => (
           <div
+            key={league.league_id}
             className={
               props.usernameSubmitted && !props.usernameCleared
                 ? `flex items-center p-1 mt-3`
