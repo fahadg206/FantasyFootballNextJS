@@ -178,19 +178,26 @@ const ScrollingTestimonials = () => {
   }, [localStorage.getItem("selectedLeagueID")]);
 
   //console.log("managerMap", managerMap);
-
   useEffect(() => {
-    axios
-      .get("http://localhost:3001/api/players")
-      .then((response) => {
-        const playersData = response.data;
-
+    const fetchData = async () => {
+      try {
+        const response = await fetch("http://localhost:3000/api/fetchPlayers", {
+          method: "POST",
+          body: "REACT_APP_LEAGUE_ID",
+        });
+        const playersData = await response.json();
+        console.log("Got it");
         setPlayersData(playersData);
+
         // Process and use the data as needed
-      })
-      .catch((error) => {
+        console.log("WHO, ", playersData["4017"]);
+        // Additional code that uses playersData goes here
+      } catch (error) {
         console.error("Error while fetching players data:", error);
-      });
+      }
+    };
+
+    fetchData();
   }, []);
 
   return (
@@ -527,22 +534,24 @@ const TestimonialList = ({
                         <div className="players-added1 mb-1">
                           {team1?.players_recieved?.map((player) => {
                             return (
-                              <span className="flex items-center">
-                                <LuUserPlus className="text-[green] mr-1" />
-                                <span className="flex">
-                                  <Image
-                                    src={
-                                      playersData[player].pos == "DEF"
-                                        ? `https://sleepercdn.com/images/team_logos/nfl/${player.toLowerCase()}.png`
-                                        : `https://sleepercdn.com/content/nfl/players/thumb/${player}.jpg`
-                                    }
-                                    alt="player image"
-                                    width={30}
-                                    height={30}
-                                  />
-                                  {`${playersData[player].fn} ${playersData[player].ln}`}
+                              playersData[player] && (
+                                <span className="flex items-center">
+                                  <LuUserPlus className="text-[green] mr-1" />
+                                  <span className="flex">
+                                    <Image
+                                      src={
+                                        playersData[player].pos == "DEF"
+                                          ? `https://sleepercdn.com/images/team_logos/nfl/${player.toLowerCase()}.png`
+                                          : `https://sleepercdn.com/content/nfl/players/thumb/${player}.jpg`
+                                      }
+                                      alt="player image"
+                                      width={30}
+                                      height={30}
+                                    />
+                                    {`${playersData[player].fn} ${playersData[player].ln}`}
+                                  </span>
                                 </span>
-                              </span>
+                              )
                             );
                           })}
                           {team1?.draft_picks_recieved?.map((pick) => {
@@ -573,46 +582,50 @@ const TestimonialList = ({
                         <div className="players-sent1 mb-1">
                           {team1?.players_sent?.map((player) => {
                             return (
-                              <span className="flex items-center">
-                                <LuUserMinus className="text-[#af1222] mr-1" />
-                                <span className="flex">
-                                  <Image
-                                    src={
-                                      playersData[player].pos == "DEF"
-                                        ? `https://sleepercdn.com/images/team_logos/nfl/${player.toLowerCase()}.png`
-                                        : `https://sleepercdn.com/content/nfl/players/thumb/${player}.jpg`
-                                    }
-                                    alt="player image"
-                                    width={30}
-                                    height={30}
-                                  />
-                                  {`${playersData[player].fn} ${playersData[player].ln}`}
+                              playersData[player] && (
+                                <span className="flex items-center">
+                                  <LuUserMinus className="text-[#af1222] mr-1" />
+                                  <span className="flex">
+                                    <Image
+                                      src={
+                                        playersData[player].pos == "DEF"
+                                          ? `https://sleepercdn.com/images/team_logos/nfl/${player.toLowerCase()}.png`
+                                          : `https://sleepercdn.com/content/nfl/players/thumb/${player}.jpg`
+                                      }
+                                      alt="player image"
+                                      width={30}
+                                      height={30}
+                                    />
+                                    {`${playersData[player].fn} ${playersData[player].ln}`}
+                                  </span>
                                 </span>
-                              </span>
+                              )
                             );
                           })}
                           {team1?.draft_picks_sent?.map((pick) => {
                             return (
-                              <div className="">
-                                <span className="flex items-center">
-                                  <LuUserMinus className="text-[#af1222] mr-1" />
-                                  {` ${pick.season} ${`${pick.round}${
-                                    pick.round?.toString()[
-                                      pick.round?.toString().length - 1
-                                    ] === "1"
-                                      ? "st"
-                                      : pick.round?.toString()[
-                                          pick.round?.toString().length - 1
-                                        ] === "2"
-                                      ? "nd"
-                                      : pick.round?.toString()[
-                                          pick.round?.toString().length - 1
-                                        ] === "3"
-                                      ? "rd"
-                                      : "th"
-                                  } Round Pick`} `}
-                                </span>
-                              </div>
+                              playersData[player] && (
+                                <div className="">
+                                  <span className="flex items-center">
+                                    <LuUserMinus className="text-[#af1222] mr-1" />
+                                    {` ${pick.season} ${`${pick.round}${
+                                      pick.round?.toString()[
+                                        pick.round?.toString().length - 1
+                                      ] === "1"
+                                        ? "st"
+                                        : pick.round?.toString()[
+                                            pick.round?.toString().length - 1
+                                          ] === "2"
+                                        ? "nd"
+                                        : pick.round?.toString()[
+                                            pick.round?.toString().length - 1
+                                          ] === "3"
+                                        ? "rd"
+                                        : "th"
+                                    } Round Pick`} `}
+                                  </span>
+                                </div>
+                              )
                             );
                           })}
                         </div>
@@ -640,22 +653,24 @@ const TestimonialList = ({
                         <div className="players-added2 mb-1">
                           {team2?.players_recieved?.map((player) => {
                             return (
-                              <span className="flex items-center">
-                                <LuUserPlus className="text-[green] mr-1" />
-                                <span className="flex">
-                                  <Image
-                                    src={
-                                      playersData[player].pos == "DEF"
-                                        ? `https://sleepercdn.com/images/team_logos/nfl/${player.toLowerCase()}.png`
-                                        : `https://sleepercdn.com/content/nfl/players/thumb/${player}.jpg`
-                                    }
-                                    alt="player image"
-                                    width={30}
-                                    height={30}
-                                  />
-                                  {`${playersData[player].fn} ${playersData[player].ln}`}
+                              playersData[player] && (
+                                <span className="flex items-center">
+                                  <LuUserPlus className="text-[green] mr-1" />
+                                  <span className="flex">
+                                    <Image
+                                      src={
+                                        playersData[player].pos == "DEF"
+                                          ? `https://sleepercdn.com/images/team_logos/nfl/${player.toLowerCase()}.png`
+                                          : `https://sleepercdn.com/content/nfl/players/thumb/${player}.jpg`
+                                      }
+                                      alt="player image"
+                                      width={30}
+                                      height={30}
+                                    />
+                                    {`${playersData[player].fn} ${playersData[player].ln}`}
+                                  </span>
                                 </span>
-                              </span>
+                              )
                             );
                           })}
                           {team2?.draft_picks_recieved?.map((pick) => {
@@ -687,22 +702,24 @@ const TestimonialList = ({
                           {" "}
                           {team2?.players_sent?.map((player) => {
                             return (
-                              <span className="flex items-center">
-                                <LuUserMinus className="text-[#af1222] mr-1" />
-                                <span className="flex">
-                                  <Image
-                                    src={
-                                      playersData[player].pos == "DEF"
-                                        ? `https://sleepercdn.com/images/team_logos/nfl/${player.toLowerCase()}.png`
-                                        : `https://sleepercdn.com/content/nfl/players/thumb/${player}.jpg`
-                                    }
-                                    alt="player image"
-                                    width={30}
-                                    height={30}
-                                  />
-                                  {`${playersData[player].fn} ${playersData[player].ln}`}
+                              playersData[player] && (
+                                <span className="flex items-center">
+                                  <LuUserMinus className="text-[#af1222] mr-1" />
+                                  <span className="flex">
+                                    <Image
+                                      src={
+                                        playersData[player].pos == "DEF"
+                                          ? `https://sleepercdn.com/images/team_logos/nfl/${player.toLowerCase()}.png`
+                                          : `https://sleepercdn.com/content/nfl/players/thumb/${player}.jpg`
+                                      }
+                                      alt="player image"
+                                      width={30}
+                                      height={30}
+                                    />
+                                    {`${playersData[player].fn} ${playersData[player].ln}`}
+                                  </span>
                                 </span>
-                              </span>
+                              )
                             );
                           })}
                           {team2?.draft_picks_sent?.map((pick) => {
@@ -756,22 +773,24 @@ const TestimonialList = ({
                         <div className="players-added2 mb-1">
                           {team3?.players_recieved?.map((player) => {
                             return (
-                              <span className="flex items-center">
-                                <LuUserPlus className="text-[green] mr-1" />
-                                <span className="flex">
-                                  <Image
-                                    src={
-                                      playersData[player].pos == "DEF"
-                                        ? `https://sleepercdn.com/images/team_logos/nfl/${player.toLowerCase()}.png`
-                                        : `https://sleepercdn.com/content/nfl/players/thumb/${player}.jpg`
-                                    }
-                                    alt="player image"
-                                    width={30}
-                                    height={30}
-                                  />
-                                  {`${playersData[player].fn} ${playersData[player].ln}`}
+                              playersData[player] && (
+                                <span className="flex items-center">
+                                  <LuUserPlus className="text-[green] mr-1" />
+                                  <span className="flex">
+                                    <Image
+                                      src={
+                                        playersData[player].pos == "DEF"
+                                          ? `https://sleepercdn.com/images/team_logos/nfl/${player.toLowerCase()}.png`
+                                          : `https://sleepercdn.com/content/nfl/players/thumb/${player}.jpg`
+                                      }
+                                      alt="player image"
+                                      width={30}
+                                      height={30}
+                                    />
+                                    {`${playersData[player].fn} ${playersData[player].ln}`}
+                                  </span>
                                 </span>
-                              </span>
+                              )
                             );
                           })}
                           {team3?.draft_picks_recieved?.map((pick) => {
@@ -803,46 +822,50 @@ const TestimonialList = ({
                           {" "}
                           {team3?.players_sent?.map((player) => {
                             return (
-                              <span className="flex items-center">
-                                <LuUserMinus className="text-[#af1222] mr-1" />
-                                <span className="flex">
-                                  <Image
-                                    src={
-                                      playersData[player].pos == "DEF"
-                                        ? `https://sleepercdn.com/images/team_logos/nfl/${player.toLowerCase()}.png`
-                                        : `https://sleepercdn.com/content/nfl/players/thumb/${player}.jpg`
-                                    }
-                                    alt="player image"
-                                    width={30}
-                                    height={30}
-                                  />
-                                  {`${playersData[player].fn} ${playersData[player].ln}`}
+                              playersData[player] && (
+                                <span className="flex items-center">
+                                  <LuUserMinus className="text-[#af1222] mr-1" />
+                                  <span className="flex">
+                                    <Image
+                                      src={
+                                        playersData[player].pos == "DEF"
+                                          ? `https://sleepercdn.com/images/team_logos/nfl/${player.toLowerCase()}.png`
+                                          : `https://sleepercdn.com/content/nfl/players/thumb/${player}.jpg`
+                                      }
+                                      alt="player image"
+                                      width={30}
+                                      height={30}
+                                    />
+                                    {`${playersData[player].fn} ${playersData[player].ln}`}
+                                  </span>
                                 </span>
-                              </span>
+                              )
                             );
                           })}
                           {team3?.draft_picks_sent?.map((pick) => {
                             return (
-                              <div className="">
-                                <span className="flex items-center">
-                                  <LuUserMinus className="text-[#af1222] mr-1" />
-                                  {` ${pick.season} ${`${pick.round}${
-                                    pick.round?.toString()[
-                                      pick.round?.toString().length - 1
-                                    ] === "1"
-                                      ? "st"
-                                      : pick.round?.toString()[
-                                          pick.round?.toString().length - 1
-                                        ] === "2"
-                                      ? "nd"
-                                      : pick.round?.toString()[
-                                          pick.round?.toString().length - 1
-                                        ] === "3"
-                                      ? "rd"
-                                      : "th"
-                                  } Round Pick`} `}
-                                </span>
-                              </div>
+                              playersData[player] && (
+                                <div className="">
+                                  <span className="flex items-center">
+                                    <LuUserMinus className="text-[#af1222] mr-1" />
+                                    {` ${pick.season} ${`${pick.round}${
+                                      pick.round?.toString()[
+                                        pick.round?.toString().length - 1
+                                      ] === "1"
+                                        ? "st"
+                                        : pick.round?.toString()[
+                                            pick.round?.toString().length - 1
+                                          ] === "2"
+                                        ? "nd"
+                                        : pick.round?.toString()[
+                                            pick.round?.toString().length - 1
+                                          ] === "3"
+                                        ? "rd"
+                                        : "th"
+                                    } Round Pick`} `}
+                                  </span>
+                                </div>
+                              )
                             );
                           })}
                         </div>

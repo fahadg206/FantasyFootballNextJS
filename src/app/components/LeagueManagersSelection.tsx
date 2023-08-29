@@ -141,16 +141,25 @@ const TabsFeatures = () => {
   }, [REACT_APP_LEAGUE_ID]);
 
   useEffect(() => {
-    axios
-      .get("http://localhost:3001/api/players")
-      .then((response) => {
-        const playersData = response.data;
+    const fetchData = async () => {
+      try {
+        const response = await fetch("http://localhost:3000/api/fetchPlayers", {
+          method: "POST",
+          body: "REACT_APP_LEAGUE_ID",
+        });
+        const playersData = await response.json();
+        console.log("Got it");
         setPlayersData(playersData);
+
         // Process and use the data as needed
-      })
-      .catch((error) => {
+        console.log("WHO, ", playersData["4017"]);
+        // Additional code that uses playersData goes here
+      } catch (error) {
         console.error("Error while fetching players data:", error);
-      });
+      }
+    };
+
+    fetchData();
   }, []);
 
   //console.log("Manager Info:", managerInfo);

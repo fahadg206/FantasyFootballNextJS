@@ -268,8 +268,11 @@ export default async function getMatchupData(league_id: any, week: number) {
 
   async function fetchPlayersData() {
     try {
-      const response = await axios.get("http://localhost:3001/api/players");
-      const playersData = response.data;
+      const response = await fetch("http://localhost:3000/api/fetchPlayers", {
+        method: "POST",
+        body: "REACT_APP_LEAGUE_ID",
+      });
+      const playersData = await response.json();
       // Process and use the data as needed
 
       return playersData;
