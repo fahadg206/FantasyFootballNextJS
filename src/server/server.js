@@ -1,10 +1,8 @@
-const express = require("express");
-const cors = require("cors");
 const axios = require("axios");
 const fetch = require("node-fetch");
 
 // Initialize the server
-const app = express();
+
 const port = 3001 || process.env.PORT; // Choose a suitable port number
 
 const { Response } = require("node-fetch");
@@ -163,7 +161,16 @@ const calculateProjection = (projectedStats, scoreSettings) => {
   return round(score);
 };
 
-app.use(cors({ origin: "http://localhost:3000" }));
+// Define the serverless function handler
+module.exports = async (req, res) => {
+  try {
+    const processedPlayers = await GET(); // Call your data retrieval function
+    res.status(200).json("processedPlayers");
+  } catch (error) {
+    console.error("Error while fetching data:", error);
+    res.status(500).json({ error: "Internal server error brodie" });
+  }
+};
 
 // Trigger the GET function when the server starts
 async function initializeData() {
@@ -174,17 +181,3 @@ async function initializeData() {
     console.error("Error while fetching data:", error);
   }
 }
-
-// Create an endpoint to access the players map data
-app.get("/api/players", (req, res) => {
-  // Return the players map as JSON
-  console.log("inside endpoint");
-  //processedPlayers["4017"];
-  res.json("processedPlayers test");
-});
-
-// Start the server and initialize data
-app.listen(port, () => {
-  console.log(`Server is running on http://localhost:${port}`);
-  initializeData();
-});
