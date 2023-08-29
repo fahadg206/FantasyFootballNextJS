@@ -5,7 +5,7 @@ const fetch = require("node-fetch");
 
 // Initialize the server
 const app = express();
-const port = 3001; // Choose a suitable port number
+const port = 3001 || process.env.PORT; // Choose a suitable port number
 
 const { Response } = require("node-fetch");
 
