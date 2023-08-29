@@ -165,7 +165,7 @@ const calculateProjection = (projectedStats, scoreSettings) => {
 module.exports = async (req, res) => {
   try {
     const processedPlayers = await GET(); // Call your data retrieval function
-    res.status(200).json("processedPlayers");
+    res.status(200).json(processedPlayers);
   } catch (error) {
     console.error("Error while fetching data:", error);
     res.status(500).json({ error: "Internal server error brodie" });
