@@ -18,7 +18,7 @@ import Image from "next/image";
 import SelectLeague from "./components/SelectLeague";
 
 export default function Home() {
-  const options = ["2020", "2021", "2022", "2023"];
+  const options = ["2022", "2023"];
   /* SAVING USERNAME INPUT INTO LOCALSTORAGE. CLEARING LOCAL STORAGE IF EMPTY. PASSING USERNAME AND YEAR SELECTED TO PROPS  */
   const [text, setText] = useState("");
   const [usernameSubmitted, setUsernameSubmitted] = useState(false);
@@ -38,6 +38,19 @@ export default function Home() {
     //console.log("Selected option:", selectedOption);
     setSelectedSeason(selectedOption);
     // Do something with the selected option if needed.
+    setUsernameSubmitted(false);
+  };
+
+  console.log(selectedSeason);
+  console.log(usernameSubmitted);
+  const onStorageCleared = () => {
+    localStorage.removeItem("selectedLeagueID");
+    localStorage.removeItem("selectedLeagueName");
+    localStorage.removeItem("usernameSubmitted");
+    localStorage.removeItem("usernames");
+    setStoredUsernames([]);
+    setText("");
+    //setCleared(true);
   };
 
   useEffect(() => {
@@ -47,16 +60,6 @@ export default function Home() {
       );
     }
   }, []);
-
-  const onStorageCleared = () => {
-    localStorage.removeItem("selectedLeagueID");
-    localStorage.removeItem("selectedLeagueName");
-    localStorage.removeItem("usernameSubmitted");
-    localStorage.removeItem("usernames");
-    setStoredUsernames([]);
-    setText("");
-    setCleared(true);
-  };
 
   const onFormSubmit = (e: React.SyntheticEvent) => {
     e.preventDefault();
@@ -151,6 +154,7 @@ export default function Home() {
                 <select
                   value={selectedSeason}
                   onChange={(e) => handleSelection(e.target.value)}
+                  className="text-[#af1222] border-2 border-[#af1222] bg-white dark:bg-black"
                 >
                   {options.map((option) => (
                     <option key={option} value={option}>
@@ -173,7 +177,7 @@ export default function Home() {
             usernameSubmitted={usernameSubmitted}
             username={text}
             selectedSeason={selectedSeason}
-            onClear={onStorageCleared}
+            usernameCleared={cleared}
           />
         </div>
       </div>
