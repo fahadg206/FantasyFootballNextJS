@@ -180,7 +180,7 @@ app.get("/api/players", (req, res) => {
   // Return the players map as JSON
   console.log("inside endpoint");
   processedPlayers["4017"];
-  res.json(processedPlayers);
+  res.json("processedPlayers");
 });
 
 // Start the server and initialize data
