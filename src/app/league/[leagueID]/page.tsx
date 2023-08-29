@@ -7,10 +7,6 @@ import HomePoll from "../../components/HomePoll";
 import axios from "axios";
 import Image from "next/image";
 
-export const metadata = {
-  title: "Home",
-};
-
 export default function page() {
   const [leagueInfo, setLeagueInfo] = useState({});
   const [playersData, setPlayersData] = useState([]);
