@@ -89,6 +89,10 @@ const Options: React.FC<OptionsProps> = ({ votes, setVotes }) => {
 
   const handleIncrementVote = async (vote: VoteInfo) => {
     const newVote = { ...vote, votes: vote.votes + 1 };
+    const newVotes = (prevVotes) =>
+      prevVotes.map((v) => (v.title === newVote.title ? newVote : v));
+
+    addVotes(newVotes(votes));
 
     setVotes((prevVotes) =>
       prevVotes.map((v) => (v.title === newVote.title ? newVote : v))
@@ -135,7 +139,6 @@ const Options: React.FC<OptionsProps> = ({ votes, setVotes }) => {
               whileTap={{ scale: 0.985 }}
               onClick={() => {
                 handleIncrementVote(vote);
-                addVotes(votes);
               }}
               key={vote.title}
               className={`w-[80%] rounded-md ${vote.color} text-white text-center py-2 font-medium `}

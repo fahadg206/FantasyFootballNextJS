@@ -156,34 +156,6 @@ function NavBar(props: MyProps) {
     const [showScore, setShowScore] = useState(false);
     const [navbar, setNavbar] = useState(false);
 
-    useEffect(() => {
-      const handleOutsideClick = (event) => {
-        if (showScore && !event.target.closest(".mobilenavbar")) {
-          setShowScore(false);
-        }
-      };
-
-      document.addEventListener("click", handleOutsideClick);
-
-      return () => {
-        document.removeEventListener("click", handleOutsideClick);
-      };
-    }, [showScore]);
-
-    useEffect(() => {
-      const handleOutsideClick = (event) => {
-        if (navbar && event.target.closest(".mobilenavbar") === null) {
-          setNavbar(false);
-        }
-      };
-
-      document.addEventListener("click", handleOutsideClick);
-
-      return () => {
-        document.removeEventListener("click", handleOutsideClick);
-      };
-    }, [navbar]);
-
     return (
       <div className=" bg-[#EDEDED] dark:bg-black px-4 mx-auto w-screen 2xl:hidden opacity-90">
         <div className="flex-items-center">

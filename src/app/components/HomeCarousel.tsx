@@ -310,7 +310,7 @@ const Card = ({
           className={`${
             typeof description === "number"
               ? "font-bold text-[25px] text-slate-300"
-              : "text-[12px] text-slate-300"
+              : "text-[14px] text-slate-300"
           }`}
         >
           {description}
