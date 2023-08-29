@@ -25,6 +25,7 @@
     "eslint-config-next": "13.4.9",
     "faiss-node": "^0.2.3",
     "firebase": "^10.1.0",
+    "fork-ts-checker-webpack-plugin": "^8.0.0",
     "framer-motion": "^10.15.0",
     "html-to-text": "^9.0.5",
     "json-bigint": "^1.0.0",
