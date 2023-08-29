@@ -179,7 +179,7 @@ async function initializeData() {
 app.get("/api/players", (req, res) => {
   // Return the players map as JSON
   console.log("inside endpoint");
-  processedPlayers["4017"];
+  //processedPlayers["4017"];
   res.json("processedPlayers");
 });
 
