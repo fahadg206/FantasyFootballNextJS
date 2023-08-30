@@ -32,6 +32,7 @@
     "langchain": "^0.0.124",
     "lucide-react": "^0.263.0",
     "mammoth": "^1.6.0",
+    "mongodb": "^5.8.1",
     "next": "13.4.9",
     "next-themes": "^0.2.1",
     "pdf-parse": "^1.1.1",
