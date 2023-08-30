@@ -175,37 +175,6 @@ export default function Scoreboard() {
       const readingRef = ref(storage, `files/${leagueID}.txt`);
       // Function to add content only if it's different
       addContentIfDifferent(textContent, storageRef);
-
-      // // Upload the text content as a text file to Firebase Cloud Storage
-      // uploadString(storageRef, textContent, "raw")
-      //   .then(() => {
-      //     console.log("Text file uploaded to Firebase Cloud Storage.");
-      //   })
-      //   .catch((error) => {
-      //     console.error("Error uploading text file:", error);
-      //   });
-      // const readingRef = ref(storage, `files/`);
-      // try {
-      //   getDownloadURL(readingRef)
-      //     .then((url) => {
-      //       fetch(url)
-      //         .then((response) => response.text())
-      //         .then((fileContent) => {
-      //           console.log(
-      //             "Text file content from Firebase Cloud Storage:",
-      //             fileContent
-      //           );
-      //         })
-      //         .catch((error) => {
-      //           console.error("Error fetching text file content:", url);
-      //         });
-      //     })
-      //     .catch((error) => {
-      //       console.error("Error getting download URL:", error);
-      //     });
-      // } catch (error) {
-      //   console.error("Unexpected error:", error);
-      // }
     }
   }
   function addContentIfDifferent(newContent: any, readingRef: any) {
@@ -276,7 +245,10 @@ export default function Scoreboard() {
     }
 
     fetchMatchupData();
-  }, [leagueID]);
+  }, [
+    typeof localStorage !== "undefined" &&
+      localStorage.getItem("selectedLeagueID"),
+  ]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -313,7 +285,7 @@ export default function Scoreboard() {
     // You can log an error, use alternative storage methods, or perform other actions
   }
   const weekString = week?.toString();
-
+  console.log("matchupmap", matchupMap);
   // MATCHUP TEXT
 
   const matchupText = Array.from(matchupMap).map(([matchupID, matchupData]) => {
@@ -323,38 +295,38 @@ export default function Scoreboard() {
     let team1Proj = 0.0;
     let team2Proj = 0.0;
 
-    if (team1?.starters) {
-      for (const currPlayer of team1.starters) {
-        const playerData = playersData && playersData[currPlayer];
-        if (
-          playerData &&
-          playerData.wi &&
-          weekString !== undefined && // Check if weekString is defined
-          typeof weekString === "string" && // Check if weekString is a string
-          playerData.wi[weekString] &&
-          playerData.wi[weekString]?.p !== undefined
-        ) {
-          if (playerData.wi[weekString].p)
-            team1Proj += parseFloat(playerData.wi[weekString].p || "0");
-        }
-      }
-    }
+    // if (team1?.starters) {
+    //   for (const currPlayer of team1.starters) {
+    //     const playerData = playersData && playersData[currPlayer];
+    //     if (
+    //       playerData &&
+    //       playerData.wi &&
+    //       weekString !== undefined && // Check if weekString is defined
+    //       typeof weekString === "string" && // Check if weekString is a string
+    //       playerData.wi[weekString] &&
+    //       playerData.wi[weekString]?.p !== undefined
+    //     ) {
+    //       if (playerData.wi[weekString].p)
+    //         team1Proj += parseFloat(playerData.wi[weekString].p || "0");
+    //     }
+    //   }
+    // }
 
-    if (team2?.starters) {
-      for (const currPlayer of team2.starters) {
-        const playerData = playersData && playersData[currPlayer];
-        if (
-          playerData &&
-          playerData.wi &&
-          weekString !== undefined && // Check if weekString is defined
-          typeof weekString === "string" && // Check if weekString is a string
-          playerData.wi[weekString] &&
-          playerData.wi[weekString]?.p !== undefined
-        ) {
-          team2Proj += parseFloat(playerData.wi[weekString].p || "0");
-        }
-      }
-    }
+    // if (team2?.starters) {
+    //   for (const currPlayer of team2.starters) {
+    //     const playerData = playersData && playersData[currPlayer];
+    //     if (
+    //       playerData &&
+    //       playerData.wi &&
+    //       weekString !== undefined && // Check if weekString is defined
+    //       typeof weekString === "string" && // Check if weekString is a string
+    //       playerData.wi[weekString] &&
+    //       playerData.wi[weekString]?.p !== undefined
+    //     ) {
+    //       team2Proj += parseFloat(playerData.wi[weekString].p || "0");
+    //     }
+    //   }
+    // }
 
     const starters1Points = scheduleDataFinal[team1.user_id]?.starters_points;
     const starters2Points = scheduleDataFinal[team2.user_id]?.starters_points;
@@ -430,13 +402,16 @@ export default function Scoreboard() {
       </p>
     );
 
+    console.log("fssd", team1);
+
     return (
       <div
         key={matchupID}
         className={
-          !leagueID
-            ? `hidden`
-            : `hidden xl:flex flex-wrap  justify-center mb-2 text-[9px] font-bold xl:h-[13vh] xl:w-[10vw] hover:bg-[#c4bfbf] dark:hover:bg-[#1a1a1c] cursor-pointer hover:scale-105 hover:duration-200`
+          typeof localStorage !== "undefined" &&
+          localStorage.getItem("selectedLeagueID")
+            ? `hidden xl:flex flex-wrap  justify-center mb-2 text-[9px] font-bold xl:h-[13vh] xl:w-[10vw] hover:bg-[#c4bfbf] dark:hover:bg-[#1a1a1c] cursor-pointer hover:scale-105 hover:duration-200`
+            : `hidden`
         }
       >
         {/* need to navigate to schedule page THEN smooth scroll to appropriate matchup */}

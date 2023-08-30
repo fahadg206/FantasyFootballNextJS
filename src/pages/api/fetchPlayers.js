@@ -15,20 +15,8 @@ const client = new MongoClient(uri, {
   },
 });
 
-async function run() {
-  try {
-    // Connect the client to the server	(optional starting in v4.7)
-    await client.connect();
-    // Send a ping to confirm a successful connection
-    await client.db("admin").command({ ping: 1 });
-    console.log(
-      "Pinged your deployment. You successfully connected to MongoDB!"
-    );
-  } finally {
-    // Ensures that the client will close when you finish/error
-    await client.close();
-  }
-}
+async function run() {}
+
 run().catch(console.dir);
 
 const round = (num) => {
@@ -189,12 +177,61 @@ export default async function handler(req, res) {
   console.log("What we got", req.body);
 
   try {
-    const processedPlayers = await GET();
-    // console.log("HERE?");
-    // console.log(processedPlayers["4017"]);
-    return res.status(200).json(processedPlayers);
+    // Connect the client to the server (optional starting in v4.7)
+    await client.connect();
+    // Send a ping to confirm a successful connection
+    await client.db("admin").command({ ping: 1 });
+    console.log(
+      "Pinged your deployment. You successfully connected to MongoDB!"
+    );
+
+    // Access the database and collection
+    const db = client.db("fantasypulse");
+    const collection = db.collection("players");
+
+    const playerArrayId = "week 1";
+
+    // Define a filter to check if the document already exists based on the id field
+    const filter = { id: playerArrayId };
+
+    // Check if the document already exists
+    const existingDocument = await collection.findOne(filter);
+
+    if (!existingDocument) {
+      // No data in the database, fetch and insert processed players
+      const processedPlayers = await GET();
+
+      const playerArray = { id: playerArrayId, players: processedPlayers };
+
+      // Define an update operation with the "upsert" option
+      const updateOperation = {
+        $set: playerArray, // This will update the fields of the existing document or insert a new one if not found
+      };
+
+      // Perform the upsert operation
+      const result = await collection.updateOne(filter, updateOperation, {
+        upsert: true,
+      });
+
+      if (result.upsertedCount === 1) {
+        console.log("Document inserted.");
+      } else if (result.matchedCount === 1) {
+        console.log("Document updated.");
+      } else {
+        console.log("No document inserted or updated.");
+      }
+
+      // Return the response after processing
+      return res.status(200).json(processedPlayers);
+    } else {
+      // Data already exists in the database, return the existing data
+      return res.status(200).json(existingDocument.players);
+    }
   } catch (error) {
-    console.error("Unexpected error:", error);
-    return res.status(500).json({ error: "An error occurred" });
+    console.error("Error:", error);
+    return res.status(500).json({ error: "Internal Server Error" });
+  } finally {
+    // Close the client connection in the finally block
+    await client.close();
   }
 }
