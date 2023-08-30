@@ -143,7 +143,7 @@ const CardCarousel = () => {
 
           try {
             const response = await fetch(
-              "https://fantasy-football-next-js-app.vercel.app/api/fetchHeadlines",
+              "https://fantasypulseff.vercel.app/api/fetchHeadlines",
               {
                 method: "POST",
                 body: REACT_APP_LEAGUE_ID,

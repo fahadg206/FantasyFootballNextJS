@@ -267,7 +267,7 @@ export default function Scoreboard() {
     const fetchData = async () => {
       try {
         const response = await fetch(
-          "https://fantasy-football-next-js-app.vercel.app/api/fetchPlayers",
+          "https://fantasypulseff.vercel.app/api/fetchPlayers",
           {
             method: "POST",
             body: "leagueID",

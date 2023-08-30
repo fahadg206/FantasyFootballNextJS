@@ -164,7 +164,7 @@ const Articles = () => {
           if (!docData.segment2) {
             promises.push(
               fetchDataFromApi(
-                "https://fantasy-football-next-js-app.vercel.app/api/fetchSegment2"
+                "https://fantasypulseff.vercel.app/api/fetchSegment2"
               )
             );
           } else {
@@ -174,7 +174,7 @@ const Articles = () => {
           if (!docData.overreaction) {
             promises.push(
               fetchDataFromApi(
-                "https://fantasy-football-next-js-app.vercel.app/api/fetchOverreaction"
+                "https://fantasypulseff.vercel.app/api/fetchOverreaction"
               )
             );
           } else {
@@ -184,7 +184,7 @@ const Articles = () => {
           if (!docData.pulse_check) {
             promises.push(
               fetchDataFromApi(
-                "https://fantasy-football-next-js-app.vercel.app/api/fetchPulseCheck"
+                "https://fantasypulseff.vercel.app/api/fetchPulseCheck"
               )
             );
           } else {
@@ -208,17 +208,15 @@ const Articles = () => {
       } else {
         // Fetch all data from APIs
         const [data1, data2, data3, data4] = await Promise.all([
+          fetchDataFromApi("https://fantasypulseff.vercel.app/api/fetchData"),
           fetchDataFromApi(
-            "https://fantasy-football-next-js-app.vercel.app/api/fetchData"
+            "https://fantasypulseff.vercel.app/api/fetchSegment2"
           ),
           fetchDataFromApi(
-            "https://fantasy-football-next-js-app.vercel.app/api/fetchSegment2"
+            "https://fantasypulseff.vercel.app/api/fetchOverreaction"
           ),
           fetchDataFromApi(
-            "https://fantasy-football-next-js-app.vercel.app/api/fetchOverreaction"
-          ),
-          fetchDataFromApi(
-            "https://fantasy-football-next-js-app.vercel.app/api/fetchPulseCheck"
+            "https://fantasypulseff.vercel.app/api/fetchPulseCheck"
           ),
         ]);
 

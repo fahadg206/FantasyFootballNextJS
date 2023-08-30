@@ -100,14 +100,30 @@ function GET() {
                     weeklyData,
                     scoringSettings
                   );
+                  // Filter players based on position
+                  const filteredPlayers = {};
+                  for (const playerId in processedPlayers) {
+                    const player = processedPlayers[playerId];
+                    if (
+                      (player.pos === "QB" ||
+                        player.pos === "WR" ||
+                        player.pos === "RB" ||
+                        player.pos === "TE" ||
+                        player.pos === "K" ||
+                        player.pos === "DEF") &&
+                      player.t
+                    ) {
+                      filteredPlayers[playerId] = player;
+                    }
+                  }
 
-                  const playerMap = new Map(Object.entries(processedPlayers));
+                  const playerMap = new Map(Object.entries(filteredPlayers));
 
                   players = playerMap;
 
                   //console.log(playerMap.get("4017"));
 
-                  return processedPlayers;
+                  return filteredPlayers;
                 });
               });
             });
@@ -201,6 +217,8 @@ export default async function handler(req, res) {
       // No data in the database, fetch and insert processed players
       const processedPlayers = await GET();
 
+      //filter here
+
       const playerArray = { id: playerArrayId, players: processedPlayers };
 
       // Define an update operation with the "upsert" option
@@ -222,24 +240,10 @@ export default async function handler(req, res) {
       }
 
       // Return the response after processing
-      return new Response(res.status(200).json(processedPlayers), {
-        status: 200,
-        headers: {
-          "Access-Control-Allow-Origin": "*",
-          "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
-          "Access-Control-Allow-Headers": "Content-Type, Authorization",
-        },
-      });
+      return res.status(200).json(processedPlayers);
     } else {
       // Data already exists in the database, return the existing data
-      return new Response(res.status(200).json(existingDocument.players), {
-        status: 200,
-        headers: {
-          "Access-Control-Allow-Origin": "*",
-          "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
-          "Access-Control-Allow-Headers": "Content-Type, Authorization",
-        },
-      });
+      res.status(200).json(existingDocument.players);
     }
   } catch (error) {
     console.error("Error:", error);

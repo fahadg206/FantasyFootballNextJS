@@ -269,7 +269,7 @@ export default async function getMatchupData(league_id: any, week: number) {
   async function fetchPlayersData() {
     try {
       const response = await fetch(
-        "https://fantasy-football-next-js-app.vercel.app/api/fetchPlayers",
+        "https://fantasypulseff.vercel.app/api/fetchPlayers",
         {
           method: "POST",
           body: "REACT_APP_LEAGUE_ID",
