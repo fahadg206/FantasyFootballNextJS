@@ -222,10 +222,24 @@ export default async function handler(req, res) {
       }
 
       // Return the response after processing
-      return res.status(200).json(processedPlayers);
+      return new Response(res.status(200).json(processedPlayers), {
+        status: 200,
+        headers: {
+          "Access-Control-Allow-Origin": "*",
+          "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
+          "Access-Control-Allow-Headers": "Content-Type, Authorization",
+        },
+      });
     } else {
       // Data already exists in the database, return the existing data
-      return res.status(200).json(existingDocument.players);
+      return new Response(res.status(200).json(existingDocument.players), {
+        status: 200,
+        headers: {
+          "Access-Control-Allow-Origin": "*",
+          "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
+          "Access-Control-Allow-Headers": "Content-Type, Authorization",
+        },
+      });
     }
   } catch (error) {
     console.error("Error:", error);
