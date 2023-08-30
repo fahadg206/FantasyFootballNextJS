@@ -79,7 +79,7 @@ export default async function getMatchupData(league_id: any, week: number) {
   const weeklyInfo: WeeklyInformation = {};
 
   //const [scheduleDataFinal, setScheduleDataFinal] = useState<ScheduleData>({});
-  const REACT_APP_LEAGUE_ID = league_id;
+  const REACT_APP_LEAGUE_ID = "864448469199347712";
 
   const getSchedule = async () => {
     try {
