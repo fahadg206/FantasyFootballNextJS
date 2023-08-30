@@ -326,14 +326,25 @@ function NavBar(props: MyProps) {
     );
   };
 
-  if (localStorage.getItem("usernameSubmitted") === "false") {
-    localStorage.removeItem("selectedLeagueID");
-    localStorage.removeItem("selectedLeagueName");
-    localStorage.removeItem("usernameSubmitted");
-    router.refresh();
+  const usernameSubmitted =
+    typeof localStorage !== "undefined"
+      ? localStorage.getItem("usernameSubmitted")
+      : null;
+
+  if (usernameSubmitted === "false") {
+    if (typeof localStorage !== "undefined") {
+      localStorage.removeItem("selectedLeagueID");
+      localStorage.removeItem("selectedLeagueName");
+      localStorage.removeItem("usernameSubmitted");
+      router.refresh();
+    }
   }
+
   const showNav = () => {
-    if (localStorage.getItem("selectedLeagueID")) {
+    if (
+      typeof localStorage !== "undefined" &&
+      localStorage.getItem("selectedLeagueID")
+    ) {
       return (
         <div className=" flex">
           <SideNav />
@@ -342,9 +353,13 @@ function NavBar(props: MyProps) {
       );
     } else return <div>{""}</div>;
   };
+
   useEffect(() => {
     showNav();
-  }, [localStorage.getItem("selectedLeagueID")]);
+  }, [
+    typeof localStorage !== "undefined" &&
+      localStorage.getItem("selectedLeagueID"),
+  ]);
 
   return <div className="">{showNav()}</div>;
 }

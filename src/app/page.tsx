@@ -50,6 +50,7 @@ export default function Home() {
     localStorage.removeItem("usernames");
     setStoredUsernames([]);
     setText("");
+    setUsernameSubmitted(false);
     //setCleared(true);
   };
 
@@ -87,28 +88,30 @@ export default function Home() {
     );
   }, [usernameSubmitted]);
 
-  const usernames = JSON.parse(localStorage.getItem("usernames"));
-  console.log(usernames);
+  let showUsernames = null; // Initialize with null or an empty array depending on your needs
 
-  let showUsernames;
+  if (typeof localStorage !== "undefined") {
+    const usernames = JSON.parse(localStorage.getItem("usernames"));
 
-  if (usernames) {
-    showUsernames = usernames.map((username: string) => {
-      return (
+    if (usernames && Array.isArray(usernames)) {
+      showUsernames = usernames.map((username) => (
         <div
           key={username}
           onClick={() => {
             setUsernameSubmitted(false);
             setText(username);
           }}
-          className=" text-[#af1222] border-b-[1px] border-[#af1222] text-[12px]  hover:bg-[#1a1a1a] mr-2 cursor-pointer"
+          className="text-[#af1222] border-b-[1px] border-[#af1222] text-[12px] hover:bg-[#1a1a1a] mr-2 cursor-pointer"
         >
           {username}
         </div>
-      );
-    });
+      ));
+    }
+  } else {
+    // Handle the situation where localStorage is not available
+    // For example, you might show an error message or fallback content
+    console.error("localStorage is not available");
   }
-
   // Retrieve the usernameSubmitted from local storage on component mount
   useEffect(() => {
     const savedUsernameSubmitted = JSON.parse(
@@ -145,12 +148,7 @@ export default function Home() {
               <button className="text-[#af1222] border-2 border-[#af1222] p-1  rounded hover:bg-[#1a1a1a] cursor-pointer mr-2 text-[14px]">
                 Submit
               </button>
-              <button
-                onClick={onStorageCleared}
-                className="text-[#af1222] border-2 border-[#af1222] p-1  rounded hover:bg-[#1a1a1a] cursor-pointer mr-2 text-[14px]"
-              >
-                Clear
-              </button>
+
               <div>
                 <select
                   value={selectedSeason}
@@ -172,6 +170,12 @@ export default function Home() {
               {showUsernames}
             </div>
           </form>
+          <button
+            onClick={onStorageCleared}
+            className="text-[#af1222] border-2 border-[#af1222] p-1  rounded hover:bg-[#1a1a1a] cursor-pointer mr-2 text-[14px]"
+          >
+            Clear
+          </button>
         </div>
         <div>
           <SelectLeague

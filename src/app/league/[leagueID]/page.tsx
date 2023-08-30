@@ -6,8 +6,10 @@ import HomeCarousel from "../../components/HomeCarousel";
 import HomePoll from "../../components/HomePoll";
 import axios from "axios";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 
 export default function Page() {
+  const router = useRouter();
   const [leagueInfo, setLeagueInfo] = useState({});
   const [playersData, setPlayersData] = useState([]);
   const leagueID = localStorage.getItem("selectedLeagueID");

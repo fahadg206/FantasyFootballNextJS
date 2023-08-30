@@ -114,8 +114,17 @@ export default function Scoreboard() {
   const [matchupMap, setMatchupMap] = useState<Map<string, MatchupMapData[]>>(
     new Map()
   );
-  const REACT_APP_LEAGUE_ID: string | null =
-    localStorage.getItem("selectedLeagueID");
+
+  const [leagueID, setLeagueID] = useState("");
+
+  useEffect(() => {
+    let leagueID;
+
+    // Get the value from local storage if it exists
+
+    leagueID = localStorage.getItem("selectedLeagueID") || "";
+    setLeagueID(leagueID);
+  }, [leagueID]);
 
   const router = useRouter();
 
@@ -130,8 +139,8 @@ export default function Scoreboard() {
   }, [isMondayNight, isSundayNight, isSundayEvening, isSundayAfternoon]);
 
   function updateDbStorage(weeklyData: ScheduleData) {
-    if (REACT_APP_LEAGUE_ID) {
-      const storageRef = ref(storage, `files/${REACT_APP_LEAGUE_ID}.txt`);
+    if (leagueID) {
+      const storageRef = ref(storage, `files/${leagueID}.txt`);
 
       //Uncomment to upload textfile to firebase storage
 
@@ -163,7 +172,7 @@ export default function Scoreboard() {
 
       const textContent = JSON.stringify(articleMatchupData);
 
-      const readingRef = ref(storage, `files/${REACT_APP_LEAGUE_ID}.txt`);
+      const readingRef = ref(storage, `files/${leagueID}.txt`);
       // Function to add content only if it's different
       addContentIfDifferent(textContent, storageRef);
 
@@ -255,7 +264,7 @@ export default function Scoreboard() {
           week = 18;
         }
         setWeek(week);
-        const matchupMapData = await getMatchupMap(REACT_APP_LEAGUE_ID, week);
+        const matchupMapData = await getMatchupMap(leagueID, week);
         setMatchupMap(matchupMapData.matchupMap);
         setScheduleDataFinal(matchupMapData.updatedScheduleData);
 
@@ -267,14 +276,14 @@ export default function Scoreboard() {
     }
 
     fetchMatchupData();
-  }, [REACT_APP_LEAGUE_ID]);
+  }, [leagueID]);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const response = await fetch("http://localhost:3000/api/fetchPlayers", {
           method: "POST",
-          body: "REACT_APP_LEAGUE_ID",
+          body: "leagueID",
         });
         const playersData = await response.json();
         console.log("Got it");
@@ -291,13 +300,18 @@ export default function Scoreboard() {
     fetchData();
   }, []);
 
-  if (localStorage.getItem("usernameSubmitted") === "false") {
-    localStorage.removeItem("selectedLeagueID");
-    localStorage.removeItem("selectedLeagueName");
-    localStorage.removeItem("usernameSubmitted");
-    router.refresh();
+  if (typeof localStorage !== "undefined") {
+    if (localStorage.getItem("usernameSubmitted") === "false") {
+      localStorage.removeItem("selectedLeagueID");
+      localStorage.removeItem("selectedLeagueName");
+      localStorage.removeItem("usernameSubmitted");
+      router.refresh();
+    }
+  } else {
+    console.log("error with local storage");
+    // Handle the situation where localStorage is not available
+    // You can log an error, use alternative storage methods, or perform other actions
   }
-
   const weekString = week?.toString();
 
   // MATCHUP TEXT
@@ -420,7 +434,7 @@ export default function Scoreboard() {
       <div
         key={matchupID}
         className={
-          !localStorage.getItem("selectedLeagueID")
+          !leagueID
             ? `hidden`
             : `hidden xl:flex flex-wrap  justify-center mb-2 text-[9px] font-bold xl:h-[13vh] xl:w-[10vw] hover:bg-[#c4bfbf] dark:hover:bg-[#1a1a1c] cursor-pointer hover:scale-105 hover:duration-200`
         }
@@ -434,9 +448,7 @@ export default function Scoreboard() {
           offset={50}
           duration={700}
           onClick={() => {
-            router.push(
-              `/league/${localStorage.getItem("selectedLeagueID")}/schedule`
-            );
+            router.push(`/league/${leagueID}/schedule`);
           }}
           to={matchupID}
         >
