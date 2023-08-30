@@ -175,6 +175,7 @@ const calculateProjection = (projectedStats, scoreSettings) => {
 
 export default async function handler(req, res) {
   console.log("What we got", req.body);
+  console.log("I got calleddd");
 
   try {
     await client.connect();
@@ -231,6 +232,6 @@ export default async function handler(req, res) {
     return res.status(500).json({ error: "Internal Server Error" });
   } finally {
     // Close the client connection in the finally block
-    await client.close();
+    //await client.close();
   }
 }
