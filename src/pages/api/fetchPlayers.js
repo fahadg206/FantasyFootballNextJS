@@ -1,118 +1,83 @@
 import axios from "axios";
-import fetch from "node-fetch";
+import { MongoClient } from "mongodb";
 
-const password = process.env.MONGO_PASSWORD;
-
-const { MongoClient, ServerApiVersion } = require("mongodb");
 const uri = `mongodb+srv://fantasypulseff:${password}@fantasypulsecluster.wj4o9kr.mongodb.net/?retryWrites=true&w=majority`;
+const client = new MongoClient(uri);
 
-// Create a MongoClient with a MongoClientOptions object to set the Stable API version
-const client = new MongoClient(uri, {
-  serverApi: {
-    version: ServerApiVersion.v1,
-    strict: true,
-    deprecationErrors: true,
-  },
-});
+async function fetchPlayerData() {
+  try {
+    await client.connect();
+    const db = client.db("fantasypulse");
+    const collection = db.collection("players");
 
-async function run() {}
+    const playerArrayId = "week 1";
+    const filter = { id: playerArrayId };
+    const existingDocument = await collection.findOne(filter);
 
-run().catch(console.dir);
+    if (existingDocument) {
+      return existingDocument.players;
+    }
 
-const round = (num) => {
-  if (typeof num === "string") {
-    num = parseFloat(num);
-  }
-  return (Math.round((num + Number.EPSILON) * 100) / 100).toFixed(2);
-};
+    const [nflStateRes, leagueDataRes, playoffsRes, playerDataRes] =
+      await Promise.all([
+        axios.get("https://api.sleeper.app/v1/state/nfl"),
+        axios.get("https://api.sleeper.app/v1/league/864448469199347712"),
+        axios.get(
+          "https://api.sleeper.app/v1/league/864448469199347712/winners_bracket"
+        ),
+        fetch("https://api.sleeper.app/v1/players/nfl"),
+      ]);
 
-async function waitForAll(...ps) {
-  const promises = ps.map((p) => (p instanceof Response ? p.json() : p));
-  return Promise.all(promises);
-}
+    const [nflState, leagueData, playoffs, playerData] = await Promise.all([
+      nflStateRes.data,
+      leagueDataRes.data,
+      playoffsRes.data,
+      playerDataRes.json(),
+    ]);
 
-let players = new Map();
-let processedPlayers;
+    const regularSeasonLength = leagueData.settings.playoff_week_start - 1;
+    const playoffLength = playoffs.pop().r;
+    const fullSeasonLength = regularSeasonLength + playoffLength;
 
-function GET() {
-  console.log("Called server");
+    const resPromises = [
+      Promise.resolve(playerData), // Avoid unnecessary fetch
+    ];
 
-  return axios
-    .get("https://api.sleeper.app/v1/state/nfl")
-    .catch((err) => {
-      console.error(err);
-      throw err;
-    })
-    .then((nflStateRes) => {
-      return axios
-        .get("https://api.sleeper.app/v1/league/864448469199347712")
-        .catch((err) => {
-          console.error(err);
-          throw err;
-        })
-        .then((leagueDataRes) => {
-          return axios
-            .get(
-              "https://api.sleeper.app/v1/league/864448469199347712/winners_bracket"
-            )
-            .catch((err) => {
-              console.error(err);
-              throw err;
-            })
-            .then((playoffsRes) => {
-              const nflState = nflStateRes.data;
-              const leagueData = leagueDataRes.data;
-              const playoffs = playoffsRes.data;
+    for (let week = 1; week <= fullSeasonLength + 3; week++) {
+      resPromises.push(
+        fetch(
+          `https://api.sleeper.app/projections/nfl/${nflState.league_season}/${week}?season_type=regular&position[]=DB&position[]=DEF&position[]=DL&position[]=FLEX&position[]=IDP_FLEX&position[]=K&position[]=LB&position[]=QB&position[]=RB&position[]=REC_FLEX&position[]=SUPER_FLEX&position[]=TE&position[]=WR&position[]=WRRB_FLEX&order_by=ppr`
+        )
+      );
+    }
 
-              console.log("Here's the state of the nfl: ", nflState);
-              let year = nflState.league_season;
-              const regularSeasonLength =
-                leagueData.settings.playoff_week_start - 1;
-              const playoffLength = playoffs.pop().r;
-              const fullSeasonLength = regularSeasonLength + playoffLength;
+    const resJSONs = await Promise.all(resPromises.map((res) => res.json()));
 
-              const resPromises = [
-                fetch("https://api.sleeper.app/v1/players/nfl"),
-              ];
+    const playerDataForWeeks = resJSONs.shift();
+    const scoringSettings = leagueData.scoring_settings;
 
-              for (let week = 1; week <= fullSeasonLength + 3; week++) {
-                resPromises.push(
-                  fetch(
-                    `https://api.sleeper.app/projections/nfl/${year}/${week}?season_type=regular&position[]=DB&position[]=DEF&position[]=DL&position[]=FLEX&position[]=IDP_FLEX&position[]=K&position[]=LB&position[]=QB&position[]=RB&position[]=REC_FLEX&position[]=SUPER_FLEX&position[]=TE&position[]=WR&position[]=WRRB_FLEX&order_by=ppr`
-                  )
-                );
-              }
+    const computedPlayers = computePlayers(
+      playerDataForWeeks,
+      resJSONs,
+      scoringSettings
+    );
 
-              return waitForAll(...resPromises).then((responses) => {
-                const resJSONs = responses.map((res) => {
-                  if (!res.ok) {
-                    // throw error(500, "No luck");
-                  }
-                  return res.json();
-                });
+    const playerArray = { id: playerArrayId, players: computedPlayers };
+    const updateOperation = {
+      $set: playerArray,
+    };
 
-                return waitForAll(...resJSONs).then((weeklyData) => {
-                  const playerData = weeklyData.shift();
-                  const scoringSettings = leagueData.scoring_settings;
-
-                  processedPlayers = computePlayers(
-                    playerData,
-                    weeklyData,
-                    scoringSettings
-                  );
-
-                  const playerMap = new Map(Object.entries(processedPlayers));
-
-                  players = playerMap;
-
-                  //console.log(playerMap.get("4017"));
-
-                  return processedPlayers;
-                });
-              });
-            });
-        });
+    await collection.updateOne(filter, updateOperation, {
+      upsert: true,
     });
+
+    return computedPlayers;
+  } catch (error) {
+    console.error("Error:", error);
+    return null;
+  } finally {
+    // await client.close();
+  }
 }
 
 function computePlayers(playerData, weeklyData, scoringSettings) {
@@ -157,95 +122,35 @@ function computePlayers(playerData, weeklyData, scoringSettings) {
   }
 
   computedPlayers["OAK"] = computedPlayers["LV"];
-  // console.log("Called player");
-  // console.log(computedPlayers["4017"].wi[1]);
-  // console.log(computedPlayers["4017"].pos);
-  // console.log(computedPlayers["4017"].fn);
+
   return computedPlayers;
 }
 
-const calculateProjection = (projectedStats, scoreSettings) => {
+function calculateProjection(projectedStats, scoreSettings) {
   let score = 0;
   for (const stat in projectedStats) {
     const multiplier = scoreSettings[stat] ? scoreSettings[stat] : 0;
     score += projectedStats[stat] * multiplier;
   }
   return round(score);
-};
+}
+
+function round(num) {
+  if (typeof num === "string") {
+    num = parseFloat(num);
+  }
+  return (Math.round((num + Number.EPSILON) * 100) / 100).toFixed(2);
+}
 
 export default async function handler(req, res) {
-  console.log("What we got", req.body);
-  console.log("I got calleddd");
-
   try {
-    await client.connect();
-    // Send a ping to confirm a successful connection
-    await client.db("admin").command({ ping: 1 });
-    console.log(
-      "Pinged your deployment. You successfully connected to MongoDB!"
-    );
-
-    // Access the database and collection
-    const db = client.db("fantasypulse");
-    const collection = db.collection("players");
-
-    const playerArrayId = "week 1";
-
-    // Define a filter to check if the document already exists based on the id field
-    const filter = { id: playerArrayId };
-
-    // Check if the document already exists
-    const existingDocument = await collection.findOne(filter);
-
-    if (!existingDocument) {
-      // No data in the database, fetch and insert processed players
-      const processedPlayers = await GET();
-
-      const playerArray = { id: playerArrayId, players: processedPlayers };
-
-      // Define an update operation with the "upsert" option
-      const updateOperation = {
-        $set: playerArray, // This will update the fields of the existing document or insert a new one if not found
-      };
-
-      // Perform the upsert operation
-      const result = await collection.updateOne(filter, updateOperation, {
-        upsert: true,
-      });
-
-      if (result.upsertedCount === 1) {
-        console.log("Document inserted.");
-      } else if (result.matchedCount === 1) {
-        console.log("Document updated.");
-      } else {
-        console.log("No document inserted or updated.");
-      }
-
-      // Return the response after processing
-      return new Response(res.status(200).json(processedPlayers), {
-        status: 200,
-        headers: {
-          "Access-Control-Allow-Origin": "*",
-          "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
-          "Access-Control-Allow-Headers": "Content-Type, Authorization",
-        },
-      });
+    const processedPlayers = await fetchPlayerData();
+    if (processedPlayers !== null) {
+      return res.status(200).json(processedPlayers);
     } else {
-      // Data already exists in the database, return the existing data
-      return new Response(res.status(200).json(existingDocument.players), {
-        status: 200,
-        headers: {
-          "Access-Control-Allow-Origin": "*",
-          "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, OPTIONS",
-          "Access-Control-Allow-Headers": "Content-Type, Authorization",
-        },
-      });
+      return res.status(500).json({ error: "Internal Server Error" });
     }
   } catch (error) {
-    console.error("Error:", error);
     return res.status(500).json({ error: "Internal Server Error" });
-  } finally {
-    // Close the client connection in the finally block
-    //await client.close();
   }
 }
