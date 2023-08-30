@@ -99,7 +99,12 @@ export default async function handler(req, res) {
     };
 
     const articleTemplate = JSON.stringify(article);
-    const question = `Give me a sports style breakdown previewing all the league's matchups in this fantasy football league, include their star players, key positional matchups and their record. include a bit of humor as well. it should be 450 words max. Give me the response in this exact format ${articleTemplate} with 8 paragraphs that are concise and it should be a valid json array. The format of the JSON response should strictly adhere to RFC8259 compliance, without any deviations or errors.`;
+    const question = `It is the first week of the season and you should welcome all fantasy managers to the fantasy pulse website! Give me an exciting  sports style breakdown article previewing each matchup in this fantasy football league, include their star players, key positional matchups and your predictions for wow it'll turn out. Make sure to include all teams.  include a bit of humor as well.   Give me the article response in this exact format  "title": "",
+  "paragraph1": "",
+  "paragraph2": "",
+  "paragraph3": "",
+  "paragraph4": "",
+} with 8 paragraphs that are concise and it should be a valid json array. 450 words max.  The format of the JSON response should strictly adhere to RFC8259 compliance, without any deviations or errors.`;
     const chain = RetrievalQAChain.fromLLM(model, vectorStore.asRetriever());
     const apiResponse = await chain.call({ query: question });
     const cleanUp = await model.call([

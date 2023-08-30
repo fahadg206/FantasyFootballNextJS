@@ -99,7 +99,12 @@ export default async function handler(req, res) {
     };
 
     const articleTemplate = JSON.stringify(article);
-    const question = `give me a "way too early" powerrankings on the league data I provided you, give every team 1 to two sentences max, and your predictions for who gets in the playoffs. it should be 450 words max. Give me the response in this exact format ${articleTemplate} with 8 paragraphs that are concise and it should be a valid json array. The format of the JSON response should strictly adhere to RFC8259 compliance, without any deviations or errors.`;
+    const question = `give me an exciting "way too early" power rankings on the league data I provided you, Make sure to include all teams without duplicating any of them in the response. give every team 1 to two sentences max, and your predictions for who gets in the playoffs by giving them a percentage and what their record would be out of 14 games include what their ranking would be as well. Article should be titled "Way Too Early Power Rankings" Give me the article response in this exact format  "title": "",
+  "paragraph1": "",
+  "paragraph2": "",
+  "paragraph3": "",
+  "paragraph4": "",
+} with paragraphs that are concise and it should be a valid json array. 450 words max.  The format of the JSON response should strictly adhere to RFC8259 compliance, without any deviations or errors.`;
     const chain = RetrievalQAChain.fromLLM(model, vectorStore.asRetriever());
     const apiResponse = await chain.call({ query: question });
     const cleanUp = await model.call([
