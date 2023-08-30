@@ -266,13 +266,15 @@ export default function Scoreboard() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch("http://localhost:3000/api/fetchPlayers", {
-          method: "POST",
-          body: "leagueID",
-        });
+        const response = await fetch(
+          "https://fantasy-football-next-js-app.vercel.app/api/fetchPlayers",
+          {
+            method: "POST",
+            body: "leagueID",
+          }
+        );
         const playersData = await response.json();
-        // const response = await axios.get(`http://localhost:3001/api/players`);
-        // const playersData = response.data;
+
         console.log("Got it");
         setPlayersData(playersData);
 

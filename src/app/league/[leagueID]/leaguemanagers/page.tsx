@@ -241,10 +241,13 @@ export default function Page() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch("http://localhost:3000/api/fetchPlayers", {
-          method: "POST",
-          body: "REACT_APP_LEAGUE_ID",
-        });
+        const response = await fetch(
+          "https://fantasy-football-next-js-app.vercel.app/api/fetchPlayers",
+          {
+            method: "POST",
+            body: "REACT_APP_LEAGUE_ID",
+          }
+        );
         const playersData = await response.json();
         console.log("Got it");
         setPlayersData(playersData);

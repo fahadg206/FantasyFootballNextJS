@@ -163,7 +163,9 @@ const Articles = () => {
 
           if (!docData.segment2) {
             promises.push(
-              fetchDataFromApi("http://localhost:3000/api/fetchSegment2")
+              fetchDataFromApi(
+                "https://fantasy-football-next-js-app.vercel.app/api/fetchSegment2"
+              )
             );
           } else {
             setArticles2(docData.segment2);
@@ -171,7 +173,9 @@ const Articles = () => {
 
           if (!docData.overreaction) {
             promises.push(
-              fetchDataFromApi("http://localhost:3000/api/fetchOverreaction")
+              fetchDataFromApi(
+                "https://fantasy-football-next-js-app.vercel.app/api/fetchOverreaction"
+              )
             );
           } else {
             setArticles3(docData.overreaction);
@@ -179,7 +183,9 @@ const Articles = () => {
 
           if (!docData.pulse_check) {
             promises.push(
-              fetchDataFromApi("http://localhost:3000/api/fetchPulseCheck")
+              fetchDataFromApi(
+                "https://fantasy-football-next-js-app.vercel.app/api/fetchPulseCheck"
+              )
             );
           } else {
             setArticles4(docData.pulse_check);
@@ -202,10 +208,18 @@ const Articles = () => {
       } else {
         // Fetch all data from APIs
         const [data1, data2, data3, data4] = await Promise.all([
-          fetchDataFromApi("http://localhost:3000/api/fetchData"),
-          fetchDataFromApi("http://localhost:3000/api/fetchSegment2"),
-          fetchDataFromApi("http://localhost:3000/api/fetchOverreaction"),
-          fetchDataFromApi("http://localhost:3000/api/fetchPulseCheck"),
+          fetchDataFromApi(
+            "https://fantasy-football-next-js-app.vercel.app/api/fetchData"
+          ),
+          fetchDataFromApi(
+            "https://fantasy-football-next-js-app.vercel.app/api/fetchSegment2"
+          ),
+          fetchDataFromApi(
+            "https://fantasy-football-next-js-app.vercel.app/api/fetchOverreaction"
+          ),
+          fetchDataFromApi(
+            "https://fantasy-football-next-js-app.vercel.app/api/fetchPulseCheck"
+          ),
         ]);
 
         setArticles(data1);
