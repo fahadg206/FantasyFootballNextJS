@@ -248,7 +248,7 @@ const CardCarousel = () => {
             animate={{
               x: CAN_SHIFT_LEFT ? "0%" : "-100%",
             }}
-            className="absolute left-0 top-[60%] z-30 rounded-r-xl bg-slate-100/30 p-3 pl-2 text-4xl text-white backdrop-blur-sm transition-[padding] hover:pl-3"
+            className="absolute left-0 top-[60%] z-30 rounded-r-xl bg-slate-100/30 p-3 pl-2 text-4xl text-white backdrop-blur-sm transition-[padding] hover:pl-3 opacity-40"
             onClick={shiftLeft}
           >
             <FiChevronLeft />
@@ -258,7 +258,7 @@ const CardCarousel = () => {
             animate={{
               x: CAN_SHIFT_RIGHT ? "0%" : "100%",
             }}
-            className="absolute right-0 top-[60%] z-30 rounded-l-xl bg-slate-100/30 p-3 pr-2 text-4xl text-white backdrop-blur-sm transition-[padding] hover:pr-3"
+            className="absolute right-0 top-[60%] z-30 rounded-l-xl bg-slate-100/30 p-3 pr-2 text-4xl text-white backdrop-blur-sm transition-[padding] hover:pr-3 opacity-40 "
             onClick={shiftRight}
           >
             <FiChevronRight />
@@ -278,7 +278,7 @@ const Card = ({
 }: HeadlineItem) => {
   return (
     <div
-      className="relative shrink-0 cursor-pointer rounded-2xl bg-white shadow-md transition-all hover:scale-[1.015] hover:shadow-xl"
+      className="relative shrink-0 cursor-pointer rounded-2xl bg-white shadow-md transition-all hover:scale-[1.015] hover:shadow-xl "
       style={{
         width: CARD_WIDTH,
         height: CARD_HEIGHT,
@@ -298,7 +298,7 @@ const Card = ({
         <span className="text-xs font-semibold uppercase text-violet-300">
           {category}
         </span>
-        <p className="my-2 text-2xl font-bold">{title}</p>
+        <p className="my-2 text-xl font-bold">{title}</p>
         <Image
           className="rounded-full"
           src={url || Logo}
@@ -310,7 +310,7 @@ const Card = ({
           className={`${
             typeof description === "number"
               ? "font-bold text-[25px] text-slate-300"
-              : "text-[14px] text-slate-300"
+              : "text-[13px] text-slate-300 "
           }`}
         >
           {description}

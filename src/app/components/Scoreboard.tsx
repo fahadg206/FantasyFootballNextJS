@@ -115,18 +115,21 @@ export default function Scoreboard() {
     new Map()
   );
 
+  let initialSelectedLeagueID = "";
+
+  // Check if localStorage is defined before using it
+  if (typeof localStorage !== "undefined") {
+    initialSelectedLeagueID = localStorage.getItem("selectedLeagueID") || "";
+  }
+
   const [leagueID, setLeagueID] = useState("");
-
-  useEffect(() => {
-    let leagueID;
-
-    // Get the value from local storage if it exists
-
-    leagueID = localStorage.getItem("selectedLeagueID") || "";
-    setLeagueID(leagueID);
-  }, [leagueID]);
-
   const router = useRouter();
+  useEffect(() => {
+    if (typeof localStorage !== "undefined") {
+      setLeagueID(localStorage.getItem("selectedLeagueID") || "");
+      router.refresh();
+    }
+  }, [leagueID, router]);
 
   const { isSundayAfternoon, isSundayEvening, isSundayNight, isMondayNight } =
     useTimeChecks();
@@ -233,7 +236,16 @@ export default function Scoreboard() {
           week = 18;
         }
         setWeek(week);
-        const matchupMapData = await getMatchupMap(leagueID, week);
+        let id = null;
+
+        if (
+          typeof localStorage !== "undefined" &&
+          localStorage.getItem("selectedLeagueID")
+        ) {
+          id = window.localStorage.getItem("selectedLeagueID");
+        }
+
+        const matchupMapData = await getMatchupMap(id, week);
         setMatchupMap(matchupMapData.matchupMap);
         setScheduleDataFinal(matchupMapData.updatedScheduleData);
 
@@ -248,6 +260,7 @@ export default function Scoreboard() {
   }, [
     typeof localStorage !== "undefined" &&
       localStorage.getItem("selectedLeagueID"),
+    leagueID,
   ]);
 
   useEffect(() => {
@@ -258,6 +271,8 @@ export default function Scoreboard() {
           body: "leagueID",
         });
         const playersData = await response.json();
+        // const response = await axios.get(`http://localhost:3001/api/players`);
+        // const playersData = response.data;
         console.log("Got it");
         setPlayersData(playersData);
 

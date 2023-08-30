@@ -141,7 +141,7 @@ const Options: React.FC<OptionsProps> = ({ votes, setVotes }) => {
                 handleIncrementVote(vote);
               }}
               key={vote.title}
-              className={`w-[80%] rounded-md ${vote.color} text-white text-center py-2 font-medium `}
+              className={`w-[80%] rounded-xl ${vote.color} text-white text-center py-2 font-medium `}
             >
               {vote.title}
             </motion.button>
