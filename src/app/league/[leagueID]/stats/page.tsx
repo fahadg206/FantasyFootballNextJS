@@ -4,10 +4,22 @@ import React from "react";
 import { useState } from "react";
 import { Modal, useModal, Button, Text, Input } from "@nextui-org/react";
 import { FaSearch } from "react-icons/fa";
+import { useRouter } from "next/navigation";
 
 export default function Home() {
   const [input, setInput] = useState("");
   const { setVisible, bindings } = useModal();
+  const router = useRouter();
+
+  console.log("WARYA");
+  if (
+    localStorage.getItem("selectedLeagueID") === null ||
+    localStorage.getItem("selectedLeagueID") === undefined
+  ) {
+    router.push("/");
+  }
+  console.log(localStorage.getItem("selectedLeagueID"));
+
   return (
     <div
       className={`text-3xl text-white  flex flex-col justify-start items-center gap-10 border-2 border-[#af1222] h-[60vh] bg-[url('./images/youtube-video-gif.gif')] bg-[length:470px_800px] md:bg-[url('./images/youtube-video-gif.gif')] bg-no-repeat md:bg-cover`}

@@ -19,22 +19,36 @@ import {
   scrollSpy,
   scroller,
 } from "react-scroll";
+import { db, storage } from "../firebase";
+import { ref, uploadString, getDownloadURL } from "firebase/storage";
 import { useRouter } from "next/navigation";
 import { BsDot } from "react-icons/bs";
 
 interface ScheduleData {
   [userId: string]: {
-    avatar: string;
+    avatar?: string;
     name: string;
     roster_id?: string;
     user_id?: string;
     starters?: string[];
+    starters_points?: string[];
+    players?: string[];
+    players_points?: string[];
+    starters_full_data?: Starter[];
     team_points?: string;
     opponent?: string;
     matchup_id?: string;
-    wins?: number;
-    losses?: number;
+    wins?: string;
+    losses?: string;
   };
+}
+
+interface Starter {
+  fname?: string;
+  lname?: string;
+  avatar?: string;
+  scored_points?: string;
+  projected_points?: string;
 }
 
 interface Matchup {
@@ -103,6 +117,90 @@ export default function ScoreboardNav({ setShowScore }) {
     setMorningSlateEnd(isSundayAfternoon);
   }, [isMondayNight, isSundayNight, isSundayEvening, isSundayAfternoon]);
 
+  function updateDbStorage(weeklyData: ScheduleData) {
+    if (REACT_APP_LEAGUE_ID) {
+      const storageRef = ref(storage, `files/${REACT_APP_LEAGUE_ID}.txt`);
+
+      //Uncomment to upload textfile to firebase storage
+
+      const articleMatchupData: ScheduleData = JSON.parse(
+        JSON.stringify(weeklyData)
+      );
+
+      for (const matchupId in articleMatchupData) {
+        const matchup = articleMatchupData[matchupId];
+
+        // Delete properties from the matchup object
+        delete matchup.starters;
+        delete matchup.starters_points;
+        delete matchup.players;
+        delete matchup.players_points;
+        delete matchup.roster_id;
+        delete matchup.user_id;
+        delete matchup.avatar;
+
+        // Check if starters_full_data exists before iterating over it
+        if (matchup.starters_full_data) {
+          for (const starter of matchup.starters_full_data) {
+            delete starter.avatar;
+          }
+        }
+      }
+
+      console.log("data ", articleMatchupData);
+
+      const textContent = JSON.stringify(articleMatchupData);
+
+      const readingRef = ref(storage, `files/${REACT_APP_LEAGUE_ID}.txt`);
+      // Function to add content only if it's different
+      addContentIfDifferent(textContent, storageRef);
+    }
+  }
+  function addContentIfDifferent(newContent: any, readingRef: any) {
+    // Get the current contents of the file
+    //uploadNewContent(newContent, readingRef);
+    getDownloadURL(readingRef)
+      .then(function (url) {
+        // Fetch the current contents using the URL
+        fetch(url)
+          .then((response) => response.text())
+          .then((existingContent) => {
+            if (
+              newContent.length > 3 &&
+              (!existingContent || existingContent !== newContent)
+            ) {
+              console.log("newcontent", newContent);
+              // If existingContent is empty or different from new content, upload the new content
+              uploadNewContent(newContent, readingRef);
+            } else {
+              //console.log("New content is the same as existing content.");
+            }
+          })
+          .catch(function (error) {
+            console.error("Error fetching existing content:", error);
+          });
+      })
+      .catch(function (error) {
+        if (error.code === "storage/object-not-found") {
+          // Handle the case when the object (file) is not found in storage
+          uploadNewContent(newContent, readingRef);
+        } else {
+          console.error("Error getting download URL:", error);
+        }
+      });
+  }
+
+  // Function to upload new content
+  function uploadNewContent(content: any, storageRef: any) {
+    uploadString(storageRef, content, "raw")
+      .then(() => {
+        console.log("Text file uploaded to Firebase Cloud Storage.");
+      })
+      .catch((error) => {
+        console.error("Error uploading text file:", error);
+      });
+  }
+
   useEffect(() => {
     async function fetchMatchupData() {
       try {
@@ -123,6 +221,7 @@ export default function ScoreboardNav({ setShowScore }) {
         setScheduleDataFinal(
           matchupMapData.updatedScheduleData as ScheduleData
         );
+        updateDbStorage(matchupMapData.updatedScheduleData);
       } catch (error) {
         console.error("Error fetching matchup data:", error);
       }

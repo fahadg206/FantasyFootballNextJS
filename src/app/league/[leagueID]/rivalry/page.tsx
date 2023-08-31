@@ -23,6 +23,7 @@ import {
 } from "firebase/firestore/lite";
 import MatchupsImg from "../../../images/matchupsImage.png";
 import { db, storage } from "../../../firebase";
+import { useRouter } from "next/navigation";
 
 interface NflState {
   season: string;
@@ -102,6 +103,8 @@ const Matchups = () => {
     new Set<RivalsManager>()
   );
 
+  const router = useRouter();
+
   const REACT_APP_LEAGUE_ID: string | null =
     localStorage.getItem("selectedLeagueID");
 
@@ -116,6 +119,15 @@ const Matchups = () => {
   const usersDropdown2: Set<User> = new Set();
 
   const rivalsMap: Map<string, Rivalry> = new Map();
+
+  console.log("WARYA");
+  if (
+    localStorage.getItem("selectedLeagueID") === null ||
+    localStorage.getItem("selectedLeagueID") === undefined
+  ) {
+    router.push("/");
+  }
+  console.log(localStorage.getItem("selectedLeagueID"));
 
   const getNflState = async (): Promise<NflState> => {
     try {

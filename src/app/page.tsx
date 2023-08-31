@@ -16,6 +16,7 @@ import NavBar from "./components/Navbar";
 import Logo from "./images/Transparent.png";
 import Image from "next/image";
 import SelectLeague from "./components/SelectLeague";
+import { useRouter } from "next/navigation";
 
 export default function Home() {
   const options = ["2022"];
@@ -26,6 +27,7 @@ export default function Home() {
   const [cleared, setCleared] = useState(false);
 
   const [selectedSeason, setSelectedSeason] = useState(options[0]);
+  const router = useRouter();
 
   // const handleSelect = (option: string) => {
   //   setSelectedOption(option);
@@ -40,6 +42,10 @@ export default function Home() {
     // Do something with the selected option if needed.
     setUsernameSubmitted(false);
   };
+
+  if (localStorage.getItem("selectedLeagueID")) {
+    router.refresh();
+  }
 
   console.log(selectedSeason);
   console.log(usernameSubmitted);

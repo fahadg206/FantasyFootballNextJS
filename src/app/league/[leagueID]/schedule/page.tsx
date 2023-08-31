@@ -18,6 +18,7 @@ import {
   scroller,
 } from "react-scroll";
 import useTimeChecks from "../../../libs/getTimes";
+import { useRouter } from "next/navigation";
 
 interface NflState {
   season: string;
@@ -106,7 +107,18 @@ export default function Schedule() {
     (() => void) | undefined
   >(undefined);
 
+  const router = useRouter();
+
   const REACT_APP_LEAGUE_ID = localStorage.getItem("selectedLeagueID");
+
+  console.log("WARYA");
+  if (
+    localStorage.getItem("selectedLeagueID") === null ||
+    localStorage.getItem("selectedLeagueID") === undefined
+  ) {
+    router.push("/");
+  }
+  console.log(localStorage.getItem("selectedLeagueID"));
 
   const getNflState = async (): Promise<NflState> => {
     try {

@@ -17,6 +17,7 @@ import {
 import { db, storage } from "../../app/firebase";
 import getMatchupData from "../libs/getMatchupData";
 import axios from "axios";
+import { useRouter } from "next/navigation";
 
 interface HeadlineItem {
   id: number;
@@ -97,6 +98,7 @@ const CardCarousel = () => {
     },
   ];
   const [headlines, setHeadlines] = useState(defaultHeadlines);
+  const router = useRouter();
 
   if (leagueStatus === "pre_draft") {
     return (
@@ -127,6 +129,15 @@ const CardCarousel = () => {
       }
       setOffset((pv) => (pv -= CARD_SIZE));
     };
+
+    console.log("WARYA");
+    if (
+      localStorage.getItem("selectedLeagueID") === null ||
+      localStorage.getItem("selectedLeagueID") === undefined
+    ) {
+      router.push("/");
+    }
+    console.log(localStorage.getItem("selectedLeagueID"));
 
     useEffect(() => {
       async function fetchData() {
@@ -208,7 +219,7 @@ const CardCarousel = () => {
       };
 
       fetchData();
-    }, []);
+    }, [REACT_APP_LEAGUE_ID]);
 
     //console.log("Headlines: ", headlines);
     let topScorer;

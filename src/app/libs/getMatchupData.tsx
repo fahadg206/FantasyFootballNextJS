@@ -267,8 +267,8 @@ export default async function getMatchupData(league_id: any, week: number) {
     } catch (error) {
       console.error("Error fetching data:", error);
     }
-    //console.log(updatedScheduleData);
-    console.log("culprit", matchupMap);
+    console.log(updatedScheduleData);
+    //console.log("culprit", matchupMap);
 
     return { matchupMap, updatedScheduleData };
   };

@@ -8,6 +8,7 @@ import Logo from "../../../images/Transparent.png";
 
 import { FiAward, FiChevronDown, FiChevronUp } from "react-icons/fi";
 import axios from "axios";
+import { useRouter } from "next/navigation";
 
 interface ManagerInfo {
   [userId: string]: {
@@ -47,8 +48,19 @@ const Page = () => {
   const [sortedTeamDataFinal, setSortedTeamDataFinal] =
     useState<SortedTeamData>([]);
   const selectedLeagueID = localStorage.getItem("selectedLeagueID");
+  const router = useRouter();
 
   console.log("selectedLeagueID:", selectedLeagueID);
+
+  console.log("WARYA");
+  if (
+    localStorage.getItem("selectedLeagueID") === null ||
+    localStorage.getItem("selectedLeagueID") === undefined
+  ) {
+    router.push("/");
+  }
+  console.log(localStorage.getItem("selectedLeagueID"));
+
   const getUsers = async () => {
     try {
       const response = await axios.get<any>(

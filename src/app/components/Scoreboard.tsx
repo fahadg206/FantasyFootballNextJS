@@ -171,7 +171,7 @@ export default function Scoreboard() {
         }
       }
 
-      //console.log("data ", articleMatchupData);
+      console.log("data ", articleMatchupData);
 
       const textContent = JSON.stringify(articleMatchupData);
 
@@ -189,7 +189,11 @@ export default function Scoreboard() {
         fetch(url)
           .then((response) => response.text())
           .then((existingContent) => {
-            if (!existingContent || existingContent !== newContent) {
+            if (
+              newContent.length > 3 &&
+              (!existingContent || existingContent !== newContent)
+            ) {
+              console.log("newcontent", newContent);
               // If existingContent is empty or different from new content, upload the new content
               uploadNewContent(newContent, readingRef);
             } else {
