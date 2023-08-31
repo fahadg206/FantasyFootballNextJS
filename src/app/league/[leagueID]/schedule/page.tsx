@@ -133,7 +133,7 @@ export default function Schedule() {
     const fetchData = async () => {
       try {
         const response = await axios.get(
-          "http://localhost:3000/api/fetchPlayers"
+          "http://fantasypulseff.vercel.app/api/fetchPlayers"
         );
         const playersData = await response.data;
         console.log("Got it");
