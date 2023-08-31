@@ -374,14 +374,13 @@ const Articles = () => {
             to={articles.title || ""}
             activeClass="active"
             spy={true}
-            delay={100}
             smooth={true}
             offset={50}
             duration={700}
           >
             <BsArrowUpCircleFill
               className="block animate-bounce fixed bottom-5 right-3 opacity-40 xl:hidden"
-              size={20}
+              size={30}
             />
           </SmoothLink>
         )}

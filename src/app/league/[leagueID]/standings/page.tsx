@@ -253,17 +253,18 @@ const Page = () => {
                 : 0)
             : ""}
         </td>
-        <td className="p-4 font-medium">
+        <td className="p-4 font-medium ">
           {user.streak !== undefined ? (
-            <span>
+            <span className="flex items-center">
               {user.streak.slice(0, -1)}
-              <span
+
+              <p
                 className={`p-1 font-bold ${
                   user.streak.slice(-1) === "L" ? "text-[red]" : "text-[green]"
                 }`}
               >
                 {user.streak.slice(-1)}
-              </span>
+              </p>
             </span>
           ) : (
             ""
