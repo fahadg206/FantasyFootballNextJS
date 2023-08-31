@@ -58,19 +58,19 @@ const CARD_WIDTH = 350;
 const CARD_HEIGHT = 350;
 const MARGIN = 20;
 const CARD_SIZE = CARD_WIDTH + MARGIN;
-const REACT_APP_LEAGUE_ID: string | null =
-  localStorage.getItem("selectedLeagueID");
-const leagueStatus: string | null = localStorage.getItem("leagueStatus");
 
 const BREAKPOINTS = {
   sm: 640,
   lg: 1024,
 };
 
-const CardCarousel = () => {
+const CardCarousel = ({ leagueID }) => {
   const [ref, { width }] = useMeasure();
   const [offset, setOffset] = useState(0);
   const [userData, setUserData] = useState<ScheduleData>();
+  const REACT_APP_LEAGUE_ID: string | null = leagueID;
+  const leagueStatus: string | null = localStorage.getItem("leagueStatus");
+
   const defaultHeadlines = [
     {
       id: 10,
@@ -138,6 +138,11 @@ const CardCarousel = () => {
         router.push("/");
       }
     }
+
+    // Add an event listener for the 'storage' event
+
+    useEffect(() => {}, [leagueID]);
+    console.log(leagueID);
 
     useEffect(() => {
       async function fetchData() {
@@ -219,7 +224,7 @@ const CardCarousel = () => {
       };
 
       fetchData();
-    }, [REACT_APP_LEAGUE_ID]);
+    }, []);
 
     //console.log("Headlines: ", headlines);
     let topScorer;

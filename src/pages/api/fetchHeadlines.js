@@ -25,6 +25,7 @@ import path from "path";
 import { db, storage } from "../../app/firebase";
 
 dotenv.config();
+const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
 
 const updateWeeklyInfo = async (REACT_APP_LEAGUE_ID, headlines) => {
   // Reference to the "Weekly Info" collection
@@ -86,6 +87,7 @@ export default async function handler(req, res) {
     const model = new ChatOpenAI({
       temperature: 0.9,
       model: "gpt-4",
+      openAIApiKey: OPENAI_API_KEY,
     });
     await vectorStore.save("leagueData");
 

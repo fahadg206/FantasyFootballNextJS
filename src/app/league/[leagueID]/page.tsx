@@ -86,7 +86,7 @@ export default function Page() {
         </div>
       </div>
       <div className="mb-2 xl:mb-5">
-        <HomeCarousel />
+        <HomeCarousel leagueID={leagueID} />
       </div>
       <HomePoll />
       <ScrollingTestimonials />
