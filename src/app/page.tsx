@@ -43,8 +43,10 @@ export default function Home() {
     setUsernameSubmitted(false);
   };
 
-  if (localStorage.getItem("selectedLeagueID")) {
-    router.refresh();
+  if (typeof localStorage !== "undefined") {
+    if (localStorage.getItem("selectedLeagueID")) {
+      router.refresh();
+    }
   }
 
   console.log(selectedSeason);
