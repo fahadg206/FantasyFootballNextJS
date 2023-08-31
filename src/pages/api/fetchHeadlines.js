@@ -24,9 +24,12 @@ import fs from "fs";
 import path from "path";
 import { db, storage } from "../../app/firebase";
 
+console.log("hey man");
 dotenv.config();
 const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
+
 console.log("openaikey", OPENAI_API_KEY);
+
 const updateWeeklyInfo = async (REACT_APP_LEAGUE_ID, headlines) => {
   // Reference to the "Weekly Info" collection
   const weeklyInfoCollectionRef = collection(db, "Weekly Headlines");

@@ -196,10 +196,6 @@ export default async function getMatchupData(league_id: any, week: number) {
           if (updatedScheduleData[userId]?.starters) {
             for (const starter of updatedScheduleData[userId].starters) {
               if (starter != "0" && playersData[starter]) {
-                console.log(
-                  updatedScheduleData[userId].name,
-                  playersData[starter]
-                );
                 const starter_data = {
                   fname: playersData[starter].fn,
                   lname: playersData[starter].ln,
@@ -267,7 +263,7 @@ export default async function getMatchupData(league_id: any, week: number) {
     } catch (error) {
       console.error("Error fetching data:", error);
     }
-    console.log(updatedScheduleData);
+    //console.log(updatedScheduleData);
     //console.log("culprit", matchupMap);
 
     return { matchupMap, updatedScheduleData };
