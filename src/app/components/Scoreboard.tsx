@@ -308,7 +308,7 @@ export default function Scoreboard() {
     // You can log an error, use alternative storage methods, or perform other actions
   }
   const weekString = week?.toString();
-  console.log("matchupmap", matchupMap);
+  //console.log("matchupmap", matchupMap);
   // MATCHUP TEXT
 
   const matchupText = Array.from(matchupMap).map(([matchupID, matchupData]) => {
@@ -429,7 +429,7 @@ export default function Scoreboard() {
       </p>
     );
 
-    console.log("fssd", team1);
+    //console.log("fssd", team1);
 
     return (
       <div

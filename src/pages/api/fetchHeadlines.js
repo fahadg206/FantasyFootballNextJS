@@ -24,7 +24,6 @@ import fs from "fs";
 import path from "path";
 import { db, storage } from "../../app/firebase";
 
-console.log("hey man");
 dotenv.config();
 const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
 
@@ -58,65 +57,68 @@ const updateWeeklyInfo = async (REACT_APP_LEAGUE_ID, headlines) => {
 };
 
 export default async function handler(req, res) {
-  console.log("what was passed in ", req.body);
-  const REACT_APP_LEAGUE_ID = req.body;
+  console.log("heyman");
 
-  try {
-    const readingRef = ref(storage, `files/${REACT_APP_LEAGUE_ID}.txt`);
-    const url = await getDownloadURL(readingRef);
-    const response = await fetch(url);
-    const fileContent = await response.text();
-    const newFile = JSON.stringify(fileContent).replace(/\//g, "");
-    //console.log("File ", newFile);
-    const leagueData = [
-      new Document({
-        pageContent: [newFile],
-        metadata: {
-          title: "Fantasy Pulse",
-          author: "Fantasy Pulse Editorial Team",
-          date: "Sep 1, 2022",
-        },
-      }),
-    ];
-    // Process the retrieved data
-    const vectorStore = await FaissStore.fromDocuments(
-      leagueData,
-      new OpenAIEmbeddings()
-    );
-    //await vectorStore.addDocuments(articles.article1);
-    //await vectorStore.addDocuments(articles.article2);
-    //await vectorStore.addDocuments(articles.article3);
-    //await vectorStore.addDocuments(articles.article4);
-    const model = new ChatOpenAI({
-      temperature: 0.9,
-      model: "gpt-4",
-      openAIApiKey: OPENAI_API_KEY,
-    });
-    await vectorStore.save("leagueData");
+  return res.status(200).json({ name: "kabo" });
+  // console.log("what was passed in ", req.body);
+  // const REACT_APP_LEAGUE_ID = req.body;
 
-    const headline = {
-      id: "",
-      category: "",
-      title: "",
-      description: "",
-    };
+  // try {
+  //   const readingRef = ref(storage, `files/${REACT_APP_LEAGUE_ID}.txt`);
+  //   const url = await getDownloadURL(readingRef);
+  //   const response = await fetch(url);
+  //   const fileContent = await response.text();
+  //   const newFile = JSON.stringify(fileContent).replace(/\//g, "");
+  //   //console.log("File ", newFile);
+  //   const leagueData = [
+  //     new Document({
+  //       pageContent: [newFile],
+  //       metadata: {
+  //         title: "Fantasy Pulse",
+  //         author: "Fantasy Pulse Editorial Team",
+  //         date: "Sep 1, 2022",
+  //       },
+  //     }),
+  //   ];
+  //   // Process the retrieved data
+  //   const vectorStore = await FaissStore.fromDocuments(
+  //     leagueData,
+  //     new OpenAIEmbeddings()
+  //   );
+  //   //await vectorStore.addDocuments(articles.article1);
+  //   //await vectorStore.addDocuments(articles.article2);
+  //   //await vectorStore.addDocuments(articles.article3);
+  //   //await vectorStore.addDocuments(articles.article4);
+  //   const model = new ChatOpenAI({
+  //     temperature: 0.9,
+  //     model: "gpt-4",
+  //     openAIApiKey: OPENAI_API_KEY,
+  //   });
+  //   await vectorStore.save("leagueData");
 
-    const headlineFormat = JSON.stringify(headline);
+  //   const headline = {
+  //     id: "",
+  //     category: "",
+  //     title: "",
+  //     description: "",
+  //   };
 
-    const question = `give me 3 sports style headlines about the league's data, include the scores, who won by comparing their team_points to their opponent's team_points and their star players include a bit of humor as well. I want the information to be in this format exactly ${headlineFormat}, keep description short to one sentance give me the response in valid JSON array format`;
+  //   const headlineFormat = JSON.stringify(headline);
 
-    const chain = RetrievalQAChain.fromLLM(model, vectorStore.asRetriever());
-    const apiResponse = await chain.call({ query: question });
-    const cleanUp = await model.call([
-      new SystemMessage(
-        "Turn the following string into valid JSON format that strictly adhere to RFC8259 compliance"
-      ),
-      new HumanMessage(apiResponse.text),
-    ]);
-    updateWeeklyInfo(REACT_APP_LEAGUE_ID, cleanUp.text);
-    return res.status(200).json(JSON.parse(apiResponse.text));
-  } catch (error) {
-    console.error("Unexpected error:", error);
-    return res.status(500).json({ error: "An error occurred" });
-  }
+  //   const question = `give me 3 sports style headlines about the league's data, include the scores, who won by comparing their team_points to their opponent's team_points and their star players include a bit of humor as well. I want the information to be in this format exactly ${headlineFormat}, keep description short to one sentance give me the response in valid JSON array format`;
+
+  //   const chain = RetrievalQAChain.fromLLM(model, vectorStore.asRetriever());
+  //   const apiResponse = await chain.call({ query: question });
+  //   const cleanUp = await model.call([
+  //     new SystemMessage(
+  //       "Turn the following string into valid JSON format that strictly adhere to RFC8259 compliance"
+  //     ),
+  //     new HumanMessage(apiResponse.text),
+  //   ]);
+  //   updateWeeklyInfo(REACT_APP_LEAGUE_ID, cleanUp.text);
+  //   return res.status(200).json(JSON.parse(apiResponse.text));
+  // } catch (error) {
+  //   console.error("Unexpected error:", error);
+  //   return res.status(500).json({ error: "An error occurred" });
+  // }
 }
