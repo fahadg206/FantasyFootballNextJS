@@ -186,6 +186,8 @@ export default async function getMatchupData(league_id: any, week: number) {
         }
       }
 
+      //Error
+
       for (const userId in updatedScheduleData) {
         if (updatedScheduleData.hasOwnProperty(userId)) {
           if (!updatedScheduleData[userId].starters_full_data) {
@@ -193,7 +195,11 @@ export default async function getMatchupData(league_id: any, week: number) {
           }
           if (updatedScheduleData[userId]?.starters) {
             for (const starter of updatedScheduleData[userId].starters) {
-              if (starter != "0") {
+              if (starter != "0" && playersData[starter]) {
+                console.log(
+                  updatedScheduleData[userId].name,
+                  playersData[starter]
+                );
                 const starter_data = {
                   fname: playersData[starter].fn,
                   lname: playersData[starter].ln,
@@ -262,20 +268,18 @@ export default async function getMatchupData(league_id: any, week: number) {
       console.error("Error fetching data:", error);
     }
     //console.log(updatedScheduleData);
+    console.log("culprit", matchupMap);
 
     return { matchupMap, updatedScheduleData };
   };
 
   async function fetchPlayersData() {
     try {
-      const response = await fetch(
-        "https://fantasypulseff.vercel.app/api/fetchPlayers",
-        {
-          method: "POST",
-          body: "REACT_APP_LEAGUE_ID",
-        }
+      const response = await axios.get(
+        "https://fantasypulseff.vercel.app/api/fetchPlayers"
       );
-      const playersData = await response.json();
+      const playersData = await response.data;
+
       // Process and use the data as needed
 
       return playersData;

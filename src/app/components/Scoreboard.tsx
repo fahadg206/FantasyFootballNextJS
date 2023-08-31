@@ -244,9 +244,11 @@ export default function Scoreboard() {
         ) {
           id = window.localStorage.getItem("selectedLeagueID");
         }
+        console.log("ID", id);
 
         const matchupMapData = await getMatchupMap(id, week);
         setMatchupMap(matchupMapData.matchupMap);
+        console.log("being set", matchupMapData.matchupMap);
         setScheduleDataFinal(matchupMapData.updatedScheduleData);
 
         updateDbStorage(matchupMapData.updatedScheduleData);
