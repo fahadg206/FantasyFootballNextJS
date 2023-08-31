@@ -55,9 +55,7 @@ export default function useTimeChecks() {
       setIsSundayNight(false);
       setIsMondayNight(false);
     }
-    console.log(sundayAfternoon);
   };
-  console.log(isSundayAfternoon);
 
   useEffect(() => {
     const interval = setInterval(checkTimes, 1000 * 60); // Check every minute

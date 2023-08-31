@@ -79,7 +79,7 @@ const Options: React.FC<OptionsProps> = ({ votes, setVotes }) => {
         });
       }
 
-      console.log("Votes added to the database successfully");
+      //console.log("Votes added to the database successfully");
     } catch (error) {
       console.error("Error adding votes to the database:", error);
     }
@@ -110,10 +110,10 @@ const Options: React.FC<OptionsProps> = ({ votes, setVotes }) => {
         querySnapshot.forEach((doc) => {
           const docData = doc.data();
           setVotes(docData.votes);
-          console.log("votes returned", docData.votes);
+          //console.log("votes returned", docData.votes);
         });
       } else {
-        console.log("votes do not exist");
+        //console.log("votes do not exist");
       }
     } catch (error) {
       console.error("Error adding votes to the database:", error);

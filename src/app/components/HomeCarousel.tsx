@@ -204,7 +204,7 @@ const CardCarousel = () => {
   //console.log("Headlines: ", headlines);
   let topScorer;
   if (userData) {
-    console.log("U", userData);
+    //console.log("U", userData);
     const userArray = Object.values(userData);
     const sortedUserData = userArray.sort((a, b) => {
       return b.team_points - a.team_points;

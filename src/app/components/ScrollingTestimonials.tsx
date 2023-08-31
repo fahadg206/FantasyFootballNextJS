@@ -181,14 +181,10 @@ const ScrollingTestimonials = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch(
-          "https://fantasypulseff.vercel.app/api/fetchPlayers",
-          {
-            method: "POST",
-            body: "REACT_APP_LEAGUE_ID",
-          }
+        const response = await axios.get(
+          "https://fantasypulseff.vercel.app/api/fetchPlayers"
         );
-        const playersData = await response.json();
+        const playersData = await response.data;
         console.log("Got it");
         setPlayersData(playersData);
 

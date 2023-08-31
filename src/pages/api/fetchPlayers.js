@@ -190,7 +190,7 @@ const calculateProjection = (projectedStats, scoreSettings) => {
 };
 
 export default async function handler(req, res) {
-  console.log("What we got", req.body);
+  // console.log("What we got", req.body);
   console.log("I got calleddd");
 
   try {

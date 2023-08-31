@@ -132,14 +132,10 @@ export default function Schedule() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch(
-          "https://fantasypulseff.vercel.app/api/fetchPlayers",
-          {
-            method: "POST",
-            body: "REACT_APP_LEAGUE_ID",
-          }
+        const response = await axios.get(
+          "http://localhost:3000/api/fetchPlayers"
         );
-        const playersData = await response.json();
+        const playersData = await response.data;
         console.log("Got it");
         setPlayersData(playersData);
 
