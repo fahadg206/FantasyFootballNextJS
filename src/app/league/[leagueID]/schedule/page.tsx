@@ -215,30 +215,34 @@ export default function Schedule() {
 
     if (team1?.starters) {
       for (const currPlayer of team1.starters) {
-        if (
-          playersData[currPlayer] &&
-          playersData[currPlayer].wi &&
-          playersData[currPlayer].wi[counter?.toString()] &&
-          playersData[currPlayer].wi[counter?.toString()].p !== undefined
-        ) {
-          team1Proj += parseFloat(
-            playersData[currPlayer].wi[counter?.toString()].p
-          );
+        if (playersData[currPlayer]) {
+          if (
+            playersData[currPlayer] &&
+            playersData[currPlayer].wi &&
+            playersData[currPlayer].wi[counter?.toString()] &&
+            playersData[currPlayer].wi[counter?.toString()].p !== undefined
+          ) {
+            team1Proj += parseFloat(
+              playersData[currPlayer].wi[counter?.toString()].p
+            );
+          }
         }
       }
     }
 
     if (team2?.starters) {
       for (const currPlayer of team2.starters) {
-        if (
-          playersData[currPlayer] &&
-          playersData[currPlayer].wi &&
-          playersData[currPlayer].wi[counter?.toString()] &&
-          playersData[currPlayer].wi[counter?.toString()].p !== undefined
-        ) {
-          team2Proj += parseFloat(
-            playersData[currPlayer].wi[counter?.toString()].p
-          );
+        if (playersData[currPlayer]) {
+          if (
+            playersData[currPlayer] &&
+            playersData[currPlayer].wi &&
+            playersData[currPlayer].wi[counter?.toString()] &&
+            playersData[currPlayer].wi[counter?.toString()].p !== undefined
+          ) {
+            team2Proj += parseFloat(
+              playersData[currPlayer].wi[counter?.toString()].p
+            );
+          }
         }
       }
     }
