@@ -71,6 +71,7 @@ export default async function handler(req, res) {
 
   const model = new OpenAI({
     temperature: 0.9,
+    openAIApiKey: OPENAI_API_KEY,
   });
 
   const chain = new LLMChain({
