@@ -61,29 +61,33 @@ const updateWeeklyInfo = async (REACT_APP_LEAGUE_ID, headlines) => {
 
 export default async function handler(req, res) {
   console.log("heyman");
+  try {
+    const template =
+      "What would be a good company name for a company that makes {product}?";
+    const promptTemplate = new PromptTemplate({
+      template: template,
+      inputVariables: ["product"],
+    });
 
-  const template =
-    "What would be a good company name for a company that makes {product}?";
-  const promptTemplate = new PromptTemplate({
-    template: template,
-    inputVariables: ["product"],
-  });
+    const model = new OpenAI({
+      temperature: 0.9,
+      openAIApiKey: "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",
+    });
 
-  const model = new OpenAI({
-    temperature: 0.9,
-    openAIApiKey: OPENAI_API_KEY,
-  });
+    const chain = new LLMChain({
+      llm: model,
+      prompt: promptTemplate,
+    });
 
-  const chain = new LLMChain({
-    llm: model,
-    prompt: promptTemplate,
-  });
+    const response = await chain.call({
+      product: "colorful socks",
+    });
 
-  const response = await chain.call({
-    product: "colorful socks",
-  });
-
-  return res.status(200).json({ response: response });
+    return res.status(200).json({ response: response });
+  } catch (error) {
+    console.error("Unexpected error:", error);
+    return res.status(500).json({ error: "An error occurred" });
+  }
 
   // //return res.status(200).json({ name: OPENAI_API_KEY });
   // console.log("what was passed in ", req.body);
