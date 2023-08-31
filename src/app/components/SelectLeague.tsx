@@ -109,6 +109,7 @@ export default function Page(props: myProps) {
 
                 localStorage.setItem("selectedLeagueID", league.league_id);
                 localStorage.setItem("selectedLeagueName", league.name);
+                localStorage.setItem("leagueStatus", league.status);
                 setLoading(!loading);
                 router.push(
                   `/league/${localStorage.getItem("selectedLeagueID")}`
