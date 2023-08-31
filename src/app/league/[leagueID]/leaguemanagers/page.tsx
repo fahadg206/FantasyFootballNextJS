@@ -383,7 +383,7 @@ export default function Page() {
   );
 
   return (
-    <div className="w-[95vw] xl:w-[60vw]">
+    <div className="w-[95vw] xl:w-[60vw] mb-3">
       <LeagueManagersSelection />
       <div className="text-center font-bold mb-2 flex justify-center items-center">
         <p>Weekly Results</p>
