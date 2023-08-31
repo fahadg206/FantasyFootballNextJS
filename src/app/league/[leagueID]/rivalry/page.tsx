@@ -11,6 +11,7 @@ import { M_PLUS_1 } from "next/font/google";
 import Image from "next/image";
 import { BsArrowBarLeft, BsArrowBarRight } from "react-icons/bs";
 import { HiOutlineArrowSmLeft, HiOutlineArrowSmRight } from "react-icons/hi";
+import { ImSad } from "react-icons/im";
 import {
   getFirestore,
   collection,
@@ -504,7 +505,7 @@ const Matchups = () => {
     const fetchData = async () => {
       try {
         const response = await fetch(
-          "https://fantasypulseff.vercel.app/api/fetchPlayers",
+          "http://fantasypulseff.vercel.app/api/fetchPlayers",
           {
             method: "POST",
             body: "REACT_APP_LEAGUE_ID",
@@ -899,6 +900,31 @@ const Matchups = () => {
                                     </div>
                                   );
                                 }
+                                if (!playersData[starter]) {
+                                  return (
+                                    <div
+                                      key={starterIndex}
+                                      className="flex  text-white text-[13px] items-center justify-start w-[164px] h-[71px] border-[1px] border-[#1a1a1a] mb-1 "
+                                    >
+                                      {" "}
+                                      <ImSad
+                                        className="opacity-40 animate-pulse ml-2"
+                                        size={23}
+                                      />
+                                      <div className="flex flex-col items-center">
+                                        {" "}
+                                        <Image
+                                          src={`https://sleepercdn.com/content/nfl/players/thumb/${starter}.jpg`}
+                                          alt="player"
+                                          width={57}
+                                          height={57}
+                                          className="opacity-50 animate-pulse"
+                                        />
+                                        <p>F/A</p>
+                                      </div>
+                                    </div>
+                                  );
+                                }
                                 const playerFirstName =
                                   playersData[starter.toString()].fn.charAt(0) +
                                   ".";
@@ -1069,6 +1095,31 @@ const Matchups = () => {
                                       className="flex flex-col text-white text[13px] items-center justify-center w-[164px] h-[71px] border-[1px] border-[#1a1a1a] mb-1"
                                     >
                                       Start your player buddy!
+                                    </div>
+                                  );
+                                }
+                                if (!playersData[starter]) {
+                                  return (
+                                    <div
+                                      key={starterIndex}
+                                      className="flex  text-white text-[13px] items-center justify-start w-[164px] h-[71px] border-[1px] border-[#1a1a1a] mb-1 "
+                                    >
+                                      {" "}
+                                      <ImSad
+                                        className="opacity-40 animate-pulse ml-2"
+                                        size={23}
+                                      />
+                                      <div className="flex flex-col items-center">
+                                        {" "}
+                                        <Image
+                                          src={`https://sleepercdn.com/content/nfl/players/thumb/${starter}.jpg`}
+                                          alt="player"
+                                          width={57}
+                                          height={57}
+                                          className="opacity-50 animate-pulse"
+                                        />
+                                        <p>F/A</p>
+                                      </div>
                                     </div>
                                   );
                                 }
