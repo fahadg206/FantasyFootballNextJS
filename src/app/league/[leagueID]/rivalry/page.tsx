@@ -505,7 +505,7 @@ const Matchups = () => {
     const fetchData = async () => {
       try {
         const response = await fetch(
-          "http://fantasypulseff.vercel.app/api/fetchPlayers",
+          "https://fantasypulseff.vercel.app/api/fetchPlayers",
           {
             method: "POST",
             body: "REACT_APP_LEAGUE_ID",
