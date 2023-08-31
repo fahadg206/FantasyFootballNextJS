@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import axios from "axios";
 import Image from "next/image";
 import helmet from "../images/helmet2.png";
+import { BsArrowRightCircleFill } from "react-icons/bs";
 
 import NavBar from "./Navbar";
 
@@ -134,8 +135,12 @@ export default function Page(props: myProps) {
             : `hidden`
         }
       >
-        <p className="italic text-[13px] text-[#807c7c] mr-2">
-          {"Don't have a Sleeper account?"}
+        <p className="italic flex items-center gap-x-4 text-[13px] text-[#807c7c] mr-2">
+          <p>{"Don't have a Sleeper account?"}</p>{" "}
+          <BsArrowRightCircleFill
+            size={25}
+            className="text-[#af1222] animate-bounce"
+          />
         </p>
         <button
           onClick={() => {

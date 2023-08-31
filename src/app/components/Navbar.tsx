@@ -22,6 +22,8 @@ import {
   FaSearch,
 } from "react-icons/fa";
 
+import { BsArrowLeftCircleFill } from "react-icons/bs";
+
 import Logo from "../images/Transparent.png";
 import Image from "next/image";
 import Link from "next/link";
@@ -155,6 +157,14 @@ function NavBar(props: MyProps) {
   const MobileNav = () => {
     const [showScore, setShowScore] = useState(false);
     const [navbar, setNavbar] = useState(false);
+
+    const handleLinkClick = () => {
+      setNavbar(false);
+
+      setTimeout(() => {
+        router.refresh(); // Replace `router` with the appropriate router instance
+      }, 1000); // Delay of 1000 milliseconds (1 second)
+    };
 
     return (
       <div className=" bg-[#EDEDED] dark:bg-black px-4 mx-auto w-screen 2xl:hidden opacity-90">
@@ -296,6 +306,17 @@ function NavBar(props: MyProps) {
               <li>
                 <Themechanger />
               </li>
+              <li>
+                <div className="flex flex-col items-center justify-center mt-5  gap-y-2">
+                  <Link onClick={handleLinkClick} href={"/"}>
+                    <BsArrowLeftCircleFill
+                      className="text-[#af1222] animate-bounce"
+                      size={20}
+                    />
+                  </Link>
+                  <p className="text-[11px] italic">Back to Login Page</p>
+                </div>
+              </li>
             </ul>
           </div>
         </div>
@@ -341,13 +362,30 @@ function NavBar(props: MyProps) {
   }
 
   const showNav = () => {
+    const handleLinkClick = () => {
+      setTimeout(() => {
+        router.refresh(); // Replace `router` with the appropriate router instance
+      }, 1000); // Delay of 1000 milliseconds (1 second)
+    };
     if (
       typeof localStorage !== "undefined" &&
       localStorage.getItem("selectedLeagueID")
     ) {
       return (
         <div className=" flex">
-          <SideNav />
+          <div className="flex">
+            <div className="hidden xl:flex flex-col items-center justify-center mt-5 ml-5 gap-y-2">
+              <Link href={"/"} onClick={handleLinkClick}>
+                <BsArrowLeftCircleFill
+                  className="text-[#af1222] animate-bounce"
+                  size={30}
+                />
+              </Link>
+              <p className="text-[11px] italic">Back to Login Page</p>
+            </div>
+            <SideNav />
+          </div>
+
           <MobileNav />
         </div>
       );
