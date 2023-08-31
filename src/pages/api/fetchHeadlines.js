@@ -26,7 +26,7 @@ import { db, storage } from "../../app/firebase";
 
 dotenv.config();
 const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
-
+console.log("openaikey", OPENAI_API_KEY);
 const updateWeeklyInfo = async (REACT_APP_LEAGUE_ID, headlines) => {
   // Reference to the "Weekly Info" collection
   const weeklyInfoCollectionRef = collection(db, "Weekly Headlines");
@@ -90,7 +90,7 @@ export default async function handler(req, res) {
       openAIApiKey: OPENAI_API_KEY,
     });
     await vectorStore.save("leagueData");
-    console.log("openaikey", OPENAI_API_KEY);
+
     const headline = {
       id: "",
       category: "",
