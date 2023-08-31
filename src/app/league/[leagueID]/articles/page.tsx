@@ -156,7 +156,7 @@ const Articles = () => {
             if (!docData.segment2) {
               promises.push(
                 fetchDataFromApi(
-                  "https://https://fantasypulseff.vercel.app/api/fetchSegment2"
+                  "https://fantasypulseff.vercel.app/api/fetchSegment2"
                 )
               );
             } else {
@@ -166,7 +166,7 @@ const Articles = () => {
             if (!docData.overreaction) {
               promises.push(
                 fetchDataFromApi(
-                  "https://https://fantasypulseff.vercel.app/api/fetchOverreaction"
+                  "https://fantasypulseff.vercel.app/api/fetchOverreaction"
                 )
               );
             } else {
@@ -176,7 +176,7 @@ const Articles = () => {
             if (!docData.pulse_check) {
               promises.push(
                 fetchDataFromApi(
-                  "https://https://fantasypulseff.vercel.app/api/fetchPulseCheck"
+                  "https://fantasypulseff.vercel.app/api/fetchPulseCheck"
                 )
               );
             } else {
