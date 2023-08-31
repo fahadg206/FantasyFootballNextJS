@@ -59,7 +59,7 @@ const updateWeeklyInfo = async (REACT_APP_LEAGUE_ID, headlines) => {
 export default async function handler(req, res) {
   console.log("heyman");
 
-  return res.status(200).json({ name: "kabo" });
+  return res.status(200).json({ name: OPENAI_API_KEY });
   // console.log("what was passed in ", req.body);
   // const REACT_APP_LEAGUE_ID = req.body;
 
