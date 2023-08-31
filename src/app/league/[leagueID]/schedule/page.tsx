@@ -375,8 +375,8 @@ export default function Schedule() {
         <p className="italic text-[14px] text-[#1a1a1a] dark:text-[#979090] text-center">
           Kabo was voted to win by 70% of league members!
         </p>{" "}
-        <p className="text-[12px] text-[#af1222] flex items-center">
-          <BsDot className="animate-ping" /> LIVE
+        <p className="text-[12px] text-[#af1222] flex items-center animate-pulse">
+          <BsDot /> LIVE
         </p>
       </div>
     );

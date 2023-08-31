@@ -3,6 +3,7 @@ import { useEffect, useState, useContext } from "react";
 import { useRouter } from "next/navigation";
 import axios from "axios";
 import Image from "next/image";
+import helmet from "../images/helmet2.png";
 
 import NavBar from "./Navbar";
 
@@ -74,7 +75,7 @@ export default function Page(props: myProps) {
   // setContext(leagueData);
 
   return (
-    <div>
+    <div className="flex flex-col items-center justify-center">
       {leagueData.length > 0 ? (
         leagueData.map((league: any) => (
           <div
@@ -90,7 +91,11 @@ export default function Page(props: myProps) {
               key={league.name}
             >
               <Image
-                src={`https://sleepercdn.com/avatars/thumbs/${league.avatar}`}
+                src={
+                  !league.avatar
+                    ? helmet
+                    : `https://sleepercdn.com/avatars/thumbs/${league.avatar}`
+                }
                 alt="league-image"
                 width={30}
                 height={30}

@@ -6,6 +6,7 @@ import HomeCarousel from "../../components/HomeCarousel";
 import HomePoll from "../../components/HomePoll";
 import axios from "axios";
 import Image from "next/image";
+import helmet from "../../images/helmet2.png";
 import { useRouter } from "next/navigation";
 
 export default function Page() {
@@ -68,7 +69,11 @@ export default function Page() {
         <div className="dark:text-slate-50 text-lg md:text-2xl font-semibold flex items-center justify-center w-full">
           <div>
             <Image
-              src={`https://sleepercdn.com/avatars/thumbs/${leagueInfo.avatar}`}
+              src={
+                !leagueInfo.avatar
+                  ? helmet
+                  : `https://sleepercdn.com/avatars/thumbs/${leagueInfo.avatar}`
+              }
               alt="league-image"
               width={45}
               height={45}

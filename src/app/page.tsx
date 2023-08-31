@@ -148,34 +148,35 @@ export default function Home() {
               <button className="text-[#af1222] border-2 border-[#af1222] p-1  rounded hover:bg-[#1a1a1a] cursor-pointer mr-2 text-[14px]">
                 Submit
               </button>
-
-              <div>
-                <select
-                  value={selectedSeason}
-                  onChange={(e) => handleSelection(e.target.value)}
-                  className="text-[#af1222] border-2 border-[#af1222] bg-white dark:bg-black"
-                >
-                  {options.map((option) => (
-                    <option key={option} value={option}>
-                      {option}
-                    </option>
-                  ))}
-                </select>
-              </div>
-            </div>
-            <div className="flex  justify-center items-center mt-3">
-              <p className="text-[#807c7c] italic text-[12px] mr-5">
-                Recent Searches:
-              </p>
-              {showUsernames}
             </div>
           </form>
-          <button
-            onClick={onStorageCleared}
-            className="text-[#af1222] border-2 border-[#af1222] p-1  rounded hover:bg-[#1a1a1a] cursor-pointer mr-2 text-[14px]"
-          >
-            Clear
-          </button>
+          <div className="flex justify-center items-center mt-3">
+            <button
+              onClick={onStorageCleared}
+              className="text-[#af1222] border-2 border-[#af1222] p-1  rounded hover:bg-[#1a1a1a] cursor-pointer mr-2 text-[14px]"
+            >
+              Clear
+            </button>
+            <div>
+              <select
+                value={selectedSeason}
+                onChange={(e) => handleSelection(e.target.value)}
+                className="text-[#af1222] border-2 py-1 rounded border-[#af1222] bg-white dark:bg-black"
+              >
+                {options.map((option) => (
+                  <option key={option} value={option}>
+                    {option}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+        </div>
+        <div className="flex  justify-center items-center mt-3">
+          <p className="text-[#807c7c] italic text-[12px] mr-5">
+            Recent Searches:
+          </p>
+          {showUsernames}
         </div>
         <div>
           <SelectLeague
