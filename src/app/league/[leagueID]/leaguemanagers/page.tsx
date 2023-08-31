@@ -77,14 +77,14 @@ export default function Page() {
   const selectedManager = localStorage.getItem("selectedManager");
   const router = useRouter();
 
-  console.log("WARYA");
-  if (
-    localStorage.getItem("selectedLeagueID") === null ||
-    localStorage.getItem("selectedLeagueID") === undefined
-  ) {
-    router.push("/");
+  if (typeof localStorage !== "undefined") {
+    if (
+      localStorage.getItem("selectedLeagueID") === null ||
+      localStorage.getItem("selectedLeagueID") === undefined
+    ) {
+      router.push("/");
+    }
   }
-  console.log(localStorage.getItem("selectedLeagueID"));
 
   const getSchedule = async (week: number) => {
     try {

@@ -130,14 +130,14 @@ const CardCarousel = () => {
       setOffset((pv) => (pv -= CARD_SIZE));
     };
 
-    console.log("WARYA");
-    if (
-      localStorage.getItem("selectedLeagueID") === null ||
-      localStorage.getItem("selectedLeagueID") === undefined
-    ) {
-      router.push("/");
+    if (typeof localStorage !== "undefined") {
+      if (
+        localStorage.getItem("selectedLeagueID") === null ||
+        localStorage.getItem("selectedLeagueID") === undefined
+      ) {
+        router.push("/");
+      }
     }
-    console.log(localStorage.getItem("selectedLeagueID"));
 
     useEffect(() => {
       async function fetchData() {

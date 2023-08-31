@@ -104,14 +104,14 @@ const Articles = () => {
     localStorage.getItem("selectedLeagueID");
   const leagueStatus: string | null = localStorage.getItem("leagueStatus");
 
-  console.log("WARYA");
-  if (
-    localStorage.getItem("selectedLeagueID") === null ||
-    localStorage.getItem("selectedLeagueID") === undefined
-  ) {
-    router.push("/");
+  if (typeof localStorage !== "undefined") {
+    if (
+      localStorage.getItem("selectedLeagueID") === null ||
+      localStorage.getItem("selectedLeagueID") === undefined
+    ) {
+      router.push("/");
+    }
   }
-  console.log(localStorage.getItem("selectedLeagueID"));
 
   if (leagueStatus === "pre_draft") {
     return (

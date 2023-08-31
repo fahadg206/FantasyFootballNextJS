@@ -52,14 +52,14 @@ const Page = () => {
 
   console.log("selectedLeagueID:", selectedLeagueID);
 
-  console.log("WARYA");
-  if (
-    localStorage.getItem("selectedLeagueID") === null ||
-    localStorage.getItem("selectedLeagueID") === undefined
-  ) {
-    router.push("/");
+  if (typeof localStorage !== "undefined") {
+    if (
+      localStorage.getItem("selectedLeagueID") === null ||
+      localStorage.getItem("selectedLeagueID") === undefined
+    ) {
+      router.push("/");
+    }
   }
-  console.log(localStorage.getItem("selectedLeagueID"));
 
   const getUsers = async () => {
     try {

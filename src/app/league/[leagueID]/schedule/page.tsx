@@ -111,14 +111,14 @@ export default function Schedule() {
 
   const REACT_APP_LEAGUE_ID = localStorage.getItem("selectedLeagueID");
 
-  console.log("WARYA");
-  if (
-    localStorage.getItem("selectedLeagueID") === null ||
-    localStorage.getItem("selectedLeagueID") === undefined
-  ) {
-    router.push("/");
+  if (typeof localStorage !== "undefined") {
+    if (
+      localStorage.getItem("selectedLeagueID") === null ||
+      localStorage.getItem("selectedLeagueID") === undefined
+    ) {
+      router.push("/");
+    }
   }
-  console.log(localStorage.getItem("selectedLeagueID"));
 
   const getNflState = async (): Promise<NflState> => {
     try {
