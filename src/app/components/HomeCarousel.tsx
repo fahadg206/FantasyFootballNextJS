@@ -91,6 +91,7 @@ const CardCarousel = ({ leagueID }) => {
   const [userData, setUserData] = useState<ScheduleData>();
   const REACT_APP_LEAGUE_ID: string | null = leagueID;
   const leagueStatus: string | null = localStorage.getItem("leagueStatus");
+  const [key, setKey] = useState("");
 
   const defaultHeadlines = [
     {
@@ -309,6 +310,18 @@ const CardCarousel = ({ leagueID }) => {
       );
     };
 
+    useEffect(() => {
+      const fetchKey = async () => {
+        const key = await fetch("http://localhost:3000/api/fetchKey");
+        setKey(String(key));
+      };
+      console.log("warya");
+
+      fetchKey();
+    }, [key]);
+
+    console.log("keyyy", key);
+
     const updateWeeklyInfo = async (REACT_APP_LEAGUE_ID, headlines) => {
       // Reference to the "Weekly Info" collection
       const weeklyInfoCollectionRef = collection(db, "Weekly Headlines");
@@ -337,8 +350,6 @@ const CardCarousel = ({ leagueID }) => {
 
     const handler = async () => {
       try {
-        const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
-
         const readingRef = ref(storage, `files/${REACT_APP_LEAGUE_ID}.txt`);
         const url = await getDownloadURL(readingRef);
         const response = await fetch(url);
@@ -348,7 +359,7 @@ const CardCarousel = ({ leagueID }) => {
         const model = new ChatOpenAI({
           temperature: 0.9,
           model: "gpt-4",
-          openAIApiKey: OPENAI_API_KEY,
+          openAIApiKey: process.env.OPENAI_API_KEY,
         });
 
         const question = `give me 3 sports style headlines about the league's data, include the scores,team names, & who won by comparing their star starters with their points. include a bit of humor as well. I want the information to be in this format exactly headline =
@@ -364,6 +375,12 @@ const CardCarousel = ({ leagueID }) => {
 
         // The result is an object with a `text` property.
         const apiResponse = await chainA.call({ leagueData: newFile });
+        const cleanUp = await model.call([
+          new SystemMessage(
+            "Turn the following string into valid JSON format that strictly adhere to RFC8259 compliance"
+          ),
+          new HumanMessage(apiResponse.text),
+        ]);
         console.log("Headlines API ", apiResponse);
         // const cleanUp = await model.call([
         //   new SystemMessage(
@@ -372,7 +389,7 @@ const CardCarousel = ({ leagueID }) => {
         //   new HumanMessage(apiResponse.text),
         // ]);
 
-        updateWeeklyInfo(REACT_APP_LEAGUE_ID, apiResponse.text);
+        updateWeeklyInfo(REACT_APP_LEAGUE_ID, cleanUp);
         return JSON.parse(apiResponse.text);
       } catch (error) {
         console.log(error);

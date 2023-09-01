@@ -20,6 +20,9 @@ module.exports = module.exports = {
   images: {
     domains: ["sleepercdn.com"],
   },
+  env: {
+    OPENAI_API_KEY: process.env.OPENAI_API_KEY,
+  },
   webpack(config) {
     config.resolve.fallback = {
       ...config.resolve.fallback, // if you miss it, all the other options in fallback, specified
