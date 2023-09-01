@@ -51,7 +51,7 @@ export default function Page() {
     fetchData();
   }, []);
 
-  console.log(leagueInfo);
+  //console.log(leagueInfo);
   let player = {};
 
   if (playersData["4017"]) {

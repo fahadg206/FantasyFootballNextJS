@@ -147,8 +147,6 @@ export default function ScoreboardNav({ setShowScore }) {
         }
       }
 
-      console.log("data ", articleMatchupData);
-
       const textContent = JSON.stringify(articleMatchupData);
 
       const readingRef = ref(storage, `files/${REACT_APP_LEAGUE_ID}.txt`);
@@ -169,7 +167,7 @@ export default function ScoreboardNav({ setShowScore }) {
               newContent.length > 3 &&
               (!existingContent || existingContent !== newContent)
             ) {
-              console.log("newcontent", newContent);
+              //console.log("newcontent", newContent);
               // If existingContent is empty or different from new content, upload the new content
               uploadNewContent(newContent, readingRef);
             } else {
@@ -367,10 +365,6 @@ export default function ScoreboardNav({ setShowScore }) {
       preGame = false;
       liveGame = false;
     }
-    console.log("morning", morningSlateEnd);
-    console.log("AN", afternoonSlateEnd);
-    console.log("SNF", snfEnd);
-    console.log("MNF", mnfEnd);
 
     //O/U jsx
 

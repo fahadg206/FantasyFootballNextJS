@@ -163,7 +163,7 @@ const CardCarousel = ({ leagueID }) => {
     // Add an event listener for the 'storage' event
 
     useEffect(() => {}, [leagueID]);
-    console.log(leagueID);
+    //console.log(leagueID);
 
     useEffect(() => {
       async function fetchData() {
@@ -336,42 +336,47 @@ const CardCarousel = ({ leagueID }) => {
     };
 
     const handler = async () => {
-      const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
+      try {
+        const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
 
-      const readingRef = ref(storage, `files/${REACT_APP_LEAGUE_ID}.txt`);
-      const url = await getDownloadURL(readingRef);
-      const response = await fetch(url);
-      const fileContent = await response.text();
-      const newFile = JSON.stringify(fileContent).replace(/\//g, "");
+        const readingRef = ref(storage, `files/${REACT_APP_LEAGUE_ID}.txt`);
+        const url = await getDownloadURL(readingRef);
+        const response = await fetch(url);
+        const fileContent = await response.text();
+        const newFile = JSON.stringify(fileContent).replace(/\//g, "");
 
-      const model = new ChatOpenAI({
-        temperature: 0.9,
-        model: "gpt-4",
-        openAIApiKey: "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",
-      });
+        const model = new ChatOpenAI({
+          temperature: 0.9,
+          model: "gpt-4",
+          openAIApiKey: "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",
+        });
 
-      const question = `give me 3 sports style headlines about the league's data, include the scores, who won by comparing their team_points to their opponent's team_points and their star players include a bit of humor as well. I want the information to be in this format exactly headline =
+        const question = `give me 3 sports style headlines about the league's data, include the scores,team names, & who won by comparing their star starters with their points. include a bit of humor as well. I want the information to be in this format exactly headline =
   "id": "",
   "category": "",
   "title": "",
   "description": ""
- keep description short to one sentance give me the response in valid JSON array format {leagueData}`;
+ keep description short to one sentence give me the response in valid JSON array format {leagueData}`;
+        console.log(question);
 
-      const prompt = PromptTemplate.fromTemplate(question);
-      const chainA = new LLMChain({ llm: model, prompt });
+        const prompt = PromptTemplate.fromTemplate(question);
+        const chainA = new LLMChain({ llm: model, prompt });
 
-      // The result is an object with a `text` property.
-      const apiResponse = await chainA.call({ leagueData: newFile });
-      console.log("Headlines API ", apiResponse);
-      // const cleanUp = await model.call([
-      //   new SystemMessage(
-      //     "Turn the following string into valid JSON format that strictly adhere to RFC8259 compliance, if it already is in a valid JSON format then give me the string as the response, without any other information from you"
-      //   ),
-      //   new HumanMessage(apiResponse.text),
-      // ]);
+        // The result is an object with a `text` property.
+        const apiResponse = await chainA.call({ leagueData: newFile });
+        console.log("Headlines API ", apiResponse);
+        // const cleanUp = await model.call([
+        //   new SystemMessage(
+        //     "Turn the following string into valid JSON format that strictly adhere to RFC8259 compliance, if it already is in a valid JSON format then give me the string as the response, without any other information from you"
+        //   ),
+        //   new HumanMessage(apiResponse.text),
+        // ]);
 
-      updateWeeklyInfo(REACT_APP_LEAGUE_ID, apiResponse.text);
-      return JSON.parse(apiResponse.text);
+        updateWeeklyInfo(REACT_APP_LEAGUE_ID, apiResponse.text);
+        return JSON.parse(apiResponse.text);
+      } catch (error) {
+        console.log(error);
+      }
     };
 
     return (

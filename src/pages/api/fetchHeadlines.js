@@ -8,28 +8,18 @@ import {
   updateDoc,
 } from "firebase/firestore/lite";
 import { Document } from "langchain/document";
-
-import { QuerySnapshot, onSnapshot } from "firebase/firestore";
 import dotenv from "dotenv";
-import { TextLoader } from "langchain/document_loaders/fs/text";
-import { JSONLoader } from "langchain/document_loaders";
 import { FaissStore } from "langchain/vectorstores/faiss";
 import { OpenAIEmbeddings } from "langchain/embeddings/openai";
 import { ChatOpenAI } from "langchain/chat_models/openai";
 import { RetrievalQAChain } from "langchain/chains";
 import { SystemMessage } from "langchain/schema";
 import { HumanMessage } from "langchain/schema";
-import fs from "fs";
-import path from "path";
+
 import { db, storage } from "../../app/firebase";
-import { OpenAI } from "langchain/llms/openai";
-import { PromptTemplate } from "langchain/prompts";
-import { LLMChain } from "langchain/chains";
 
 dotenv.config();
 const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
-
-console.log("openaikey", OPENAI_API_KEY);
 
 const updateWeeklyInfo = async (REACT_APP_LEAGUE_ID, headlines) => {
   // Reference to the "Weekly Info" collection

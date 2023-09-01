@@ -171,7 +171,7 @@ export default function Scoreboard() {
         }
       }
 
-      console.log("data ", articleMatchupData);
+      //console.log("data ", articleMatchupData);
 
       const textContent = JSON.stringify(articleMatchupData);
 
@@ -248,11 +248,11 @@ export default function Scoreboard() {
         ) {
           id = window.localStorage.getItem("selectedLeagueID");
         }
-        console.log("ID", id);
+        //console.log("ID", id);
 
         const matchupMapData = await getMatchupMap(id, week);
         setMatchupMap(matchupMapData.matchupMap);
-        console.log("being set", matchupMapData.matchupMap);
+        //console.log("being set", matchupMapData.matchupMap);
         setScheduleDataFinal(matchupMapData.updatedScheduleData);
 
         updateDbStorage(matchupMapData.updatedScheduleData);
