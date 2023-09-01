@@ -165,6 +165,118 @@ const Articles = () => {
       }
     };
 
+    const updateArticle1 = async (REACT_APP_LEAGUE_ID, articles) => {
+      articles = await JSON.parse(articles);
+      // Reference to the "Weekly Info" collection
+      const weeklyInfoCollectionRef = collection(db, "Weekly Articles");
+      // Use a Query to check if a document with the league_id exists
+      const queryRef = query(
+        weeklyInfoCollectionRef,
+        where("league_id", "==", REACT_APP_LEAGUE_ID)
+      );
+      const querySnapshot = await getDocs(queryRef);
+      // Add or update the document based on whether it already exists
+      if (!querySnapshot.empty) {
+        // Document exists, update it
+        console.log("in if");
+        querySnapshot.forEach(async (doc) => {
+          await updateDoc(doc.ref, {
+            articles: articles,
+          });
+        });
+      } else {
+        // Document does not exist, add a new one
+        await addDoc(weeklyInfoCollectionRef, {
+          league_id: REACT_APP_LEAGUE_ID,
+          articles: articles,
+        });
+      }
+    };
+
+    const updateArticle3 = async (REACT_APP_LEAGUE_ID, articles) => {
+      articles = await JSON.parse(articles);
+      // Reference to the "Weekly Info" collection
+      const weeklyInfoCollectionRef = collection(db, "Weekly Articles");
+      // Use a Query to check if a document with the league_id exists
+      const queryRef = query(
+        weeklyInfoCollectionRef,
+        where("league_id", "==", REACT_APP_LEAGUE_ID)
+      );
+      const querySnapshot = await getDocs(queryRef);
+      // Add or update the document based on whether it already exists
+      if (!querySnapshot.empty) {
+        // Document exists, update it
+        console.log("in if");
+        querySnapshot.forEach(async (doc) => {
+          await updateDoc(doc.ref, {
+            overreaction: articles,
+          });
+        });
+      } else {
+        // Document does not exist, add a new one
+        await addDoc(weeklyInfoCollectionRef, {
+          league_id: REACT_APP_LEAGUE_ID,
+          overreaction: articles,
+        });
+      }
+    };
+
+    const updateArticle2 = async (REACT_APP_LEAGUE_ID, articles) => {
+      articles = await JSON.parse(articles);
+      // Reference to the "Weekly Info" collection
+      const weeklyInfoCollectionRef = collection(db, "Weekly Articles");
+      // Use a Query to check if a document with the league_id exists
+      const queryRef = query(
+        weeklyInfoCollectionRef,
+        where("league_id", "==", REACT_APP_LEAGUE_ID)
+      );
+      const querySnapshot = await getDocs(queryRef);
+      // Add or update the document based on whether it already exists
+      if (!querySnapshot.empty) {
+        // Document exists, update it
+        console.log("in if");
+        querySnapshot.forEach(async (doc) => {
+          await updateDoc(doc.ref, {
+            segment2: articles,
+          });
+        });
+      } else {
+        // Document does not exist, add a new one
+        await addDoc(weeklyInfoCollectionRef, {
+          league_id: REACT_APP_LEAGUE_ID,
+          segment2: articles,
+        });
+      }
+    };
+
+    const updateArticle4 = async (REACT_APP_LEAGUE_ID, articles) => {
+      articles = await JSON.parse(articles);
+      // Reference to the "Weekly Info" collection
+      const weeklyInfoCollectionRef = collection(db, "Weekly Articles");
+      // Use a Query to check if a document with the league_id exists
+      const queryRef = query(
+        weeklyInfoCollectionRef,
+        where("league_id", "==", REACT_APP_LEAGUE_ID)
+      );
+      const querySnapshot = await getDocs(queryRef);
+      // Add or update the document based on whether it already exists
+      if (!querySnapshot.empty) {
+        // Document exists, update it
+        console.log("in if");
+        querySnapshot.forEach(async (doc) => {
+          await updateDoc(doc.ref, {
+            pulse_check: articles,
+          });
+        });
+      } else {
+        // Document does not exist, add a new one
+        await addDoc(weeklyInfoCollectionRef, {
+          league_id: REACT_APP_LEAGUE_ID,
+          pulse_check: articles,
+        });
+      }
+    };
+
     const fetchData = async () => {
       try {
         const promises = [];
@@ -222,13 +334,13 @@ const Articles = () => {
           results.forEach((data, index) => {
             if (index === 0) {
               setArticles2(data);
-              updateDatabaseArticle("segment2", data);
+              updateArticle2(REACT_APP_LEAGUE_ID, data);
             } else if (index === 1) {
               setArticles3(data);
-              updateDatabaseArticle("overreaction", data);
+              updateArticle3(REACT_APP_LEAGUE_ID, data);
             } else if (index === 2) {
               setArticles4(data);
-              updateDatabaseArticle("pulse_check", data);
+              updateArticle4(REACT_APP_LEAGUE_ID, data);
             }
           });
         } else {
@@ -248,19 +360,19 @@ const Articles = () => {
 
           if (data1) {
             setArticles(data1);
-            updateDatabaseArticle("articles", data1);
+            updateArticle1(REACT_APP_LEAGUE_ID, data1);
           }
           if (data2) {
             setArticles2(data2);
-            updateDatabaseArticle("segment2", data2);
+            updateArticle2(REACT_APP_LEAGUE_ID, data2);
           }
           if (data3) {
             setArticles3(data3);
-            updateDatabaseArticle("overreaction", data3);
+            updateArticle3(REACT_APP_LEAGUE_ID, data3);
           }
           if (data4) {
             setArticles4(data4);
-            updateDatabaseArticle("pulse_check", data4);
+            updateArticle4(REACT_APP_LEAGUE_ID, data4);
           }
         }
       } catch (error) {
