@@ -166,7 +166,7 @@ const Articles = () => {
     };
 
     const updateArticle1 = async (REACT_APP_LEAGUE_ID, articles) => {
-      articles = await JSON.parse(articles);
+      //articles = await JSON.parse(articles);
       // Reference to the "Weekly Info" collection
       const weeklyInfoCollectionRef = collection(db, "Weekly Articles");
       // Use a Query to check if a document with the league_id exists
@@ -194,7 +194,7 @@ const Articles = () => {
     };
 
     const updateArticle3 = async (REACT_APP_LEAGUE_ID, articles) => {
-      articles = await JSON.parse(articles);
+      //articles = await JSON.parse(articles);
       // Reference to the "Weekly Info" collection
       const weeklyInfoCollectionRef = collection(db, "Weekly Articles");
       // Use a Query to check if a document with the league_id exists
@@ -222,7 +222,7 @@ const Articles = () => {
     };
 
     const updateArticle2 = async (REACT_APP_LEAGUE_ID, articles) => {
-      articles = await JSON.parse(articles);
+      //articles = await JSON.parse(articles);
       // Reference to the "Weekly Info" collection
       const weeklyInfoCollectionRef = collection(db, "Weekly Articles");
       // Use a Query to check if a document with the league_id exists
@@ -250,7 +250,7 @@ const Articles = () => {
     };
 
     const updateArticle4 = async (REACT_APP_LEAGUE_ID, articles) => {
-      articles = await JSON.parse(articles);
+      //articles = await JSON.parse(articles);
       // Reference to the "Weekly Info" collection
       const weeklyInfoCollectionRef = collection(db, "Weekly Articles");
       // Use a Query to check if a document with the league_id exists
