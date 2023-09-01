@@ -8,20 +8,14 @@ import {
   updateDoc,
 } from "firebase/firestore/lite";
 import { Document } from "langchain/document";
-import { articles } from "./articles";
-
-import { QuerySnapshot, onSnapshot } from "firebase/firestore";
 import dotenv from "dotenv";
-import { TextLoader } from "langchain/document_loaders/fs/text";
-import { JSONLoader } from "langchain/document_loaders";
 import { FaissStore } from "langchain/vectorstores/faiss";
 import { OpenAIEmbeddings } from "langchain/embeddings/openai";
 import { ChatOpenAI } from "langchain/chat_models/openai";
 import { RetrievalQAChain } from "langchain/chains";
 import { SystemMessage } from "langchain/schema";
 import { HumanMessage } from "langchain/schema";
-import fs from "fs";
-import path from "path";
+
 import { db, storage } from "../../app/firebase";
 
 dotenv.config();
@@ -55,65 +49,54 @@ const updateWeeklyInfo = async (REACT_APP_LEAGUE_ID, headlines) => {
 };
 
 export default async function handler(req, res) {
-  console.log("what was passed in ", req.body);
-  const REACT_APP_LEAGUE_ID = req.body;
+  // console.log("what was passed in ", req.body);
+  // const REACT_APP_LEAGUE_ID = req.body;
 
   try {
-    const readingRef = ref(storage, `files/${REACT_APP_LEAGUE_ID}.txt`);
     const url = await getDownloadURL(readingRef);
+    const readingRef = ref(storage, `files/${REACT_APP_LEAGUE_ID}.txt`);
     const response = await fetch(url);
     const fileContent = await response.text();
     const newFile = JSON.stringify(fileContent).replace(/\//g, "");
-    //console.log("File ", newFile);
-    const leagueData = [
-      new Document({
-        pageContent: [newFile],
-        metadata: {
-          title: "Fantasy Pulse",
-          author: "Fantasy Pulse Editorial Team",
-          date: "Sep 1, 2022",
-        },
-      }),
-    ];
-    // Process the retrieved data
-    const vectorStore = await FaissStore.fromDocuments(
-      leagueData,
-      new OpenAIEmbeddings()
-    );
-    //await vectorStore.addDocuments(articles.article1);
-    //await vectorStore.addDocuments(articles.article2);
-    //await vectorStore.addDocuments(articles.article3);
-    //await vectorStore.addDocuments(articles.article4);
+
     const model = new ChatOpenAI({
       temperature: 0.9,
       model: "gpt-4",
       openAIApiKey: process.env.OPENAI_API_KEY,
     });
-    await vectorStore.save("leagueData");
 
-    const headline = {
-      id: "",
-      category: "",
-      title: "",
-      description: "",
-    };
+    const question = `give me 3 sports style headlines about the league's data, include the scores,team names, & who won by comparing their star starters with their points. include a bit of humor as well. I want the information to be in this format exactly headline =
+  "id": "",
+  "category": "",
+  "title": "",
+  "description": ""
+ keep description short to one sentence give me the response in valid JSON array format {leagueData}`;
+    console.log(question);
 
-    const headlineFormat = JSON.stringify(headline);
+    const prompt = PromptTemplate.fromTemplate(question);
+    const chainA = new LLMChain({ llm: model, prompt });
 
-    const question = `give me 3 sports style headlines about the league's data, include the scores, who won by comparing their team_points to their opponent's team_points and their star players include a bit of humor as well. I want the information to be in this format exactly ${headlineFormat}, keep description short to one sentance give me the response in valid JSON array format`;
-
-    const chain = RetrievalQAChain.fromLLM(model, vectorStore.asRetriever());
-    const apiResponse = await chain.call({ query: question });
+    // The result is an object with a `text` property.
+    const apiResponse = await chainA.call({ leagueData: newFile });
     const cleanUp = await model.call([
       new SystemMessage(
         "Turn the following string into valid JSON format that strictly adhere to RFC8259 compliance"
       ),
       new HumanMessage(apiResponse.text),
     ]);
-    updateWeeklyInfo(REACT_APP_LEAGUE_ID, cleanUp.text);
-    return res.status(200).json(JSON.parse(apiResponse.text));
+    console.log("Headlines API ", apiResponse.text);
+    // const cleanUp = await model.call([
+    //   new SystemMessage(
+    //     "Turn the following string into valid JSON format that strictly adhere to RFC8259 compliance, if it already is in a valid JSON format then give me the string as the response, without any other information from you"
+    //   ),
+    //   new HumanMessage(apiResponse.text),
+    // ]);
+
+    updateWeeklyInfo(REACT_APP_LEAGUE_ID, cleanUp);
+
+    return res.status(200).json(JSON.parse(cleanUp.content));
   } catch (error) {
     console.error("Unexpected error:", error);
-    return res.status(500).json({ error: "An error occurred" });
+    return res.status(500).json({ error: error });
   }
 }
