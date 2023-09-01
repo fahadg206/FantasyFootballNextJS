@@ -15,7 +15,6 @@ import { ChatOpenAI } from "langchain/chat_models/openai";
 import { RetrievalQAChain } from "langchain/chains";
 import { SystemMessage } from "langchain/schema";
 import { HumanMessage } from "langchain/schema";
-import { OpenAI } from "langchain/llms/openai";
 
 import { db, storage } from "../../app/firebase";
 
@@ -54,15 +53,9 @@ export default async function handler(req, res) {
   // const REACT_APP_LEAGUE_ID = req.body;
 
   try {
-    const url = await getDownloadURL(readingRef);
-    const readingRef = ref(storage, `files/${REACT_APP_LEAGUE_ID}.txt`);
-    const response = await fetch(url);
-    const fileContent = await response.text();
-    const newFile = JSON.stringify(fileContent).replace(/\//g, "");
-
-    const model = new OpenAI({
+    const model = new ChatOpenAI({
       temperature: 0.9,
-      model: "gpt-3",
+      model: "gpt-4",
       openAIApiKey: process.env.OPENAI_API_KEY,
     });
 
@@ -78,7 +71,7 @@ export default async function handler(req, res) {
     const chainA = new LLMChain({ llm: model, prompt });
 
     // The result is an object with a `text` property.
-    const apiResponse = await chainA.call({ leagueData: newFile });
+    const apiResponse = await chainA.call({ leagueData: "NBA" });
     const cleanUp = await model.call([
       new SystemMessage(
         "Turn the following string into valid JSON format that strictly adhere to RFC8259 compliance"
@@ -93,7 +86,7 @@ export default async function handler(req, res) {
     //   new HumanMessage(apiResponse.text),
     // ]);
 
-    updateWeeklyInfo(REACT_APP_LEAGUE_ID, cleanUp);
+    updateWeeklyInfo("864448469199347712", cleanUp);
 
     return res.status(200).json(JSON.parse(cleanUp.content));
   } catch (error) {
