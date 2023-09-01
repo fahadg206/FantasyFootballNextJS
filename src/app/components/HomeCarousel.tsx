@@ -328,7 +328,6 @@ const CardCarousel = ({ leagueID }) => {
           });
         });
       } else {
-        // Document does not exist, add a new one
         await addDoc(weeklyInfoCollectionRef, {
           league_id: REACT_APP_LEAGUE_ID,
           headlines: headlines,
@@ -348,7 +347,7 @@ const CardCarousel = ({ leagueID }) => {
       const model = new ChatOpenAI({
         temperature: 0.9,
         model: "gpt-4",
-        openAIApiKey: "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",
+        openAIApiKey: "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",
       });
 
       const question = `give me 3 sports style headlines about the league's data, include the scores, who won by comparing their team_points to their opponent's team_points and their star players include a bit of humor as well. I want the information to be in this format exactly headline =
