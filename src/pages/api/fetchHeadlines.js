@@ -87,6 +87,7 @@ export default async function handler(req, res) {
     const model = new ChatOpenAI({
       temperature: 0.9,
       model: "gpt-4",
+      openAIApiKey: process.env.OPENAI_API_KEY,
     });
     await vectorStore.save("leagueData");
 
