@@ -8,7 +8,6 @@ import {
   updateDoc,
 } from "firebase/firestore/lite";
 import { Document } from "langchain/document";
-import { articles } from "./articles";
 
 import { QuerySnapshot, onSnapshot } from "firebase/firestore";
 import dotenv from "dotenv";
@@ -85,10 +84,7 @@ export default async function handler(req, res) {
       leagueData,
       new OpenAIEmbeddings()
     );
-    await vectorStore.addDocuments(articles.article1);
-    await vectorStore.addDocuments(articles.article2);
-    await vectorStore.addDocuments(articles.article3);
-    await vectorStore.addDocuments(articles.article4);
+
     const model = new ChatOpenAI({
       temperature: 0.9,
       model: "gpt-4",
@@ -115,13 +111,9 @@ export default async function handler(req, res) {
       ),
       new HumanMessage(apiResponse.text),
     ]);
-    updateWeeklyInfo(REACT_APP_LEAGUE_ID, cleanUp.text);
+    updateWeeklyInfo(REACT_APP_LEAGUE_ID, cleanUp.content);
 
-    const test = await model.call([
-      new SystemMessage("You're a comedian"),
-      new HumanMessage("tell me a funny joke"),
-    ]);
-    return res.status(200).json(JSON.parse(test.content));
+    return res.status(200).json(JSON.parse(cleanUp.content));
   } catch (error) {
     console.error("Unexpected error:", error);
     return res.status(500).json({ error: "An error occurred" });
