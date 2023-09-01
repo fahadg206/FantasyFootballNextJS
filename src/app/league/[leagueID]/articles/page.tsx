@@ -138,8 +138,6 @@ const Articles = () => {
     const fetchData = async () => {
       try {
         const promises = [];
-
-        // Fetch data from the database based on league_id
         const querySnapshot = await getDocs(
           query(
             collection(db, "Weekly Articles"),
@@ -152,37 +150,40 @@ const Articles = () => {
           querySnapshot.forEach((doc) => {
             const docData = doc.data();
             setArticles(docData.articles);
-
-            if (!docData.segment2) {
-              promises.push(
-                fetchDataFromApi(
-                  "https://fantasypulseff.vercel.app/api/fetchSegment2"
-                )
-              );
-            } else {
-              setArticles2(docData.segment2);
-            }
-
-            if (!docData.overreaction) {
-              promises.push(
-                fetchDataFromApi(
-                  "https://fantasypulseff.vercel.app/api/fetchOverreaction"
-                )
-              );
-            } else {
-              setArticles3(docData.overreaction);
-            }
-
-            if (!docData.pulse_check) {
-              promises.push(
-                fetchDataFromApi(
-                  "https://fantasypulseff.vercel.app/api/fetchPulseCheck"
-                )
-              );
-            } else {
-              setArticles4(docData.pulse_check);
-            }
+            setArticles2(docData.segment2 || {});
+            setArticles3(docData.overreaction || {});
+            setArticles4(docData.pulse_check || {});
           });
+        } else {
+          // Fetch data from APIs only if articles don't exist in the database
+          if (!articles.title) {
+            promises.push(
+              fetchDataFromApi(
+                "https://fantasypulseff.vercel.app/api/fetchData"
+              )
+            );
+          }
+          if (!articles2.title) {
+            promises.push(
+              fetchDataFromApi(
+                "https://fantasypulseff.vercel.app/api/fetchSegment2"
+              )
+            );
+          }
+          if (!articles3.title) {
+            promises.push(
+              fetchDataFromApi(
+                "https://fantasypulseff.vercel.app/api/fetchOverreaction"
+              )
+            );
+          }
+          if (!articles4.title) {
+            promises.push(
+              fetchDataFromApi(
+                "https://fantasypulseff.vercel.app/api/fetchPulseCheck"
+              )
+            );
+          }
 
           // Wait for all promises to resolve
           const results = await Promise.all(promises);
@@ -190,32 +191,15 @@ const Articles = () => {
           // Set the fetched data using the state setters
           results.forEach((data, index) => {
             if (index === 0) {
-              setArticles2(data);
+              setArticles(data);
             } else if (index === 1) {
-              setArticles3(data);
+              setArticles2(data);
             } else if (index === 2) {
+              setArticles3(data);
+            } else if (index === 3) {
               setArticles4(data);
             }
           });
-        } else {
-          // Fetch all data from APIs
-          const [data1, data2, data3, data4] = await Promise.all([
-            fetchDataFromApi("https://fantasypulseff.vercel.app/api/fetchData"),
-            fetchDataFromApi(
-              "https://fantasypulseff.vercel.app/api/fetchSegment2"
-            ),
-            fetchDataFromApi(
-              "https://fantasypulseff.vercel.app/api/fetchOverreaction"
-            ),
-            fetchDataFromApi(
-              "https://fantasypulseff.vercel.app/api/fetchPulseCheck"
-            ),
-          ]);
-
-          setArticles(data1);
-          setArticles2(data2);
-          setArticles3(data3);
-          setArticles4(data4);
         }
       } catch (error) {
         console.error("Error:", error);
@@ -237,22 +221,36 @@ const Articles = () => {
       };
 
       fetchDataIfNeeded();
-    }, [articles4]);
+    }, []);
 
-    if (
-      articles &&
-      articles2 &&
-      articles3 &&
-      articles4 &&
-      articles.title &&
-      articles2.title &&
-      articles3.title &&
-      articles4.title &&
-      loaded === false
-    ) {
-      router.refresh();
-      loaded = true;
-    }
+    // const updateArticleInfo = async (fieldName, articles) => {
+    //   articles = await JSON.parse(articles);
+    //   // Reference to the "Weekly Info" collection
+    //   const weeklyInfoCollectionRef = collection(db, "Weekly Articles");
+    //   // Use a Query to check if a document with the league_id exists
+    //   const queryRef = query(
+    //     weeklyInfoCollectionRef,
+    //     where("league_id", "==", REACT_APP_LEAGUE_ID)
+    //   );
+    //   const querySnapshot = await getDocs(queryRef);
+
+    //   // Add or update the document based on whether it already exists
+    //   if (!querySnapshot.empty) {
+    //     // Document exists, update it
+    //     querySnapshot.forEach(async (doc) => {
+    //       await updateDoc(doc.ref, {
+    //         [fieldName]: articles,
+    //       });
+    //     });
+    //   } else {
+    //     // Document does not exist, add a new one
+    //     const newArticleData = {
+    //       league_id: REACT_APP_LEAGUE_ID,
+    //     };
+    //     newArticleData[fieldName] = articles;
+    //     await addDoc(weeklyInfoCollectionRef, newArticleData);
+    //   }
+    // };
 
     if (loading) {
       return (
@@ -378,21 +376,16 @@ const Articles = () => {
             />
           </div>
         </Element>
-        {articles && (
+        <div className="sticky top-1/2 right-1/2 transform translate-y-[-50%] translate-x-[-50%]">
           <SmoothLink
-            to={articles.title || ""}
-            activeClass="active"
-            spy={true}
+            to="1"
             smooth={true}
-            offset={50}
-            duration={700}
+            duration={500}
+            className="text-4xl text-[#af1222] hover:text-[#af1222] transition-colors cursor-pointer"
           >
-            <BsArrowUpCircleFill
-              className="block animate-bounce fixed bottom-5 right-3 opacity-40 xl:hidden"
-              size={30}
-            />
+            <BsArrowUpCircleFill />
           </SmoothLink>
-        )}
+        </div>
       </div>
     );
   }
