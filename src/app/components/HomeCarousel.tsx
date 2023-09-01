@@ -347,7 +347,7 @@ const CardCarousel = ({ leagueID }) => {
       const model = new ChatOpenAI({
         temperature: 0.9,
         model: "gpt-4",
-        openAIApiKey: "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",
+        openAIApiKey: "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",
       });
 
       const question = `give me 3 sports style headlines about the league's data, include the scores, who won by comparing their team_points to their opponent's team_points and their star players include a bit of humor as well. I want the information to be in this format exactly headline =
