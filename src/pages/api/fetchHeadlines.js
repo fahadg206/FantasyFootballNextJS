@@ -72,13 +72,13 @@ export default async function handler(req, res) {
 
     // The result is an object with a `text` property.
     const apiResponse = await chainA.call({ leagueData: "NBA" });
-    const cleanUp = await model.call([
-      new SystemMessage(
-        "Turn the following string into valid JSON format that strictly adhere to RFC8259 compliance"
-      ),
-      new HumanMessage(apiResponse.text),
-    ]);
-    console.log("Headlines API ", apiResponse.text);
+    // const cleanUp = await model.call([
+    //   new SystemMessage(
+    //     "Turn the following string into valid JSON format that strictly adhere to RFC8259 compliance"
+    //   ),
+    //   new HumanMessage(apiResponse.text),
+    // ]);
+    // console.log("Headlines API ", apiResponse.text);
     // const cleanUp = await model.call([
     //   new SystemMessage(
     //     "Turn the following string into valid JSON format that strictly adhere to RFC8259 compliance, if it already is in a valid JSON format then give me the string as the response, without any other information from you"
@@ -86,11 +86,11 @@ export default async function handler(req, res) {
     //   new HumanMessage(apiResponse.text),
     // ]);
 
-    updateWeeklyInfo("864448469199347712", cleanUp);
+    //updateWeeklyInfo("864448469199347712", cleanUp);
 
-    return res.status(200).json(JSON.parse(cleanUp.content));
+    return res.status(200).json(JSON.parse(apiResponse.text));
   } catch (error) {
     console.error("Unexpected error:", error);
-    return res.status(500).json({ error: error });
+    return res.status(500).json({ error: "Failed" });
   }
 }
