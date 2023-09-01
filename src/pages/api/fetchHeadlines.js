@@ -53,7 +53,13 @@ const updateWeeklyInfo = async (REACT_APP_LEAGUE_ID, headlines) => {
 export default async function handler(req, res) {
   console.log("here");
   // console.log("what was passed in ", req.body);
-  // const REACT_APP_LEAGUE_ID = req.body;
+  const REACT_APP_LEAGUE_ID = req.body;
+  const readingRef = ref(storage, `files/${REACT_APP_LEAGUE_ID}.txt`);
+  const url = await getDownloadURL(readingRef);
+
+  const response = await fetch(url);
+  const fileContent = await response.text();
+  const newFile = JSON.stringify(fileContent).replace(/\//g, "");
 
   try {
     console.log("Here");
@@ -76,7 +82,7 @@ export default async function handler(req, res) {
     const chainA = new LLMChain({ llm: model, prompt });
 
     // The result is an object with a `text` property.
-    const apiResponse = await chainA.call({ leagueData: "NBA" });
+    const apiResponse = await chainA.call({ leagueData: newFile });
     // const cleanUp = await model.call([
     //   new SystemMessage(
     //     "Turn the following string into valid JSON format that strictly adhere to RFC8259 compliance"
