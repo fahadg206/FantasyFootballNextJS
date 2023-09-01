@@ -15,10 +15,12 @@ import { ChatOpenAI } from "langchain/chat_models/openai";
 import { RetrievalQAChain } from "langchain/chains";
 import { SystemMessage } from "langchain/schema";
 import { HumanMessage } from "langchain/schema";
+import { PromptTemplate } from "langchain/prompts";
+import { LLMChain } from "langchain/chains";
 
 import { db, storage } from "../../app/firebase";
 
-dotenv.config();
+//dotenv.config();
 const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
 
 const updateWeeklyInfo = async (REACT_APP_LEAGUE_ID, headlines) => {
@@ -49,29 +51,32 @@ const updateWeeklyInfo = async (REACT_APP_LEAGUE_ID, headlines) => {
 };
 
 export default async function handler(req, res) {
+  console.log("here");
   // console.log("what was passed in ", req.body);
   // const REACT_APP_LEAGUE_ID = req.body;
 
   try {
-    //     const model = new ChatOpenAI({
-    //       temperature: 0.9,
-    //       model: "gpt-4",
-    //       openAIApiKey: process.env.OPENAI_API_KEY,
-    //     });
+    console.log("Here");
+    console.info(process.env.OPENAI_API_KEY);
+    const model = new ChatOpenAI({
+      temperature: 0.9,
+      model: "gpt-4",
+      openAIApiKey: process.env.OPENAI_API_KEY,
+    });
 
-    //     const question = `give me 3 sports style headlines about the league's data, include the scores,team names, & who won by comparing their star starters with their points. include a bit of humor as well. I want the information to be in this format exactly headline =
-    //   "id": "",
-    //   "category": "",
-    //   "title": "",
-    //   "description": ""
-    //  keep description short to one sentence give me the response in valid JSON array format {leagueData}`;
-    //     console.log(question);
+    const question = `give me 3 sports style headlines about the league's data, include the scores,team names, & who won by comparing their star starters with their points. include a bit of humor as well. I want the information to be in this format exactly headline =
+  "id": "",
+  "category": "",
+  "title": "",
+  "description": ""
+ keep description short to one sentence give me the response in valid JSON array format {leagueData}`;
+    console.log(question);
 
-    //     const prompt = PromptTemplate.fromTemplate(question);
-    //     const chainA = new LLMChain({ llm: model, prompt });
+    const prompt = PromptTemplate.fromTemplate(question);
+    const chainA = new LLMChain({ llm: model, prompt });
 
-    //     // The result is an object with a `text` property.
-    //     const apiResponse = await chainA.call({ leagueData: "NBA" });
+    // The result is an object with a `text` property.
+    const apiResponse = await chainA.call({ leagueData: "NBA" });
     // const cleanUp = await model.call([
     //   new SystemMessage(
     //     "Turn the following string into valid JSON format that strictly adhere to RFC8259 compliance"
@@ -88,34 +93,7 @@ export default async function handler(req, res) {
 
     //updateWeeklyInfo("864448469199347712", cleanUp);
 
-    const defaultHeadlines = [
-      {
-        id: 18,
-        url: "/imgs/computer/mouse.png",
-        category: "News",
-        title: "These are default headlines",
-        description:
-          "Our news department is hard at work!! We'll publish your league headlines soon!",
-      },
-      {
-        id: 27,
-        url: "/imgs/computer/keyboard.png",
-        category: "News",
-        title: "Only testing these",
-        description:
-          "Check out some of the other pages while you're at it too!",
-      },
-      {
-        id: 38,
-        url: "/imgs/computer/monitor.png",
-        category: "Question of the Week? Why isn't this working?",
-        title:
-          "Have you voted on this weeks question? Scroll down and let us know!",
-        description: "We really value your feedback!",
-      },
-    ];
-
-    return res.status(200).json(defaultHeadlines);
+    return res.status(200).json(JSON.parse(apiResponse.text));
   } catch (error) {
     console.error("Unexpected error:", error);
     return res.status(500).json({ error: "Failed" });
