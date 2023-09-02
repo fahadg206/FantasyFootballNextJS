@@ -327,7 +327,7 @@ const Bars = ({ votes, liveGame }) => {
                 transition={{ type: "spring" }}
               />
               <span className="absolute bottom-0 left-[50%] mt-2 inline-block w-full -translate-x-[50%] p-2 text-center text-sm text-[#8d8787] dark:text-white">
-                <span className="text-xs ">{vote.votes} votes</span>
+                <span className="text-xs font-bold">{vote.votes} votes</span>
               </span>
             </div>
           </div>

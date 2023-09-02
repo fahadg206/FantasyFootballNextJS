@@ -2,11 +2,27 @@
 
 import React from "react";
 import { FaSearch } from "react-icons/fa";
-import { Dropdown, Modal, useModal, Button, Text } from "@nextui-org/react";
+import { Button } from "@nextui-org/button";
+import {
+  Dropdown,
+  DropdownMenu,
+  DropdownItem,
+  DropdownTrigger,
+  useDropdown,
+} from "@nextui-org/dropdown";
+import {
+  Modal,
+  ModalContent,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
+  useDisclosure,
+  useModal,
+} from "@nextui-org/modal";
 import axios, { AxiosResponse } from "axios";
 import { useEffect, useState } from "react";
 import { match } from "assert";
-import { useDropdown } from "@nextui-org/react/types/dropdown/use-dropdown";
+
 import { M_PLUS_1 } from "next/font/google";
 import Image from "next/image";
 import { BsArrowBarLeft, BsArrowBarRight } from "react-icons/bs";
@@ -108,7 +124,7 @@ const Matchups = () => {
   const REACT_APP_LEAGUE_ID: string | null =
     localStorage.getItem("selectedLeagueID");
 
-  const { setVisible, bindings } = useModal();
+  //  const { setVisible, bindings } = useModal();
 
   const [input, setInput] = useState("");
 
@@ -603,9 +619,12 @@ const Matchups = () => {
     .map((player) => {
       if (selected2.keys().next().value !== player.userName) {
         return (
-          <Dropdown.Item css={{ color: "#af1222" }} key={player.userName}>
+          <DropdownItem
+            className="text-[#af1222] hover:bg-[#5f5f5f] rounded-2xl"
+            key={player.userName}
+          >
             {player.userName}
-          </Dropdown.Item>
+          </DropdownItem>
         );
       }
       return undefined;
@@ -616,9 +635,12 @@ const Matchups = () => {
     .map((player) => {
       if (selected.keys().next().value !== player.userName) {
         return (
-          <Dropdown.Item css={{ color: "#af1222" }} key={player.userName}>
+          <DropdownItem
+            className="text-[#af1222] hover:bg-[#5f5f5f] rounded-2xl"
+            key={player.userName}
+          >
             {player.userName}
-          </Dropdown.Item>
+          </DropdownItem>
         );
       }
       return undefined;
@@ -706,62 +728,64 @@ const Matchups = () => {
   // // }
   // console.log(team1Proj, team2Proj);
 
+  const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
+
   return (
-    <div className="mt-3 flex flex-col items-center  h-screen w-[95vw] xl:w-[60vw]">
+    <div className="mt-3 flex flex-col items-center  h-screen w-[95vw] xl:w-[60vw] ">
       <div className="flex-col flex items-center ml-5 md:flex-row md:justify-center md:items-start md:ml-0  mt-5">
         <div className="mr-10 mb-5 md:mb-0">
-          <Dropdown>
-            <Dropdown.Button flat css={{ tt: "capitalize", color: "#af1222" }}>
-              {selectedValue}
-            </Dropdown.Button>
-            <Dropdown.Menu
-              aria-label="Single selection actions"
-              css={{
-                backgroundColor: "black",
-                border: "solid",
-                borderColor: "#af1222",
-                color: "white",
-              }}
+          <Dropdown className="border-[1px] border-[#af1222] border-opacity-20 bg-[#1a1a1a] rounded-xl">
+            <DropdownTrigger>
+              <Button
+                variant="bordered"
+                className="capitalize border-[1px]  border-[#af1222] border-opacity-20 rounded-[10px] p-3"
+              >
+                {selectedValue}
+              </Button>
+            </DropdownTrigger>
+            <DropdownMenu
+              aria-label="Single selection example"
+              variant="flat"
               disallowEmptySelection
               selectionMode="single"
               selectedKeys={selected}
-              onSelectionChange={handleSelectionChange}
+              onSelectionChange={setSelected}
             >
               {dropdownItems1}
-            </Dropdown.Menu>
+            </DropdownMenu>
           </Dropdown>
         </div>
         <div className="mr-10">
-          <Dropdown>
-            <Dropdown.Button flat css={{ tt: "capitalize", color: "#af1222" }}>
-              {selectedValue2}
-            </Dropdown.Button>
-            <Dropdown.Menu
-              aria-label="Single selection actions"
-              css={{
-                backgroundColor: "black",
-                border: "solid",
-                borderColor: "#af1222",
-                color: "white",
-              }}
+          <Dropdown className="border-[1px] border-[#af1222] border-opacity-20 bg-[#1a1a1a] rounded-xl">
+            <DropdownTrigger>
+              <Button
+                variant="bordered"
+                className="capitalize border-[1px]  border-[#af1222] border-opacity-20 rounded-[10px] p-3"
+              >
+                {selectedValue2}
+              </Button>
+            </DropdownTrigger>
+            <DropdownMenu
+              aria-label="Single selection example"
+              variant="flat"
               disallowEmptySelection
               selectionMode="single"
               selectedKeys={selected2}
-              onSelectionChange={handleSelectionChange2}
+              onSelectionChange={setSelected2}
             >
               {dropdownItems2}
-            </Dropdown.Menu>
+            </DropdownMenu>
           </Dropdown>
         </div>
 
-        <button
-          className="mr-10 md:mr-0 mt-6 md:mt-1 bg-[#CEE4FE] text-[#af1222]  rounded-xl px-5 py-2"
-          onClick={() => setVisible(true)}
+        <Button
+          className="mr-10 md:mr-0 mt-6 md:mt-1 border-[1px]  border-[#af1222] border-opacity-20 rounded-xl px-5 py-2"
+          onPress={onOpen}
         >
           <FaSearch />
-        </button>
+        </Button>
       </div>
-      <div>
+      {/* <div>
         <Image
           src={MatchupsImg}
           alt="matchup image"
@@ -769,80 +793,255 @@ const Matchups = () => {
           width={600}
           height={600}
         />
-      </div>
+      </div> */}
       {/* Modal */}
       <div>
         {selected.size > 0 && selected2.size > 0 && (
           <div>
             <Modal
-              scroll
-              width="600px"
-              aria-labelledby="modal-title"
-              aria-describedby="modal-description"
-              {...bindings}
-              css={{
-                backgroundColor: "#050505",
-                color: "white",
-                "@smMax": {
-                  backgroundColor: "#050505",
-                  width: "90vw",
-                  display: "flex",
-                  justifyContent: "center",
-                  textAlign: "center",
-                  marginLeft: "20px",
-                },
-              }}
+              isOpen={isOpen}
+              onOpenChange={onOpenChange}
+              placement="center"
+              scrollBehavior="inside"
             >
-              <Modal.Header>
-                <Text id="modal-title" size={18} css={{ color: "#E9EBEA" }}>
-                  Rivarly Summary
-                </Text>
-              </Modal.Header>
-              <Modal.Body css={{ color: "#190103" }}>
-                <div>
-                  {rivalsMap.has("Rival") ? (
-                    <div>
-                      <div className="text-center mb-10">
-                        <div
-                          className={
-                            (rivalsMap.get("Rival")?.matchups.length ?? 0) <= 1
-                              ? "hidden"
-                              : "flex justify-center text-[#af1222] text-[25px]"
-                          }
-                        >
-                          <HiOutlineArrowSmLeft
-                            onClick={() =>
-                              setWeekCount(Math.max(0, weekCount - 1))
+              <ModalContent className="flex bg-[#e0dfdf] dark:bg-[#050505] rounded-xl">
+                <ModalHeader className=" flex justify-center">
+                  <p>Rivarly Summary</p>
+                </ModalHeader>
+                <ModalBody>
+                  <div>
+                    {rivalsMap.has("Rival") ? (
+                      <div>
+                        <div className="text-center mb-10">
+                          <div
+                            className={
+                              (rivalsMap.get("Rival")?.matchups.length ?? 0) <=
+                              1
+                                ? "hidden"
+                                : "flex justify-center text-[#af1222] text-[25px]"
                             }
-                            size={30}
-                          />
-                          <HiOutlineArrowSmRight
-                            onClick={() =>
-                              setWeekCount(
-                                Math.min(
-                                  weekCount + 1,
-                                  (rivalsMap.get("Rival")?.matchups.length ??
-                                    0) - 1
+                          >
+                            <HiOutlineArrowSmLeft
+                              onClick={() =>
+                                setWeekCount(Math.max(0, weekCount - 1))
+                              }
+                              size={30}
+                            />
+                            <HiOutlineArrowSmRight
+                              onClick={() =>
+                                setWeekCount(
+                                  Math.min(
+                                    weekCount + 1,
+                                    (rivalsMap.get("Rival")?.matchups.length ??
+                                      0) - 1
+                                  )
                                 )
-                              )
-                            }
-                            size={30}
-                          />
-                        </div>
-                        <Text className="mb-10" css={{ color: "#E9EBEA" }}>
-                          Week:
-                          {slate?.week}
-                        </Text>
-                        <div className="flex teams justify-around">
-                          <div className=" team1 flex flex-col items-center">
-                            <div className="flex items-center justify-center border-b-[1px] border-[#1a1a1a] border-opacity-80 mb-2 w-full ">
-                              <div className="flex items-center mr-1 sm:mr-3">
-                                {" "}
-                                {slate && slate.matchup[0] && (
+                              }
+                              size={30}
+                            />
+                          </div>
+                          <p className="mb-10 font-bold">
+                            Week:
+                            {slate?.week}
+                          </p>
+                          <div className="flex teams justify-around">
+                            <div className=" team1 flex flex-col items-center">
+                              <div className="flex items-center justify-center border-b-[1px] border-[#1a1a1a] border-opacity-80 mb-2 w-full ">
+                                <div className="flex items-center mr-1 sm:mr-3">
+                                  {" "}
+                                  {slate && slate.matchup[0] && (
+                                    <Image
+                                      src={`https://sleepercdn.com/avatars/thumbs/${
+                                        rivalManagers[slate.year][
+                                          slate.matchup[0].roster_id
+                                        ].team.avatar
+                                      }`}
+                                      alt="player"
+                                      width={38}
+                                      height={38}
+                                      className="rounded-full mr-2 w-[25px] h-[25px] sm:w-full sm:h-full"
+                                    />
+                                  )}
+                                  <p className=" font-bold text-[12px]">
+                                    {
+                                      rivalManagers[slate?.year][
+                                        slate?.matchup[0].roster_id
+                                      ].team.name
+                                    }
+                                  </p>
+                                </div>
+                                <div className="flex flex-col justify-center items-center">
+                                  <p className="font-bold text-[10px]">
+                                    {slate?.matchup[0].points
+                                      .reduce(
+                                        (total, currentValue) =>
+                                          total + parseFloat(currentValue),
+                                        0
+                                      )
+                                      .toFixed(2) === "0.00"
+                                      ? "-"
+                                      : slate?.matchup[0].points
+                                          .reduce(
+                                            (total, currentValue) =>
+                                              total + parseFloat(currentValue),
+                                            0
+                                          )
+                                          .toFixed(2)}
+                                  </p>
+                                  <p className=" text-[8px] md:text-[10px] font-bold italic">
+                                    {team1Proj.toFixed(2)}
+                                  </p>
+                                </div>
+                              </div>
+
+                              {slate?.matchup[0].starters.map(
+                                (starter: string, starterIndex: number) => {
+                                  if (starter === "0") {
+                                    return (
+                                      <div
+                                        key={starterIndex}
+                                        className="flex flex-coltext-[13px] items-center justify-center w-[164px] h-[71px] border-[1px] border-[#1a1a1a] mb-1"
+                                      >
+                                        Start your player buddy!
+                                      </div>
+                                    );
+                                  }
+                                  if (!playersData[starter]) {
+                                    return (
+                                      <div
+                                        key={starterIndex}
+                                        className="flex text-[13px] items-center justify-start w-[164px] h-[71px] border-[1px] border-[#1a1a1a] mb-1 "
+                                      >
+                                        {" "}
+                                        <ImSad
+                                          className="opacity-40 animate-pulse ml-2"
+                                          size={23}
+                                        />
+                                        <div className="flex flex-col items-center">
+                                          {" "}
+                                          <Image
+                                            src={`https://sleepercdn.com/content/nfl/players/thumb/${starter}.jpg`}
+                                            alt="player"
+                                            width={57}
+                                            height={57}
+                                            className="opacity-50 animate-pulse"
+                                          />
+                                          <p>F/A</p>
+                                        </div>
+                                      </div>
+                                    );
+                                  }
+                                  const playerFirstName =
+                                    playersData[starter.toString()].fn.charAt(
+                                      0
+                                    ) + ".";
+                                  const playerLastName =
+                                    playersData[starter.toString()].ln;
+                                  const playerPoints =
+                                    slate.matchup[0].points[starterIndex];
+
+                                  return (
+                                    <div
+                                      key={starterIndex}
+                                      className="flex flex-col items-center justify-center w-[164px] h-[71px] border-[1px] border-[#1a1a1a] mb-1"
+                                    >
+                                      <div className="flex justify-between items-center w-full p-2">
+                                        <div className="flex flex-col items-center justify-center">
+                                          <div className="flex items-center">
+                                            <p
+                                              className={`${
+                                                colorObj[
+                                                  playersData[starter].pos
+                                                ]
+                                              }`}
+                                            >
+                                              {playersData[starter].pos}
+                                            </p>
+                                            <Image
+                                              src={
+                                                playersData[starter.toString()]
+                                                  .pos === "DEF"
+                                                  ? `https://sleepercdn.com/images/team_logos/nfl/${starter.toLowerCase()}.png`
+                                                  : `https://sleepercdn.com/content/nfl/players/thumb/${starter}.jpg`
+                                              }
+                                              alt="player"
+                                              width={
+                                                playersData[starter.toString()]
+                                                  .pos === "DEF"
+                                                  ? 40
+                                                  : 57
+                                              }
+                                              height={
+                                                playersData[starter.toString()]
+                                                  .pos === "DEF"
+                                                  ? 40
+                                                  : 57
+                                              }
+                                            />
+                                          </div>
+
+                                          <p className=" font-bold text-[12px]">
+                                            {playerFirstName} {playerLastName}
+                                          </p>
+                                        </div>
+                                        <div className="flex flex-col items-center justify-center">
+                                          <p className=" font-bold text-[10px]">
+                                            {playerPoints}
+                                          </p>
+                                          <p className=" text-[8px] md:text-[10px] font-bold italic">
+                                            {(() => {
+                                              const player =
+                                                playersData[starter.toString()];
+                                              const proj =
+                                                player?.wi[slate.week]?.p;
+                                              if (
+                                                proj !== undefined &&
+                                                proj !== 0.0
+                                              ) {
+                                                return proj;
+                                              }
+                                              return slate.matchup[1].points[
+                                                starterIndex
+                                              ];
+                                            })()}
+                                          </p>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  );
+                                }
+                              )}
+                            </div>
+                            <div className=" team2 flex flex-col items-center">
+                              <div className="flex items-center justify-center border-b-[1px] border-[#1a1a1a] border-opacity-80 mb-2 w-full ">
+                                <div className="flex flex-col justify-center items-center mr-1 sm:mr-3">
+                                  <p className=" font-bold text-[10px] sm:text-[14px]">
+                                    {slate?.matchup[1].points
+                                      .reduce(
+                                        (total, currentValue) =>
+                                          total + parseFloat(currentValue),
+                                        0
+                                      )
+                                      .toFixed(2) === "0.00"
+                                      ? "-"
+                                      : slate?.matchup[1].points
+                                          .reduce(
+                                            (total, currentValue) =>
+                                              total + parseFloat(currentValue),
+                                            0
+                                          )
+                                          .toFixed(2)}
+                                  </p>
+                                  <p className=" text-[8px] md:text-[10px] font-bold italic">
+                                    {team2Proj.toFixed(2)}
+                                  </p>
+                                </div>
+                                <div className="flex items-center ">
+                                  {" "}
                                   <Image
                                     src={`https://sleepercdn.com/avatars/thumbs/${
                                       rivalManagers[slate.year][
-                                        slate.matchup[0].roster_id
+                                        slate.matchup[1].roster_id
                                       ].team.avatar
                                     }`}
                                     alt="player"
@@ -850,409 +1049,153 @@ const Matchups = () => {
                                     height={38}
                                     className="rounded-full mr-2 w-[25px] h-[25px] sm:w-full sm:h-full"
                                   />
-                                )}
-                                <Text
-                                  css={{
-                                    color: "#E9EBEA",
-                                    fontWeight: "$bold",
-                                    "@xsMax": {
-                                      fontSize: "12px",
-                                    },
-                                  }}
-                                >
-                                  {
-                                    rivalManagers[slate?.year][
-                                      slate?.matchup[0].roster_id
-                                    ].team.name
+                                  <p className=" font-bold text-[10px] sm:text-[14px]">
+                                    {
+                                      rivalManagers[slate.year][
+                                        slate.matchup[1].roster_id
+                                      ].team.name
+                                    }
+                                  </p>
+                                </div>
+                              </div>
+
+                              {slate.matchup[1].starters.map(
+                                (starter, starterIndex) => {
+                                  if (starter === "0") {
+                                    return (
+                                      <div
+                                        key={starterIndex}
+                                        className="flex flex-col  text[13px] items-center justify-center w-[164px] h-[71px] border-[1px] border-[#1a1a1a] mb-1"
+                                      >
+                                        Start your player buddy!
+                                      </div>
+                                    );
                                   }
-                                </Text>
-                              </div>
-                              <div className="flex flex-col justify-center items-center">
-                                <Text
-                                  css={{
-                                    color: "#E9EBEA",
-                                    fontSize: "14px",
-                                    "@xsMax": {
-                                      fontSize: "10px",
-                                      fontWeight: "bold",
-                                    },
-                                  }}
-                                >
-                                  {slate?.matchup[0].points
-                                    .reduce(
-                                      (total, currentValue) =>
-                                        total + parseFloat(currentValue),
-                                      0
-                                    )
-                                    .toFixed(2) === "0.00"
-                                    ? "-"
-                                    : slate?.matchup[0].points
-                                        .reduce(
-                                          (total, currentValue) =>
-                                            total + parseFloat(currentValue),
-                                          0
-                                        )
-                                        .toFixed(2)}
-                                </Text>
-                                <p className="text-[#A6A6A6] text-[8px] md:text-[10px] font-bold italic">
-                                  {team1Proj.toFixed(2)}
-                                </p>
-                              </div>
-                            </div>
-
-                            {slate?.matchup[0].starters.map(
-                              (starter: string, starterIndex: number) => {
-                                if (starter === "0") {
-                                  return (
-                                    <div
-                                      key={starterIndex}
-                                      className="flex flex-col text-white text-[13px] items-center justify-center w-[164px] h-[71px] border-[1px] border-[#1a1a1a] mb-1"
-                                    >
-                                      Start your player buddy!
-                                    </div>
-                                  );
-                                }
-                                if (!playersData[starter]) {
-                                  return (
-                                    <div
-                                      key={starterIndex}
-                                      className="flex  text-white text-[13px] items-center justify-start w-[164px] h-[71px] border-[1px] border-[#1a1a1a] mb-1 "
-                                    >
-                                      {" "}
-                                      <ImSad
-                                        className="opacity-40 animate-pulse ml-2"
-                                        size={23}
-                                      />
-                                      <div className="flex flex-col items-center">
+                                  if (!playersData[starter]) {
+                                    return (
+                                      <div
+                                        key={starterIndex}
+                                        className="flex   text-[13px] items-center justify-start w-[164px] h-[71px] border-[1px] border-[#1a1a1a] mb-1 "
+                                      >
                                         {" "}
-                                        <Image
-                                          src={`https://sleepercdn.com/content/nfl/players/thumb/${starter}.jpg`}
-                                          alt="player"
-                                          width={57}
-                                          height={57}
-                                          className="opacity-50 animate-pulse"
+                                        <ImSad
+                                          className="opacity-40 animate-pulse ml-2"
+                                          size={23}
                                         />
-                                        <p>F/A</p>
-                                      </div>
-                                    </div>
-                                  );
-                                }
-                                const playerFirstName =
-                                  playersData[starter.toString()].fn.charAt(0) +
-                                  ".";
-                                const playerLastName =
-                                  playersData[starter.toString()].ln;
-                                const playerPoints =
-                                  slate.matchup[0].points[starterIndex];
-
-                                return (
-                                  <div
-                                    key={starterIndex}
-                                    className="flex flex-col items-center justify-center w-[164px] h-[71px] border-[1px] border-[#1a1a1a] mb-1"
-                                  >
-                                    <div className="flex justify-between items-center w-full p-2">
-                                      <div className="flex flex-col items-center justify-center">
-                                        <div className="flex items-center">
-                                          <p
-                                            className={`${
-                                              colorObj[playersData[starter].pos]
-                                            }`}
-                                          >
-                                            {playersData[starter].pos}
-                                          </p>
+                                        <div className="flex flex-col items-center">
+                                          {" "}
                                           <Image
-                                            src={
-                                              playersData[starter.toString()]
-                                                .pos === "DEF"
-                                                ? `https://sleepercdn.com/images/team_logos/nfl/${starter.toLowerCase()}.png`
-                                                : `https://sleepercdn.com/content/nfl/players/thumb/${starter}.jpg`
-                                            }
+                                            src={`https://sleepercdn.com/content/nfl/players/thumb/${starter}.jpg`}
                                             alt="player"
-                                            width={
-                                              playersData[starter.toString()]
-                                                .pos === "DEF"
-                                                ? 40
-                                                : 57
-                                            }
-                                            height={
-                                              playersData[starter.toString()]
-                                                .pos === "DEF"
-                                                ? 40
-                                                : 57
-                                            }
+                                            width={57}
+                                            height={57}
+                                            className="opacity-50 animate-pulse"
                                           />
+                                          <p>F/A</p>
                                         </div>
-
-                                        <Text
-                                          css={{
-                                            color: "#E9EBEA",
-                                            fontSize: "12px",
-                                            fontWeight: "$bold",
-                                          }}
-                                        >
-                                          {playerFirstName} {playerLastName}
-                                        </Text>
                                       </div>
-                                      <div className="flex flex-col items-center justify-center">
-                                        <Text
-                                          css={{
-                                            color: "#E9EBEA",
-                                            fontSize: "12px",
-                                            fontWeight: "$bold",
-                                          }}
-                                        >
-                                          {playerPoints}
-                                        </Text>
-                                        <Text
-                                          css={{
-                                            color: "#A6A6A6",
-                                            fontSize: "8px",
-                                            fontWeight: "$bold",
-                                            fontStyle: "italic",
-                                          }}
-                                        >
-                                          {(() => {
-                                            const player =
-                                              playersData[starter.toString()];
-                                            const proj =
-                                              player?.wi[slate.week]?.p;
-                                            if (
-                                              proj !== undefined &&
-                                              proj !== 0.0
-                                            ) {
-                                              return proj;
-                                            }
-                                            return slate.matchup[1].points[
-                                              starterIndex
-                                            ];
-                                          })()}
-                                        </Text>
-                                      </div>
-                                    </div>
-                                  </div>
-                                );
-                              }
-                            )}
-                          </div>
-                          <div className=" team2 flex flex-col items-center">
-                            <div className="flex items-center justify-center border-b-[1px] border-[#1a1a1a] border-opacity-80 mb-2 w-full ">
-                              <div className="flex flex-col justify-center items-center mr-1 sm:mr-3">
-                                <Text
-                                  css={{
-                                    color: "#E9EBEA",
-                                    fontSize: "14px",
-                                    "@xsMax": {
-                                      fontSize: "10px",
-                                      fontWeight: "bold",
-                                    },
-                                  }}
-                                >
-                                  {slate?.matchup[1].points
-                                    .reduce(
-                                      (total, currentValue) =>
-                                        total + parseFloat(currentValue),
-                                      0
-                                    )
-                                    .toFixed(2) === "0.00"
-                                    ? "-"
-                                    : slate?.matchup[1].points
-                                        .reduce(
-                                          (total, currentValue) =>
-                                            total + parseFloat(currentValue),
-                                          0
-                                        )
-                                        .toFixed(2)}
-                                </Text>
-                                <p className="text-[#A6A6A6] text-[8px] md:text-[10px] font-bold italic">
-                                  {team2Proj.toFixed(2)}
-                                </p>
-                              </div>
-                              <div className="flex items-center ">
-                                {" "}
-                                <Image
-                                  src={`https://sleepercdn.com/avatars/thumbs/${
-                                    rivalManagers[slate.year][
-                                      slate.matchup[1].roster_id
-                                    ].team.avatar
-                                  }`}
-                                  alt="player"
-                                  width={38}
-                                  height={38}
-                                  className="rounded-full mr-2 w-[25px] h-[25px] sm:w-full sm:h-full"
-                                />
-                                <Text
-                                  css={{
-                                    color: "#E9EBEA",
-                                    fontWeight: "$bold",
-                                    "@xsMax": {
-                                      fontSize: "12px",
-                                    },
-                                  }}
-                                >
-                                  {
-                                    rivalManagers[slate.year][
-                                      slate.matchup[1].roster_id
-                                    ].team.name
+                                    );
                                   }
-                                </Text>
-                              </div>
-                            </div>
+                                  const playerFirstName =
+                                    playersData[starter.toString()].fn.charAt(
+                                      0
+                                    ) + ".";
+                                  const playerLastName =
+                                    playersData[starter.toString()].ln;
+                                  const playerPoints =
+                                    slate.matchup[1].points[starterIndex];
 
-                            {slate.matchup[1].starters.map(
-                              (starter, starterIndex) => {
-                                if (starter === "0") {
                                   return (
                                     <div
                                       key={starterIndex}
-                                      className="flex flex-col text-white text[13px] items-center justify-center w-[164px] h-[71px] border-[1px] border-[#1a1a1a] mb-1"
+                                      className="flex flex-col items-center justify-center w-[164px] h-[71px] border-[1px] border-[#1a1a1a] mb-1"
                                     >
-                                      Start your player buddy!
-                                    </div>
-                                  );
-                                }
-                                if (!playersData[starter]) {
-                                  return (
-                                    <div
-                                      key={starterIndex}
-                                      className="flex  text-white text-[13px] items-center justify-start w-[164px] h-[71px] border-[1px] border-[#1a1a1a] mb-1 "
-                                    >
-                                      {" "}
-                                      <ImSad
-                                        className="opacity-40 animate-pulse ml-2"
-                                        size={23}
-                                      />
-                                      <div className="flex flex-col items-center">
-                                        {" "}
-                                        <Image
-                                          src={`https://sleepercdn.com/content/nfl/players/thumb/${starter}.jpg`}
-                                          alt="player"
-                                          width={57}
-                                          height={57}
-                                          className="opacity-50 animate-pulse"
-                                        />
-                                        <p>F/A</p>
-                                      </div>
-                                    </div>
-                                  );
-                                }
-                                const playerFirstName =
-                                  playersData[starter.toString()].fn.charAt(0) +
-                                  ".";
-                                const playerLastName =
-                                  playersData[starter.toString()].ln;
-                                const playerPoints =
-                                  slate.matchup[1].points[starterIndex];
+                                      <div className="flex justify-between items-center w-full p-2">
+                                        <div className="flex flex-col items-center justify-center">
+                                          <div className="flex items-center">
+                                            <p
+                                              className={`${
+                                                colorObj[
+                                                  playersData[starter].pos
+                                                ]
+                                              }`}
+                                            >
+                                              {playersData[starter].pos}
+                                            </p>
+                                            <Image
+                                              src={
+                                                playersData[starter.toString()]
+                                                  .pos === "DEF"
+                                                  ? `https://sleepercdn.com/images/team_logos/nfl/${starter.toLowerCase()}.png`
+                                                  : `https://sleepercdn.com/content/nfl/players/thumb/${starter}.jpg`
+                                              }
+                                              alt="player"
+                                              width={
+                                                playersData[starter.toString()]
+                                                  .pos === "DEF"
+                                                  ? 40
+                                                  : 57
+                                              }
+                                              height={
+                                                playersData[starter.toString()]
+                                                  .pos === "DEF"
+                                                  ? 40
+                                                  : 57
+                                              }
+                                            />
+                                          </div>
 
-                                return (
-                                  <div
-                                    key={starterIndex}
-                                    className="flex flex-col items-center justify-center w-[164px] h-[71px] border-[1px] border-[#1a1a1a] mb-1"
-                                  >
-                                    <div className="flex justify-between items-center w-full p-2">
-                                      <div className="flex flex-col items-center justify-center">
-                                        <div className="flex items-center">
-                                          <p
-                                            className={`${
-                                              colorObj[playersData[starter].pos]
-                                            }`}
-                                          >
-                                            {playersData[starter].pos}
+                                          <p className=" font-bold text-[10px] sm:text-[12px]">
+                                            {playerFirstName} {playerLastName}
                                           </p>
-                                          <Image
-                                            src={
-                                              playersData[starter.toString()]
-                                                .pos === "DEF"
-                                                ? `https://sleepercdn.com/images/team_logos/nfl/${starter.toLowerCase()}.png`
-                                                : `https://sleepercdn.com/content/nfl/players/thumb/${starter}.jpg`
-                                            }
-                                            alt="player"
-                                            width={
-                                              playersData[starter.toString()]
-                                                .pos === "DEF"
-                                                ? 40
-                                                : 57
-                                            }
-                                            height={
-                                              playersData[starter.toString()]
-                                                .pos === "DEF"
-                                                ? 40
-                                                : 57
-                                            }
-                                          />
                                         </div>
-
-                                        <Text
-                                          css={{
-                                            color: "#E9EBEA",
-                                            fontSize: "12px",
-                                            fontWeight: "$bold",
-                                          }}
-                                        >
-                                          {playerFirstName} {playerLastName}
-                                        </Text>
-                                      </div>
-                                      <div className="flex flex-col items-center justify-center">
-                                        <Text
-                                          css={{
-                                            color: "#E9EBEA",
-                                            fontSize: "12px",
-                                            fontWeight: "$bold",
-                                          }}
-                                        >
-                                          {playerPoints}
-                                        </Text>
-                                        <Text
-                                          css={{
-                                            color: "#A6A6A6",
-                                            fontSize: "8px",
-                                            fontWeight: "$bold",
-                                            fontStyle: "italic",
-                                          }}
-                                        >
-                                          {(() => {
-                                            const player =
-                                              playersData[starter.toString()];
-                                            const proj =
-                                              player?.wi[slate.week]?.p;
-                                            if (
-                                              proj !== undefined &&
-                                              proj !== 0.0
-                                            ) {
-                                              return proj;
-                                            }
-                                            return slate.matchup[1].points[
-                                              starterIndex
-                                            ];
-                                          })()}
-                                        </Text>
+                                        <div className="flex flex-col items-center justify-center">
+                                          <p className=" font-bold text-[10px] sm:text-[12px]">
+                                            {playerPoints}
+                                          </p>
+                                          <p className="text-[A6a6a6] text-[8px] font-bold italic">
+                                            {(() => {
+                                              const player =
+                                                playersData[starter.toString()];
+                                              const proj =
+                                                player?.wi[slate.week]?.p;
+                                              if (
+                                                proj !== undefined &&
+                                                proj !== 0.0
+                                              ) {
+                                                return proj;
+                                              }
+                                              return slate.matchup[1].points[
+                                                starterIndex
+                                              ];
+                                            })()}
+                                          </p>
+                                        </div>
                                       </div>
                                     </div>
-                                  </div>
-                                );
-                              }
-                            )}
+                                  );
+                                }
+                              )}
+                            </div>
                           </div>
                         </div>
                       </div>
-                    </div>
-                  ) : (
-                    <Text id="modal-description" css={{ color: "#E9EBEA" }}>
-                      Invalid Submission
-                    </Text>
-                  )}
-                </div>
-              </Modal.Body>
-              <Modal.Footer>
-                <Button
-                  auto
-                  flat
-                  color="default"
-                  onPress={() => setVisible(false)}
-                  css={{ color: "white", backgroundColor: "#af1222" }}
-                >
-                  Close
-                </Button>
-              </Modal.Footer>
+                    ) : (
+                      <p id="modal-description" className="">
+                        Invalid Submission
+                      </p>
+                    )}
+                  </div>
+                </ModalBody>
+                <ModalFooter>
+                  <Button
+                    className="bg-[#af1222] p-1 rounded-xl "
+                    onPress={onClose}
+                  >
+                    Close
+                  </Button>
+                </ModalFooter>
+              </ModalContent>
             </Modal>
           </div>
         )}

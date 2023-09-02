@@ -56,71 +56,52 @@ const updateWeeklyInfo = async (REACT_APP_LEAGUE_ID, articles) => {
 };
 
 export default async function handler(req, res) {
-  console.log("what was passed in ", req.body);
+  console.log("here");
+  // console.log("what was passed in ", req.body);
   const REACT_APP_LEAGUE_ID = req.body;
+  const readingRef = ref(storage, `files/${REACT_APP_LEAGUE_ID}.txt`);
+  const url = await getDownloadURL(readingRef);
+
+  const response = await fetch(url);
+  const fileContent = await response.text();
+  const newFile = JSON.stringify(fileContent).replace(/\//g, "");
 
   try {
-    const readingRef = ref(storage, `files/${REACT_APP_LEAGUE_ID}.txt`);
-    const url = await getDownloadURL(readingRef);
-    const response = await fetch(url);
-    const fileContent = await response.text();
-    const newFile = JSON.stringify(fileContent).replace(/\//g, "");
-    //console.log("File ", newFile);
-    const leagueData = [
-      new Document({
-        pageContent: [newFile],
-        metadata: {
-          title: "Fantasy Pulse",
-          author: "Fantasy Pulse Editorial Team",
-          date: "Sep 1, 2022",
-        },
-      }),
-    ];
-    // Process the retrieved data
-    const vectorStore = await FaissStore.fromDocuments(
-      leagueData,
-      new OpenAIEmbeddings()
-    );
-    //await vectorStore.addDocuments(articles.article1);
-    //await vectorStore.addDocuments(articles.article2);
-    //await vectorStore.addDocuments(articles.article3);
-    //await vectorStore.addDocuments(articles.article4);
+    console.log("Here");
+    console.info(process.env.OPENAI_API_KEY);
     const model = new ChatOpenAI({
       temperature: 0.9,
-      model: "gpt-4.0",
-      max_tokens: 8000,
-      openAIApiKey: OPENAI_API_KEY,
+      model: "gpt-4",
+      openAIApiKey: process.env.OPENAI_API_KEY,
     });
-    await vectorStore.save("leagueData");
 
-    const article = {
-      title: "",
-      paragraph1: "",
-      paragraph2: "",
-      paragraph3: "",
-    };
-
-    const articleTemplate = JSON.stringify(article);
     const question = `Using the league data I provided you Write a short article about The Art of Trash Talk: Showcase the best and wittiest trash talk exchanges between managers, celebrating the creativity and competitiveness within the league. make up fake quotes if you need to. Pick one random matchup
- Keep the content within 150 words maximum. The format of the JSON response should strictly adhere to RFC8259 compliance, without any deviations or errors. The JSON structure should match this template: {
+ Keep the content within 150 words maximum. The format of the JSON response should strictly adhere to RFC8259 compliance, without any deviations or errors. The JSON structure should match this template:
   "title": "",
   "paragraph1": "",
   "paragraph2": "",
   "paragraph3": "",
-}
-Please ensure that the generated JSON response meets the specified criteria without any syntax issues or inconsistencies.`;
-    const chain = RetrievalQAChain.fromLLM(model, vectorStore.asRetriever());
-    const apiResponse = await chain.call({ query: question });
-    console.log(apiResponse);
-    console.log(typeof apiResponse.text);
+  "paragraph4": "",
+  "paragraph5": "",
+  "paragraph6": "",
+  "paragraph7": ""
+Please ensure that the generated JSON response meets the specified criteria without any syntax issues or inconsistencies. {leagueData} `;
+
+    const prompt = PromptTemplate.fromTemplate(question);
+    const chainA = new LLMChain({ llm: model, prompt });
+    const apiResponse = await chainA.call({ leagueData: newFile });
+
+    console.log("Headlines API ", apiResponse.text);
     const cleanUp = await model.call([
       new SystemMessage(
-        "Turn the following string into valid JSON format that strictly adhere to RFC8259 compliance"
+        "Turn the following string into valid JSON format that strictly adhere to RFC8259 compliance, if it already is in a valid JSON format then give me the string as the response, without any other information from you"
       ),
       new HumanMessage(apiResponse.text),
     ]);
-    updateWeeklyInfo(REACT_APP_LEAGUE_ID, cleanUp.text);
-    return res.status(200).json(apiResponse);
+
+    updateWeeklyInfo(REACT_APP_LEAGUE_ID, cleanUp.content);
+
+    return res.status(200).json(JSON.parse(cleanUp.content));
   } catch (error) {
     console.error("Unexpected error:", error);
     return res.status(500).json({ error: "An error occurred" });

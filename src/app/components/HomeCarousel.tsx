@@ -199,6 +199,8 @@ const CardCarousel = ({ leagueID }) => {
 
               const data = await handler();
 
+              console.log(data);
+
               if (Array.isArray(data) && data.length > 0) {
                 // If data is valid, update headlines state
                 setHeadlines(data);

@@ -167,7 +167,7 @@ function NavBar(props: MyProps) {
     };
 
     return (
-      <div className=" bg-[#EDEDED] dark:bg-black px-4 mx-auto w-screen 2xl:hidden opacity-90">
+      <div className=" bg-[#EDEDED] dark:bg-black px-4 mx-auto w-screen 2xl:hidden opacity-90 ">
         <div className="flex-items-center">
           <div
             className={`mobilenavbar flex items-center justify-between py-3 border-b-2 border-b-1 border-[#af1222] border-opacity-10 h-[95px] xl:hidden `}
@@ -303,7 +303,7 @@ function NavBar(props: MyProps) {
                   </span>
                 </Link>
               </li>
-              <li>
+              <li className="w-full bg-green-300">
                 <Themechanger />
               </li>
               <li>
