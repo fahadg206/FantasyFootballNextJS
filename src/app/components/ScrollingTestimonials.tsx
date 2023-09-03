@@ -104,7 +104,7 @@ const ScrollingTestimonials = () => {
     const response = await axios.get(
       `https://api.sleeper.app/v1/league/${localStorage.getItem(
         "selectedLeagueID"
-      )}/transactions/1`
+      )}/transactions/6`
     );
     setLeagueTransactions(response.data);
   };
