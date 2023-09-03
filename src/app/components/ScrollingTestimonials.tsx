@@ -182,7 +182,7 @@ const ScrollingTestimonials = () => {
     const fetchData = async () => {
       try {
         const response = await axios.get(
-          "https://fantasypulseff.vercel.app/api/fetchPlayers"
+          "https://www.fantasypulseff.com/api/fetchPlayers"
         );
         const playersData = await response.data;
         console.log("Got it");

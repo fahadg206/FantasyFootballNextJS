@@ -300,7 +300,7 @@ const Articles = () => {
             if (!docData.segment2) {
               promises.push(
                 fetchDataFromApi(
-                  "https://fantasypulseff.vercel.app/api/fetchSegment2"
+                  "https://www.fantasypulseff.com/api/fetchSegment2"
                 )
               );
             } else {
@@ -310,7 +310,7 @@ const Articles = () => {
             if (!docData.overreaction) {
               promises.push(
                 fetchDataFromApi(
-                  "https://fantasypulseff.vercel.app/api/fetchOverreaction"
+                  "https://www.fantasypulseff.com/api/fetchOverreaction"
                 )
               );
             } else {
@@ -320,7 +320,7 @@ const Articles = () => {
             if (!docData.pulse_check) {
               promises.push(
                 fetchDataFromApi(
-                  "https://fantasypulseff.vercel.app/api/fetchPulseCheck"
+                  "https://www.fantasypulseff.com/api/fetchPulseCheck"
                 )
               );
             } else {
@@ -347,15 +347,15 @@ const Articles = () => {
         } else {
           // Fetch all data from APIs
           const [data1, data2, data3, data4] = await Promise.all([
-            fetchDataFromApi("https://fantasypulseff.vercel.app/api/fetchData"),
+            fetchDataFromApi("https://www.fantasypulseff.com/api/fetchData"),
             fetchDataFromApi(
-              "https://fantasypulseff.vercel.app/api/fetchSegment2"
+              "https://www.fantasypulseff.com/api/fetchSegment2"
             ),
             fetchDataFromApi(
-              "https://fantasypulseff.vercel.app/api/fetchOverreaction"
+              "https://www.fantasypulseff.com/api/fetchOverreaction"
             ),
             fetchDataFromApi(
-              "https://fantasypulseff.vercel.app/api/fetchPulseCheck"
+              "https://www.fantasypulseff.com/api/fetchPulseCheck"
             ),
           ]);
 
@@ -450,9 +450,9 @@ const Articles = () => {
             title4={articles4?.title || ""}
           />
         </div>{" "}
-        <div>
+        {/* <div>
           <ShowAuthors />
-        </div>
+        </div> */}
         <Element name={articles?.title || ""}>
           <div className="">
             <ArticleTemplate

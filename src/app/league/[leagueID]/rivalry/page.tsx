@@ -3,6 +3,8 @@
 import React from "react";
 import { FaSearch } from "react-icons/fa";
 import { Button } from "@nextui-org/button";
+import { Spinner } from "@nextui-org/spinner";
+import { CircularProgress } from "@nextui-org/react";
 import {
   Dropdown,
   DropdownMenu,
@@ -65,6 +67,7 @@ interface User {
   managerID: string;
   rosterID: string;
   userName: string;
+  avatar: string;
   // Add other properties as needed
 }
 
@@ -206,6 +209,7 @@ const Matchups = () => {
 
     const nflState: NflState = await getNflState();
     const teamManagers: any = await getLeagueTeamManagers();
+    console.log(teamManagers);
 
     let week = 1;
     if (nflState.season_type === "regular") {
@@ -389,8 +393,9 @@ const Matchups = () => {
         // console.log("Username:", userName);
         if (userName && users.size <= 12) {
           // The userName is provided and not undefined
-
-          const userTemp: User = { managerID, rosterID, userName };
+          const avatar =
+            teamManagers.teamManagersMap[year][rosterID].team.avatar;
+          const userTemp: User = { managerID, rosterID, userName, avatar };
 
           const usersMap = new Map();
           usersDropdown.forEach((userTemp) => {
@@ -533,7 +538,7 @@ const Matchups = () => {
     const fetchData = async () => {
       try {
         const response = await fetch(
-          "https://fantasypulseff.vercel.app/api/fetchPlayers",
+          "https://www.fantasypulseff.com/api/fetchPlayers",
           {
             method: "POST",
             body: "REACT_APP_LEAGUE_ID",
@@ -623,7 +628,16 @@ const Matchups = () => {
             className="text-[#af1222] hover:bg-[#5f5f5f] rounded-2xl"
             key={player.userName}
           >
-            {player.userName}
+            <div className="flex items-center">
+              <Image
+                src={`https://sleepercdn.com/avatars/${player.avatar}`}
+                alt="avatar"
+                width={30}
+                height={30}
+                className="rounded-full mr-1"
+              />
+              {player.userName}
+            </div>
           </DropdownItem>
         );
       }
@@ -639,7 +653,16 @@ const Matchups = () => {
             className="text-[#af1222] hover:bg-[#5f5f5f] rounded-2xl"
             key={player.userName}
           >
-            {player.userName}
+            <div className="flex items-center">
+              <Image
+                src={`https://sleepercdn.com/avatars/${player.avatar}`}
+                alt="avatar"
+                width={30}
+                height={30}
+                className="rounded-full mr-1"
+              />
+              {player.userName}
+            </div>
           </DropdownItem>
         );
       }
@@ -730,17 +753,67 @@ const Matchups = () => {
 
   const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
 
+  const [isLoading, setIsLoading] = useState(true);
+
+  const startTimer = () => {
+    setIsLoading(true);
+
+    // Simulate a 5-second loading animation
+    setTimeout(() => {
+      setIsLoading(false);
+    }, 2000); // 5000 milliseconds (5 seconds)
+  };
+
+  let selectedText;
+
+  Array.from(users).map((player) => {
+    if (selected.keys().next().value === player.userName) {
+      selectedText = (
+        <div className="flex items-center">
+          <Image
+            src={`https://sleepercdn.com/avatars/${player.avatar}`}
+            alt="avatar"
+            width={25}
+            height={25}
+            className="rounded-full mr-1"
+          />
+          {player.userName}
+        </div>
+      );
+    }
+  });
+  let selectedText2;
+
+  Array.from(users).map((player) => {
+    if (selected2.keys().next().value === player.userName) {
+      selectedText2 = (
+        <div className="flex items-center">
+          <Image
+            src={`https://sleepercdn.com/avatars/${player.avatar}`}
+            alt="avatar"
+            width={25}
+            height={25}
+            className="rounded-full mr-1"
+          />
+          {player.userName}
+        </div>
+      );
+    }
+  });
+
   return (
     <div className="mt-3 flex flex-col items-center  h-screen w-[95vw] xl:w-[60vw] ">
-      <div className="flex-col flex items-center ml-5 md:flex-row md:justify-center md:items-start md:ml-0  mt-5">
-        <div className="mr-10 mb-5 md:mb-0">
-          <Dropdown className="border-[1px] border-[#af1222] border-opacity-20 bg-[#1a1a1a] rounded-xl">
+      <div className="flex-col flex items-center ml-5 md:flex-row md:justify-center md:items-center md:ml-0  mt-5">
+        <div className=" ">
+          <Dropdown className="border-[1px] border-[#af1222] border-opacity-20 bg-[#E1E0E0] dark:bg-[#090909] rounded-xl">
             <DropdownTrigger>
               <Button
                 variant="bordered"
-                className="capitalize border-[1px]  border-[#af1222] border-opacity-20 rounded-[10px] p-3"
+                className=" border-[1px] text-[15px] w-[180px] font-bold  border-[#af1222] border-opacity-20 rounded-[10px] p-2"
               >
-                {selectedValue}
+                <div className="flex items-center">
+                  <div>{selectedText ? selectedText : "Select User"}</div>
+                </div>
               </Button>
             </DropdownTrigger>
             <DropdownMenu
@@ -755,14 +828,17 @@ const Matchups = () => {
             </DropdownMenu>
           </Dropdown>
         </div>
-        <div className="mr-10">
-          <Dropdown className="border-[1px] border-[#af1222] border-opacity-20 bg-[#1a1a1a] rounded-xl">
+        <div className="mx-3 font-bold my-3">vs.</div>
+        <div className="mr-0 md:mr-10">
+          <Dropdown className="border-[1px] border-[#af1222] border-opacity-20 bg-[#E1E0E0] dark:bg-[#090909] rounded-xl">
             <DropdownTrigger>
               <Button
                 variant="bordered"
-                className="capitalize border-[1px]  border-[#af1222] border-opacity-20 rounded-[10px] p-3"
+                className=" border-[1px] text-[15px] w-[180px] font-bold border-[#af1222] border-opacity-20 rounded-[10px] p-2"
               >
-                {selectedValue2}
+                <div className="flex items-center">
+                  {selectedText2 ? selectedText2 : "Select User"}
+                </div>
               </Button>
             </DropdownTrigger>
             <DropdownMenu
@@ -779,13 +855,14 @@ const Matchups = () => {
         </div>
 
         <Button
-          className="mr-10 md:mr-0 mt-6 md:mt-1 border-[1px]  border-[#af1222] border-opacity-20 rounded-xl px-5 py-2"
+          className="ml-10 md:ml-0 mr-10 md:mr-0 mt-6 md:mt-1 border-[1px]  border-[#af1222] border-opacity-20 rounded-xl px-5 py-2"
           onPress={onOpen}
+          onClick={startTimer}
         >
           <FaSearch />
         </Button>
       </div>
-      {/* <div>
+      <div>
         <Image
           src={MatchupsImg}
           alt="matchup image"
@@ -793,7 +870,7 @@ const Matchups = () => {
           width={600}
           height={600}
         />
-      </div> */}
+      </div>
       {/* Modal */}
       <div>
         {selected.size > 0 && selected2.size > 0 && (
@@ -801,7 +878,7 @@ const Matchups = () => {
             <Modal
               isOpen={isOpen}
               onOpenChange={onOpenChange}
-              placement="center"
+              placement="bottom"
               scrollBehavior="inside"
             >
               <ModalContent className="flex bg-[#e0dfdf] dark:bg-[#050505] rounded-xl">
@@ -857,12 +934,12 @@ const Matchups = () => {
                                         ].team.avatar
                                       }`}
                                       alt="player"
-                                      width={38}
-                                      height={38}
-                                      className="rounded-full mr-2 w-[25px] h-[25px] sm:w-full sm:h-full"
+                                      width={32}
+                                      height={32}
+                                      className="rounded-full mr-2 mb-1 w-[25px] h-[25px] sm:w-full sm:h-full"
                                     />
                                   )}
-                                  <p className=" font-bold text-[12px]">
+                                  <p className=" font-bold text-[11px]">
                                     {
                                       rivalManagers[slate?.year][
                                         slate?.matchup[0].roster_id
@@ -1015,7 +1092,7 @@ const Matchups = () => {
                             <div className=" team2 flex flex-col items-center">
                               <div className="flex items-center justify-center border-b-[1px] border-[#1a1a1a] border-opacity-80 mb-2 w-full ">
                                 <div className="flex flex-col justify-center items-center mr-1 sm:mr-3">
-                                  <p className=" font-bold text-[10px] sm:text-[14px]">
+                                  <p className="font-bold text-[10px]">
                                     {slate?.matchup[1].points
                                       .reduce(
                                         (total, currentValue) =>
@@ -1045,11 +1122,11 @@ const Matchups = () => {
                                       ].team.avatar
                                     }`}
                                     alt="player"
-                                    width={38}
-                                    height={38}
-                                    className="rounded-full mr-2 w-[25px] h-[25px] sm:w-full sm:h-full"
+                                    width={32}
+                                    height={32}
+                                    className="rounded-full mr-2 mb-1 w-[25px] h-[25px] sm:w-full sm:h-full"
                                   />
-                                  <p className=" font-bold text-[10px] sm:text-[14px]">
+                                  <p className=" font-bold text-[11px]">
                                     {
                                       rivalManagers[slate.year][
                                         slate.matchup[1].roster_id
@@ -1181,15 +1258,40 @@ const Matchups = () => {
                         </div>
                       </div>
                     ) : (
-                      <p id="modal-description" className="">
-                        Invalid Submission
+                      <p className="">
+                        {isLoading ? (
+                          <div
+                            role="status"
+                            className=" flex justify-center items-center"
+                          >
+                            <svg
+                              aria-hidden="true"
+                              className="w-8 h-8 mr-2 text-black animate-spin dark:text-gray-600 fill-[#af1222]"
+                              viewBox="0 0 100 101"
+                              fill="none"
+                              xmlns="http://www.w3.org/2000/svg"
+                            >
+                              <path
+                                d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z"
+                                fill="currentColor"
+                              />
+                              <path
+                                d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.813 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z"
+                                fill="currentFill"
+                              />
+                            </svg>
+                            <span>Loading Rivalry...</span>
+                          </div>
+                        ) : (
+                          <div>Invalid Submission</div>
+                        )}
                       </p>
                     )}
                   </div>
                 </ModalBody>
                 <ModalFooter>
                   <Button
-                    className="bg-[#af1222] p-1 rounded-xl "
+                    className="bg-[#af1222] text-white p-1 rounded-xl "
                     onPress={onClose}
                   >
                     Close

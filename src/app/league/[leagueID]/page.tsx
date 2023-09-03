@@ -30,7 +30,7 @@ export default function Page() {
     const fetchData = async () => {
       try {
         const response = await fetch(
-          "https://fantasypulseff.vercel.app/fetchPlayers",
+          "https://www.fantasypulseff.com/fetchPlayers",
           {
             method: "POST",
             body: "REACT_APP_LEAGUE_ID",

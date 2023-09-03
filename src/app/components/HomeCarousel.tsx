@@ -189,15 +189,15 @@ const CardCarousel = ({ leagueID }) => {
             console.log("Document does not exist");
 
             try {
-              // const response = await fetch(
-              //   "https://fantasypulseff.vercel.app/api/fetchHeadlines",
-              //   {
-              //     method: "POST",
-              //     body: REACT_APP_LEAGUE_ID,
-              //   }
-              // );
+              const response = await fetch(
+                "https://www.fantasypulseff.com/api/fetchHeadlines",
+                {
+                  method: "POST",
+                  body: REACT_APP_LEAGUE_ID,
+                }
+              );
 
-              const data = await handler();
+              const data = await response.json();
 
               console.log(data);
 
@@ -287,7 +287,7 @@ const CardCarousel = ({ leagueID }) => {
                 : `absolute inset-0 z-20 rounded-2xl bg-gradient-to-b from-black/90 via-black/60 to-black/0 p-6 text-white transition-[backdrop-filter] hover:backdrop-blur-sm`
             }
           >
-            <span className="text-xs font-semibold uppercase text-violet-300">
+            <span className="text-xs font-semibold uppercase text-[#e45263]">
               {category}
             </span>
             <p className="my-2 text-xl font-bold">{title}</p>

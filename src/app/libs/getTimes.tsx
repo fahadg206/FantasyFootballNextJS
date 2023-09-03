@@ -17,7 +17,7 @@ export default function useTimeChecks() {
     //REMEMBER GET RID OF -7
     const sundayAfternoon = new Date(currentTime);
     sundayAfternoon.setDate(
-      currentTime.getDate() + ((7 - currentTime.getDay() + 0 - 7) % 7)
+      currentTime.getDate() + ((7 - currentTime.getDay() + 0) % 7)
     );
     sundayAfternoon.setHours(13, 30, 0, 0);
 

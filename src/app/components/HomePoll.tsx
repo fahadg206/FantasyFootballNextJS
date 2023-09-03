@@ -47,7 +47,7 @@ const BarPoll = () => {
 
   return (
     <section className=" px-4 mb-10  w-[100vw] xl:w-[60vw]">
-      <div className="mx-auto grid max-w-4xl grid-cols-1 gap-2 md:grid-cols-[1fr_400px] md:gap-12">
+      <div className="mx-auto grid max-w-4xl grid-cols-1  md:grid-cols-[1fr_400px] md:gap-12 border-y-[1px] border-[#af1222] border-opacity-20 p-2 rounded-xl">
         <Options votes={votes} setVotes={setVotes} />
         <Bars votes={votes} />
       </div>

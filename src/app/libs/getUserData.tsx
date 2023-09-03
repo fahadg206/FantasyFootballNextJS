@@ -311,7 +311,7 @@ export default async function getUserData(league_id: any, week: number) {
   async function fetchPlayersData() {
     try {
       const response = await fetch(
-        "https://fantasypulseff.vercel.app/api/fetchPlayers",
+        "https://www.fantasypulseff.com/api/fetchPlayers",
         {
           method: "POST",
           body: "REACT_APP_LEAGUE_ID",

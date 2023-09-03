@@ -111,13 +111,10 @@ const ShowAuthors = () => {
               </ModalBody>
               <ModalFooter>
                 <Button
-                  className="bg-[#af1222] p-1 rounded-2xl"
+                  className="bg-[#af1222] p-1 rounded-xl font-bold text-[14px]"
                   onPress={onClose}
                 >
                   Close
-                </Button>
-                <Button color="primary" onPress={onClose}>
-                  Action
                 </Button>
               </ModalFooter>
             </>

@@ -273,7 +273,7 @@ export default function Scoreboard() {
     const fetchData = async () => {
       try {
         const response = await fetch(
-          "https://fantasypulseff.vercel.app/api/fetchPlayers",
+          "https://www.fantasypulseff.com/api/fetchPlayers",
           {
             method: "POST",
             body: "leagueID",
@@ -318,42 +318,42 @@ export default function Scoreboard() {
     let team1Proj = 0.0;
     let team2Proj = 0.0;
 
-    // if (team1?.starters) {
-    //   for (const currPlayer of team1.starters) {
-    //     if (playersData[currPlayer]) {
-    //       const playerData = playersData && playersData[currPlayer];
-    //       if (
-    //         playerData &&
-    //         playerData.wi &&
-    //         weekString !== undefined && // Check if weekString is defined
-    //         typeof weekString === "string" && // Check if weekString is a string
-    //         playerData.wi[weekString] &&
-    //         playerData.wi[weekString]?.p !== undefined
-    //       ) {
-    //         if (playerData.wi[weekString].p)
-    //           team1Proj += parseFloat(playerData.wi[weekString].p || "0");
-    //       }
-    //     }
-    //   }
-    // }
+    if (team1?.starters) {
+      for (const currPlayer of team1.starters) {
+        if (playersData[currPlayer]) {
+          const playerData = playersData && playersData[currPlayer];
+          if (
+            playerData &&
+            playerData.wi &&
+            weekString !== undefined && // Check if weekString is defined
+            typeof weekString === "string" && // Check if weekString is a string
+            playerData.wi[weekString] &&
+            playerData.wi[weekString]?.p !== undefined
+          ) {
+            if (playerData.wi[weekString].p)
+              team1Proj += parseFloat(playerData.wi[weekString].p || "0");
+          }
+        }
+      }
+    }
 
-    // if (team2?.starters) {
-    //   for (const currPlayer of team2.starters) {
-    //     if (playersData[currPlayer]) {
-    //       const playerData = playersData && playersData[currPlayer];
-    //       if (
-    //         playerData &&
-    //         playerData.wi &&
-    //         weekString !== undefined && // Check if weekString is defined
-    //         typeof weekString === "string" && // Check if weekString is a string
-    //         playerData.wi[weekString] &&
-    //         playerData.wi[weekString]?.p !== undefined
-    //       ) {
-    //         team2Proj += parseFloat(playerData.wi[weekString].p || "0");
-    //       }
-    //     }
-    //   }
-    // }
+    if (team2?.starters) {
+      for (const currPlayer of team2.starters) {
+        if (playersData[currPlayer]) {
+          const playerData = playersData && playersData[currPlayer];
+          if (
+            playerData &&
+            playerData.wi &&
+            weekString !== undefined && // Check if weekString is defined
+            typeof weekString === "string" && // Check if weekString is a string
+            playerData.wi[weekString] &&
+            playerData.wi[weekString]?.p !== undefined
+          ) {
+            team2Proj += parseFloat(playerData.wi[weekString].p || "0");
+          }
+        }
+      }
+    }
 
     const starters1Points = scheduleDataFinal[team1.user_id]?.starters_points;
     const starters2Points = scheduleDataFinal[team2.user_id]?.starters_points;

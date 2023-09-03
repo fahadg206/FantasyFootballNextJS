@@ -138,7 +138,7 @@ const Page = () => {
         setManagerInfo(managerInfo);
         const teamArray = Object.entries(managerInfo);
         //const sortByWins = [...teamArray].sort((a, b) => b[1].wins - a[1].wins);
-
+        console.log(teamArray);
         const sortedTeamData = Object.entries(managerInfo)
 
           .sort((a, b) => {
@@ -158,7 +158,7 @@ const Page = () => {
             return winsB - winsA;
           });
 
-        setSortedTeamDataFinal(sortedTeamData);
+        setSortedTeamDataFinal(sortedTeamData ? sortedTeamData : teamArray);
       } catch (error) {
         console.error("Error fetching data:", error);
       }
@@ -168,6 +168,7 @@ const Page = () => {
   }, [selectedLeagueID]);
 
   console.log("sorted", sortedTeamDataFinal);
+  console.log(managerInfo);
 
   const Table = () => {
     return (
@@ -208,6 +209,7 @@ const Page = () => {
       </div>
     );
   };
+  console.log(sortedTeamDataFinal);
 
   const TableRows: React.FC<{ user: ManagerInfo[string]; index: number }> = ({
     user,

@@ -272,7 +272,7 @@ export default async function getMatchupData(league_id: any, week: number) {
   async function fetchPlayersData() {
     try {
       const response = await axios.get(
-        "https://fantasypulseff.vercel.app/api/fetchPlayers"
+        "https://www.fantasypulseff.com/api/fetchPlayers"
       );
       const playersData = await response.data;
 

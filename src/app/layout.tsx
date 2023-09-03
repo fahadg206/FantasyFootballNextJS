@@ -18,11 +18,10 @@ export const metadata: Metadata = {
     template: "Fantasy Pulse | %s",
   },
   icons: {
-    icon: ["/android-chrome-512x512.png"],
+    icon: ["/favicon.ico?v=4"],
     apple: ["/apple-touch-icon.png?v=4"],
     shortcut: ["/apple-touch-icon.png"],
   },
-  manifest: "/site.webmanifest",
 };
 
 export default function RootLayout({

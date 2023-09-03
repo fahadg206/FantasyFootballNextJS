@@ -3,14 +3,7 @@ import React from "react";
 import Standings from "./league/[leagueID]/standings/page";
 
 import { useState, useEffect } from "react";
-import {
-  Modal,
-  useModal,
-  Button,
-  Text,
-  Input,
-  Navbar,
-} from "@nextui-org/react";
+import { Input } from "@nextui-org/input";
 import { FaSearch } from "react-icons/fa";
 import NavBar from "./components/Navbar";
 import Logo from "./images/Transparent.png";
@@ -139,19 +132,14 @@ export default function Home() {
               onChange={(e) => {
                 textChanged(e.target.value);
               }}
-              size="lg"
-              width="60vw"
               type="text"
-              labelPlaceholder="Search Sleeper Username"
-              css={{
-                fontSize: "40px",
-                "@smMax": {
-                  width: "90vw",
-                },
-              }}
+              variant="bordered"
+              size="sm"
+              placeholder="Enter your Sleeper Username"
               value={text}
-              className="p-1 rounded-lg  focus:rounded-lg border-rounded focus:ring focus:ring-[#af1222] focus:border-[#af1222] border-[#af1222] border-[1px] dark:border-none text-[11px] md:text-[16px]"
+              className="p-1 rounded-xl focus:rounded-lg border-rounded focus:ring focus:ring-[#af1222] focus:border-[#af1222] border-[#af1222] border-2 text-[15px] w-[80vw] md:w-[60vw] h-[40px]"
             />
+
             <div className="w-[screen] flex justify-center items-center mt-3 ">
               <button className="text-[#af1222] border-2 border-[#af1222] p-1  rounded hover:bg-[#1a1a1a] cursor-pointer mr-2 text-[14px]">
                 Submit
@@ -184,7 +172,7 @@ export default function Home() {
           <p className="text-[#807c7c] italic text-[12px] mr-5">
             Recent Searches:
           </p>
-          {showUsernames}
+          <div className="flex flex-wrap ">{showUsernames}</div>
         </div>
         <div>
           <SelectLeague

@@ -378,7 +378,7 @@ function NavBar(props: MyProps) {
               <Link href={"/"} onClick={handleLinkClick}>
                 <BsArrowLeftCircleFill
                   className="text-[#af1222] animate-bounce"
-                  size={30}
+                  size={25}
                 />
               </Link>
               <p className="text-[11px] italic">Back to Login Page</p>
