@@ -878,7 +878,7 @@ const Matchups = () => {
             <Modal
               isOpen={isOpen}
               onOpenChange={onOpenChange}
-              placement="bottom"
+              placement="center"
               scrollBehavior="inside"
             >
               <ModalContent className="flex bg-[#e0dfdf] dark:bg-[#050505] rounded-xl">
