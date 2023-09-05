@@ -686,7 +686,13 @@ const Matchups = () => {
   //console.log("Work ", rivalManagers);
 
   rivalsMap.get("Rival")?.matchups.sort((a, b) => {
-    return a.week - b.week;
+    // Compare years first
+    if (a.year !== b.year) {
+      return Number(a.year) - Number(b.year);
+    } else {
+      // If the years are the same, compare weeks
+      return a.week - b.week;
+    }
   });
 
   const slate =
@@ -917,10 +923,10 @@ const Matchups = () => {
                               size={30}
                             />
                           </div>
-                          <p className="mb-10 font-bold">
-                            Week:
-                            {slate?.week}
-                          </p>
+                          <div className="mb-10 font-bold flex flex-col">
+                            <div> {slate?.year}</div>
+                            <div className="font-normal">{`Week: ${slate?.week}`}</div>
+                          </div>
                           <div className="flex teams justify-around">
                             <div className=" team1 flex flex-col items-center">
                               <div className="flex items-center justify-center border-b-[1px] border-[#1a1a1a] border-opacity-80 mb-2 w-full ">
