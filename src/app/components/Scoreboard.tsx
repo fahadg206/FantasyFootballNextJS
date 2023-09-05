@@ -276,7 +276,7 @@ export default function Scoreboard() {
           "https://www.fantasypulseff.com/api/fetchPlayers",
           {
             method: "POST",
-            body: "leagueID",
+            body: leagueID,
           }
         );
         const playersData = await response.json();

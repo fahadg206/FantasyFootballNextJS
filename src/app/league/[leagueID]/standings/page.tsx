@@ -93,6 +93,7 @@ const Page = () => {
         const usersData = await getUsers();
 
         const rostersData = await getRoster();
+        console.log(rostersData);
 
         // Filter users with no roster id (They don't have a team)
         const usersWithRoster = usersData.filter((user) =>
@@ -126,11 +127,17 @@ const Page = () => {
 
             managerInfo[roster.owner_id].team_points_against_dec =
               roster.settings.fpts_against_decimal;
-            managerInfo[roster.owner_id].team_points_against =
-              roster.settings.fpts_against;
+
+            managerInfo[roster.owner_id].team_points_against = roster.settings
+              .fpts_against
+              ? roster.settings.fpts_against
+              : "0";
             managerInfo[roster.owner_id].wins = roster.settings.wins;
             managerInfo[roster.owner_id].losses = roster.settings.losses;
-            managerInfo[roster.owner_id].streak = roster.metadata.streak;
+            // if (roster.metadata.streak) {
+            //   managerInfo[roster.owner_id].streak = roster.metadata.streak;
+            // }
+            managerInfo[roster.owner_id].streak = "-";
           }
         }
 

@@ -104,7 +104,7 @@ const ScrollingTestimonials = () => {
     const response = await axios.get(
       `https://api.sleeper.app/v1/league/${localStorage.getItem(
         "selectedLeagueID"
-      )}/transactions/6`
+      )}/transactions/1`
     );
     setLeagueTransactions(response.data);
   };
@@ -181,10 +181,14 @@ const ScrollingTestimonials = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get(
-          "https://www.fantasypulseff.com/api/fetchPlayers"
+        const response = await fetch(
+          "https://www.fantasypulseff.com/api/fetchPlayers",
+          {
+            method: "POST",
+            body: localStorage.getItem("selectedLeagueID"),
+          }
         );
-        const playersData = await response.data;
+        const playersData = await response.json();
         console.log("Got it");
         setPlayersData(playersData);
 

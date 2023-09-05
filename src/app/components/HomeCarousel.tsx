@@ -284,15 +284,19 @@ const CardCarousel = ({ leagueID }) => {
             className={
               scorerStyle
                 ? `flex flex-col justify-around items-center absolute inset-0 z-20 rounded-2xl bg-gradient-to-b from-black/90 via-black/60 to-black/0 p-6 text-white transition-[backdrop-filter] hover:backdrop-blur-sm`
-                : `absolute inset-0 z-20 rounded-2xl bg-gradient-to-b from-black/90 via-black/60 to-black/0 p-6 text-white transition-[backdrop-filter] hover:backdrop-blur-sm`
+                : `absolute flex flex-col inset-0 z-20 rounded-2xl bg-gradient-to-b from-black/90 via-black/60 to-black/0 p-6 text-white transition-[backdrop-filter] hover:backdrop-blur-sm`
             }
           >
             <span className="text-xs font-semibold uppercase text-[#e45263]">
               {category}
             </span>
-            <p className="my-2 text-xl font-bold">{title}</p>
+            <p className="my-2 text-xl font-bold ">{title}</p>
             <Image
-              className="rounded-full"
+              className={
+                scorerStyle
+                  ? `rounded-full `
+                  : `rounded-full animate-pulse self-center`
+              }
               src={url || Logo}
               alt="image"
               width={120}

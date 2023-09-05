@@ -87,7 +87,7 @@ const ShowAuthors = () => {
         onOpenChange={onOpenChange}
         scrollBehavior="inside"
       >
-        <ModalContent className="bg-[#1a1a1a] rounded-xl">
+        <ModalContent className="bg-[#0A0A0A] rounded-xl">
           {(onClose) => (
             <>
               <ModalHeader className="flex justify-center">Authors</ModalHeader>

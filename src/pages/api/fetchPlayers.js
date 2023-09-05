@@ -34,7 +34,7 @@ async function waitForAll(...ps) {
 let players = new Map();
 let processedPlayers;
 
-function GET() {
+function GET(leagueID) {
   console.log("Called server");
 
   return axios
@@ -45,7 +45,7 @@ function GET() {
     })
     .then((nflStateRes) => {
       return axios
-        .get("https://api.sleeper.app/v1/league/864448469199347712")
+        .get(`https://api.sleeper.app/v1/league/${leagueID}`)
         .catch((err) => {
           console.error(err);
           throw err;
@@ -53,7 +53,7 @@ function GET() {
         .then((leagueDataRes) => {
           return axios
             .get(
-              "https://api.sleeper.app/v1/league/864448469199347712/winners_bracket"
+              `https://api.sleeper.app/v1/league/${leagueID}/winners_bracket`
             )
             .catch((err) => {
               console.error(err);
@@ -215,7 +215,7 @@ export default async function handler(req, res) {
 
     if (!existingDocument) {
       // No data in the database, fetch and insert processed players
-      const processedPlayers = await GET();
+      const processedPlayers = await GET(req.body);
 
       //filter here
 

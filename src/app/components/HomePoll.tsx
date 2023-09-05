@@ -41,7 +41,7 @@ const BarPoll = () => {
     {
       title: "League Managers Page",
       votes: 0,
-      color: "bg-[#58667A]",
+      color: "bg-[#e45263]",
     },
   ]);
 

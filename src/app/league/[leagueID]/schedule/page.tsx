@@ -144,10 +144,14 @@ export default function Schedule() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get(
-          "https://www.fantasypulseff.com/api/fetchPlayers"
+        const response = await fetch(
+          "https://www.fantasypulseff.com/api/fetchPlayers",
+          {
+            method: "POST",
+            body: REACT_APP_LEAGUE_ID,
+          }
         );
-        const playersData = await response.data;
+        const playersData = await response.json();
         console.log("Got it");
         setPlayersData(playersData);
 
@@ -602,8 +606,8 @@ export default function Schedule() {
                 {postGame && team2TopScorers}
               </div>
 
-              {mnfEnd || postGame ? (
-                <p className="text-[12px] w-[75vw] xl:w-[40vw] flex  font-bold">
+              {(mnfEnd || postGame) && counter <= nflState?.display_week ? (
+                <p className=" text-[12px] w-[75vw] xl:w-[40vw] flex  font-bold">
                   {"FINAL"}
                 </p>
               ) : (

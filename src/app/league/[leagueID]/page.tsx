@@ -30,10 +30,10 @@ export default function Page() {
     const fetchData = async () => {
       try {
         const response = await fetch(
-          "https://www.fantasypulseff.com/fetchPlayers",
+          "https://www.fantasypulseff.com/api/fetchPlayers",
           {
             method: "POST",
-            body: "REACT_APP_LEAGUE_ID",
+            body: leagueID,
           }
         );
         const playersData = await response.json();
@@ -65,7 +65,7 @@ export default function Page() {
 
   return (
     <div>
-      <div className=" px-4">
+      <div className=" px-4 ">
         <div className="dark:text-slate-50 text-lg md:text-2xl font-semibold flex items-center justify-center w-full">
           <div>
             <Image
@@ -77,10 +77,10 @@ export default function Page() {
               alt="league-image"
               width={45}
               height={45}
-              className="rounded-full mr-2"
+              className="rounded-full mr-2 ml-7 sm:ml-0"
             />
           </div>
-          <div>{`Welcome to ${localStorage.getItem(
+          <div className="text-center">{`Welcome to ${localStorage.getItem(
             "selectedLeagueName"
           )}!`}</div>
         </div>

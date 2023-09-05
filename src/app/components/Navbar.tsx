@@ -51,8 +51,8 @@ function NavBar(props: MyProps) {
               className="ml-10"
               src={Logo}
               alt="logo"
-              width={250}
-              height={250}
+              width={200}
+              height={200}
             />
           </div>
         </Link>
@@ -167,7 +167,7 @@ function NavBar(props: MyProps) {
     };
 
     return (
-      <div className=" bg-[#EDEDED] dark:bg-black px-4 mx-auto w-screen 2xl:hidden opacity-90 ">
+      <div className=" bg-[#EDEDED] dark:bg-black px-4 mx-auto w-screen 2xl:hidden opacity-100 ">
         <div className="flex-items-center">
           <div
             className={`mobilenavbar flex items-center justify-between py-3 border-b-2 border-b-1 border-[#af1222] border-opacity-10 h-[95px] xl:hidden `}
@@ -192,7 +192,7 @@ function NavBar(props: MyProps) {
               <Link
                 href={`/league/${localStorage.getItem("selectedLeagueID")}`}
               >
-                <Image height={240} width={240} alt="logo" src={Logo} />
+                <Image height={135} width={135} alt="logo" src={Logo} />
               </Link>
             </div>
             {/* HAMBURGER BUTTON FOR MOBILE */}

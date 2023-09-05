@@ -52,6 +52,9 @@ export default function RootLayout({
                   <div className=" w-screen xl:w-[60vw] flex justify-center mt-2">
                     {children}
                   </div>
+                  <div className="block xl:col-start-1  xl:col-end-8">
+                    <Footer />
+                  </div>
                 </div>
               </div>
             </SelectedManagerProvider>

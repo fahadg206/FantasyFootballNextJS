@@ -164,9 +164,11 @@ const Options = ({
     console.log(votes);
   };
 
-  if (localStorage.getItem("currentWeek") < nflWeek) {
+  if (parseInt(localStorage.getItem("currentWeek")) < nflWeek) {
     localStorage.removeItem(`${league_id} ${matchup_id} userVoted`);
-    localStorage.removeItem("currentWeek");
+    setTimeout(() => {
+      localStorage.removeItem("currentWeek");
+    }, 2000);
   }
 
   const getVotes = async () => {

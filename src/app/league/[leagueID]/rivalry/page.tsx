@@ -541,7 +541,7 @@ const Matchups = () => {
           "https://www.fantasypulseff.com/api/fetchPlayers",
           {
             method: "POST",
-            body: "REACT_APP_LEAGUE_ID",
+            body: REACT_APP_LEAGUE_ID,
           }
         );
         const playersData = await response.json();
