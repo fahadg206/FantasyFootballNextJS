@@ -294,9 +294,15 @@ const Articles = () => {
         if (!querySnapshot.empty) {
           querySnapshot.forEach((doc) => {
             const docData = doc.data();
-            setArticles(docData.articles);
 
             // Update or add articles as needed
+            if (!docData.articles) {
+              promises.push(
+                fetchDataFromApi("https://www.fantasypulseff.com/api/fetchData")
+              );
+            } else {
+              setArticles(docData.articles);
+            }
             if (!docData.segment2) {
               promises.push(
                 fetchDataFromApi(
@@ -334,12 +340,15 @@ const Articles = () => {
           // Set the fetched data using the state setters and update the database
           results.forEach((data, index) => {
             if (index === 0) {
+              setArticles(data);
+              updateArticle1(REACT_APP_LEAGUE_ID, data);
+            } else if (index === 1) {
               setArticles2(data);
               updateArticle2(REACT_APP_LEAGUE_ID, data);
-            } else if (index === 1) {
+            } else if (index === 2) {
               setArticles3(data);
               updateArticle3(REACT_APP_LEAGUE_ID, data);
-            } else if (index === 2) {
+            } else if (index === 3) {
               setArticles4(data);
               updateArticle4(REACT_APP_LEAGUE_ID, data);
             }
@@ -450,11 +459,11 @@ const Articles = () => {
             title4={articles4?.title || ""}
           />
         </div>{" "}
-        <div>
+        {/* <div>
           <ShowAuthors />
-        </div>
+        </div> */}
         <Element name={articles?.title || ""}>
-          <div className="">
+          <div className={articles?.title ? "block" : "hidden"}>
             <ArticleTemplate
               title={
                 articles?.title ||
@@ -478,7 +487,7 @@ const Articles = () => {
           </div>
         </Element>
         <Element name={articles2?.title || ""}>
-          <div>
+          <div className={articles2?.title ? "block" : "hidden"}>
             <ArticleTemplate
               title={articles2?.title || ""}
               image={boo}
@@ -499,7 +508,7 @@ const Articles = () => {
           </div>
         </Element>
         <Element name={articles3?.title || ""}>
-          <div>
+          <div className={articles3?.title ? "block" : "hidden"}>
             <ArticleTemplate
               title={articles3?.title || ""}
               image={imran}
@@ -520,7 +529,7 @@ const Articles = () => {
           </div>
         </Element>
         <Element name={articles4?.title}>
-          <div>
+          <div className={articles4?.title ? "block" : "hidden"}>
             <ArticleTemplate
               title={articles4?.title || ""}
               image={PulseCheck}
