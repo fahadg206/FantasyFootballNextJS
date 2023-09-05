@@ -48,12 +48,14 @@ interface Article {
   paragraph6: string;
   paragraph7: string;
   paragraph8: string;
+  date: string; // Add date field
 }
 
 let loaded = false;
 
 const Articles = () => {
   const [loading, setLoading] = useState<Boolean>(true);
+  const [date, setDate] = useState<string>(""); // Define the date state
   const [articles, setArticles] = useState<Article>({
     title: "",
     paragraph1: "",
@@ -64,6 +66,7 @@ const Articles = () => {
     paragraph6: "",
     paragraph7: "",
     paragraph8: "",
+    date: "", // Initialize date
   });
   const [articles2, setArticles2] = useState<Article>({
     title: "",
@@ -75,6 +78,7 @@ const Articles = () => {
     paragraph6: "",
     paragraph7: "",
     paragraph8: "",
+    date: "", // Initialize date
   });
   const [articles3, setArticles3] = useState<Article>({
     title: "",
@@ -86,6 +90,7 @@ const Articles = () => {
     paragraph6: "",
     paragraph7: "",
     paragraph8: "",
+    date: "", // Initialize date
   });
 
   const [articles4, setArticles4] = useState<Article>({
@@ -98,6 +103,7 @@ const Articles = () => {
     paragraph6: "",
     paragraph7: "",
     paragraph8: "",
+    date: "", // Initialize date
   });
 
   const router = useRouter();
@@ -167,113 +173,109 @@ const Articles = () => {
     };
 
     const updateArticle1 = async (REACT_APP_LEAGUE_ID, articles) => {
-      //articles = await JSON.parse(articles);
-      // Reference to the "Weekly Info" collection
+      const currentDate = new Date();
       const weeklyInfoCollectionRef = collection(db, "Weekly Articles");
-      // Use a Query to check if a document with the league_id exists
       const queryRef = query(
         weeklyInfoCollectionRef,
         where("league_id", "==", REACT_APP_LEAGUE_ID)
       );
+
       const querySnapshot = await getDocs(queryRef);
-      // Add or update the document based on whether it already exists
       if (!querySnapshot.empty) {
         // Document exists, update it
-        console.log("in if");
         querySnapshot.forEach(async (doc) => {
           await updateDoc(doc.ref, {
             articles: articles,
+            date: date,
           });
         });
+        console.log("updating article 1");
       } else {
+        setDate(currentDate.toISOString());
+
+        console.log("adding article 1");
         // Document does not exist, add a new one
         await addDoc(weeklyInfoCollectionRef, {
           league_id: REACT_APP_LEAGUE_ID,
           articles: articles,
+          date: currentDate.toISOString(),
         });
+
+        console.log("Date that was generated: ", currentDate.toISOString());
       }
     };
 
     const updateArticle3 = async (REACT_APP_LEAGUE_ID, articles) => {
-      //articles = await JSON.parse(articles);
-      // Reference to the "Weekly Info" collection
+      const currentDate = new Date();
       const weeklyInfoCollectionRef = collection(db, "Weekly Articles");
-      // Use a Query to check if a document with the league_id exists
       const queryRef = query(
         weeklyInfoCollectionRef,
         where("league_id", "==", REACT_APP_LEAGUE_ID)
       );
       const querySnapshot = await getDocs(queryRef);
-      // Add or update the document based on whether it already exists
       if (!querySnapshot.empty) {
         // Document exists, update it
-        console.log("in if");
         querySnapshot.forEach(async (doc) => {
           await updateDoc(doc.ref, {
             overreaction: articles,
+            date: date,
           });
         });
       } else {
         // Document does not exist, add a new one
         await addDoc(weeklyInfoCollectionRef, {
-          league_id: REACT_APP_LEAGUE_ID,
           overreaction: articles,
+          date: currentDate.toISOString(),
         });
       }
     };
 
     const updateArticle2 = async (REACT_APP_LEAGUE_ID, articles) => {
-      //articles = await JSON.parse(articles);
-      // Reference to the "Weekly Info" collection
+      const currentDate = new Date();
       const weeklyInfoCollectionRef = collection(db, "Weekly Articles");
-      // Use a Query to check if a document with the league_id exists
       const queryRef = query(
         weeklyInfoCollectionRef,
         where("league_id", "==", REACT_APP_LEAGUE_ID)
       );
       const querySnapshot = await getDocs(queryRef);
-      // Add or update the document based on whether it already exists
       if (!querySnapshot.empty) {
         // Document exists, update it
-        console.log("in if");
         querySnapshot.forEach(async (doc) => {
           await updateDoc(doc.ref, {
             segment2: articles,
+            date: date,
           });
         });
       } else {
         // Document does not exist, add a new one
         await addDoc(weeklyInfoCollectionRef, {
-          league_id: REACT_APP_LEAGUE_ID,
           segment2: articles,
+          date: currentDate.toISOString(),
         });
       }
     };
 
     const updateArticle4 = async (REACT_APP_LEAGUE_ID, articles) => {
-      //articles = await JSON.parse(articles);
-      // Reference to the "Weekly Info" collection
+      const currentDate = new Date();
       const weeklyInfoCollectionRef = collection(db, "Weekly Articles");
-      // Use a Query to check if a document with the league_id exists
       const queryRef = query(
         weeklyInfoCollectionRef,
         where("league_id", "==", REACT_APP_LEAGUE_ID)
       );
       const querySnapshot = await getDocs(queryRef);
-      // Add or update the document based on whether it already exists
       if (!querySnapshot.empty) {
         // Document exists, update it
-        console.log("in if");
         querySnapshot.forEach(async (doc) => {
           await updateDoc(doc.ref, {
             pulse_check: articles,
+            date: date,
           });
         });
       } else {
         // Document does not exist, add a new one
         await addDoc(weeklyInfoCollectionRef, {
-          league_id: REACT_APP_LEAGUE_ID,
           pulse_check: articles,
+          date: currentDate.toISOString(),
         });
       }
     };
@@ -281,68 +283,67 @@ const Articles = () => {
     const fetchData = async () => {
       try {
         const promises = [];
-
-        // Fetch data from the database based on league_id
-        const querySnapshot = await getDocs(
-          query(
-            collection(db, "Weekly Articles"),
-            where("league_id", "==", REACT_APP_LEAGUE_ID),
-            limit(1)
-          )
+        const weeklyInfoCollectionRef = collection(db, "Weekly Articles");
+        const queryRef = query(
+          weeklyInfoCollectionRef,
+          where("league_id", "==", REACT_APP_LEAGUE_ID)
         );
+        const querySnapshot = await getDocs(queryRef);
 
         if (!querySnapshot.empty) {
-          querySnapshot.forEach((doc) => {
-            const docData = doc.data();
+          // Document exists, update it
+          const doc = querySnapshot.docs[0]; // Assuming there's only one matching document
+          const docData = doc.data();
+          setArticles(docData.articles);
+          setDate(docData.date);
 
-            // Update or add articles as needed
-            if (!docData.articles) {
-              promises.push(
-                fetchDataFromApi("https://www.fantasypulseff.com/api/fetchData")
-              );
-            } else {
-              setArticles(docData.articles);
-            }
-            if (!docData.segment2) {
-              promises.push(
-                fetchDataFromApi(
-                  "https://www.fantasypulseff.com/api/fetchSegment2"
-                )
-              );
-            } else {
-              setArticles2(docData.segment2);
-            }
+          // Update or add articles as needed
+          if (!docData.articles) {
+            promises.push(
+              fetchDataFromApi("https://www.fantasypulseff.com/api/fetchData")
+            );
+          } else {
+            setArticles(docData.articles);
+          }
 
-            if (!docData.overreaction) {
-              promises.push(
-                fetchDataFromApi(
-                  "https://www.fantasypulseff.com/api/fetchOverreaction"
-                )
-              );
-            } else {
-              setArticles3(docData.overreaction);
-            }
+          if (!docData.segment2) {
+            promises.push(
+              fetchDataFromApi(
+                "https://www.fantasypulseff.com/api/fetchSegment2"
+              )
+            );
+          } else {
+            setArticles2(docData.segment2);
+          }
 
-            if (!docData.pulse_check) {
-              promises.push(
-                fetchDataFromApi(
-                  "https://www.fantasypulseff.com/api/fetchPulseCheck"
-                )
-              );
-            } else {
-              setArticles4(docData.pulse_check);
-            }
-          });
+          if (!docData.overreaction) {
+            promises.push(
+              fetchDataFromApi(
+                "https://www.fantasypulseff.com/api/fetchOverreaction"
+              )
+            );
+          } else {
+            setArticles3(docData.overreaction);
+          }
 
-          // Wait for all promises to resolve
+          if (!docData.pulse_check) {
+            promises.push(
+              fetchDataFromApi(
+                "https://www.fantasypulseff.com/api/fetchPulseCheck"
+              )
+            );
+          } else {
+            setArticles4(docData.pulse_check);
+          }
+
           const results = await Promise.all(promises);
 
-          // Set the fetched data using the state setters and update the database
           results.forEach((data, index) => {
             if (index === 0) {
               setArticles(data);
               updateArticle1(REACT_APP_LEAGUE_ID, data);
-            } else if (index === 1) {
+            }
+            if (index === 1) {
               setArticles2(data);
               updateArticle2(REACT_APP_LEAGUE_ID, data);
             } else if (index === 2) {
@@ -354,7 +355,18 @@ const Articles = () => {
             }
           });
         } else {
-          // Fetch all data from APIs
+          // Document does not exist, add a new one
+          const dataToAdd = {
+            league_id: REACT_APP_LEAGUE_ID,
+            articles: {}, // Initialize with empty data
+            segment2: {}, // Initialize with empty data
+            overreaction: {}, // Initialize with empty data
+            pulse_check: {}, // Initialize with empty data
+            date: date,
+          };
+          const newDocRef = await addDoc(weeklyInfoCollectionRef, dataToAdd);
+
+          // Fetch data and update
           const [data1, data2, data3, data4] = await Promise.all([
             fetchDataFromApi("https://www.fantasypulseff.com/api/fetchData"),
             fetchDataFromApi(
@@ -393,7 +405,6 @@ const Articles = () => {
 
     useEffect(() => {
       const fetchDataIfNeeded = async () => {
-        // Fetch data only if any of the articles is not populated
         if (
           !articles.title ||
           !articles2.title ||
@@ -473,7 +484,7 @@ const Articles = () => {
               author={"Boogie The Writer"}
               authorImg={boogie}
               jobtitle="Fantasy Pulse Senior Staff Writer"
-              date="Sep 14th, 2023"
+              date={articles?.date || ""}
               p1={articles?.paragraph1 || ""}
               p2={articles?.paragraph2 || ""}
               p3={articles?.paragraph3 || ""}
@@ -494,7 +505,7 @@ const Articles = () => {
               author={"Savage Steve"}
               authorImg={steve}
               jobtitle="Independent Journalist"
-              date="Sep 14th, 2023"
+              date={articles2?.date || ""}
               p1={articles2?.paragraph1 || ""}
               p2={articles2?.paragraph2 || ""}
               p3={articles2?.paragraph3 || ""}
@@ -515,7 +526,7 @@ const Articles = () => {
               author={"Joe Glazer"}
               authorImg={glazer}
               jobtitle="Fantasy Pulse Insider"
-              date="Sep 14th, 2023"
+              date={articles3?.date || ""}
               p1={articles3?.paragraph1 || ""}
               p2={articles3?.paragraph2 || ""}
               p3={articles3?.paragraph3 || ""}
@@ -536,7 +547,7 @@ const Articles = () => {
               author={"Greg Roberts"}
               authorImg={pulseDr}
               jobtitle="Fantasy Pulse Medical Director"
-              date="Sep 14th, 2023"
+              date={articles4?.date || ""}
               p1={articles4?.paragraph1 || ""}
               p2={articles4?.paragraph2 || ""}
               p3={articles4?.paragraph3 || ""}
