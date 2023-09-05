@@ -3,40 +3,49 @@ import React from "react";
 import { StaticImageData } from "next/image";
 import Image from "next/image";
 
-interface ArticleTemplate {
+const generateParagraphProps = (article: any): React.ReactElement[] => {
+  const paragraphProps = [];
+  //console.log("Article", previewArticle[`paragraph${1}`]);
+
+  for (let i = 1; i <= Object.keys(article).length; i++) {
+    const paragraphKey = `p${i}`;
+    if (article[`paragraph${i}`]) {
+      paragraphProps.push(
+        <p
+          key={paragraphKey}
+          className="mt-3 w-90 break-words text-xs md:indent-12 sm:text-sm md:text-base"
+        >
+          {article[`paragraph${i}`]}
+        </p>
+      );
+    }
+  }
+
+  return paragraphProps;
+};
+
+interface ArticleTemplateProps {
   title: string;
   image: StaticImageData;
   author: string;
   authorImg: StaticImageData;
   jobtitle: string;
   date: string;
-  p1: string;
-  p2: string;
-  p3: string;
-  p4: string;
-  p5: string;
-  p6: string;
-  p7: string;
-  p8: string;
   name: string;
+  article: any; // Update the type to match your previewArticle structure
 }
 
-const ArticleTemplate = ({
+const ArticleTemplate: React.FC<ArticleTemplateProps> = ({
   title,
   image,
   author,
   authorImg,
   jobtitle,
   date,
-  p1,
-  p2,
-  p3,
-  p4,
-  p5,
-  p6,
-  p7,
-  p8,
-}: ArticleTemplate) => {
+  article,
+}: ArticleTemplateProps) => {
+  const paragraphProps = generateParagraphProps(article);
+
   return (
     <div className="flex flex-col items-center justify-end sm:flex sm:flex-row sm:justify-around sm:items-start  w-[95vw] xl:w-[60vw] rounded border-b-2 border-dotted border-[#af1222] dark:border-[white] border-opacity-10 mb-2">
       <div className="mt-5 md:sticky md:top-5">
@@ -68,38 +77,10 @@ const ArticleTemplate = ({
           </div>
           <p className="text-[10px] md:text-[11px] ">{date}</p>
         </div>
-        <p className="mt-3 w-[90%]  break-words text-[12px] md:indent-12 sm:text-[13px] md:text-[14px]">
-          {p1}
-          <br />
-        </p>
-        <p className=" w-[90%]  break-words text-[12px] sm:text-[13px] md:text-[14px]">
-          {p2}
-          <br />
-        </p>
-        <p className="w-[90%]  break-words text-[12px] sm:text-[13px] md:text-[14px]">
-          {p3}
-          <br />
-        </p>
-        <p className=" w-[90%]  break-words text-[12px] sm:text-[13px] md:text-[14px]">
-          {p4}
-          <br />
-        </p>
-        <p className=" w-[90%]  break-words text-[12px] sm:text-[13px] md:text-[14px]">
-          {p5}
-          <br />
-        </p>
-        <p className="w-[90%]  break-words text-[12px] sm:text-[13px] md:text-[14px]">
-          {p6}
-          <br />
-        </p>
-        <p className="w-[90%]  break-words text-[12px] sm:text-[13px] md:text-[14px]">
-          {p7}
-          <br />
-        </p>
-        <p className="w-[90%]  break-words text-[12px] sm:text-[13px] md:text-[14px]">
-          {p8}
-          <br />
-        </p>
+
+        {/* Render dynamically generated paragraphs */}
+        {paragraphProps}
+
         <br />
         <br />
       </div>

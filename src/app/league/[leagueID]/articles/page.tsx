@@ -106,6 +106,32 @@ const Articles = () => {
     date: "", // Initialize date
   });
 
+  const [previewArticle, setPreviewArticle] = useState<Article>({
+    title: "",
+    paragraph1: "",
+    paragraph2: "",
+    paragraph3: "",
+    paragraph4: "",
+    paragraph5: "",
+    paragraph6: "",
+    paragraph7: "",
+    paragraph8: "",
+    date: "", // Initialize date
+  });
+
+  const [playoffsArticle, setPlayoffsArticle] = useState<Article>({
+    title: "",
+    paragraph1: "",
+    paragraph2: "",
+    paragraph3: "",
+    paragraph4: "",
+    paragraph5: "",
+    paragraph6: "",
+    paragraph7: "",
+    paragraph8: "",
+    date: "", // Initialize date
+  });
+
   const router = useRouter();
   const REACT_APP_LEAGUE_ID: string | null =
     localStorage.getItem("selectedLeagueID");
@@ -288,6 +314,60 @@ const Articles = () => {
       }
     };
 
+    const updatePreview = async (REACT_APP_LEAGUE_ID, articles) => {
+      const currentDate = new Date();
+      const weeklyInfoCollectionRef = collection(db, "Weekly Articles");
+      const queryRef = query(
+        weeklyInfoCollectionRef,
+        where("league_id", "==", REACT_APP_LEAGUE_ID)
+      );
+      const querySnapshot = await getDocs(queryRef);
+      if (!querySnapshot.empty) {
+        // Document exists, update it
+        querySnapshot.forEach(async (doc) => {
+          if (!articles.error) {
+            await updateDoc(doc.ref, {
+              preview: articles,
+            });
+          }
+        });
+      } else {
+        // Document does not exist, add a new one
+        if (!articles.error) {
+          await addDoc(weeklyInfoCollectionRef, {
+            preview: articles,
+          });
+        }
+      }
+    };
+
+    const updatePlayoffPredictions = async (REACT_APP_LEAGUE_ID, articles) => {
+      const currentDate = new Date();
+      const weeklyInfoCollectionRef = collection(db, "Weekly Articles");
+      const queryRef = query(
+        weeklyInfoCollectionRef,
+        where("league_id", "==", REACT_APP_LEAGUE_ID)
+      );
+      const querySnapshot = await getDocs(queryRef);
+      if (!querySnapshot.empty) {
+        // Document exists, update it
+        querySnapshot.forEach(async (doc) => {
+          if (!articles.error) {
+            await updateDoc(doc.ref, {
+              playoff_predictions: articles,
+            });
+          }
+        });
+      } else {
+        // Document does not exist, add a new one
+        if (!articles.error) {
+          await addDoc(weeklyInfoCollectionRef, {
+            playoff_predictions: articles,
+          });
+        }
+      }
+    };
+
     const getOrdinalSuffix = (number) => {
       const suffixes = ["th", "st", "nd", "rd"];
       const lastDigit = number % 10;
@@ -349,54 +429,88 @@ const Articles = () => {
           setDate(docData.date);
 
           // Update or add articles as needed
-          if (!docData.articles) {
+
+          // Uncomment which ever article's will be added for the week
+
+          // if (!docData.articles) {
+          //   promises.push(
+          //     fetchDataFromApi("https://www.fantasypulseff.com/api/fetchData")
+          //   );
+          // } else {
+          //   setArticles(docData.articles);
+          // }
+
+          // if (!docData.segment2) {
+          //   promises.push(
+          //     fetchDataFromApi("https://www.fantasypulseff.com/api/fetchSegment2")
+          //   );
+          // } else {
+          //   setArticles2(docData.segment2);
+          // }
+
+          // if (!docData.overreaction) {
+          //   promises.push(
+          //     fetchDataFromApi("https://www.fantasypulseff.com/api/fetchOverreaction")
+          //   );
+          // } else {
+          //   setArticles3(docData.overreaction);
+          // }
+
+          // if (!docData.pulse_check) {
+          //   promises.push(
+          //     fetchDataFromApi("https://www.fantasypulseff.com/api/fetchPulseCheck")
+          //   );
+          // } else {
+          //   setArticles4(docData.pulse_check);
+          // }
+
+          if (!docData.preview) {
             promises.push(
-              fetchDataFromApi("http://localhost:3000/api/fetchData")
+              fetchDataFromApi(
+                "https://www.fantasypulseff.com/api/fetchPreview"
+              )
             );
           } else {
-            setArticles(docData.articles);
+            setPreviewArticle(docData.preview);
           }
 
-          if (!docData.segment2) {
+          if (!docData.playoff_predictions) {
             promises.push(
-              fetchDataFromApi("http://localhost:3000/api/fetchSegment2")
+              fetchDataFromApi(
+                "https://www.fantasypulseff.com/api/fetchPlayoffPredictions"
+              )
             );
           } else {
-            setArticles2(docData.segment2);
-          }
-
-          if (!docData.overreaction) {
-            promises.push(
-              fetchDataFromApi("http://localhost:3000/api/fetchOverreaction")
-            );
-          } else {
-            setArticles3(docData.overreaction);
-          }
-
-          if (!docData.pulse_check) {
-            promises.push(
-              fetchDataFromApi("http://localhost:3000/api/fetchPulseCheck")
-            );
-          } else {
-            setArticles4(docData.pulse_check);
+            setPlayoffsArticle(docData.playoff_predictions);
           }
 
           const results = await Promise.all(promises);
 
           results.forEach((data, index) => {
-            if (index === 0) {
-              setArticles(data);
-              updateArticle1(REACT_APP_LEAGUE_ID, data);
+            //Uncomment this when we're back to regular articles
+            // if (index === 0) {
+            //   setArticles(data);
+            //   updateArticle1(REACT_APP_LEAGUE_ID, data);
+            // }
+            // if (index === 1) {
+            //   setArticles2(data);
+            //   updateArticle2(REACT_APP_LEAGUE_ID, data);
+            // } else if (index === 2) {
+            //   setArticles3(data);
+            //   updateArticle3(REACT_APP_LEAGUE_ID, data);
+            // } else if (index === 3) {
+            //   setArticles4(data);
+            //   updateArticle4(REACT_APP_LEAGUE_ID, data);
+            // }
+
+            if (data.preview) {
+              setPreviewArticle(data);
+              updatePreview(REACT_APP_LEAGUE_ID, data);
             }
-            if (index === 1) {
-              setArticles2(data);
-              updateArticle2(REACT_APP_LEAGUE_ID, data);
-            } else if (index === 2) {
-              setArticles3(data);
-              updateArticle3(REACT_APP_LEAGUE_ID, data);
-            } else if (index === 3) {
-              setArticles4(data);
-              updateArticle4(REACT_APP_LEAGUE_ID, data);
+
+            if (data.playoff_predictions) {
+              setPlayoffsArticle(data);
+              updatePlayoffPredictions(REACT_APP_LEAGUE_ID, data);
             }
           });
         } else {
@@ -414,29 +528,47 @@ const Articles = () => {
           const newDocRef = await addDoc(weeklyInfoCollectionRef, dataToAdd);
           setDate(formattedDate);
 
+          // Uncomment this when we're back to regular articles
+
           // Fetch data and update
-          const [data1, data2, data3, data4] = await Promise.all([
-            fetchDataFromApi("http://localhost:3000/api/fetchData"),
-            fetchDataFromApi("http://localhost:3000/api/fetchSegment2"),
-            fetchDataFromApi("http://localhost:3000/api/fetchOverreaction"),
-            fetchDataFromApi("http://localhost:3000/api/fetchPulseCheck"),
+          // const [data1, data2, data3, data4] = await Promise.all([
+          //   fetchDataFromApi("https://www.fantasypulseff.com/api/fetchData"),
+          //   fetchDataFromApi("https://www.fantasypulseff.com/api/fetchSegment2"),
+          //   fetchDataFromApi("https://www.fantasypulseff.com/api/fetchOverreaction"),
+          //   fetchDataFromApi("https://www.fantasypulseff.com/api/fetchPulseCheck"),
+          // ]);
+
+          // if (data1) {
+          //   setArticles(data1);
+          //   updateArticle1(REACT_APP_LEAGUE_ID, data1);
+          // }
+          // if (data2) {
+          //   setArticles2(data2);
+          //   updateArticle2(REACT_APP_LEAGUE_ID, data2);
+          // }
+          // if (data3) {
+          //   setArticles3(data3);
+          //   updateArticle3(REACT_APP_LEAGUE_ID, data3);
+          // }
+          // if (data4) {
+          //   setArticles4(data4);
+          //   updateArticle4(REACT_APP_LEAGUE_ID, data4);
+          // }
+
+          const [data1, data2] = await Promise.all([
+            fetchDataFromApi("https://www.fantasypulseff.com/api/fetchPreview"),
+            fetchDataFromApi(
+              "https://www.fantasypulseff.com/api/fetchPlayoffPredictions"
+            ),
           ]);
 
           if (data1) {
-            setArticles(data1);
-            updateArticle1(REACT_APP_LEAGUE_ID, data1);
+            setPreviewArticle(data1);
+            updatePreview(REACT_APP_LEAGUE_ID, data1);
           }
           if (data2) {
-            setArticles2(data2);
-            updateArticle2(REACT_APP_LEAGUE_ID, data2);
-          }
-          if (data3) {
-            setArticles3(data3);
-            updateArticle3(REACT_APP_LEAGUE_ID, data3);
-          }
-          if (data4) {
-            setArticles4(data4);
-            updateArticle4(REACT_APP_LEAGUE_ID, data4);
+            setPlayoffsArticle(data2);
+            updatePlayoffPredictions(REACT_APP_LEAGUE_ID, data2);
           }
         }
       } catch (error) {
@@ -527,14 +659,7 @@ const Articles = () => {
               authorImg={boogie}
               jobtitle="Fantasy Pulse Senior Staff Writer"
               date={date || ""}
-              p1={articles?.paragraph1 || ""}
-              p2={articles?.paragraph2 || ""}
-              p3={articles?.paragraph3 || ""}
-              p4={articles?.paragraph4 || ""}
-              p5={articles?.paragraph5 || ""}
-              p6={articles?.paragraph6 || ""}
-              p7={articles?.paragraph7 || ""}
-              p8={articles?.paragraph8 || ""}
+              article={articles}
               name="1"
             />
           </div>
@@ -548,14 +673,7 @@ const Articles = () => {
               authorImg={steve}
               jobtitle="Independent Journalist"
               date={date || ""}
-              p1={articles2?.paragraph1 || ""}
-              p2={articles2?.paragraph2 || ""}
-              p3={articles2?.paragraph3 || ""}
-              p4={articles2?.paragraph4 || ""}
-              p5={articles2?.paragraph5 || ""}
-              p6={articles2?.paragraph6 || ""}
-              p7={articles2?.paragraph7 || ""}
-              p8={articles2?.paragraph8 || ""}
+              article={articles2}
               name="1"
             />
           </div>
@@ -569,14 +687,7 @@ const Articles = () => {
               authorImg={glazer}
               jobtitle="Fantasy Pulse Insider"
               date={date || ""}
-              p1={articles3?.paragraph1 || ""}
-              p2={articles3?.paragraph2 || ""}
-              p3={articles3?.paragraph3 || ""}
-              p4={articles3?.paragraph4 || ""}
-              p5={articles3?.paragraph5 || ""}
-              p6={articles3?.paragraph6 || ""}
-              p7={articles3?.paragraph7 || ""}
-              p8={articles3?.paragraph8 || ""}
+              article={articles3}
               name="1"
             />
           </div>
@@ -590,19 +701,40 @@ const Articles = () => {
               authorImg={pulseDr}
               jobtitle="Fantasy Pulse Medical Director"
               date={date || ""}
-              p1={articles4?.paragraph1 || ""}
-              p2={articles4?.paragraph2 || ""}
-              p3={articles4?.paragraph3 || ""}
-              p4={articles4?.paragraph4 || ""}
-              p5={articles4?.paragraph5 || ""}
-              p6={articles4?.paragraph6 || ""}
-              p7={articles4?.paragraph7 || ""}
-              p8={articles4?.paragraph8 || ""}
+              name="1"
+              article={articles4}
+            />
+          </div>
+        </Element>
+        <Element name={previewArticle?.title}>
+          <div className={playoffsArticle?.title ? "block" : "hidden"}>
+            <ArticleTemplate
+              title={previewArticle?.title || ""}
+              image={PulseCheck}
+              author={"Greg Roberts"}
+              authorImg={pulseDr}
+              jobtitle="Fantasy Pulse Medical Director"
+              date={date || ""}
+              name="1"
+              article={previewArticle}
+            />
+          </div>
+        </Element>
+        <Element name={playoffsArticle?.title}>
+          <div className={playoffsArticle?.title ? "block" : "hidden"}>
+            <ArticleTemplate
+              title={playoffsArticle?.title || ""}
+              image={PulseCheck}
+              author={"Greg Roberts"}
+              authorImg={pulseDr}
+              jobtitle="Fantasy Pulse Medical Director"
+              date={date || ""}
+              article={playoffsArticle}
               name="1"
             />
           </div>
         </Element>
-        {articles && (
+        {previewArticle && (
           <SmoothLink
             to={articles.title || ""}
             activeClass="active"

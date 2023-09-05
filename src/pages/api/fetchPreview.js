@@ -71,7 +71,7 @@ export default async function handler(req, res) {
       openAIApiKey: process.env.OPENAI_API_KEY,
     });
 
-    const question = `It is the first week of the season and you should welcome all fantasy managers to the fantasy pulse website! Give me an exciting  sports style breakdown article previewing each matchup in this fantasy football league, include their star players, key positional matchups and your predictions for wow it'll turn out. Make sure to include all teams.  include a bit of humor as well. Keep the content within 450 words maximum. The format of the JSON response should strictly adhere to RFC8259 compliance, without any deviations or errors. The JSON structure should match this template:
+    const question = `It is the first week of the season and you should welcome all fantasy managers to the fantasy pulse website! Give me an exciting  sports style breakdown article previewing each matchup in this fantasy football league, include their star players, key positional matchups and your predictions for wow it'll turn out. Make sure to include all teams and all matchups for that week.  include a bit of humor as well. Keep the content within 450 words maximum. The format of the JSON response should strictly adhere to RFC8259 compliance, without any deviations or errors. The JSON structure should match this template:
   "title": "",
   "paragraph1": "",
   "paragraph2": "",
