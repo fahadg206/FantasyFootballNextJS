@@ -94,7 +94,7 @@ export default async function handler(req, res) {
       new HumanMessage(apiResponse.text),
     ]);
 
-    updateWeeklyInfo(REACT_APP_LEAGUE_ID, cleanUp.content);
+    //updateWeeklyInfo(REACT_APP_LEAGUE_ID, cleanUp.content);
 
     return res.status(200).json(JSON.parse(cleanUp.content));
   } catch (error) {
