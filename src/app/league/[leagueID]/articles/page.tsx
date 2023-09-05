@@ -184,22 +184,24 @@ const Articles = () => {
       if (!querySnapshot.empty) {
         // Document exists, update it
         querySnapshot.forEach(async (doc) => {
-          await updateDoc(doc.ref, {
-            articles: articles,
-            date: date,
-          });
+          if (!articles.error) {
+            await updateDoc(doc.ref, {
+              articles: articles,
+            });
+          }
         });
         console.log("updating article 1");
       } else {
-        setDate(currentDate.toISOString());
+        //setDate(currentDate.toISOString());
 
         console.log("adding article 1");
         // Document does not exist, add a new one
-        await addDoc(weeklyInfoCollectionRef, {
-          league_id: REACT_APP_LEAGUE_ID,
-          articles: articles,
-          date: currentDate.toISOString(),
-        });
+        if (!articles.error) {
+          await addDoc(weeklyInfoCollectionRef, {
+            league_id: REACT_APP_LEAGUE_ID,
+            articles: articles,
+          });
+        }
 
         console.log("Date that was generated: ", currentDate.toISOString());
       }
@@ -216,17 +218,19 @@ const Articles = () => {
       if (!querySnapshot.empty) {
         // Document exists, update it
         querySnapshot.forEach(async (doc) => {
-          await updateDoc(doc.ref, {
-            overreaction: articles,
-            date: date,
-          });
+          if (!articles.error) {
+            await updateDoc(doc.ref, {
+              overreaction: articles,
+            });
+          }
         });
       } else {
         // Document does not exist, add a new one
-        await addDoc(weeklyInfoCollectionRef, {
-          overreaction: articles,
-          date: currentDate.toISOString(),
-        });
+        if (!articles.error) {
+          await addDoc(weeklyInfoCollectionRef, {
+            overreaction: articles,
+          });
+        }
       }
     };
 
@@ -241,17 +245,19 @@ const Articles = () => {
       if (!querySnapshot.empty) {
         // Document exists, update it
         querySnapshot.forEach(async (doc) => {
-          await updateDoc(doc.ref, {
-            segment2: articles,
-            date: date,
-          });
+          if (!articles.error) {
+            await updateDoc(doc.ref, {
+              segment2: articles,
+            });
+          }
         });
       } else {
         // Document does not exist, add a new one
-        await addDoc(weeklyInfoCollectionRef, {
-          segment2: articles,
-          date: currentDate.toISOString(),
-        });
+        if (!articles.error) {
+          await addDoc(weeklyInfoCollectionRef, {
+            segment2: articles,
+          });
+        }
       }
     };
 
@@ -266,18 +272,63 @@ const Articles = () => {
       if (!querySnapshot.empty) {
         // Document exists, update it
         querySnapshot.forEach(async (doc) => {
-          await updateDoc(doc.ref, {
-            pulse_check: articles,
-            date: date,
-          });
+          if (!articles.error) {
+            await updateDoc(doc.ref, {
+              pulse_check: articles,
+            });
+          }
         });
       } else {
         // Document does not exist, add a new one
-        await addDoc(weeklyInfoCollectionRef, {
-          pulse_check: articles,
-          date: currentDate.toISOString(),
-        });
+        if (!articles.error) {
+          await addDoc(weeklyInfoCollectionRef, {
+            pulse_check: articles,
+          });
+        }
       }
+    };
+
+    const getOrdinalSuffix = (number) => {
+      const suffixes = ["th", "st", "nd", "rd"];
+      const lastDigit = number % 10;
+      return number + (suffixes[lastDigit] || suffixes[0]);
+    };
+
+    const getFormattedDate = (currentDate: Date) => {
+      // Months array for formatting
+      const months = [
+        "Jan",
+        "Feb",
+        "Mar",
+        "Apr",
+        "May",
+        "Jun",
+        "Jul",
+        "Aug",
+        "Sep",
+        "Oct",
+        "Nov",
+        "Dec",
+      ];
+
+      // Get components of the date
+      const month = months[currentDate.getMonth()];
+      const day = getOrdinalSuffix(currentDate.getDate());
+      const hours = currentDate.getHours();
+      const minutes = currentDate.getMinutes();
+
+      // Format the time zone offset
+      const timeZoneOffset = currentDate.getTimezoneOffset();
+      const timeZoneOffsetHours = Math.abs(Math.floor(timeZoneOffset / 60));
+      const timeZoneOffsetMinutes = Math.abs(timeZoneOffset % 60);
+      const timeZoneAbbreviation = timeZoneOffset >= 0 ? "EST" : "EDT"; // Eastern Time (ET)
+
+      // Create the formatted string
+      const formattedDate = `${month}, ${day} ${hours}:${
+        minutes < 10 ? "0" : ""
+      }${minutes}${hours < 12 ? "am" : "pm"} ${timeZoneAbbreviation}`;
+
+      return formattedDate;
     };
 
     const fetchData = async () => {
@@ -294,13 +345,13 @@ const Articles = () => {
           // Document exists, update it
           const doc = querySnapshot.docs[0]; // Assuming there's only one matching document
           const docData = doc.data();
-          setArticles(docData.articles);
+          //setArticles(docData.articles);
           setDate(docData.date);
 
           // Update or add articles as needed
           if (!docData.articles) {
             promises.push(
-              fetchDataFromApi("https://www.fantasypulseff.com/api/fetchData")
+              fetchDataFromApi("http://localhost:3000/api/fetchData")
             );
           } else {
             setArticles(docData.articles);
@@ -308,9 +359,7 @@ const Articles = () => {
 
           if (!docData.segment2) {
             promises.push(
-              fetchDataFromApi(
-                "https://www.fantasypulseff.com/api/fetchSegment2"
-              )
+              fetchDataFromApi("http://localhost:3000/api/fetchSegment2")
             );
           } else {
             setArticles2(docData.segment2);
@@ -318,9 +367,7 @@ const Articles = () => {
 
           if (!docData.overreaction) {
             promises.push(
-              fetchDataFromApi(
-                "https://www.fantasypulseff.com/api/fetchOverreaction"
-              )
+              fetchDataFromApi("http://localhost:3000/api/fetchOverreaction")
             );
           } else {
             setArticles3(docData.overreaction);
@@ -328,9 +375,7 @@ const Articles = () => {
 
           if (!docData.pulse_check) {
             promises.push(
-              fetchDataFromApi(
-                "https://www.fantasypulseff.com/api/fetchPulseCheck"
-              )
+              fetchDataFromApi("http://localhost:3000/api/fetchPulseCheck")
             );
           } else {
             setArticles4(docData.pulse_check);
@@ -356,28 +401,25 @@ const Articles = () => {
           });
         } else {
           // Document does not exist, add a new one
+          const currentDate = new Date();
+
+          // Function to format a number with an ordinal suffix (e.g., 1st, 2nd, 3rd, 4th)
+
+          const formattedDate = getFormattedDate(currentDate);
+
           const dataToAdd = {
             league_id: REACT_APP_LEAGUE_ID,
-            articles: {}, // Initialize with empty data
-            segment2: {}, // Initialize with empty data
-            overreaction: {}, // Initialize with empty data
-            pulse_check: {}, // Initialize with empty data
-            date: date,
+            date: formattedDate,
           };
           const newDocRef = await addDoc(weeklyInfoCollectionRef, dataToAdd);
+          setDate(formattedDate);
 
           // Fetch data and update
           const [data1, data2, data3, data4] = await Promise.all([
-            fetchDataFromApi("https://www.fantasypulseff.com/api/fetchData"),
-            fetchDataFromApi(
-              "https://www.fantasypulseff.com/api/fetchSegment2"
-            ),
-            fetchDataFromApi(
-              "https://www.fantasypulseff.com/api/fetchOverreaction"
-            ),
-            fetchDataFromApi(
-              "https://www.fantasypulseff.com/api/fetchPulseCheck"
-            ),
+            fetchDataFromApi("http://localhost:3000/api/fetchData"),
+            fetchDataFromApi("http://localhost:3000/api/fetchSegment2"),
+            fetchDataFromApi("http://localhost:3000/api/fetchOverreaction"),
+            fetchDataFromApi("http://localhost:3000/api/fetchPulseCheck"),
           ]);
 
           if (data1) {
@@ -484,7 +526,7 @@ const Articles = () => {
               author={"Boogie The Writer"}
               authorImg={boogie}
               jobtitle="Fantasy Pulse Senior Staff Writer"
-              date={articles?.date || ""}
+              date={date || ""}
               p1={articles?.paragraph1 || ""}
               p2={articles?.paragraph2 || ""}
               p3={articles?.paragraph3 || ""}
@@ -505,7 +547,7 @@ const Articles = () => {
               author={"Savage Steve"}
               authorImg={steve}
               jobtitle="Independent Journalist"
-              date={articles2?.date || ""}
+              date={date || ""}
               p1={articles2?.paragraph1 || ""}
               p2={articles2?.paragraph2 || ""}
               p3={articles2?.paragraph3 || ""}
@@ -526,7 +568,7 @@ const Articles = () => {
               author={"Joe Glazer"}
               authorImg={glazer}
               jobtitle="Fantasy Pulse Insider"
-              date={articles3?.date || ""}
+              date={date || ""}
               p1={articles3?.paragraph1 || ""}
               p2={articles3?.paragraph2 || ""}
               p3={articles3?.paragraph3 || ""}
@@ -547,7 +589,7 @@ const Articles = () => {
               author={"Greg Roberts"}
               authorImg={pulseDr}
               jobtitle="Fantasy Pulse Medical Director"
-              date={articles4?.date || ""}
+              date={date || ""}
               p1={articles4?.paragraph1 || ""}
               p2={articles4?.paragraph2 || ""}
               p3={articles4?.paragraph3 || ""}

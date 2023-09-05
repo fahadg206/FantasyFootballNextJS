@@ -69,6 +69,17 @@ interface WaiverInfo {
   };
 }
 
+interface FreeAgentInfo {
+  [transactionID: string]: {
+    avatar?: string;
+    name?: string;
+    roster_id?: string;
+    user_id?: string;
+    player_added?: string;
+    player_dropped?: string;
+  };
+}
+
 interface Transaction {
   id: string;
   status: string;
@@ -104,7 +115,7 @@ const ScrollingTestimonials = () => {
     const response = await axios.get(
       `https://api.sleeper.app/v1/league/${localStorage.getItem(
         "selectedLeagueID"
-      )}/transactions/6`
+      )}/transactions/1`
     );
     setLeagueTransactions(response.data);
   };
@@ -251,6 +262,7 @@ const ScrollingTestimonials = () => {
 
 const tradeInfoObj: Record<string, ManagerData[]> = {};
 const waiverInfoObj: WaiverInfo = {};
+const freeAgentInfoObj: FreeAgentInfo = {};
 function areObjectsEqual(obj1: any, obj2: any) {
   return (
     obj1.name === obj2.name &&
@@ -277,10 +289,12 @@ const TestimonialList = ({
     <motion.div
       initial={{ translateX: reverse ? "-100%" : "0%" }}
       animate={{ translateX: reverse ? "0%" : "-100%" }}
-      transition={{ duration, repeat: Infinity, ease: "linear" }}
+      transition={{ duration: duration, repeat: Infinity, ease: "linear" }}
       className="flex gap-4 px-2"
     >
       {list.map((transaction) => {
+        // console.log("TYPE: ", transaction.type);
+        // console.log("Transaction: ", transaction);
         if (transaction.status === "complete" && transaction.type === "trade") {
           //players added
           // const addsKeys = transaction.adds
@@ -408,6 +422,52 @@ const TestimonialList = ({
                   waiverInfoObj[transaction.transaction_id].roster_id
                 ) {
                   waiverInfoObj[transaction.transaction_id].player_dropped =
+                    key;
+                }
+              }
+            }
+          }
+        }
+
+        if (
+          transaction.status === "complete" &&
+          transaction.type === "free_agent"
+        ) {
+          for (const manager in managerMap) {
+            for (const rosterId of transaction.consenter_ids) {
+              if (!tradeInfoObj[manager]) {
+                freeAgentInfoObj[manager] = {};
+              }
+
+              if (rosterId === managerMap[manager].roster_id) {
+                const newManagerData = {
+                  name: managerMap[manager].name,
+                  avatar: managerMap[manager].avatar,
+                  roster_id: managerMap[manager].roster_id,
+                  user_id: managerMap[manager].user_id,
+                };
+
+                freeAgentInfoObj[transaction.transaction_id] = newManagerData;
+              }
+            }
+            for (const key in transaction.adds) {
+              if (freeAgentInfoObj[transaction.transaction_id]) {
+                if (
+                  transaction.adds[key] ===
+                  freeAgentInfoObj[transaction.transaction_id].roster_id
+                ) {
+                  freeAgentInfoObj[transaction.transaction_id].player_added =
+                    key;
+                }
+              }
+            }
+            for (const key in transaction.drops) {
+              if (freeAgentInfoObj[transaction.transaction_id]) {
+                if (
+                  transaction.drops[key] ===
+                  freeAgentInfoObj[transaction.transaction_id].roster_id
+                ) {
+                  freeAgentInfoObj[transaction.transaction_id].player_dropped =
                     key;
                 }
               }
@@ -892,6 +952,94 @@ const TestimonialList = ({
         if (waiverInfoObj.hasOwnProperty(transaction.transaction_id)) {
           if (waiverInfoObj[transaction.transaction_id]) {
             const player = waiverInfoObj[transaction.transaction_id];
+            return (
+              <div
+                key={transaction.id}
+                className="w-screen md:w-[60vw] h-[27vh] font-bold lg:w-[25vw] flex flex-wrap justify-center rounded-lg overflow-hidden relative border-2 border-[#af1222] dark:border-[#1a1a1a] border-opacity-80"
+              >
+                <div>
+                  <div className="text-[13px] xl:text-[20px] text-white font-bold p-2 flex justify-center bg-[#af1222] w-screen md:w-[60vw] lg:w-[25vw]">
+                    <span className="block capitalize font-semibold  mb-1">
+                      {`${transaction.type}   :    ${transaction.status}`}
+                    </span>
+                  </div>
+                  <div className="waiver mt-3">
+                    <span className="border-b-2 border-[#1a1a1a] border-opacity-80 text-center mb-1 flex justify-center items-center">
+                      <Image
+                        className="rounded-full mr-2 mb-1"
+                        src={player.avatar ?? ""}
+                        alt="manager"
+                        width={22}
+                        height={22}
+                      />
+                      <p className="text-[14px]">{player.name}</p>
+                    </span>
+                    <div className="flex flex-col items-center">
+                      <div className="player-added">
+                        {player.player_added && (
+                          <span className="flex items-center">
+                            <LuUserPlus className="text-[green] mr-1" />{" "}
+                            <Image
+                              src={
+                                playersData[player.player_added]?.pos === "DEF"
+                                  ? `https://sleepercdn.com/images/team_logos/nfl/${player.player_added.toLowerCase()}.png`
+                                  : `https://sleepercdn.com/content/nfl/players/thumb/${player.player_added}.jpg`
+                              }
+                              alt="player image"
+                              width={30}
+                              height={30}
+                            />
+                            <p className="text-[14px]">
+                              {`${
+                                playersData[player.player_added]?.fn ||
+                                "Unknown"
+                              } ${
+                                playersData[player.player_added]?.ln || "Player"
+                              }`}
+                            </p>
+                          </span>
+                        )}
+                      </div>
+                      {player.player_dropped && (
+                        <div className="player-dropped">
+                          <span className="flex items-center">
+                            <LuUserMinus className="text-[#af1222] mr-1" />{" "}
+                            <Image
+                              src={
+                                playersData[player.player_dropped]?.pos ===
+                                "DEF"
+                                  ? `https://sleepercdn.com/images/team_logos/nfl/${player.player_dropped.toLowerCase()}.png`
+                                  : `https://sleepercdn.com/content/nfl/players/thumb/${player.player_dropped}.jpg`
+                              }
+                              alt="player image"
+                              width={30}
+                              height={30}
+                            />
+                            <p className="text-[14px]">
+                              {`${
+                                playersData[player.player_dropped]?.fn ||
+                                "Unknown"
+                              } ${
+                                playersData[player.player_dropped]?.ln ||
+                                "Player"
+                              }`}
+                            </p>
+                          </span>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+                <span className="text-3xl absolute top-2 right-2 text-white dark:text-[black]">
+                  <IoPulseSharp />
+                </span>
+              </div>
+            );
+          }
+        }
+        if (freeAgentInfoObj.hasOwnProperty(transaction.transaction_id)) {
+          if (freeAgentInfoObj[transaction.transaction_id]) {
+            const player = freeAgentInfoObj[transaction.transaction_id];
             return (
               <div
                 key={transaction.id}
