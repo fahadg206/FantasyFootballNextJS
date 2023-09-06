@@ -80,15 +80,7 @@ export default async function handler(req, res) {
   "paragraph5": "",
   "paragraph6": "",
   "paragraph7": ""
-  "paragraph8": ""
-  "paragraph9": ""
-  "paragraph10": ""
-  "paragraph11": ""
-  "paragraph12": ""
-  "paragraph13": ""
-  "paragraph14": ""
-
- Make sure to include ALL teams in the league. Please ensure that the generated JSON response meets the specified criteria without any syntax issues or inconsistencies.`;
+  You can add more paragraphs if necessary. Make sure to include all teams in the league. Please ensure that the generated JSON response meets the specified criteria without any syntax issues or inconsistencies.`;
 
     const prompt = PromptTemplate.fromTemplate(question);
     const chainA = new LLMChain({ llm: model, prompt });
