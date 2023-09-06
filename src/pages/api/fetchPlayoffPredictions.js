@@ -71,7 +71,7 @@ export default async function handler(req, res) {
       openAIApiKey: process.env.OPENAI_API_KEY,
     });
 
-    const question = `{leagueData} It is the first game of the season and there hasn't been a single game played yet. Give me an exciting "way too early" power rankings on the league data I provided you, Make sure to include all teams only once, there should be no duplicate teams in the response. Give your predictions for who gets in the playoffs by giving them a percentage and what their record would be out of 14 games along with some analysis of their teams. Article should be titled "Way Too Early Power Rankings". The JSON structure should match this template:
+    const question = `{leagueData} It is the first game of the season and there hasn't been a single game played yet. Give me an exciting "way too early" power rankings on the league data I provided you provide some analysis of their teams, Make sure to include all teams only once, there should be no duplicate teams in the response. Give your predictions for who gets in the playoffs and give them a percentage chance for making the playoffs. Include your prediction for what their record would be out of 14 games. Article should be titled "Way Too Early Power Rankings". The JSON structure should match this template:
   "title": "",
   "paragraph1": "",
   "paragraph2": "",
