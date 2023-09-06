@@ -76,7 +76,7 @@ export default async function handler(req, res) {
     "paragraph1": "",
   
   
-  each paragraph NEEDS to in this format above. Each paragraph NEEDS to be numbered as well like above.  This can be up to 25 paragraphs. Please style this in a way where team name and prediction is underlined and centered. thanks
+  each paragraph NEEDS to in this format above. Each paragraph NEEDS to be numbered as well like above.  This can be up to 14 paragraphs.
   
     You can add more paragraphs if necessary. Make sure to include all teams in the league. Please ensure that the generated JSON response meets the specified criteria without any syntax issues or inconsistencies.`;
 
