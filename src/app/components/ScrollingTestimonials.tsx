@@ -667,28 +667,26 @@ const TestimonialList = ({
                           })}
                           {team1?.draft_picks_sent?.map((pick) => {
                             return (
-                              playersData[player] && (
-                                <div className="">
-                                  <span className="flex items-center">
-                                    <LuUserMinus className="text-[#af1222] mr-1" />
-                                    {` ${pick.season} ${`${pick.round}${
-                                      pick.round?.toString()[
-                                        pick.round?.toString().length - 1
-                                      ] === "1"
-                                        ? "st"
-                                        : pick.round?.toString()[
-                                            pick.round?.toString().length - 1
-                                          ] === "2"
-                                        ? "nd"
-                                        : pick.round?.toString()[
-                                            pick.round?.toString().length - 1
-                                          ] === "3"
-                                        ? "rd"
-                                        : "th"
-                                    } Round Pick`} `}
-                                  </span>
-                                </div>
-                              )
+                              <div className="">
+                                <span className="flex items-center">
+                                  <LuUserMinus className="text-[#af1222] mr-1" />
+                                  {` ${pick.season} ${`${pick.round}${
+                                    pick.round?.toString()[
+                                      pick.round?.toString().length - 1
+                                    ] === "1"
+                                      ? "st"
+                                      : pick.round?.toString()[
+                                          pick.round?.toString().length - 1
+                                        ] === "2"
+                                      ? "nd"
+                                      : pick.round?.toString()[
+                                          pick.round?.toString().length - 1
+                                        ] === "3"
+                                      ? "rd"
+                                      : "th"
+                                  } Round Pick`} `}
+                                </span>
+                              </div>
                             );
                           })}
                         </div>
@@ -907,28 +905,26 @@ const TestimonialList = ({
                           })}
                           {team3?.draft_picks_sent?.map((pick) => {
                             return (
-                              playersData[player] && (
-                                <div className="">
-                                  <span className="flex items-center">
-                                    <LuUserMinus className="text-[#af1222] mr-1" />
-                                    {` ${pick.season} ${`${pick.round}${
-                                      pick.round?.toString()[
-                                        pick.round?.toString().length - 1
-                                      ] === "1"
-                                        ? "st"
-                                        : pick.round?.toString()[
-                                            pick.round?.toString().length - 1
-                                          ] === "2"
-                                        ? "nd"
-                                        : pick.round?.toString()[
-                                            pick.round?.toString().length - 1
-                                          ] === "3"
-                                        ? "rd"
-                                        : "th"
-                                    } Round Pick`} `}
-                                  </span>
-                                </div>
-                              )
+                              <div className="">
+                                <span className="flex items-center">
+                                  <LuUserMinus className="text-[#af1222] mr-1" />
+                                  {` ${pick.season} ${`${pick.round}${
+                                    pick.round?.toString()[
+                                      pick.round?.toString().length - 1
+                                    ] === "1"
+                                      ? "st"
+                                      : pick.round?.toString()[
+                                          pick.round?.toString().length - 1
+                                        ] === "2"
+                                      ? "nd"
+                                      : pick.round?.toString()[
+                                          pick.round?.toString().length - 1
+                                        ] === "3"
+                                      ? "rd"
+                                      : "th"
+                                  } Round Pick`} `}
+                                </span>
+                              </div>
                             );
                           })}
                         </div>
