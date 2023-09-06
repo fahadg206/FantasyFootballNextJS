@@ -743,9 +743,9 @@ const Articles = () => {
           <div className={playoffsArticle?.title ? "block" : "hidden"}>
             <ArticleTemplate
               title={playoffsArticle?.title || ""}
-              image={hamsa}
+              image={predictions}
               author={"El Jefe"}
-              authorImg={pulseDr}
+              authorImg={hamsa}
               jobtitle="Head of Media Department"
               date={date || ""}
               article={playoffsArticle}
