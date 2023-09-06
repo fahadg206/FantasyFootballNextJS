@@ -73,7 +73,7 @@ const ScrollingTeamLogos = () => {
 
   const LogoItem = ({ avatar, name }: { avatar: string; name: string }) => {
     return (
-      <div className="w-16 md:w-24 h-24 flex flex-col justify-center items-center hover:bg-[#1a1a1a] text-[#white] transition-colors">
+      <div className="w-16 md:w-24 h-24 flex flex-col justify-center items-center rounded-xl hover:bg-[#797777] dark:hover:bg-[#1a1a1a] text-[#white] transition-colors">
         <Image
           src={avatar}
           alt="avatar"

@@ -624,6 +624,26 @@ const Articles = () => {
       loaded = true;
     }
 
+    const messages = [
+      "Our editors are hard at work crafting the perfect fantasy football analysis for your league!",
+      "Drafting the perfect fantasy football articles... because even our servers need a mock draft or two!",
+      "Sit tight and visualize your fantasy football glory - it's on its way!",
+      "Drafting fantasy football articles is like picking a kicker in the first round—unconventional, but we promise it'll be worth the wait!",
+      "Deciding whether to start a player is like choosing between pizza or tacos. Our servers are just making sure they pick the tastiest choice for your lineup!",
+    ];
+
+    const [messageIndex, setMessageIndex] = useState(0);
+
+    useEffect(() => {
+      const interval = setInterval(() => {
+        setMessageIndex((prevIndex) => (prevIndex + 1) % messages.length);
+      }, 8000); // Change the message every 2 seconds (adjust as needed)
+
+      return () => {
+        clearInterval(interval);
+      };
+    }, []);
+
     if (loading) {
       return (
         <div
@@ -646,7 +666,7 @@ const Articles = () => {
               fill="currentFill"
             />
           </svg>
-          <span>Our editors are hard at work!</span>
+          <span>{messages[messageIndex]}</span>
         </div>
       );
     }
