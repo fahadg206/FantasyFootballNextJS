@@ -11,6 +11,9 @@ import glazer from "../../../images/Glazer.jpg";
 import boo from "../../../images/boo.png";
 import PulseCheck from "../../../images/Pulse Check.jpg";
 import weekly_recap from "../../../images/week_recap.png";
+import weekly_preview from "../../../images/weekly_preview.jpg";
+import predictions from "../../../images/predictions.jpg";
+import hamsa from "../../../images/hamsa.png";
 import {
   collection,
   query,
@@ -154,17 +157,29 @@ const Articles = () => {
       </div>
     );
   } else {
-    const fetchDataFromApi = async (endpoint) => {
+    const fetchDataFromApi = async (endpoint, retryCount = 3) => {
       try {
         const response = await fetch(endpoint, {
           method: "POST",
           body: REACT_APP_LEAGUE_ID,
         });
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch data");
+        }
+
         const data = await response.json();
-        return data; // Return the fetched data
+        return data;
       } catch (error) {
         console.error("Error fetching data:", error);
-        return null; // Return null to handle errors
+
+        if (retryCount > 0) {
+          // Retry fetching the data with one less retry attempt
+          return fetchDataFromApi(endpoint, retryCount - 1);
+        }
+
+        // If retries are exhausted or the response is still invalid, return null
+        return null;
       }
     };
 
@@ -465,21 +480,21 @@ const Articles = () => {
           // }
 
           if (!docData.preview) {
-            promises.push(
-              fetchDataFromApi(
-                "https://www.fantasypulseff.com/api/fetchPreview"
-              )
+            const data = await fetchDataFromApi(
+              "https://www.fantasypulseff.com/api/fetchPreview"
             );
+            setPreviewArticle(data);
+            updatePreview(REACT_APP_LEAGUE_ID, data);
           } else {
             setPreviewArticle(docData.preview);
           }
 
           if (!docData.playoff_predictions) {
-            promises.push(
-              fetchDataFromApi(
-                "https://www.fantasypulseff.com/api/fetchPlayoffPredictions"
-              )
+            const data = await fetchDataFromApi(
+              "https://www.fantasypulseff.com/api/fetchPlayoffPredictions"
             );
+            setPlayoffsArticle(data);
+            updatePlayoffPredictions(REACT_APP_LEAGUE_ID, data);
           } else {
             setPlayoffsArticle(docData.playoff_predictions);
           }
@@ -503,15 +518,17 @@ const Articles = () => {
             //   updateArticle4(REACT_APP_LEAGUE_ID, data);
             // }
 
-            if (data.preview) {
-              setPreviewArticle(data);
-              updatePreview(REACT_APP_LEAGUE_ID, data);
-            }
+            console.log("what we are working with ", data);
 
-            if (data.playoff_predictions) {
-              setPlayoffsArticle(data);
-              updatePlayoffPredictions(REACT_APP_LEAGUE_ID, data);
-            }
+            // if (index === 0) {
+            //   setPreviewArticle(data);
+            //   updatePreview(REACT_APP_LEAGUE_ID, data);
+            // }
+
+            // if (index === 0) {
+            //   setPlayoffsArticle(data);
+            //   updatePlayoffPredictions(REACT_APP_LEAGUE_ID, data);
+            // }
           });
         } else {
           // Document does not exist, add a new one
@@ -558,7 +575,7 @@ const Articles = () => {
           const [data1, data2] = await Promise.all([
             fetchDataFromApi("https://www.fantasypulseff.com/api/fetchPreview"),
             fetchDataFromApi(
-              "https://www.fantasypulseff.com/api/fetchPlayoffPredictions"
+              "https://www.fantasypulseff.com/fetchPlayoffPredictions"
             ),
           ]);
 
@@ -638,10 +655,12 @@ const Articles = () => {
       <div className="relative flex flex-col justify-center items-center container w-[60vw]">
         <div className={`sticky flex items-center justify-around top-0 z-50 `}>
           <ArticleDropdown
-            title1={articles?.title || ""}
-            title2={articles2?.title || ""}
-            title3={articles3?.title || ""}
-            title4={articles4?.title || ""}
+            // title1={articles?.title || ""}
+            // title2={articles2?.title || ""}
+            // title3={articles3?.title || ""}
+            // title4={articles4?.title || ""}
+            title1={previewArticle?.title || ""}
+            title2={playoffsArticle?.title || ""}
           />
         </div>{" "}
         {/* <div>
@@ -707,13 +726,13 @@ const Articles = () => {
           </div>
         </Element>
         <Element name={previewArticle?.title}>
-          <div className={playoffsArticle?.title ? "block" : "hidden"}>
+          <div className={previewArticle?.title ? "block" : "hidden"}>
             <ArticleTemplate
               title={previewArticle?.title || ""}
-              image={PulseCheck}
-              author={"Greg Roberts"}
-              authorImg={pulseDr}
-              jobtitle="Fantasy Pulse Medical Director"
+              image={weekly_preview}
+              author={"Boogie The Writer"}
+              authorImg={boogie}
+              jobtitle="Fantasy Pulse Senior Staff Writer"
               date={date || ""}
               name="1"
               article={previewArticle}
@@ -724,10 +743,10 @@ const Articles = () => {
           <div className={playoffsArticle?.title ? "block" : "hidden"}>
             <ArticleTemplate
               title={playoffsArticle?.title || ""}
-              image={PulseCheck}
-              author={"Greg Roberts"}
+              image={hamsa}
+              author={"El Jefe"}
               authorImg={pulseDr}
-              jobtitle="Fantasy Pulse Medical Director"
+              jobtitle="Head of Media Department"
               date={date || ""}
               article={playoffsArticle}
               name="1"

@@ -22,6 +22,7 @@ import { GiTeamIdea } from "react-icons/gi";
 import { FaFaceSadCry } from "react-icons/fa6";
 import { GiDonut } from "react-icons/gi";
 import { FaUserDoctor } from "react-icons/fa6";
+import { FaRankingStar } from "react-icons/fa6";
 
 const StaggeredDropDown = ({
   title1,
@@ -31,8 +32,8 @@ const StaggeredDropDown = ({
 }: {
   title1: string;
   title2: string;
-  title3: string;
-  title4: string;
+  title3?: string;
+  title4?: string;
 }) => {
   const [open, setOpen] = useState(false);
 
@@ -83,7 +84,7 @@ const StaggeredDropDown = ({
           >
             <Option
               setOpen={setOpen}
-              Icon={FaFaceSadCry}
+              Icon={FaRankingStar}
               text={title2.substring(0, 20) + "..."}
             />
           </SmoothLink>
@@ -100,7 +101,7 @@ const StaggeredDropDown = ({
             <Option
               setOpen={setOpen}
               Icon={GiDonut}
-              text={title3.substring(0, 20) + "..."}
+              text={title3?.substring(0, 20) + "..."}
             />
           </SmoothLink>
           <SmoothLink
@@ -116,7 +117,7 @@ const StaggeredDropDown = ({
             <Option
               setOpen={setOpen}
               Icon={FaUserDoctor}
-              text={title4.substring(0, 20) + "..."}
+              text={title4?.substring(0, 20) + "..."}
             />
           </SmoothLink>
         </motion.ul>
