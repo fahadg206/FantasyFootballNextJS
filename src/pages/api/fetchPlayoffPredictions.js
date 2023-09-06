@@ -71,16 +71,14 @@ export default async function handler(req, res) {
       openAIApiKey: process.env.OPENAI_API_KEY,
     });
 
-    const question = `{leagueData} It is the first game of the season and there hasn't been a single game played yet. Give me an exciting "way too early" power rankings on the league data I provided you, Make sure to include all teams only once, there should be no duplicate teams in the response. Give your predictions for who gets in the playoffs by giving them a percentage and what their record would be out of 14 games along with some analysis of their teams. Article should be titled "Way Too Early Power Rankings". The JSON structure should match this template:
-  "title": "",
-  "paragraph1": "",
-  "paragraph2": "",
-  "paragraph3": "",
-  "paragraph4": "",
-  "paragraph5": "",
-  "paragraph6": "",
-  "paragraph7": ""
-  You can add more paragraphs if necessary. Make sure to include all teams in the league. Please ensure that the generated JSON response meets the specified criteria without any syntax issues or inconsistencies.`;
+    const question = `{leagueData} It is the first game of the season and there hasn't been a single game played yet. Give me an exciting "way too early" power rankings on the league data I provided you, Make sure to include ALL teams only once, there should be no duplicate teams in the response. Give your predictions for who gets in the playoffs by giving them a percentage and what their record would be out of 14 games and percentage chance to make the playoffs along with some analysis of their teams. Article should be titled "Way Too Early Power Rankings". The JSON structure should match this template:
+    "title": "",
+    "paragraph1": "",
+  
+  
+  each paragraph NEEDS to in this format above. Each paragraph NEEDS to be numbered as well like above.  This can be up to 25 paragraphs. Please style this in a way where team name and prediction is underlined and centered. thanks
+  
+    You can add more paragraphs if necessary. Make sure to include all teams in the league. Please ensure that the generated JSON response meets the specified criteria without any syntax issues or inconsistencies.`;
 
     const prompt = PromptTemplate.fromTemplate(question);
     const chainA = new LLMChain({ llm: model, prompt });

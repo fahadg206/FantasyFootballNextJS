@@ -36,6 +36,7 @@ import {
 import ArticleDropdown from "../../../components/ArticleDropdown";
 import { BsArrowUpCircleFill } from "react-icons/bs";
 import ShowAuthors from "../../../components/ShowAuthors";
+import { AiFillWarning } from "react-icons/ai";
 
 const JsonBigInt = require("json-bigint");
 
@@ -626,10 +627,11 @@ const Articles = () => {
 
     const messages = [
       "Our editors are hard at work crafting the perfect fantasy football analysis for your league!",
+      "Articles can take up to 1-2 minutes to generate! Feel free to check out the rest of Fantasy Pulse and come back!",
       "Drafting the perfect fantasy football articles... because even our servers need a mock draft or two!",
       "Sit tight and visualize your fantasy football glory - it's on its way!",
       "Drafting fantasy football articles is like picking a kicker in the first round—unconventional, but we promise it'll be worth the wait!",
-      "Deciding whether to start a player is like choosing between pizza or tacos. Our servers are just making sure they pick the tastiest choice for your lineup!",
+      "Articles can take up to 1-2 minutes to generate! Fell free to check out the rest of Fantasy Pulse and come back!",
     ];
 
     const [messageIndex, setMessageIndex] = useState(0);
@@ -637,7 +639,7 @@ const Articles = () => {
     useEffect(() => {
       const interval = setInterval(() => {
         setMessageIndex((prevIndex) => (prevIndex + 1) % messages.length);
-      }, 8000); // Change the message every 2 seconds (adjust as needed)
+      }, 8000); // Change the message every 8 seconds (adjust as needed)
 
       return () => {
         clearInterval(interval);
@@ -666,7 +668,14 @@ const Articles = () => {
               fill="currentFill"
             />
           </svg>
-          <span>{messages[messageIndex]}</span>
+          <span className="flex flex-col justify-center items-center">
+            <p className="flex items-center gap-2 font-bold">
+              <AiFillWarning size={30} className="text-[#af1222]" /> PLEASE DO
+              NOT REFRESH AS IT CAN HINDER ARTICLE RESULTS!!{" "}
+              <AiFillWarning className="text-[#af1222]" size={30} />
+            </p>
+            <p>{messages[messageIndex]}</p>
+          </span>
         </div>
       );
     }

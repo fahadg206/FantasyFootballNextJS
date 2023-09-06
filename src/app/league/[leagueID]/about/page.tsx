@@ -19,9 +19,9 @@ export default function About() {
           <p className="text-[#e45263]">Comes to Life!</p>
         </div>
         <div className="text-small sm:text-medium text-center text-[#858383] mb-10">
-          Fantasy Pulse is the ultimate AI-driven fantasy football companion,
-          delivering personalized content and interactivity to elevate your
-          fantasy football experience.
+          Fantasy Pulse is the ultimate fantasy football companion, delivering
+          personalized content and interactivity to elevate your fantasy
+          football experience.
         </div>
       </div>
 
