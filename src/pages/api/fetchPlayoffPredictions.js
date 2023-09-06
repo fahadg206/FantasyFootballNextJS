@@ -87,16 +87,16 @@ export default async function handler(req, res) {
     const apiResponse = await chainA.call({ leagueData: newFile });
 
     console.log("Headlines API ", apiResponse.text);
-    const cleanUp = await model.call([
-      new SystemMessage(
-        "Turn the following string into valid JSON format that strictly adhere to RFC8259 compliance, if it already is in a valid JSON format then give me the string as the response, without any other information from you"
-      ),
-      new HumanMessage(apiResponse.text),
-    ]);
+    // const cleanUp = await model.call([
+    //   new SystemMessage(
+    //     "Turn the following string into valid JSON format that strictly adhere to RFC8259 compliance, if it already is in a valid JSON format then give me the string as the response, without any other information from you"
+    //   ),
+    //   new HumanMessage(apiResponse.text),
+    // ]);
 
     //updateWeeklyInfo(REACT_APP_LEAGUE_ID, cleanUp.content);
 
-    return res.status(200).json(JSON.parse(cleanUp.content));
+    return res.status(200).json(JSON.parse(apiResponse.text));
   } catch (error) {
     console.error("Unexpected error:", error);
     return res.status(500).json({ error: "An error occurred" });

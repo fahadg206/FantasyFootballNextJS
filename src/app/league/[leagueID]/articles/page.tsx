@@ -576,7 +576,7 @@ const Articles = () => {
           const [data1, data2] = await Promise.all([
             fetchDataFromApi("https://www.fantasypulseff.com/api/fetchPreview"),
             fetchDataFromApi(
-              "https://www.fantasypulseff.com/fetchPlayoffPredictions"
+              "https://www.fantasypulseff.com/api/fetchPlayoffPredictions"
             ),
           ]);
 
