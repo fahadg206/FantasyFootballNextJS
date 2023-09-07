@@ -175,8 +175,10 @@ export default function ScoreboardNav({ setShowScore }) {
 
       //console.log("data ", articleMatchupData);
 
-      const textContent = JSON.stringify(articleMatchupData);
-      const previewTextContent = JSON.stringify(previewMatchupData);
+      const textContent = JSON.stringify(Object.values(articleMatchupData));
+      const previewTextContent = JSON.stringify(
+        Object.values(previewMatchupData)
+      );
 
       const previewRef = ref(
         storage,

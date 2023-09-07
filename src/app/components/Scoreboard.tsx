@@ -199,8 +199,10 @@ export default function Scoreboard() {
 
       //console.log("data ", articleMatchupData);
 
-      const textContent = JSON.stringify(articleMatchupData);
-      const previewTextContent = JSON.stringify(previewMatchupData);
+      const textContent = JSON.stringify(Object.values(articleMatchupData));
+      const previewTextContent = JSON.stringify(
+        Object.values(previewMatchupData)
+      );
 
       const previewRef = ref(storage, `files/${leagueID}_preview.txt`);
       // Function to add content only if it's different
