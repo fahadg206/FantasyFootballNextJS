@@ -225,10 +225,9 @@ const CardCarousel = ({ leagueID }) => {
                 "https://www.fantasypulseff.com/api/fetchHeadlines"
               );
 
-              console.log(data);
-
               // If data is valid, update headlines state
               setHeadlines(data);
+              updateHeadlines(REACT_APP_LEAGUE_ID, data);
 
               //console.log("parsed ", data);
             } catch (error) {
@@ -272,6 +271,33 @@ const CardCarousel = ({ leagueID }) => {
 
       fetchData();
     }, []);
+
+    const updateHeadlines = async (REACT_APP_LEAGUE_ID, headlines) => {
+      // Reference to the "Weekly Info" collection
+      const weeklyInfoCollectionRef = collection(db, "Weekly Headlines");
+      // Use a Query to check if a document with the league_id exists
+      const queryRef = query(
+        weeklyInfoCollectionRef,
+        where("league_id", "==", REACT_APP_LEAGUE_ID)
+      );
+      const querySnapshot = await getDocs(queryRef);
+      // Add or update the document based on whether it already exists
+      if (!querySnapshot.empty) {
+        // Document exists, update it
+        console.log("in if");
+        querySnapshot.forEach(async (doc) => {
+          await updateDoc(doc.ref, {
+            headlines: headlines,
+          });
+        });
+      } else {
+        // Document does not exist, add a new one
+        await addDoc(weeklyInfoCollectionRef, {
+          league_id: REACT_APP_LEAGUE_ID,
+          headlines: headlines,
+        });
+      }
+    };
 
     //console.log("Headlines: ", headlines);
     let topScorer;
