@@ -71,7 +71,7 @@ export default async function handler(req, res) {
       openAIApiKey: process.env.OPENAI_API_KEY,
     });
 
-    const question = `{leagueData} It is the first game of the season and there hasn't been a single game played yet. Give me an exciting "way too early" power rankings on the league data I provided you provide some analysis of their teams, Make sure to include all teams only once, there should be no duplicate teams in the response. Give your predictions for who gets in the playoffs. Include each teams percentage chance for making the playoffs. Include your prediction for what their record would be out of 14 games AND THE PERCENTAGE CHANCE TO MAKE THE PLAYOFFS OUT OF A HUNDRED ALONG SIDE RECORD. Article should be titled "Way Too Early Power Rankings". The JSON structure should match this template:
+    const question = `{leagueData} It is the first game of the season and there hasn't been a single game played yet. Give me an exciting "way too early" power rankings on the league data I provided you provide some analysis of their teams, Make sure to include all teams only once, there should be no duplicate teams in the response. Include each teams percentage chance for making the playoffs. Include your prediction for what their record would be out of 14 games. THE PLAYOFF CHANCES SHOULD BE DISPLAYED OUT OF A HUNDRED ALONG SIDE RECORD. Article should be titled "WAY TOO EARLY POWER RANKINGS". The JSON structure should match this template:
     "title": "",
     "paragraph1": "",
     "paragraph2": "",
@@ -80,7 +80,7 @@ export default async function handler(req, res) {
     "paragraph5": "",
     "paragraph6": "",
     "paragraph7": ""
-    up to however many paragraphs necessary to complete the response and include ALL teams. Make sure to include all teams in the league in your response. DON'T FORGET NO DUPLICATE TEAMS. Please ensure that the generated JSON response meets the specified criteria without any syntax issues or inconsistencies.`;
+    USE however many MORE paragraphs necessary to complete the response and include ALL teams. Make sure ALL THE TEAMS IN THE league ARE LISTED in your response. DON'T FORGET NO DUPLICATE TEAMS. Please ensure that the generated JSON response meets the specified criteria without any syntax issues or inconsistencies.`;
 
     const prompt = PromptTemplate.fromTemplate(question);
     const chainA = new LLMChain({ llm: model, prompt });
