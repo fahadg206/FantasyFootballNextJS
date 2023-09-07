@@ -165,6 +165,32 @@ const CardCarousel = ({ leagueID }) => {
     // Add an event listener for the 'storage' event
 
     useEffect(() => {}, [leagueID]);
+
+    const fetchDataFromApi = async (endpoint, retryCount = 3) => {
+      try {
+        const response = await fetch(endpoint, {
+          method: "POST",
+          body: REACT_APP_LEAGUE_ID,
+        });
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch data");
+        }
+
+        const data = await response.json();
+        return data;
+      } catch (error) {
+        console.error("Error fetching data:", error);
+
+        if (retryCount > 0) {
+          // Retry fetching the data with one less retry attempt
+          return fetchDataFromApi(endpoint, retryCount - 1);
+        }
+
+        // If retries are exhausted or the response is still invalid, return null
+        return null;
+      }
+    };
     //console.log(leagueID);
 
     useEffect(() => {
@@ -184,32 +210,22 @@ const CardCarousel = ({ leagueID }) => {
             querySnapshot.forEach((doc) => {
               const docData = doc.data();
               //console.log("DB returned", JSON.parse(docData.headlines));
-              setHeadlines(JSON.parse(docData.headlines));
+              setHeadlines(docData.headlines);
             });
           } else {
             console.log("Document does not exist");
 
             try {
               setLoading(true);
-              const response = await fetch(
-                "https://www.fantasypulseff.com/api/fetchHeadlines",
-                {
-                  method: "POST",
-                  body: REACT_APP_LEAGUE_ID,
-                }
+              const data = await fetchDataFromApi(
+                "https://www.fantasypulseff.com/api/fetchPreview"
               );
-
-              const data = await response.json();
 
               console.log(data);
 
-              if (Array.isArray(data) && data.length > 0) {
-                // If data is valid, update headlines state
-                setHeadlines(data);
-              } else {
-                console.log("Using default headlines");
-                setHeadlines(defaultHeadlines); // Set default headlines here
-              }
+              // If data is valid, update headlines state
+              setHeadlines(data);
+
               //console.log("parsed ", data);
             } catch (error) {
               console.error("Error fetching data:", error);
