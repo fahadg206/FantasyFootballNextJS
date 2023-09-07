@@ -167,6 +167,7 @@ export default function Scoreboard() {
         if (matchup.starters_full_data) {
           for (const starter of matchup.starters_full_data) {
             delete starter.avatar;
+            delete starter.projected_points;
           }
         }
       }
