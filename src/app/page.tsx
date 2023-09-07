@@ -102,7 +102,7 @@ export default function Home() {
             setUsernameSubmitted(false);
             setText(username);
           }}
-          className="text-[#af1222] border-b-[1px] border-[#af1222] text-[12px] hover:bg-[#1a1a1a] mr-2 cursor-pointer"
+          className="text-[#af1222] border-b-[1px] border-[#af1222] text-[12px] hover:bg-[#d4d0d0] rounded-xl mr-2 cursor-pointer"
         >
           {username}
         </div>
@@ -141,7 +141,7 @@ export default function Home() {
             />
 
             <div className="w-[screen] flex justify-center items-center mt-3 ">
-              <button className="text-[#af1222] border-2 border-[#af1222] p-1  rounded hover:bg-[#747272] dark:hover:bg-[#1a1a1a] cursor-pointer mr-2 text-[14px]">
+              <button className="text-[#af1222] border-2 border-[#af1222] p-1  rounded hover:bg-[#d4d0d0] dark:hover:bg-[#1a1a1a] cursor-pointer mr-2 text-[14px]">
                 Submit
               </button>
             </div>
@@ -149,7 +149,7 @@ export default function Home() {
           <div className="flex justify-center items-center mt-3">
             <button
               onClick={onStorageCleared}
-              className="text-[#af1222] border-2 border-[#af1222] p-1  rounded hover:bg-[#747272] dark:hover:bg-[#1a1a1a] cursor-pointer mr-2 text-[14px]"
+              className="text-[#af1222] border-2 border-[#af1222] p-1  rounded hover:bg-[#d4d0d0] dark:hover:bg-[#1a1a1a] cursor-pointer mr-2 text-[14px]"
             >
               Clear
             </button>

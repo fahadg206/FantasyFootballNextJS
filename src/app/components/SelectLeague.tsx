@@ -117,7 +117,7 @@ export default function Page(props: myProps) {
                 );
                 router.refresh();
               }}
-              className="text-[12px] text-[#af1222] border-2 border-[#af1222] p-1  rounded hover:bg-[#747272] dark:hover:bg-[#1a1a1a] cursor-pointer"
+              className="text-[12px] text-[#af1222] border-2 border-[#af1222] p-1  rounded hover:bg-[#d4d0d0] dark:hover:bg-[#1a1a1a] cursor-pointer"
             >
               Select League
             </button>
@@ -153,7 +153,7 @@ export default function Page(props: myProps) {
             router.push(`/league/${localStorage.getItem("selectedLeagueID")}`);
             router.refresh();
           }}
-          className="text-[12px] text-[#af1222] border-2 border-[#af1222] p-1  rounded hover:bg-[#747272] dark:hover:bg-[#1a1a1a] cursor-pointer"
+          className="text-[12px] text-[#af1222] border-2 border-[#af1222] p-1  rounded hover:bg-[#d4d0d0] dark:hover:bg-[#1a1a1a] cursor-pointer"
         >
           {"Demo"}
         </button>
