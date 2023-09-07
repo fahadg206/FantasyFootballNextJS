@@ -71,7 +71,7 @@ export default async function handler(req, res) {
       openAIApiKey: process.env.OPENAI_API_KEY,
     });
 
-    const question = `give me 3 sports style headlines about the league's data, include team names & by team names i mean user names,  a preview and look ahead of their respective matchup and positional matchups. highlight the matchup of their starters as well. include a bit of humor as well. I want the information to be in this format exactly headline dont include any words that are in the prompt as a part of the headlines. make titles creative. =
+    const question = `give me 3 sports style headlines about the league's data, include team names & by team names i mean user names,  a preview and look ahead of their respective matchup and positional matchups. highlight the matchup of their starters as well. include a bit of humor as well. I want the information to be in this format exactly headline dont include any words that are in the prompt as a part of the headlines. make titles creative. do NOT include NFL Team names or DEF =
   "id": "",
   "category": "",
   "title": "",
