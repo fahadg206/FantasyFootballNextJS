@@ -210,6 +210,7 @@ export default async function getMatchupData(league_id: any, week: number) {
                   scored_points:
                     updatedScheduleData[userId].players_points[starter],
                   position: playersData[starter].pos,
+                  projected_points: playersData[starter].wi[week.toString()].p,
                 };
                 if (
                   updatedScheduleData[userId]?.starters_full_data &&
@@ -234,6 +235,8 @@ export default async function getMatchupData(league_id: any, week: number) {
                       scored_points:
                         updatedScheduleData[userId].players_points[starter],
                       position: playersData[starter].pos,
+                      projected_points:
+                        playersData[starter].wi[week.toString()].p,
                     },
                   ];
                 }
@@ -267,7 +270,7 @@ export default async function getMatchupData(league_id: any, week: number) {
     } catch (error) {
       console.error("Error fetching data:", error);
     }
-    console.log(updatedScheduleData);
+    //console.log("testing projections", updatedScheduleData);
     //console.log("culprit", matchupMap);
 
     return { matchupMap, updatedScheduleData };
