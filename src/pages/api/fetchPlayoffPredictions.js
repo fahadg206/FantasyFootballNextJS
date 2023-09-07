@@ -55,7 +55,7 @@ export default async function handler(req, res) {
   console.log("here");
   // console.log("what was passed in ", req.body);
   const REACT_APP_LEAGUE_ID = req.body;
-  const readingRef = ref(storage, `files/${REACT_APP_LEAGUE_ID}.txt`);
+  const readingRef = ref(storage, `files/${REACT_APP_LEAGUE_ID}_preview.txt`);
   const url = await getDownloadURL(readingRef);
 
   const response = await fetch(url);

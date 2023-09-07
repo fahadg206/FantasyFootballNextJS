@@ -151,6 +151,10 @@ export default function Scoreboard() {
         JSON.stringify(weeklyData)
       );
 
+      const previewMatchupData: ScheduleData = JSON.parse(
+        JSON.stringify(weeklyData)
+      );
+
       for (const matchupId in articleMatchupData) {
         const matchup = articleMatchupData[matchupId];
 
@@ -172,13 +176,36 @@ export default function Scoreboard() {
         }
       }
 
+      for (const matchupId in previewMatchupData) {
+        const matchup = previewMatchupData[matchupId];
+
+        // Delete properties from the matchup object
+        delete matchup.starters;
+        delete matchup.starters_points;
+        delete matchup.players;
+        delete matchup.players_points;
+        delete matchup.roster_id;
+        delete matchup.user_id;
+        delete matchup.avatar;
+
+        // Check if starters_full_data exists before iterating over it
+        if (matchup.starters_full_data) {
+          for (const starter of matchup.starters_full_data) {
+            delete starter.avatar;
+            delete starter.scored_points;
+          }
+        }
+      }
+
       //console.log("data ", articleMatchupData);
 
       const textContent = JSON.stringify(articleMatchupData);
+      const previewTextContent = JSON.stringify(previewMatchupData);
 
-      const readingRef = ref(storage, `files/${leagueID}.txt`);
+      const previewRef = ref(storage, `files/${leagueID}_preview.txt`);
       // Function to add content only if it's different
       addContentIfDifferent(textContent, storageRef);
+      addContentIfDifferent(previewTextContent, previewRef);
     }
   }
   function addContentIfDifferent(newContent: any, readingRef: any) {
@@ -319,42 +346,42 @@ export default function Scoreboard() {
     let team1Proj = 0.0;
     let team2Proj = 0.0;
 
-    if (team1?.starters) {
-      for (const currPlayer of team1.starters) {
-        if (playersData[currPlayer]) {
-          const playerData = playersData && playersData[currPlayer];
-          if (
-            playerData &&
-            playerData.wi &&
-            weekString !== undefined && // Check if weekString is defined
-            typeof weekString === "string" && // Check if weekString is a string
-            playerData.wi[weekString] &&
-            playerData.wi[weekString]?.p !== undefined
-          ) {
-            if (playerData.wi[weekString].p)
-              team1Proj += parseFloat(playerData.wi[weekString].p || "0");
-          }
-        }
-      }
-    }
+    // if (team1?.starters) {
+    //   for (const currPlayer of team1.starters) {
+    //     if (playersData[currPlayer]) {
+    //       const playerData = playersData && playersData[currPlayer];
+    //       if (
+    //         playerData &&
+    //         playerData.wi &&
+    //         weekString !== undefined && // Check if weekString is defined
+    //         typeof weekString === "string" && // Check if weekString is a string
+    //         playerData.wi[weekString] &&
+    //         playerData.wi[weekString]?.p !== undefined
+    //       ) {
+    //         if (playerData.wi[weekString].p)
+    //           team1Proj += parseFloat(playerData.wi[weekString].p || "0");
+    //       }
+    //     }
+    //   }
+    // }
 
-    if (team2?.starters) {
-      for (const currPlayer of team2.starters) {
-        if (playersData[currPlayer]) {
-          const playerData = playersData && playersData[currPlayer];
-          if (
-            playerData &&
-            playerData.wi &&
-            weekString !== undefined && // Check if weekString is defined
-            typeof weekString === "string" && // Check if weekString is a string
-            playerData.wi[weekString] &&
-            playerData.wi[weekString]?.p !== undefined
-          ) {
-            team2Proj += parseFloat(playerData.wi[weekString].p || "0");
-          }
-        }
-      }
-    }
+    // if (team2?.starters) {
+    //   for (const currPlayer of team2.starters) {
+    //     if (playersData[currPlayer]) {
+    //       const playerData = playersData && playersData[currPlayer];
+    //       if (
+    //         playerData &&
+    //         playerData.wi &&
+    //         weekString !== undefined && // Check if weekString is defined
+    //         typeof weekString === "string" && // Check if weekString is a string
+    //         playerData.wi[weekString] &&
+    //         playerData.wi[weekString]?.p !== undefined
+    //       ) {
+    //         team2Proj += parseFloat(playerData.wi[weekString].p || "0");
+    //       }
+    //     }
+    //   }
+    // }
 
     const starters1Points = scheduleDataFinal[team1.user_id]?.starters_points;
     const starters2Points = scheduleDataFinal[team2.user_id]?.starters_points;

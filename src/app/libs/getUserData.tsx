@@ -269,7 +269,6 @@ export default async function getUserData(league_id: any, week: number) {
       for (const starter of articleMatchupData[matchupData]
         .starters_full_data) {
         delete starter.avatar;
-        delete starter.projected_points;
       }
     }
 
