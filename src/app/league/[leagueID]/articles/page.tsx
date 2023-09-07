@@ -626,12 +626,12 @@ const Articles = () => {
     }
 
     const messages = [
-      "Articles can take a few minutes to generate! Feel free to check out the rest of Fantasy Pulse and come back!",
+      "Articles can take up to 1-2 minutes to generate! Feel free to check out the rest of Fantasy Pulse and come back!",
       "Our editors are hard at work crafting the perfect fantasy football analysis for your league!",
       "Drafting the perfect fantasy football articles... because even our servers need a mock draft or two!",
       "Sit tight and visualize your fantasy football glory - it's on its way!",
-      "See a bug or just want to give general feedback on performance? Submit a ticket at the bottom of the page! It'll go a long way!",
-      "Articles can take a few minutes to generate! Feel free to check out the rest of Fantasy Pulse and come back!",
+      "Drafting fantasy football articles is like picking a kicker in the first round—unconventional, but we promise it'll be worth the wait!",
+      "Articles can take up to 1-2 minutes to generate! Feel free to check out the rest of Fantasy Pulse and come back!",
     ];
 
     const [messageIndex, setMessageIndex] = useState(0);
