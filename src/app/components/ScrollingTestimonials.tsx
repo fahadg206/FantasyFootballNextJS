@@ -225,21 +225,21 @@ const ScrollingTestimonials = () => {
             playersData={playersData}
             reverse={true}
             list={leagueTransactions}
-            duration={100}
+            duration={500}
           />
           <TestimonialList
             managerMap={managerMap}
             playersData={playersData}
             reverse={true}
             list={leagueTransactions}
-            duration={100}
+            duration={500}
           />
           <TestimonialList
             managerMap={managerMap}
             playersData={playersData}
             reverse={true}
             list={leagueTransactions}
-            duration={100}
+            duration={500}
           />
         </div>
 

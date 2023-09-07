@@ -124,7 +124,7 @@ const CardCarousel = ({ leagueID }) => {
 
   if (leagueStatus === "pre_draft") {
     return (
-      <div className=" flex items-center font-bold">
+      <div className=" flex items-center font-bold text-center p-1">
         Hey, your league hasn't drafted yet. Come back when your league has
         drafted to see YOUR leagues headlines!
       </div>

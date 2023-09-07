@@ -123,7 +123,7 @@ export default function Home() {
 
   /* ^ sSAVING USERNAME INPUT INTO LOCALSTORAGE. CLEARING LOCAL STORAGE IF EMPTY. PASSING USERNAME AND YEAR SELECTED TO PROPS ^ */
   return (
-    <div className={`text-xl text-white  h-screen  flex absolute left-0 `}>
+    <div className={`text-xl   h-screen  flex absolute left-0 `}>
       <div className="flex flex-col justify-center h-screen items-center w-screen">
         <Image src={Logo} width={500} height={500} alt="logo" />
         <div className=" ">

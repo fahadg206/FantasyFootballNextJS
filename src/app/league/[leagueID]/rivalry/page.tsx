@@ -398,7 +398,7 @@ const Matchups = () => {
           const avatar = teamManagers.teamManagersMap[year][rosterID].team
             .avatar
             ? teamManagers.teamManagersMap[year][rosterID].team.avatar
-            : logo;
+            : "";
           const userTemp: User = { managerID, rosterID, userName, avatar };
 
           const usersMap = new Map();
@@ -497,9 +497,7 @@ const Matchups = () => {
     const user = users[ownerID];
     if (user) {
       return {
-        avatar: user?.avatar
-          ? user.avatar
-          : `https://sleepercdn.com/avatars/thumbs/${user.avatar}`,
+        avatar: user?.avatar && user?.avatar !== null ? user.avatar : "",
         name: user.team_name ? user.team_name : user.display_name,
       };
     }

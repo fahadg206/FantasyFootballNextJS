@@ -42,7 +42,7 @@ const StaggeredDropDown = ({
       <motion.div animate={open ? "open" : "closed"} className="relative">
         <button
           onClick={() => setOpen((pv) => !pv)}
-          className="flex items-center gap-2 px-3 py-2 rounded-xl text-[#1a1a1a] font-bold bg-[#A39F9F] dark:bg-[#1a1a1a] dark:text-white transition-colors"
+          className="flex items-center gap-2 px-3 py-2 rounded-[5px] text-[#1a1a1a] font-bold bg-[#e0dfdf] dark:bg-[#0a0a0a] dark:text-white transition-colors"
         >
           <span className="text-[12px]">Pick an Article!</span>
           <motion.span variants={iconVariants}>
@@ -54,7 +54,7 @@ const StaggeredDropDown = ({
           initial={wrapperVariants.closed}
           variants={wrapperVariants}
           style={{ originY: "top", translateX: "-50%" }}
-          className="flex flex-col gap-2 p-2 rounded-lg text-[#1a1a1a]  bg-[#A39F9F] dark:bg-[#1a1a1a] dark:text-white shadow-xl absolute top-[120%] left-[50%] w-48 overflow-hidden"
+          className="flex flex-col gap-2 p-2 rounded-[5px] text-[#1a1a1a]  bg-[#e0dfdf] dark:bg-[#0a0a0a] dark:text-white shadow-xl absolute top-[120%] left-[50%] w-48 overflow-hidden"
         >
           <SmoothLink
             className={!title1 ? `hidden` : `block`}

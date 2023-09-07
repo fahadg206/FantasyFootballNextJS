@@ -152,7 +152,7 @@ const Articles = () => {
 
   if (leagueStatus === "pre_draft") {
     return (
-      <div className="h-screen flex items-center font-bold">
+      <div className="h-screen flex items-center font-bold text-center p-1">
         Hey, your league hasn't drafted yet. Come back when your league has
         drafted to see YOUR league's articles!
       </div>
@@ -680,6 +680,8 @@ const Articles = () => {
       );
     }
 
+    const thisWeeksAuthors: string[] = ["Boogie The Writer"];
+
     return (
       <div className="relative flex flex-col justify-center items-center container w-[60vw]">
         <div className={`sticky flex items-center justify-around top-0 z-50 `}>
@@ -692,9 +694,9 @@ const Articles = () => {
             title2={playoffsArticle?.title || ""}
           />
         </div>{" "}
-        {/* <div>
-          <ShowAuthors />
-        </div> */}
+        <div>
+          <ShowAuthors thisWeeksAuthors={thisWeeksAuthors} />
+        </div>
         <Element name={articles?.title || ""}>
           <div className={articles?.title ? "block" : "hidden"}>
             <ArticleTemplate
