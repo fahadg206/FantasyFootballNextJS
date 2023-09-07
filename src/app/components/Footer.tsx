@@ -84,7 +84,7 @@ const Footer = () => {
           <Link
             href={`/league/${localStorage.getItem("selectedLeagueID")}/report`}
           >
-            <div className="hover:bg-[#AF1222] hover:transition  hover:ease-in-out hover:rounded cursor-pointer my-2">
+            <div className="hover:bg-[#AF1222] hover:transition  hover:ease-in-out hover:rounded cursor-pointer my-2 mb-3">
               Report An Issue
             </div>
           </Link>
