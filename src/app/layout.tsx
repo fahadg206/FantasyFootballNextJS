@@ -46,7 +46,7 @@ export default function RootLayout({
                     <Themechanger />
                   </div>
 
-                  <div className="flex w-[60vw]">
+                  <div className="flex justify-center w-[60vw]">
                     <Scoreboard />
                   </div>
                   <div className=" w-screen xl:w-[60vw] flex justify-center mt-2">

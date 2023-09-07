@@ -92,6 +92,7 @@ const CardCarousel = ({ leagueID }) => {
   const REACT_APP_LEAGUE_ID: string | null = leagueID;
   const leagueStatus: string | null = localStorage.getItem("leagueStatus");
   const [key, setKey] = useState("");
+  const [loading, setLoading] = useState(true);
 
   const defaultHeadlines = [
     {
@@ -189,6 +190,7 @@ const CardCarousel = ({ leagueID }) => {
             console.log("Document does not exist");
 
             try {
+              setLoading(true);
               const response = await fetch(
                 "https://www.fantasypulseff.com/api/fetchHeadlines",
                 {
@@ -217,6 +219,7 @@ const CardCarousel = ({ leagueID }) => {
           if (querySnapshot.empty) {
             console.error("No documents found in 'Article Info' collection");
           }
+          setLoading(false);
         } catch (error) {
           console.error("Error:", error);
         }
@@ -261,6 +264,24 @@ const CardCarousel = ({ leagueID }) => {
       topScorer = sortedUserData[0];
     }
 
+    let loadingText = (
+      <div
+        role="status"
+        className="  flex justify-center bg-gradient-to-b from-black/90 via-black/60 to-black/0 p-6 "
+      >
+        <span className="flex flex-col justify-center items-center">
+          <Image
+            src={Logo}
+            width={150}
+            height={150}
+            alt="logo"
+            className="animate-pulse mr-2"
+          />{" "}
+          <p className="font-bold text-white">Loading Headlines...</p>
+        </span>
+      </div>
+    );
+
     const Card = ({
       url,
       category,
@@ -280,53 +301,45 @@ const CardCarousel = ({ leagueID }) => {
             backgroundSize: "cover",
           }}
         >
-          <div
-            className={
-              scorerStyle
-                ? `flex flex-col justify-around items-center absolute inset-0 z-20 rounded-2xl bg-gradient-to-b from-black/90 via-black/60 to-black/0 p-6 text-white transition-[backdrop-filter] hover:backdrop-blur-sm`
-                : `absolute flex flex-col inset-0 z-20 rounded-2xl bg-gradient-to-b from-black/90 via-black/60 to-black/0 p-6 text-white transition-[backdrop-filter] hover:backdrop-blur-sm`
-            }
-          >
-            <span className="text-xs font-semibold uppercase text-[#e45263]">
-              {category}
-            </span>
-            <p className="my-2 text-xl font-bold ">{title}</p>
-            <Image
+          {loading ? (
+            loadingText
+          ) : (
+            <div
               className={
                 scorerStyle
-                  ? `rounded-full `
-                  : `rounded-full animate-pulse self-center`
+                  ? `flex flex-col justify-around items-center absolute inset-0 z-20 rounded-2xl bg-gradient-to-b from-black/90 via-black/60 to-black/0 p-6 text-white transition-[backdrop-filter] hover:backdrop-blur-sm`
+                  : `absolute flex flex-col inset-0 z-20 rounded-2xl bg-gradient-to-b from-black/90 via-black/60 to-black/0 p-6 text-white transition-[backdrop-filter] hover:backdrop-blur-sm`
               }
-              src={url || Logo}
-              alt="image"
-              width={120}
-              height={120}
-            />
-            <p
-              className={`${
-                typeof description === "number"
-                  ? "font-bold text-[25px] text-slate-300"
-                  : "text-[13px] text-slate-300 "
-              }`}
             >
-              {description}
-            </p>
-          </div>
+              <span className="text-xs font-semibold uppercase text-[#e45263]">
+                {category}
+              </span>
+              <p className="my-2 text-xl font-bold ">{title}</p>
+              <Image
+                className={
+                  scorerStyle
+                    ? `rounded-full `
+                    : `rounded-full animate-pulse self-center`
+                }
+                src={url || Logo}
+                alt="image"
+                width={120}
+                height={120}
+              />
+              <p
+                className={`${
+                  typeof description === "number"
+                    ? "font-bold text-[25px] text-slate-300"
+                    : "text-[13px] text-slate-300 "
+                }`}
+              >
+                {description}
+              </p>
+            </div>
+          )}
         </div>
       );
     };
-
-    useEffect(() => {
-      const fetchKey = async () => {
-        const key = await fetch("http://localhost:3000/api/fetchKey");
-        setKey(String(key));
-      };
-      console.log("warya");
-
-      fetchKey();
-    }, [key]);
-
-    console.log("keyyy", key);
 
     const updateWeeklyInfo = async (REACT_APP_LEAGUE_ID, headlines) => {
       // Reference to the "Weekly Info" collection
@@ -351,54 +364,6 @@ const CardCarousel = ({ leagueID }) => {
           league_id: REACT_APP_LEAGUE_ID,
           headlines: headlines,
         });
-      }
-    };
-
-    const handler = async () => {
-      try {
-        const readingRef = ref(storage, `files/${REACT_APP_LEAGUE_ID}.txt`);
-        const url = await getDownloadURL(readingRef);
-        const response = await fetch(url);
-        const fileContent = await response.text();
-        const newFile = JSON.stringify(fileContent).replace(/\//g, "");
-
-        const model = new ChatOpenAI({
-          temperature: 0.9,
-          model: "gpt-4",
-          openAIApiKey: process.env.OPENAI_API_KEY,
-        });
-
-        const question = `give me 3 sports style headlines about the league's data, include the scores,team names, & who won by comparing their star starters with their points. include a bit of humor as well. I want the information to be in this format exactly headline =
-  "id": "",
-  "category": "",
-  "title": "",
-  "description": ""
- keep description short to one sentence give me the response in valid JSON array format {leagueData}`;
-        console.log(question);
-
-        const prompt = PromptTemplate.fromTemplate(question);
-        const chainA = new LLMChain({ llm: model, prompt });
-
-        // The result is an object with a `text` property.
-        const apiResponse = await chainA.call({ leagueData: newFile });
-        const cleanUp = await model.call([
-          new SystemMessage(
-            "Turn the following string into valid JSON format that strictly adhere to RFC8259 compliance"
-          ),
-          new HumanMessage(apiResponse.text),
-        ]);
-        console.log("Headlines API ", apiResponse);
-        // const cleanUp = await model.call([
-        //   new SystemMessage(
-        //     "Turn the following string into valid JSON format that strictly adhere to RFC8259 compliance, if it already is in a valid JSON format then give me the string as the response, without any other information from you"
-        //   ),
-        //   new HumanMessage(apiResponse.text),
-        // ]);
-
-        updateWeeklyInfo(REACT_APP_LEAGUE_ID, cleanUp);
-        return JSON.parse(apiResponse.text);
-      } catch (error) {
-        console.log(error);
       }
     };
 

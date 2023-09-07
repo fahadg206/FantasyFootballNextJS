@@ -77,10 +77,10 @@ export default function Page() {
               alt="league-image"
               width={45}
               height={45}
-              className="rounded-full mr-2 ml-7 sm:ml-0"
+              className="rounded-full mr-1 ml-7 sm:ml-0"
             />
           </div>
-          <div className="text-center">{`Welcome to ${localStorage.getItem(
+          <div className="text-center text-[15px] sm:text-[18px] font-bold">{`Welcome to ${localStorage.getItem(
             "selectedLeagueName"
           )}!`}</div>
         </div>

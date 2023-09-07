@@ -6,6 +6,7 @@ import { useState, useEffect } from "react";
 import getMatchupMap from "../libs/getMatchupData";
 import { useSelectedManager } from "../context/SelectedManagerContext";
 import { v4 as uuidv4 } from "uuid";
+import LoadingPulse from "./LoadingPulse";
 
 import axios from "axios";
 import Image from "next/image";
