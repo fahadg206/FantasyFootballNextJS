@@ -44,7 +44,7 @@ interface Starter {
   fn?: string;
   ln?: string;
   avatar?: string;
-  scored_points?: string;
+  points?: string;
   proj?: string;
   pos: string;
 }
@@ -192,7 +192,7 @@ const TabsFeatures = () => {
           {userDataArray[selected].starters_full_data?.map((starter) => {
             if (Object.keys(starter).length > 0) {
               const playerName = starter.fn?.charAt(0) + ". " + starter.ln;
-              const points = starter.scored_points;
+              const points = starter.points;
 
               // Calculate the length of the player name and points
               const playerNameLength = playerName.length;

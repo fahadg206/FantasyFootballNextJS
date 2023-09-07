@@ -70,7 +70,7 @@ interface Starter {
   fn?: string;
   ln?: string;
   avatar?: string;
-  scored_points?: string;
+  points?: string;
   proj?: string;
 }
 

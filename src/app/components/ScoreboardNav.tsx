@@ -47,7 +47,7 @@ interface Starter {
   fn?: string;
   ln?: string;
   avatar?: string;
-  scored_points?: string;
+  points?: string;
   proj?: string;
 }
 
@@ -168,7 +168,7 @@ export default function ScoreboardNav({ setShowScore }) {
         if (matchup.starters_full_data) {
           for (const starter of matchup.starters_full_data) {
             delete starter.avatar;
-            delete starter.scored_points;
+            delete starter.points;
           }
         }
       }
