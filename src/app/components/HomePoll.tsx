@@ -10,6 +10,7 @@ import {
   updateDoc,
   limit,
 } from "firebase/firestore/lite";
+import { AiFillAlert } from "react-icons/ai";
 
 interface VoteInfo {
   title: string;

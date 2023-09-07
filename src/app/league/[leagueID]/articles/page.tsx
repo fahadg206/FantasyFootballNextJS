@@ -650,7 +650,7 @@ const Articles = () => {
       return (
         <div
           role="status"
-          className=" h-[60vh] flex justify-center items-center"
+          className=" h-[60vh] flex justify-center items-center p-2"
         >
           <svg
             aria-hidden="true"
@@ -668,13 +668,15 @@ const Articles = () => {
               fill="currentFill"
             />
           </svg>
-          <span className="flex flex-col justify-center items-center">
-            <p className="flex items-center gap-2 font-bold">
+          <span className="flex flex-col justify-center items-center text-center">
+            <p className="flex items-center gap-2 font-bold mb-3">
               <AiFillWarning size={30} className="text-[#af1222]" /> PLEASE DO
               NOT REFRESH AS IT CAN HINDER ARTICLE RESULTS!!{" "}
               <AiFillWarning className="text-[#af1222]" size={30} />
             </p>
-            <p>{messages[messageIndex]}</p>
+            <p className="text-[13px] sm:text-[16px]">
+              {messages[messageIndex]}
+            </p>
           </span>
         </div>
       );
