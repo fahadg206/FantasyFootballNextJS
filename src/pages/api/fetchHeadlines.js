@@ -70,7 +70,7 @@ export default async function handler(req, res) {
       openAIApiKey: process.env.OPENAI_API_KEY,
     });
 
-    const question = `give me 3 sports style headlines about the league's data, include the preivews for their games,team names, & key player and positional matchups. include a bit of humor as well. I want the information to be in this format exactly headline =
+    const question = `give me 3 sports style headlines about the league's data, include team names, a preview and look ahead of their respective matchup and positional matchups. include a bit of humor as well. I want the information to be in this format exactly headline =
   "id": "",
   "category": "",
   "title": "",

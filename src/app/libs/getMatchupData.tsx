@@ -15,6 +15,8 @@ import {
   where,
 } from "firebase/firestore/lite";
 import { QuerySnapshot, onSnapshot, doc } from "firebase/firestore";
+import logo from "../images/helmet2.png";
+import { StaticImageData } from "next/image";
 
 interface WeeklyInformation {
   [league_id: string]: {
@@ -24,7 +26,7 @@ interface WeeklyInformation {
 
 interface ScheduleData {
   [userId: string]: {
-    avatar?: string;
+    avatar?: string | StaticImageData;
     name: string;
     roster_id?: string;
     user_id?: string;
@@ -54,7 +56,7 @@ interface Matchup {
 }
 
 interface MatchupMapData {
-  avatar: string;
+  avatar?: string | StaticImageData;
   name: string;
   roster_id?: string;
   user_id?: string;
@@ -153,7 +155,9 @@ export default async function getMatchupData(league_id: any, week: number) {
       // Update the scheduleData map with user data
       for (const user of usersWithRoster) {
         updatedScheduleData[user.user_id] = {
-          avatar: `https://sleepercdn.com/avatars/thumbs/${user.avatar}`,
+          avatar: user.avatar
+            ? `https://sleepercdn.com/avatars/thumbs/${user.avatar}`
+            : logo,
           name: user.display_name,
           user_id: user.user_id,
         };

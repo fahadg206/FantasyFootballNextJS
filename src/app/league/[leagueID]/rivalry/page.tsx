@@ -5,6 +5,7 @@ import { FaSearch } from "react-icons/fa";
 import { Button } from "@nextui-org/button";
 import { Spinner } from "@nextui-org/spinner";
 import { CircularProgress } from "@nextui-org/react";
+import logo from "../../../images/helmet2.png";
 import {
   Dropdown,
   DropdownMenu,
@@ -42,6 +43,7 @@ import {
 import MatchupsImg from "../../../images/matchupsImage.png";
 import { db, storage } from "../../../firebase";
 import { useRouter } from "next/navigation";
+import { StaticImageData } from "next/image";
 
 interface NflState {
   season: string;
@@ -67,7 +69,7 @@ interface User {
   managerID: string;
   rosterID: string;
   userName: string;
-  avatar: string;
+  avatar: string | StaticImageData;
   // Add other properties as needed
 }
 
@@ -393,8 +395,10 @@ const Matchups = () => {
         // console.log("Username:", userName);
         if (userName && users.size <= 12) {
           // The userName is provided and not undefined
-          const avatar =
-            teamManagers.teamManagersMap[year][rosterID].team.avatar;
+          const avatar = teamManagers.teamManagersMap[year][rosterID].team
+            .avatar
+            ? teamManagers.teamManagersMap[year][rosterID].team.avatar
+            : logo;
           const userTemp: User = { managerID, rosterID, userName, avatar };
 
           const usersMap = new Map();
@@ -630,7 +634,11 @@ const Matchups = () => {
           >
             <div className="flex items-center">
               <Image
-                src={`https://sleepercdn.com/avatars/${player.avatar}`}
+                src={
+                  player.avatar
+                    ? `https://sleepercdn.com/avatars/${player.avatar}`
+                    : logo
+                }
                 alt="avatar"
                 width={30}
                 height={30}
@@ -655,7 +663,11 @@ const Matchups = () => {
           >
             <div className="flex items-center">
               <Image
-                src={`https://sleepercdn.com/avatars/${player.avatar}`}
+                src={
+                  player.avatar
+                    ? `https://sleepercdn.com/avatars/${player.avatar}`
+                    : logo
+                }
                 alt="avatar"
                 width={30}
                 height={30}
@@ -777,7 +789,11 @@ const Matchups = () => {
       selectedText = (
         <div className="flex items-center">
           <Image
-            src={`https://sleepercdn.com/avatars/${player.avatar}`}
+            src={
+              player.avatar
+                ? `https://sleepercdn.com/avatars/${player.avatar}`
+                : logo
+            }
             alt="avatar"
             width={25}
             height={25}
@@ -795,7 +811,11 @@ const Matchups = () => {
       selectedText2 = (
         <div className="flex items-center">
           <Image
-            src={`https://sleepercdn.com/avatars/${player.avatar}`}
+            src={
+              player.avatar
+                ? `https://sleepercdn.com/avatars/${player.avatar}`
+                : logo
+            }
             alt="avatar"
             width={25}
             height={25}
@@ -934,11 +954,17 @@ const Matchups = () => {
                                   {" "}
                                   {slate && slate.matchup[0] && (
                                     <Image
-                                      src={`https://sleepercdn.com/avatars/thumbs/${
+                                      src={
                                         rivalManagers[slate.year][
                                           slate.matchup[0].roster_id
                                         ].team.avatar
-                                      }`}
+                                          ? `https://sleepercdn.com/avatars/thumbs/${
+                                              rivalManagers[slate.year][
+                                                slate.matchup[0].roster_id
+                                              ].team.avatar
+                                            }`
+                                          : logo
+                                      }
                                       alt="player"
                                       width={32}
                                       height={32}
@@ -1122,11 +1148,17 @@ const Matchups = () => {
                                 <div className="flex items-center ">
                                   {" "}
                                   <Image
-                                    src={`https://sleepercdn.com/avatars/thumbs/${
+                                    src={
                                       rivalManagers[slate.year][
                                         slate.matchup[1].roster_id
                                       ].team.avatar
-                                    }`}
+                                        ? `https://sleepercdn.com/avatars/thumbs/${
+                                            rivalManagers[slate.year][
+                                              slate.matchup[1].roster_id
+                                            ].team.avatar
+                                          }`
+                                        : logo
+                                    }
                                     alt="player"
                                     width={32}
                                     height={32}
