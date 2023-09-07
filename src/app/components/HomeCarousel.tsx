@@ -137,7 +137,11 @@ const CardCarousel = ({ leagueID }) => {
     const CAN_SHIFT_LEFT = offset < 0;
 
     const CAN_SHIFT_RIGHT =
-      Math.abs(offset) < CARD_SIZE * (headlines.length + 1 - CARD_BUFFER);
+      Math.abs(offset) <
+      CARD_SIZE *
+        (headlines
+          ? headlines.length + 1 - CARD_BUFFER
+          : defaultHeadlines.length + 1 - CARD_BUFFER);
 
     const shiftLeft = () => {
       if (!CAN_SHIFT_LEFT) {
@@ -218,7 +222,7 @@ const CardCarousel = ({ leagueID }) => {
             try {
               setLoading(true);
               const data = await fetchDataFromApi(
-                "https://www.fantasypulseff.com/api/fetchPreview"
+                "http://localhost:3000/api/fetchHeadlines"
               );
 
               console.log(data);

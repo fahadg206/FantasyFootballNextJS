@@ -24,6 +24,7 @@ import { db, storage } from "../../app/firebase";
 const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
 
 const updateWeeklyInfo = async (REACT_APP_LEAGUE_ID, headlines) => {
+  headlines = JSON.parse(headlines);
   // Reference to the "Weekly Info" collection
   const weeklyInfoCollectionRef = collection(db, "Weekly Headlines");
   // Use a Query to check if a document with the league_id exists

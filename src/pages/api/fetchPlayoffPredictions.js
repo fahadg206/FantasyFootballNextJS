@@ -80,7 +80,7 @@ export default async function handler(req, res) {
   "paragraph5": "",
   "paragraph6": "",
   "paragraph7": ""
-  You can add more paragraphs if necessary. Make sure to include all teams in the league. Please ensure that the generated JSON response meets the specified criteria without any syntax issues or inconsistencies.`;
+  up to 14 paragraphs. You can add more paragraphs if necessary. Make sure to include all teams in the league in your response. Please ensure that the generated JSON response meets the specified criteria without any syntax issues or inconsistencies.`;
 
     const prompt = PromptTemplate.fromTemplate(question);
     const chainA = new LLMChain({ llm: model, prompt });
