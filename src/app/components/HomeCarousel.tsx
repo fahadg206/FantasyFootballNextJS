@@ -70,7 +70,7 @@ interface Starter {
   fn?: string;
   ln?: string;
   avatar?: string;
-  scored_points?: string;
+  points?: string;
   proj?: string;
 }
 
@@ -211,10 +211,25 @@ const CardCarousel = ({ leagueID }) => {
           );
 
           if (!querySnapshot.empty) {
-            querySnapshot.forEach((doc) => {
+            querySnapshot.forEach(async (doc) => {
               const docData = doc.data();
               //console.log("DB returned", JSON.parse(docData.headlines));
-              setHeadlines(docData.headlines);
+              if (docData.headlines) {
+                setHeadlines(docData.headlines);
+              } else {
+                try {
+                  setLoading(true);
+                  const data = await fetchDataFromApi(
+                    "https://www.fantasypulseff.com/api/fetchHeadlines"
+                  );
+
+                  // If data is valid, update headlines state
+                  setHeadlines(data);
+                  updateHeadlines(REACT_APP_LEAGUE_ID, data);
+                } catch (error) {
+                  console.error("Error fetching data:", error);
+                }
+              }
             });
           } else {
             console.log("Document does not exist");

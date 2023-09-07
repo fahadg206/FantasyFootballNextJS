@@ -71,12 +71,12 @@ export default async function handler(req, res) {
       openAIApiKey: process.env.OPENAI_API_KEY,
     });
 
-    const question = `give me 3 sports style headlines about the league's data, include team names & by team names i mean user names,  a preview and look ahead of their respective matchup and positional matchups. highlight the matchup of their starters as well. include a bit of humor as well. I want the information to be in this format exactly headline dont include any words that are in the prompt as a part of the headlines. make titles creative. do NOT include NFL Team names or DEF =
+    const question = `{leagueData} give me 3 sports style headlines about the league's data, include user names, a preview and look ahead of their respective matchup and positional matchups. highlight the matchup of their starters as well. include a bit of humor as well. I want the information to be in this format exactly headline: 
   "id": "",
   "category": "",
   "title": "",
   "description": ""
- keep description short to one sentence give me the response in valid JSON array format {leagueData}`;
+ keep description short to one sentence give me the response in valid JSON array format. Please ensure that the generated JSON response meets the specified criteria without any syntax issues or inconsistencies.`;
     console.log(question);
 
     const prompt = PromptTemplate.fromTemplate(question);
@@ -99,6 +99,7 @@ export default async function handler(req, res) {
     // ]);
 
     //updateWeeklyInfo(REACT_APP_LEAGUE_ID, apiResponse.text);
+    console.log(apiResponse.text);
 
     return res.status(200).json(JSON.parse(apiResponse.text));
   } catch (error) {

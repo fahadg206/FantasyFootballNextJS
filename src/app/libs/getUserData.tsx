@@ -65,7 +65,7 @@ interface Starter {
   fn?: string;
   ln?: string;
   avatar?: string;
-  scored_points?: string;
+  points?: string;
   proj?: string;
 }
 
@@ -187,8 +187,7 @@ export default async function getUserData(league_id: any, week: number) {
                     playersData[starter.toString()].pos == "DEF"
                       ? `https://sleepercdn.com/images/team_logos/nfl/${starter.toLowerCase()}.png`
                       : `https://sleepercdn.com/content/nfl/players/thumb/${starter}.jpg`,
-                  scored_points:
-                    updatedScheduleData[userId].players_points[starter],
+                  points: updatedScheduleData[userId].players_points[starter],
                 };
                 if (
                   updatedScheduleData[userId]?.starters_full_data &&
@@ -210,7 +209,7 @@ export default async function getUserData(league_id: any, week: number) {
                         playersData[starter.toString()].pos === "DEF"
                           ? `https://sleepercdn.com/images/team_logos/nfl/${starter.toLowerCase()}.png`
                           : `https://sleepercdn.com/content/nfl/players/thumb/${starter}.jpg`,
-                      scored_points:
+                      points:
                         updatedScheduleData[userId].players_points[starter],
                     },
                   ];

@@ -70,9 +70,9 @@ interface Starter {
   fn?: string;
   ln?: string;
   avatar?: string;
-  scored_points?: string;
+  points?: string;
   proj?: string;
-  position?: string;
+  pos?: string;
 }
 
 export default async function getMatchupData(league_id: any, week: number) {
@@ -207,9 +207,8 @@ export default async function getMatchupData(league_id: any, week: number) {
                     playersData[starter.toString()].pos == "DEF"
                       ? `https://sleepercdn.com/images/team_logos/nfl/${starter.toLowerCase()}.png`
                       : `https://sleepercdn.com/content/nfl/players/thumb/${starter}.jpg`,
-                  scored_points:
-                    updatedScheduleData[userId].players_points[starter],
-                  position: playersData[starter].pos,
+                  points: updatedScheduleData[userId].players_points[starter],
+                  pos: playersData[starter].pos,
                   proj: playersData[starter].wi[week.toString()].p,
                 };
                 if (
@@ -232,9 +231,9 @@ export default async function getMatchupData(league_id: any, week: number) {
                         playersData[starter.toString()].pos === "DEF"
                           ? `https://sleepercdn.com/images/team_logos/nfl/${starter.toLowerCase()}.png`
                           : `https://sleepercdn.com/content/nfl/players/thumb/${starter}.jpg`,
-                      scored_points:
+                      points:
                         updatedScheduleData[userId].players_points[starter],
-                      position: playersData[starter].pos,
+                      pos: playersData[starter].pos,
                       proj: playersData[starter].wi[week.toString()].p,
                     },
                   ];

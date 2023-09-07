@@ -75,11 +75,6 @@ export default async function handler(req, res) {
   "title": "",
   "paragraph1": "",
   "paragraph2": "",
-  "paragraph3": "",
-  "paragraph4": "",
-  "paragraph5": "",
-  "paragraph6": "",
-  "paragraph7": ""
   USE however many MORE paragraphs necessary to complete the response and include ALL teams. please Make sure ALL THE matchups IN THE league ARE LISTED in your response. Please ensure that the generated JSON response meets the specified criteria without any syntax issues or inconsistencies.`;
 
     const prompt = PromptTemplate.fromTemplate(question);

@@ -73,9 +73,9 @@ interface Starter {
   fn?: string;
   ln?: string;
   avatar?: string;
-  scored_points?: string;
+  points?: string;
   proj?: string;
-  position?: string;
+  pos?: string;
 }
 
 let initialize = false;
@@ -323,13 +323,13 @@ export default function Schedule() {
       (starter) => Object.keys(starter).length > 0
     );
 
-    // Sort the non-empty starters by scored_points in descending order
+    // Sort the non-empty starters by points in descending order
     const sortedStarters1 = [...nonEmptyStarters1].sort(
-      (a, b) => b.scored_points - a.scored_points
+      (a, b) => b.points - a.points
     );
 
     const sortedStarters2 = [...nonEmptyStarters2].sort(
-      (a, b) => b.scored_points - a.scored_points
+      (a, b) => b.points - a.points
     );
 
     // Extract the top two highest scorers
@@ -434,7 +434,7 @@ export default function Schedule() {
             <ul className=" flex w-[40vw] xl:w-[20vw] justify-center ">
               {topTwoScorers1.map((player, index) => {
                 const playerName = player.fn?.charAt(0) + ". " + player.ln;
-                const points = player.scored_points;
+                const points = player.points;
 
                 // Calculate the length of the player name and points
                 const totalContentLength =
@@ -446,7 +446,7 @@ export default function Schedule() {
                 // Calculate adjusted font size and image size
 
                 let imageSize = scaleFactor * 100;
-                if (player.position === "DEF") {
+                if (player.pos === "DEF") {
                   imageSize = scaleFactor * 55;
                 }
 
@@ -485,7 +485,7 @@ export default function Schedule() {
             <ul className=" flex justify-center w-[40vw] xl:w-[20vw] ">
               {topTwoScorers2.map((player, index) => {
                 const playerName = player.fn?.charAt(0) + ". " + player.ln;
-                const points = player.scored_points;
+                const points = player.points;
 
                 // Calculate the length of the player name and points
                 const totalContentLength =
@@ -497,7 +497,7 @@ export default function Schedule() {
                 // Calculate adjusted font size and image size
 
                 let imageSize = scaleFactor * 100;
-                if (player.position === "DEF") {
+                if (player.pos === "DEF") {
                   imageSize = scaleFactor * 55;
                 }
 

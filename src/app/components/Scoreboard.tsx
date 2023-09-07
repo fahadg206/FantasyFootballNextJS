@@ -83,7 +83,7 @@ interface Starter {
   fn?: string;
   ln?: string;
   avatar?: string;
-  scored_points?: string;
+  points?: string;
   proj?: string;
 }
 
@@ -192,15 +192,17 @@ export default function Scoreboard() {
         if (matchup.starters_full_data) {
           for (const starter of matchup.starters_full_data) {
             delete starter.avatar;
-            delete starter.scored_points;
+            delete starter.points;
           }
         }
       }
 
       //console.log("data ", articleMatchupData);
 
-      const textContent = JSON.stringify(articleMatchupData);
-      const previewTextContent = JSON.stringify(previewMatchupData);
+      const textContent = JSON.stringify(Object.values(articleMatchupData));
+      const previewTextContent = JSON.stringify(
+        Object.values(previewMatchupData)
+      );
 
       const previewRef = ref(storage, `files/${leagueID}_preview.txt`);
       // Function to add content only if it's different

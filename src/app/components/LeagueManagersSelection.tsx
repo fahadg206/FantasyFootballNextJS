@@ -44,9 +44,9 @@ interface Starter {
   fn?: string;
   ln?: string;
   avatar?: string;
-  scored_points?: string;
+  points?: string;
   proj?: string;
-  position: string;
+  pos: string;
 }
 
 interface ManagerInfo {
@@ -192,7 +192,7 @@ const TabsFeatures = () => {
           {userDataArray[selected].starters_full_data?.map((starter) => {
             if (Object.keys(starter).length > 0) {
               const playerName = starter.fn?.charAt(0) + ". " + starter.ln;
-              const points = starter.scored_points;
+              const points = starter.points;
 
               // Calculate the length of the player name and points
               const playerNameLength = playerName.length;
@@ -209,7 +209,7 @@ const TabsFeatures = () => {
               // Calculate adjusted font size and image size
               const fontSize = scaleFactor * 7 + "px";
               let imageSize = scaleFactor * 2 * 100;
-              if (starter.position === "DEF") {
+              if (starter.pos === "DEF") {
                 imageSize = scaleFactor * 55;
               }
 
@@ -239,9 +239,7 @@ const TabsFeatures = () => {
                   <p className="text-[10px]  w-full text-center overflow-hidden">
                     {playerName}
                   </p>
-                  <p className={colorObj[starter.position]}>
-                    {starter.position}
-                  </p>
+                  <p className={colorObj[starter.pos]}>{starter.pos}</p>
                 </div>
               );
             }
