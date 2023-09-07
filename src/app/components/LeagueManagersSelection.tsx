@@ -41,11 +41,11 @@ interface ScheduleData {
 }
 
 interface Starter {
-  fname?: string;
-  lname?: string;
+  fn?: string;
+  ln?: string;
   avatar?: string;
   scored_points?: string;
-  projected_points?: string;
+  proj?: string;
   position: string;
 }
 
@@ -191,8 +191,7 @@ const TabsFeatures = () => {
         <div className="flex flex-wrap relative top-5 items-center justify-center w-[90%] h-[90%] text-[20px] ">
           {userDataArray[selected].starters_full_data?.map((starter) => {
             if (Object.keys(starter).length > 0) {
-              const playerName =
-                starter.fname?.charAt(0) + ". " + starter.lname;
+              const playerName = starter.fn?.charAt(0) + ". " + starter.ln;
               const points = starter.scored_points;
 
               // Calculate the length of the player name and points

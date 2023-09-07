@@ -44,11 +44,11 @@ interface ScheduleData {
 }
 
 interface Starter {
-  fname?: string;
-  lname?: string;
+  fn?: string;
+  ln?: string;
   avatar?: string;
   scored_points?: string;
-  projected_points?: string;
+  proj?: string;
 }
 
 interface Matchup {
@@ -147,7 +147,7 @@ export default function ScoreboardNav({ setShowScore }) {
         if (matchup.starters_full_data) {
           for (const starter of matchup.starters_full_data) {
             delete starter.avatar;
-            delete starter.projected_points;
+            delete starter.proj;
           }
         }
       }
@@ -295,42 +295,42 @@ export default function ScoreboardNav({ setShowScore }) {
     let team1Proj = 0.0;
     let team2Proj = 0.0;
 
-    // if (team1?.starters) {
-    //   for (const currPlayer of team1.starters) {
-    //     if (playersData[currPlayer]) {
-    //       const playerData = playersData && playersData[currPlayer];
-    //       if (
-    //         playerData &&
-    //         playerData.wi &&
-    //         weekString !== undefined && // Check if weekString is defined
-    //         typeof weekString === "string" && // Check if weekString is a string
-    //         playerData.wi[weekString] &&
-    //         playerData.wi[weekString]?.p !== undefined
-    //       ) {
-    //         if (playerData.wi[weekString].p)
-    //           team1Proj += parseFloat(playerData.wi[weekString].p || "0");
-    //       }
-    //     }
-    //   }
-    // }
+    if (team1?.starters) {
+      for (const currPlayer of team1.starters) {
+        if (playersData[currPlayer]) {
+          const playerData = playersData && playersData[currPlayer];
+          if (
+            playerData &&
+            playerData.wi &&
+            weekString !== undefined && // Check if weekString is defined
+            typeof weekString === "string" && // Check if weekString is a string
+            playerData.wi[weekString] &&
+            playerData.wi[weekString]?.p !== undefined
+          ) {
+            if (playerData.wi[weekString].p)
+              team1Proj += parseFloat(playerData.wi[weekString].p || "0");
+          }
+        }
+      }
+    }
 
-    // if (team2?.starters) {
-    //   for (const currPlayer of team2.starters) {
-    //     if (playersData[currPlayer]) {
-    //       const playerData = playersData && playersData[currPlayer];
-    //       if (
-    //         playerData &&
-    //         playerData.wi &&
-    //         weekString !== undefined && // Check if weekString is defined
-    //         typeof weekString === "string" && // Check if weekString is a string
-    //         playerData.wi[weekString] &&
-    //         playerData.wi[weekString]?.p !== undefined
-    //       ) {
-    //         team2Proj += parseFloat(playerData.wi[weekString].p || "0");
-    //       }
-    //     }
-    //   }
-    // }
+    if (team2?.starters) {
+      for (const currPlayer of team2.starters) {
+        if (playersData[currPlayer]) {
+          const playerData = playersData && playersData[currPlayer];
+          if (
+            playerData &&
+            playerData.wi &&
+            weekString !== undefined && // Check if weekString is defined
+            typeof weekString === "string" && // Check if weekString is a string
+            playerData.wi[weekString] &&
+            playerData.wi[weekString]?.p !== undefined
+          ) {
+            team2Proj += parseFloat(playerData.wi[weekString].p || "0");
+          }
+        }
+      }
+    }
 
     const team1UserId = team1.user_id;
     const team2UserId = team2.user_id;

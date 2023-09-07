@@ -62,11 +62,11 @@ interface MatchupMapData {
 }
 
 interface Starter {
-  fname?: string;
-  lname?: string;
+  fn?: string;
+  ln?: string;
   avatar?: string;
   scored_points?: string;
-  projected_points?: string;
+  proj?: string;
 }
 
 export default async function getUserData(league_id: any, week: number) {
@@ -181,8 +181,8 @@ export default async function getUserData(league_id: any, week: number) {
             if (updatedScheduleData[userId]?.starters) {
               for (const starter of updatedScheduleData[userId].starters) {
                 const starter_data = {
-                  fname: playersData[starter].fn,
-                  lname: playersData[starter].ln,
+                  fn: playersData[starter].fn,
+                  ln: playersData[starter].ln,
                   avatar:
                     playersData[starter.toString()].pos == "DEF"
                       ? `https://sleepercdn.com/images/team_logos/nfl/${starter.toLowerCase()}.png`
@@ -204,8 +204,8 @@ export default async function getUserData(league_id: any, week: number) {
                 } else {
                   updatedScheduleData[userId].starters_full_data = [
                     {
-                      fname: playersData[starter].fn,
-                      lname: playersData[starter].ln,
+                      fn: playersData[starter].fn,
+                      ln: playersData[starter].ln,
                       avatar:
                         playersData[starter.toString()].pos === "DEF"
                           ? `https://sleepercdn.com/images/team_logos/nfl/${starter.toLowerCase()}.png`

@@ -70,16 +70,16 @@ interface ScheduleData {
 }
 
 interface Starter {
-  fname?: string;
-  lname?: string;
+  fn?: string;
+  ln?: string;
   avatar?: string;
   scored_points?: string;
-  projected_points?: string;
+  proj?: string;
   position?: string;
 }
 
 let initialize = false;
-let pollNamesSet = false;
+let pollnsSet = false;
 
 export default function Schedule() {
   const [loading, setLoading] = useState(true);
@@ -433,8 +433,7 @@ export default function Schedule() {
           <div className="top-scorers">
             <ul className=" flex w-[40vw] xl:w-[20vw] justify-center ">
               {topTwoScorers1.map((player, index) => {
-                const playerName =
-                  player.fname?.charAt(0) + ". " + player.lname;
+                const playerName = player.fn?.charAt(0) + ". " + player.ln;
                 const points = player.scored_points;
 
                 // Calculate the length of the player name and points
@@ -485,8 +484,7 @@ export default function Schedule() {
             <p className="font-bold mb-2"></p>
             <ul className=" flex justify-center w-[40vw] xl:w-[20vw] ">
               {topTwoScorers2.map((player, index) => {
-                const playerName =
-                  player.fname?.charAt(0) + ". " + player.lname;
+                const playerName = player.fn?.charAt(0) + ". " + player.ln;
                 const points = player.scored_points;
 
                 // Calculate the length of the player name and points

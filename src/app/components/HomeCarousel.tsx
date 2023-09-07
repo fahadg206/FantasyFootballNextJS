@@ -67,11 +67,11 @@ interface ScheduleData {
 }
 
 interface Starter {
-  fname?: string;
-  lname?: string;
+  fn?: string;
+  ln?: string;
   avatar?: string;
   scored_points?: string;
-  projected_points?: string;
+  proj?: string;
 }
 
 const CARD_WIDTH = 350;

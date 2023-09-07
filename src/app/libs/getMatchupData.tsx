@@ -67,11 +67,11 @@ interface MatchupMapData {
 }
 
 interface Starter {
-  fname?: string;
-  lname?: string;
+  fn?: string;
+  ln?: string;
   avatar?: string;
   scored_points?: string;
-  projected_points?: string;
+  proj?: string;
   position?: string;
 }
 
@@ -201,8 +201,8 @@ export default async function getMatchupData(league_id: any, week: number) {
             for (const starter of updatedScheduleData[userId].starters) {
               if (starter != "0" && playersData[starter]) {
                 const starter_data = {
-                  fname: playersData[starter].fn,
-                  lname: playersData[starter].ln,
+                  fn: playersData[starter].fn,
+                  ln: playersData[starter].ln,
                   avatar:
                     playersData[starter.toString()].pos == "DEF"
                       ? `https://sleepercdn.com/images/team_logos/nfl/${starter.toLowerCase()}.png`
@@ -210,7 +210,7 @@ export default async function getMatchupData(league_id: any, week: number) {
                   scored_points:
                     updatedScheduleData[userId].players_points[starter],
                   position: playersData[starter].pos,
-                  projected_points: playersData[starter].wi[week.toString()].p,
+                  proj: playersData[starter].wi[week.toString()].p,
                 };
                 if (
                   updatedScheduleData[userId]?.starters_full_data &&
@@ -226,8 +226,8 @@ export default async function getMatchupData(league_id: any, week: number) {
                 } else {
                   updatedScheduleData[userId].starters_full_data = [
                     {
-                      fname: playersData[starter].fn,
-                      lname: playersData[starter].ln,
+                      fn: playersData[starter].fn,
+                      ln: playersData[starter].ln,
                       avatar:
                         playersData[starter.toString()].pos === "DEF"
                           ? `https://sleepercdn.com/images/team_logos/nfl/${starter.toLowerCase()}.png`
@@ -235,8 +235,7 @@ export default async function getMatchupData(league_id: any, week: number) {
                       scored_points:
                         updatedScheduleData[userId].players_points[starter],
                       position: playersData[starter].pos,
-                      projected_points:
-                        playersData[starter].wi[week.toString()].p,
+                      proj: playersData[starter].wi[week.toString()].p,
                     },
                   ];
                 }
