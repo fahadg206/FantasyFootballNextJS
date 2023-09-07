@@ -172,6 +172,7 @@ export default function Scoreboard() {
           for (const starter of matchup.starters_full_data) {
             delete starter.avatar;
             delete starter.proj;
+            delete starter.fn;
           }
         }
       }
@@ -193,6 +194,7 @@ export default function Scoreboard() {
           for (const starter of matchup.starters_full_data) {
             delete starter.avatar;
             delete starter.points;
+            delete starter.fn;
           }
         }
       }
