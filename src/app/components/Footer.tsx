@@ -14,7 +14,7 @@ const Footer = () => {
       <div className="flex flex-col justify-center items-center border-t-[1px] border-opacity-20 border-[#af1222] mt-10  rounded-xl">
         <div className="flex flex-wrap h-5 items-center justify-center space-x-4 text-[15px] mt-5">
           <Link href={`/league/${localStorage.getItem("selectedLeagueID")}`}>
-            <div className="hover:bg-[#AF1222] hover:transition  hover:ease-in-out hover:rounded cursor-pointer">
+            <div className="hover:bg-[#AF1222] hover:transition  hover:ease-in-out hover:rounded cursor-pointer mb-3">
               Home
             </div>
           </Link>
@@ -24,7 +24,7 @@ const Footer = () => {
               "selectedLeagueID"
             )}/articles`}
           >
-            <div className="hover:bg-[#AF1222] hover:transition  hover:ease-in-out hover:rounded cursor-pointer">
+            <div className="hover:bg-[#AF1222] hover:transition  hover:ease-in-out hover:rounded cursor-pointer mb-3">
               Articles
             </div>
           </Link>
@@ -32,7 +32,7 @@ const Footer = () => {
           <Link
             href={`/league/${localStorage.getItem("selectedLeagueID")}/rivalry`}
           >
-            <div className="hover:bg-[#AF1222] hover:transition  hover:ease-in-out hover:rounded cursor-pointer">
+            <div className="hover:bg-[#AF1222] hover:transition  hover:ease-in-out hover:rounded cursor-pointer mb-3 ">
               Rivalry
             </div>
           </Link>
@@ -42,7 +42,7 @@ const Footer = () => {
               "selectedLeagueID"
             )}/schedule`}
           >
-            <div className="hover:bg-[#AF1222] hover:transition  hover:ease-in-out hover:rounded cursor-pointer">
+            <div className="hover:bg-[#AF1222] hover:transition  hover:ease-in-out hover:rounded cursor-pointer mb-3">
               Schedule
             </div>
           </Link>
@@ -66,6 +66,7 @@ const Footer = () => {
               League Managers
             </div>
           </Link>
+          <Divider orientation="vertical" />
           <Link
             href={`/league/${localStorage.getItem("selectedLeagueID")}/about`}
           >
@@ -73,20 +74,24 @@ const Footer = () => {
               About
             </div>
           </Link>
+          <Divider orientation="vertical" />
           <Link href={`https://www.sleeper.com`} target="_blank">
-            <div className="hover:bg-[#AF1222] hover:transition  hover:ease-in-out hover:rounded cursor-pointer">
+            <div className="hover:bg-[#AF1222] hover:transition  hover:ease-in-out hover:rounded cursor-pointer my-2">
               Sleeper
             </div>
           </Link>
+          <Divider orientation="vertical" />
           <Link
             href={`/league/${localStorage.getItem("selectedLeagueID")}/report`}
           >
-            <div className="hover:bg-[#AF1222] hover:transition  hover:ease-in-out hover:rounded cursor-pointer">
+            <div className="hover:bg-[#AF1222] hover:transition  hover:ease-in-out hover:rounded cursor-pointer my-2">
               Report An Issue
             </div>
           </Link>
+          <Divider orientation="vertical" />
         </div>
-        <div className="space-y-1 mb-10 flex flex-col items-center text-[14px]">
+        <div></div>
+        <div className="space-y-1 mb-10 flex flex-col items-center text-[14px] mt-[50px] sm:mt-5">
           <Divider className="my-4" />
           <p>
             © 2023{" "}
