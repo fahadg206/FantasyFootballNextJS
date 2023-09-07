@@ -222,7 +222,7 @@ const CardCarousel = ({ leagueID }) => {
             try {
               setLoading(true);
               const data = await fetchDataFromApi(
-                "http://localhost:3000/api/fetchHeadlines"
+                "https://www.fantasypulseff.com/api/fetchHeadlines"
               );
 
               console.log(data);
