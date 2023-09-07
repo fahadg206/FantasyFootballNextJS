@@ -78,6 +78,13 @@ const Footer = () => {
               Sleeper
             </div>
           </Link>
+          <Link
+            href={`/league/${localStorage.getItem("selectedLeagueID")}/report`}
+          >
+            <div className="hover:bg-[#AF1222] hover:transition  hover:ease-in-out hover:rounded cursor-pointer">
+              Report An Issue
+            </div>
+          </Link>
         </div>
         <div className="space-y-1 mb-10 flex flex-col items-center text-[14px]">
           <Divider className="my-4" />
