@@ -393,7 +393,7 @@ const Matchups = () => {
         // console.log("ManagerID: ", managerID);
         // console.log("RosterID: ", rosterID);
         // console.log("Username:", userName);
-        if (userName && users.size <= 12) {
+        if (userName && users.size <= 14) {
           // The userName is provided and not undefined
           const avatar = teamManagers.teamManagersMap[year][rosterID].team
             .avatar
