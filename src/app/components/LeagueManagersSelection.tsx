@@ -46,7 +46,7 @@ interface Starter {
   avatar?: string;
   scored_points?: string;
   proj?: string;
-  position: string;
+  pos: string;
 }
 
 interface ManagerInfo {
@@ -209,7 +209,7 @@ const TabsFeatures = () => {
               // Calculate adjusted font size and image size
               const fontSize = scaleFactor * 7 + "px";
               let imageSize = scaleFactor * 2 * 100;
-              if (starter.position === "DEF") {
+              if (starter.pos === "DEF") {
                 imageSize = scaleFactor * 55;
               }
 
@@ -239,9 +239,7 @@ const TabsFeatures = () => {
                   <p className="text-[10px]  w-full text-center overflow-hidden">
                     {playerName}
                   </p>
-                  <p className={colorObj[starter.position]}>
-                    {starter.position}
-                  </p>
+                  <p className={colorObj[starter.pos]}>{starter.pos}</p>
                 </div>
               );
             }

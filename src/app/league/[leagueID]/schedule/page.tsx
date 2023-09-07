@@ -75,7 +75,7 @@ interface Starter {
   avatar?: string;
   scored_points?: string;
   proj?: string;
-  position?: string;
+  pos?: string;
 }
 
 let initialize = false;
@@ -446,7 +446,7 @@ export default function Schedule() {
                 // Calculate adjusted font size and image size
 
                 let imageSize = scaleFactor * 100;
-                if (player.position === "DEF") {
+                if (player.pos === "DEF") {
                   imageSize = scaleFactor * 55;
                 }
 
@@ -497,7 +497,7 @@ export default function Schedule() {
                 // Calculate adjusted font size and image size
 
                 let imageSize = scaleFactor * 100;
-                if (player.position === "DEF") {
+                if (player.pos === "DEF") {
                   imageSize = scaleFactor * 55;
                 }
 

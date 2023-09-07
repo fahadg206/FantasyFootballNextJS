@@ -29,7 +29,7 @@ interface Starter {
   avatar?: string;
   scored_points?: string;
   proj?: string;
-  position?: string;
+  pos?: string;
 }
 
 interface ManagerMatchup {

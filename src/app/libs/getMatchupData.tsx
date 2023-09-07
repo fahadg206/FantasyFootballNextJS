@@ -72,7 +72,7 @@ interface Starter {
   avatar?: string;
   scored_points?: string;
   proj?: string;
-  position?: string;
+  pos?: string;
 }
 
 export default async function getMatchupData(league_id: any, week: number) {
@@ -209,7 +209,7 @@ export default async function getMatchupData(league_id: any, week: number) {
                       : `https://sleepercdn.com/content/nfl/players/thumb/${starter}.jpg`,
                   scored_points:
                     updatedScheduleData[userId].players_points[starter],
-                  position: playersData[starter].pos,
+                  pos: playersData[starter].pos,
                   proj: playersData[starter].wi[week.toString()].p,
                 };
                 if (
@@ -234,7 +234,7 @@ export default async function getMatchupData(league_id: any, week: number) {
                           : `https://sleepercdn.com/content/nfl/players/thumb/${starter}.jpg`,
                       scored_points:
                         updatedScheduleData[userId].players_points[starter],
-                      position: playersData[starter].pos,
+                      pos: playersData[starter].pos,
                       proj: playersData[starter].wi[week.toString()].p,
                     },
                   ];
