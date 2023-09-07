@@ -99,6 +99,7 @@ export default async function handler(req, res) {
     // ]);
 
     //updateWeeklyInfo(REACT_APP_LEAGUE_ID, apiResponse.text);
+    console.log(apiResponse.text);
 
     return res.status(200).json(JSON.parse(apiResponse.text));
   } catch (error) {
