@@ -57,6 +57,7 @@ const BarPoll = () => {
 };
 
 const Options: React.FC<OptionsProps> = ({ votes, setVotes }) => {
+  const [voted, setVoted] = useState(false);
   const addVotes = async (newVotes: VoteInfo[]) => {
     try {
       const voteInfo = collection(db, "Home Poll");
@@ -132,7 +133,7 @@ const Options: React.FC<OptionsProps> = ({ votes, setVotes }) => {
       <h3 className="mb-6 text-2xl font-semibold  text-center">
         What is your favorite page from Fantasy Pulse so far?
       </h3>
-      <div className="mb-6 space-y-2 text-center">
+      <div className={voted ? `hidden` : `block mb-6 space-y-2 text-center`}>
         {votes.map((vote: VoteInfo) => {
           return (
             <motion.button
@@ -140,6 +141,7 @@ const Options: React.FC<OptionsProps> = ({ votes, setVotes }) => {
               whileTap={{ scale: 0.985 }}
               onClick={() => {
                 handleIncrementVote(vote);
+                setVoted(true);
               }}
               key={vote.title}
               className={`w-[80%] rounded-xl ${vote.color} text-white text-center py-2 font-medium `}
@@ -149,10 +151,13 @@ const Options: React.FC<OptionsProps> = ({ votes, setVotes }) => {
           );
         })}
       </div>
-      <div className="flex items-center justify-center">
+      <div className="flex flex-col items-center justify-center">
         <span className="mb-2 italic text-black dark:text-slate-400 text-center">
           {totalVotes} votes
         </span>
+        <p className={voted ? `block italic text-[14px]` : `hidden`}>
+          Thanks for voting!
+        </p>
       </div>
     </div>
   );

@@ -102,7 +102,7 @@ export default function Home() {
             setUsernameSubmitted(false);
             setText(username);
           }}
-          className="text-[#af1222] border-b-[1px] border-[#af1222] text-[12px] hover:bg-[#d4d0d0] rounded-xl mr-2 cursor-pointer"
+          className="text-[#af1222] border-b-[1px] border-[#af1222] text-[12px] hover:bg-[#d4d0d0] dark:hover:bg-[#1a1a1a]  mr-2 cursor-pointer"
         >
           {username}
         </div>
