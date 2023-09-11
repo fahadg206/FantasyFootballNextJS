@@ -22,8 +22,9 @@
   If you and your fantasy league enjoy Fantasy Pulse, please encourage your friends to use it too! Also, please star the repo as well!
 
   If you would like to support enhancements or just say thank you, please consider become a Fantasy Pulse Patron!
-  <a href="https://www.patreon.com/FantasyPulse"><img src="https://github.com/fahadg206/FantasyPulse/assets/89051306/92695b8d-6d92-41ee-b404-e295f0fb2637" alt="image" width="50" height="50" ></a>
-
+ <p align="center">
+  <a href="https://www.patreon.com/FantasyPulse">Become a Fantasy Pulse Patron</a> <img src="https://github.com/fahadg206/FantasyPulse/assets/89051306/92695b8d-6d92-41ee-b404-e295f0fb2637" alt="image" width="50" height="50" >
+</p>
 </p>
 
 <p align="center">
