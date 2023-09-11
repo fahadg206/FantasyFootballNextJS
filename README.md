@@ -10,6 +10,10 @@
   Just simply log in with your Sleeper username and enjoy all tailored content Fantasy Pulse has to offer!
 </p>
 
-<p align="center" style="border-top: 1px solid #000; border-bottom: 1px solid #000;">
+<p align="center">
+  <hr>
+</p>
+
+<p align="center">
   If you and your fantasy league enjoy Fantasy Pulse, please encourage your friends to use it too! Also, please star the repo as well!
 </p>
