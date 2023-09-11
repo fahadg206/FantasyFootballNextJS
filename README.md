@@ -1,4 +1,5 @@
 ![image](https://github.com/fahadg206/FantasyPulse/assets/89051306/db119ab5-80a8-401d-8584-8715989a23ab)
+[Fantasy Pulse (Powered by Sleeper)](https://fantasypulseff.com)
 
 
 ## Getting Started
