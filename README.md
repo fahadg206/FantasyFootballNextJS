@@ -17,3 +17,7 @@
 <p align="center">
   If you and your fantasy league enjoy Fantasy Pulse, please encourage your friends to use it too! Also, please star the repo as well!
 </p>
+
+<p align="center">
+  <hr>
+</p>
