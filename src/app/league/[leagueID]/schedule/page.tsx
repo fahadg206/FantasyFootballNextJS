@@ -375,6 +375,7 @@ export default function Schedule() {
       preGame = false;
       liveGame = false;
     }
+    console.log(postGame);
 
     let overUnderText = (
       <div
@@ -400,13 +401,18 @@ export default function Schedule() {
       console.log(team1Poll.name, team2Poll.name);
 
       showPoll = (
-        <div className="w-[50vw] xl:w-[35vw] flex justify-center  ">
+        <div
+          className={
+            mnfEnd ? `hidden` : `w-[50vw] xl:w-[35vw] flex justify-center`
+          }
+        >
           <SchedulePoll
             team1Name={team1Poll.name}
             team2Name={team2Poll.name}
             matchup_id={matchupID}
             nflWeek={nflState?.display_week}
             liveGame={liveGame}
+            mnfEnd={mnfEnd}
           />
         </div>
       );
@@ -528,6 +534,8 @@ export default function Schedule() {
       </div>
     );
 
+    console.log(postGame);
+
     return (
       <div
         key={matchupID}
@@ -631,7 +639,7 @@ export default function Schedule() {
               </div>
 
               {(mnfEnd || postGame) && counter <= nflState?.display_week ? (
-                <p className=" text-[12px] w-[75vw] xl:w-[40vw] flex  font-bold">
+                <p className="text-[12px] w-[75vw] xl:w-[40vw] flex  font-bold">
                   {"FINAL"}
                 </p>
               ) : (

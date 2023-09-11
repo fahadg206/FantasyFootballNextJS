@@ -14,35 +14,89 @@ export default function useTimeChecks() {
 
     const currentTime = new Date(pacificTime);
 
-    //REMEMBER GET RID OF -7
+    // Calculate the previous Sunday afternoon
+    const previousSundayAfternoon = new Date(currentTime);
+    previousSundayAfternoon.setDate(
+      currentTime.getDate() - ((currentTime.getDay() + 7) % 7) // Calculate days ago
+    );
+    previousSundayAfternoon.setHours(13, 30, 0, 0);
+
+    //Calculate the upcoming Sunday Afternoon
     const sundayAfternoon = new Date(currentTime);
     sundayAfternoon.setDate(
       currentTime.getDate() + ((7 - currentTime.getDay() + 0) % 7)
     );
     sundayAfternoon.setHours(13, 30, 0, 0);
 
+    // Calculate the previous Sunday evening
+    const previousSundayEvening = new Date(currentTime);
+    previousSundayEvening.setDate(
+      currentTime.getDate() - ((currentTime.getDay() + 7) % 7) // Calculate days ago
+    );
+    previousSundayEvening.setHours(16, 50, 0, 0);
+
+    //Calculate the upcoming Sunday Evening
     const sundayEvening = new Date(currentTime);
     sundayEvening.setDate(
       currentTime.getDate() + ((7 - currentTime.getDay() + 0) % 7)
     );
     sundayEvening.setHours(16, 50, 0, 0);
 
+    // Calculate the previous Sunday night
+    const previousSundayNight = new Date(currentTime);
+    previousSundayNight.setDate(
+      currentTime.getDate() - ((currentTime.getDay() + 7) % 7) // Calculate days ago
+    );
+    previousSundayNight.setHours(21, 30, 0, 0);
+
+    //Calculate the upcoming Sunday Evening
     const sundayNight = new Date(currentTime);
     sundayNight.setDate(
       currentTime.getDate() + ((7 - currentTime.getDay() + 0) % 7)
     );
     sundayNight.setHours(21, 30, 0, 0);
 
+    console.log(previousSundayNight);
+    console.log(sundayNight);
+
+    // Calculate the previous Monday night
+    const previousMondayNight = new Date(currentTime);
+    previousMondayNight.setDate(
+      currentTime.getDate() - ((currentTime.getDay() + 7 - 1) % 7) // Calculate days ago
+    );
+    previousMondayNight.setHours(21, 30, 0, 0);
+
+    //Calculate the upcoming Monday Night
     const mondayNight = new Date(currentTime);
     mondayNight.setDate(
       currentTime.getDate() + ((1 + 7 - currentTime.getDay()) % 7)
     );
     mondayNight.setHours(21, 30, 0, 0);
 
+    const mondayMidNight = new Date(currentTime);
+    mondayMidNight.setDate(
+      currentTime.getDate() + ((1 + 7 - currentTime.getDay()) % 7)
+    );
+    mondayMidNight.setHours(0, 0, 0, 0);
+
+    const tuesdayMidNight = new Date(currentTime);
+    tuesdayMidNight.setDate(
+      currentTime.getDate() + ((2 + 7 - currentTime.getDay()) % 7)
+    );
+    tuesdayMidNight.setHours(0, 0, 0, 0);
+
     setIsSundayAfternoon(currentTime >= sundayAfternoon);
     setIsSundayEvening(currentTime >= sundayEvening);
-    setIsSundayNight(currentTime >= sundayNight);
-    setIsMondayNight(currentTime >= mondayNight);
+    setIsSundayNight(
+      currentTime < mondayMidNight
+        ? currentTime >= sundayNight
+        : currentTime >= previousSundayNight
+    );
+    setIsMondayNight(
+      currentTime < tuesdayMidNight
+        ? currentTime >= mondayNight
+        : currentTime >= previousMondayNight
+    );
 
     // Reset all states to false on Wednesday at midnight
     if (

@@ -169,7 +169,7 @@ export default function Home() {
           </div>
         </div>
         <div className="flex  justify-center items-center mt-3">
-          <p className="text-[#807c7c] italic text-[12px] mr-5">
+          <p className="text-[#807c7c] text-center italic text-[11px] mr-3">
             Recent Searches:
           </p>
           <div className="flex flex-wrap ">{showUsernames}</div>

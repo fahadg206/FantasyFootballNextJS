@@ -24,12 +24,14 @@ const BarPoll = ({
   liveGame,
   matchup_id,
   nflWeek,
+  mnfEnd,
 }: {
   team1Name: string;
   team2Name: string;
   liveGame: boolean;
   matchup_id: string;
   nflWeek: number;
+  mnfEnd: boolean;
 }) => {
   const [votes, setVotes] = useState<VoteInfo[]>([
     {
@@ -49,7 +51,9 @@ const BarPoll = ({
   //console.log("SP", team1Name, team2Name);
 
   return (
-    <section className=" px-4 w-[70vw] xl:w-[35vw] md:h-[20vw] xl:h-[10vw]  p-2">
+    <section
+      className={`px-4 w-[70vw] xl:w-[35vw] md:h-[20vw] xl:h-[10vw]  p-2`}
+    >
       <div className="">
         <Options
           matchup_id={matchup_id}
@@ -63,8 +67,9 @@ const BarPoll = ({
           userVoted={userVoted}
           liveGame={liveGame}
           nflWeek={nflWeek}
+          mnfEnd={mnfEnd}
         />
-        <Bars votes={votes} liveGame={liveGame} />
+        <Bars votes={votes} liveGame={liveGame} mnfEnd={mnfEnd} />
       </div>
     </section>
   );
@@ -82,6 +87,7 @@ const Options = ({
   setUserVoted,
   userVoted,
   nflWeek,
+  mnfEnd,
 }) => {
   const leagueID = localStorage.getItem("selectedLeagueID");
 
@@ -280,7 +286,7 @@ const Options = ({
       <div
         className={
           liveGame
-            ? ` w-[50vw] xl:w-[35vw] flex flex-col h-[150px] justify-around items-center`
+            ? `w-[50vw] xl:w-[35vw] flex flex-col h-[150px] justify-around items-center`
             : `hidden`
         }
       >
