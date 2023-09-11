@@ -462,7 +462,7 @@ export default function Schedule() {
                       height={imageSize}
                       className={`rounded-full w-[${imageSize}] h-[${imageSize}]`}
                     />
-                    <div className="flex flex-col text-[9px] xl:text-[12px]">
+                    <div className="flex flex-col text-[8px] md:text-[9px] xl:text-[12px]">
                       <p>{playerName}</p>
                       <p className="text-[8px] xl:text-[10px] w-full text-center">
                         {points}
@@ -513,7 +513,7 @@ export default function Schedule() {
                       height={imageSize}
                       className={`w-[${imageSize}] h-[${imageSize}]`}
                     />
-                    <div className="flex flex-col text-[9px] xl:text-[12px]">
+                    <div className="flex flex-col text-[8px] md:text-[9px] xl:text-[12px]">
                       <p>{playerName}</p>
                       <p className="text-[8px] xl:text-[10px] w-full text-center">
                         {points}

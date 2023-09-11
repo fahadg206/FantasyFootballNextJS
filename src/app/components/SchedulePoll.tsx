@@ -289,7 +289,7 @@ const Options = ({
             winningTeamName === "DRAW" ? (
               <div>Votes Resulted in a DRAW!</div>
             ) : (
-              ` ${winningTeamName} was voted to win by ${winningTeamVotes}% of league members!`
+              <div className="text-[12px]">{` ${winningTeamName} was voted to win by ${winningTeamVotes}% of league members!`}</div>
             )
           ) : (
             "No Vote Results to display."
