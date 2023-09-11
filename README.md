@@ -87,4 +87,11 @@ Fantasy Pulse is powered by a stack of modern technologies to provide you with t
 
 These technologies come together to create the seamless and feature-rich experience you'll find on Fantasy Pulse.
 
+## Twitter
+
+Stay updated with Fantasy Pulse on Twitter! Follow us [@fantasypulseff](https://twitter.com/fantasypulseff) for the latest news, updates, and exciting content related to fantasy football and our platform.
+
+Feel free to reach out to us, ask questions, and join the conversation. We'd love to connect with you on social media!
+
+
 
