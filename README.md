@@ -2,14 +2,17 @@
   <img src="https://github.com/fahadg206/FantasyPulse/assets/89051306/db119ab5-80a8-401d-8584-8715989a23ab" alt="image" width="180" height="100">
 </p>
 
+<p align="center">
+  No coding knowledge? No problem! 
+  Just simply log in with your Sleeper username and enjoy all the tailored content Fantasy Pulse has to offer!
+</p>
 
 <p align="center">
+ Don't have a Sleeper account to access all of Fantasy Pulse's exciting features? No worries! Simply visit our website and click the 'Demo' button located at the bottom of the login page to explore what Fantasy Pulse has to offer.
   <a href="https://fantasypulseff.com">Fantasy Pulse (Powered by Sleeper)</a>
 </p>
 
-<p align="center">
-  Just simply log in with your Sleeper username and enjoy all the tailored content Fantasy Pulse has to offer!
-</p>
+
 
 ![image](https://github.com/fahadg206/FantasyPulse/assets/89051306/fc99a125-a596-4d1b-a463-65fa50187cba)
 
@@ -60,4 +63,28 @@ Fantasy Pulse offers a range of features designed to enhance your fantasy footba
 - **Schedule for Future Weeks:** Plan ahead with the schedule for future weeks.
 
 And much more! Fantasy Pulse is your one-stop solution for an enhanced fantasy football experience.
+
+
+## Technologies Used
+
+Fantasy Pulse is powered by a stack of modern technologies to provide you with the best experience. Here are the key technologies we use:
+
+- **Artificial Intelligence (AI):** Leveraging AI to enhance user experience and deliver tailored content.
+
+- **Next.js:** A powerful React framework for building efficient and scalable web applications.
+
+- **Firebase:** Firebase provides a comprehensive suite of tools for app development, including authentication and real-time database capabilities.
+
+- **Express.js:** A Node.js web application framework for building robust and scalable server-side applications.
+
+- **MongoDB:** A NoSQL database for storing and managing data efficiently.
+
+- **TypeScript:** Enhancing code quality and maintainability with TypeScript's static typing.
+
+- **Node.js:** A server-side runtime environment for building fast and scalable applications.
+
+- **Tailwind CSS:** A utility-first CSS framework that helps streamline design and development.
+
+These technologies come together to create the seamless and feature-rich experience you'll find on Fantasy Pulse.
+
 
