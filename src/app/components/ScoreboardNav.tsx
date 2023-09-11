@@ -512,9 +512,9 @@ export default function ScoreboardNav({ setShowScore }) {
 
             {preGame
               ? overUnderText
-              : liveGame
+              : liveGame && !mnfEnd
               ? liveText
-              : postGame
+              : postGame || mnfEnd
               ? finalText
               : ""}
           </div>

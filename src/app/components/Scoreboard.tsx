@@ -559,9 +559,9 @@ export default function Scoreboard() {
             </div>
             {preGame
               ? overUnderText
-              : liveGame
+              : liveGame && !mnfEnd
               ? liveText
-              : postGame
+              : postGame || mnfEnd
               ? finalText
               : ""}
           </div>
