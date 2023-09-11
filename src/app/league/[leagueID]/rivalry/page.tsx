@@ -978,7 +978,7 @@ const Matchups = () => {
                                   </p>
                                 </div>
                                 <div className="flex flex-col justify-center items-center">
-                                  <p className="font-bold text-[10px]">
+                                  <p className="font-bold text-[12px]">
                                     {slate?.matchup[0].points
                                       .reduce(
                                         (total, currentValue) =>
@@ -995,7 +995,7 @@ const Matchups = () => {
                                           )
                                           .toFixed(2)}
                                   </p>
-                                  <p className=" text-[8px] md:text-[10px] font-bold italic">
+                                  <p className="text-[8px] text-[#b3adad] font-bold italic">
                                     {team1Proj.toFixed(2)}
                                   </p>
                                 </div>
@@ -1122,7 +1122,7 @@ const Matchups = () => {
                             <div className=" team2 flex flex-col items-center">
                               <div className="flex items-center justify-center border-b-[1px] border-[#1a1a1a] border-opacity-80 mb-2 w-full ">
                                 <div className="flex flex-col justify-center items-center mr-1 sm:mr-3">
-                                  <p className="font-bold text-[10px]">
+                                  <p className="font-bold text-[12px]">
                                     {slate?.matchup[1].points
                                       .reduce(
                                         (total, currentValue) =>
@@ -1139,7 +1139,7 @@ const Matchups = () => {
                                           )
                                           .toFixed(2)}
                                   </p>
-                                  <p className=" text-[8px] md:text-[10px] font-bold italic">
+                                  <p className=" text-[8px] text-[#b3adad] font-bold italic">
                                     {team2Proj.toFixed(2)}
                                   </p>
                                 </div>
