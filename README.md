@@ -3,6 +3,9 @@
 
 Just simply log in with your Sleeper username and enjoy all tailored content Fantasy Pulse has to offer!
 
+![image](https://github.com/fahadg206/FantasyPulse/assets/89051306/0eb6453c-1e23-406a-8f36-8534e5f0d468)
+
+
 
 ## Getting Started
 
