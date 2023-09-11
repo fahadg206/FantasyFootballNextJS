@@ -23,12 +23,10 @@
 
   If you would like to support enhancements or just say thank you, please consider become a Fantasy Pulse Patron!
 <p align="center">
- <div align="center" style="display: flex; flex-direction: column; align-items: center; justify-content: center;">
-  <a href="https://www.patreon.com/FantasyPulse">
-    <img src="https://github.com/fahadg206/FantasyPulse/assets/89051306/92695b8d-6d92-41ee-b404-e295f0fb2637" alt="image" width="50" height="50">
-    Become a Fantasy Pulse Patron
-  </a>
-</div>
+ <p align="center">
+  <img src="https://github.com/fahadg206/FantasyPulse/assets/89051306/92695b8d-6d92-41ee-b404-e295f0fb2637" alt="image" width="50" height="50" > <a href="https://www.patreon.com/FantasyPulse">Become a Fantasy Pulse Patron</a>
+</p>
+
 
 </p>
 </p>
