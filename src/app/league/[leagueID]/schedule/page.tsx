@@ -248,7 +248,7 @@ export default function Schedule() {
     const team2 = matchupData[1];
 
     if (counter === nflState?.display_week) {
-      console.log("kaboooooooooooo");
+      //console.log("kaboooooooooooo");
     }
     let team1Proj = 0.0;
     let team2Proj = 0.0;
@@ -345,8 +345,9 @@ export default function Schedule() {
 
     //check if we're in current week. If we are, display poll. Else, display over/under.
     if (
-      parseFloat(team1.team_points) === 0 &&
-      parseFloat(team2.team_points) === 0
+      (parseFloat(team1.team_points) === 0 &&
+        parseFloat(team2.team_points) === 0) ||
+      nflState?.display_week < counter
     ) {
       preGame = true;
       postGame = false;
@@ -369,12 +370,18 @@ export default function Schedule() {
       nflState?.display_week > counter ||
       (team1Played &&
         team2Played &&
-        (morningSlateEnd || afternoonSlateEnd || snfEnd || mnfEnd))
+        (morningSlateEnd || afternoonSlateEnd || snfEnd))
     ) {
       postGame = true;
       preGame = false;
       liveGame = false;
     }
+    if (mnfEnd && counter === nflState?.display_week) {
+      postGame = true;
+      preGame = false;
+      liveGame = false;
+    }
+    console.log(nflState?.display_week < counter);
     console.log(postGame);
 
     let overUnderText = (
@@ -398,7 +405,7 @@ export default function Schedule() {
     if (matchupPoll) {
       let team1Poll = matchupPoll[0];
       let team2Poll = matchupPoll[1];
-      console.log(team1Poll.name, team2Poll.name);
+      //console.log(team1Poll.name, team2Poll.name);
 
       showPoll = (
         <div
@@ -534,8 +541,6 @@ export default function Schedule() {
       </div>
     );
 
-    console.log(postGame);
-
     return (
       <div
         key={matchupID}
@@ -553,7 +558,7 @@ export default function Schedule() {
               {/* 1 styling is for polls, 2 is for postgame players*/}
               <div
                 className={
-                  (preGame || liveGame) && !mnfEnd
+                  preGame || liveGame
                     ? `1 team1 flex justify-between items-center  w-[45vw] xl:w-[25vw] mb-5`
                     : `2 team1 flex justify-around items-center  w-[95vw] xl:w-[60vw] `
                 }
@@ -582,7 +587,7 @@ export default function Schedule() {
 
                   <div
                     className={
-                      postGame || mnfEnd
+                      postGame
                         ? `block text-[11px] md:text-[14px] italic`
                         : `hidden`
                     }
@@ -593,11 +598,11 @@ export default function Schedule() {
 
                 {/* TopScorers */}
 
-                {postGame || mnfEnd ? team1TopScorers : ""}
+                {postGame && team1TopScorers}
               </div>
               <div
                 className={
-                  (preGame || liveGame) && !mnfEnd
+                  preGame || liveGame
                     ? `1 team2 flex justify-between items-center  w-[45vw] xl:w-[25vw] `
                     : `2 team2 flex justify-around items-center  w-[95vw] xl:w-[60vw] `
                 }
@@ -626,7 +631,7 @@ export default function Schedule() {
 
                   <div
                     className={
-                      postGame || mnfEnd
+                      postGame
                         ? `block text-[11px] md:text-[14px] italic`
                         : `hidden`
                     }
@@ -635,7 +640,7 @@ export default function Schedule() {
                   </div>
                 </div>
                 {/* TopScorers team 2 */}
-                {postGame || mnfEnd ? team2TopScorers : ""}
+                {postGame && team2TopScorers}
               </div>
 
               {(mnfEnd || postGame) && counter <= nflState?.display_week ? (

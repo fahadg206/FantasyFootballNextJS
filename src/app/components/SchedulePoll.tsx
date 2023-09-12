@@ -188,7 +188,7 @@ const Options = ({
         querySnapshot.forEach((doc) => {
           const docData = doc.data();
           const matchups = docData.matchups || []; // Retrieve the matchups array
-          console.log(matchups);
+          // console.log(matchups);
           const matchup = matchups.find(
             (matchup) => matchup.matchup_id === matchup_id
           ); // Find the specific matchup
