@@ -87,7 +87,7 @@ export default async function getMatchupData(league_id: any, week: number) {
     try {
       const response = await axios.get<any>(
         `https://api.sleeper.app/v1/league/${REACT_APP_LEAGUE_ID}/matchups/${
-          week ? week : 1
+          week && week >= 1 ? week : 1
         }`
       );
 

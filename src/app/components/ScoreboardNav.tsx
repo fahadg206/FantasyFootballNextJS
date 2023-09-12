@@ -271,13 +271,19 @@ export default function ScoreboardNav({ setShowScore }) {
           matchupMapData.updatedScheduleData as ScheduleData
         );
         if (wednesdayNight) {
-          const previewMapData = await getMatchupMap(id, week + 1);
+          const previewMapData = await getMatchupMap(
+            REACT_APP_LEAGUE_ID,
+            week + 1
+          );
           updateDbStorage(
             matchupMapData.updatedScheduleData,
             previewMapData.updatedScheduleData
           );
         } else {
-          const recapMapData = await getMatchupMap(id, week - 1);
+          const recapMapData = await getMatchupMap(
+            REACT_APP_LEAGUE_ID,
+            week - 1
+          );
           updateDbStorage(
             recapMapData.updatedScheduleData,
             matchupMapData.updatedScheduleData
