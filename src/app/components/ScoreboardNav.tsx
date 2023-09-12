@@ -90,6 +90,7 @@ export default function ScoreboardNav({ setShowScore }) {
   const [scheduleDataFinal, setScheduleDataFinal] = useState<ScheduleData>({});
   const [shouldDisplay, setShouldDisplay] = useState(false);
   const [selectedMatchup, setSelectedMatchup] = useState(false);
+  const [wednesdayNight, setWednesdaynNight] = useState(false);
   const [week, setWeek] = useState<number>();
   const [mnfEnd, setMnfEnd] = useState(false);
   const [morningSlateEnd, setMorningSlateEnd] = useState(false);
@@ -107,17 +108,32 @@ export default function ScoreboardNav({ setShowScore }) {
   const REACT_APP_LEAGUE_ID: string | null =
     localStorage.getItem("selectedLeagueID");
 
-  const { isSundayAfternoon, isSundayEvening, isSundayNight, isMondayNight } =
-    useTimeChecks();
+  const {
+    isSundayAfternoon,
+    isSundayEvening,
+    isSundayNight,
+    isMondayNight,
+    isWednesdayMidnight,
+  } = useTimeChecks();
 
   useEffect(() => {
     setMnfEnd(isMondayNight);
     setSnfEnd(isSundayNight);
     setAfternoonSlateEnd(isSundayEvening);
     setMorningSlateEnd(isSundayAfternoon);
-  }, [isMondayNight, isSundayNight, isSundayEvening, isSundayAfternoon]);
+    setWednesdaynNight(isWednesdayMidnight);
+  }, [
+    isMondayNight,
+    isSundayNight,
+    isSundayEvening,
+    isSundayAfternoon,
+    isWednesdayMidnight,
+  ]);
 
-  function updateDbStorage(weeklyData: ScheduleData) {
+  function updateDbStorage(
+    weeklyData: ScheduleData,
+    previewData: ScheduleData
+  ) {
     if (REACT_APP_LEAGUE_ID) {
       const storageRef = ref(storage, `files/${REACT_APP_LEAGUE_ID}.txt`);
 
@@ -128,7 +144,7 @@ export default function ScoreboardNav({ setShowScore }) {
       );
 
       const previewMatchupData: ScheduleData = JSON.parse(
-        JSON.stringify(weeklyData)
+        JSON.stringify(previewData)
       );
 
       for (const matchupId in articleMatchupData) {
@@ -254,7 +270,19 @@ export default function ScoreboardNav({ setShowScore }) {
         setScheduleDataFinal(
           matchupMapData.updatedScheduleData as ScheduleData
         );
-        updateDbStorage(matchupMapData.updatedScheduleData);
+        if (wednesdayNight) {
+          const previewMapData = await getMatchupMap(id, week + 1);
+          updateDbStorage(
+            matchupMapData.updatedScheduleData,
+            previewMapData.updatedScheduleData
+          );
+        } else {
+          const recapMapData = await getMatchupMap(id, week - 1);
+          updateDbStorage(
+            recapMapData.updatedScheduleData,
+            matchupMapData.updatedScheduleData
+          );
+        }
       } catch (error) {
         console.error("Error fetching matchup data:", error);
       }

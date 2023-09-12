@@ -269,7 +269,7 @@ const Articles = () => {
       }
     };
 
-    const updateArticle1 = async (REACT_APP_LEAGUE_ID, articles) => {
+    const updateRecap = async (REACT_APP_LEAGUE_ID, articles) => {
       const currentDate = new Date();
       const weeklyInfoCollectionRef = collection(db, "Weekly Articles");
       const queryRef = query(
@@ -331,7 +331,7 @@ const Articles = () => {
       }
     };
 
-    const updateArticle2 = async (REACT_APP_LEAGUE_ID, articles) => {
+    const updateSavage = async (REACT_APP_LEAGUE_ID, articles) => {
       const currentDate = new Date();
       const weeklyInfoCollectionRef = collection(db, "Weekly Articles");
       const queryRef = query(
@@ -464,9 +464,16 @@ const Articles = () => {
 
       // Get components of the date
       const month = months[currentDate.getMonth()];
-      const day = getOrdinalSuffix(currentDate.getDate());
+      const day = currentDate.getDate();
+      const year = currentDate.getFullYear();
       const hours = currentDate.getHours();
       const minutes = currentDate.getMinutes();
+
+      // Determine AM or PM
+      const amOrPm = hours >= 12 ? "PM" : "AM";
+
+      // Convert hours to non-military format
+      const hours12 = hours % 12 || 12;
 
       // Format the time zone offset
       const timeZoneOffset = currentDate.getTimezoneOffset();
@@ -475,9 +482,9 @@ const Articles = () => {
       const timeZoneAbbreviation = timeZoneOffset >= 0 ? "EST" : "EDT"; // Eastern Time (ET)
 
       // Create the formatted string
-      const formattedDate = `${month}, ${day} ${hours}:${
+      const formattedDate = `${month} ${day}, ${year} ${hours12}:${
         minutes < 10 ? "0" : ""
-      }${minutes}${hours < 12 ? "am" : "pm"} ${timeZoneAbbreviation}`;
+      }${minutes} ${amOrPm} ${timeZoneAbbreviation}`;
 
       return formattedDate;
     };
@@ -535,24 +542,44 @@ const Articles = () => {
           //   setArticles4(docData.pulse_check);
           // }
 
-          if (!docData.preview) {
+          // if (!docData.preview) {
+          //   const data = await fetchDataFromApi(
+          //     "https://www.fantasypulseff.com/api/fetchPreview"
+          //   );
+          //   setPreviewArticle(data);
+          //   updatePreview(REACT_APP_LEAGUE_ID, data);
+          // } else {
+          //   setPreviewArticle(docData.preview);
+          // }
+
+          // if (!docData.playoff_predictions) {
+          //   const data = await fetchDataFromApi(
+          //     "https://www.fantasypulseff.com/api/fetchPlayoffPredictions"
+          //   );
+          //   setPlayoffsArticle(data);
+          //   updatePlayoffPredictions(REACT_APP_LEAGUE_ID, data);
+          // } else {
+          //   setPlayoffsArticle(docData.playoff_predictions);
+          // }
+
+          if (!docData.articles) {
             const data = await fetchDataFromApi(
-              "https://www.fantasypulseff.com/api/fetchPreview"
+              "https://www.fantasypulseff.com/api/fetchData"
             );
-            setPreviewArticle(data);
-            updatePreview(REACT_APP_LEAGUE_ID, data);
+            setArticles(data);
+            updateRecap(REACT_APP_LEAGUE_ID, data);
           } else {
-            setPreviewArticle(docData.preview);
+            setArticles(docData.articles);
           }
 
-          if (!docData.playoff_predictions) {
+          if (!docData.segment2) {
             const data = await fetchDataFromApi(
-              "https://www.fantasypulseff.com/api/fetchPlayoffPredictions"
+              "https://www.fantasypulseff.com/api/fetchSegment2"
             );
-            setPlayoffsArticle(data);
-            updatePlayoffPredictions(REACT_APP_LEAGUE_ID, data);
+            setArticles2(data);
+            updateSavage(REACT_APP_LEAGUE_ID, data);
           } else {
-            setPlayoffsArticle(docData.playoff_predictions);
+            setArticles2(docData.segment2);
           }
 
           const results = await Promise.all(promises);
@@ -629,19 +656,19 @@ const Articles = () => {
           // }
 
           const [data1, data2] = await Promise.all([
-            fetchDataFromApi("https://www.fantasypulseff.com/api/fetchPreview"),
+            fetchDataFromApi("https://www.fantasypulseff.com/api/fetchData"),
             fetchDataFromApi(
-              "https://www.fantasypulseff.com/api/fetchPlayoffPredictions"
+              "https://www.fantasypulseff.com/api/fetchSegment2"
             ),
           ]);
 
           if (data1) {
-            setPreviewArticle(data1);
-            updatePreview(REACT_APP_LEAGUE_ID, data1);
+            setArticles(data1);
+            updateRecap(REACT_APP_LEAGUE_ID, data1);
           }
           if (data2) {
-            setPlayoffsArticle(data2);
-            updatePlayoffPredictions(REACT_APP_LEAGUE_ID, data2);
+            setArticles2(data2);
+            updateSavage(REACT_APP_LEAGUE_ID, data2);
           }
         }
       } catch (error) {
@@ -756,12 +783,12 @@ const Articles = () => {
             className={`sticky flex items-center justify-around top-0 z-50 `}
           >
             <ArticleDropdown
-              // title1={articles?.title || ""}
-              // title2={articles2?.title || ""}
+              title1={articles?.title || ""}
+              title2={articles2?.title || ""}
               // title3={articles3?.title || ""}
               // title4={articles4?.title || ""}
-              title1={previewArticle?.title || ""}
-              title2={playoffsArticle?.title || ""}
+              // title1={previewArticle?.title || ""}
+              // title2={playoffsArticle?.title || ""}
             />
           </div>{" "}
           <div>
@@ -854,7 +881,7 @@ const Articles = () => {
               />
             </div>
           </Element>
-          {previewArticle && (
+          {articles && (
             <SmoothLink
               to={articles.title || ""}
               activeClass="active"

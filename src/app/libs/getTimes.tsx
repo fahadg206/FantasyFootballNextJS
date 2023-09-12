@@ -6,6 +6,7 @@ export default function useTimeChecks() {
   const [isSundayEvening, setIsSundayEvening] = useState(false);
   const [isSundayNight, setIsSundayNight] = useState(false);
   const [isMondayNight, setIsMondayNight] = useState(false);
+  const [isWednesdayMidnight, setIsWednesdayMidnight] = useState(false);
 
   const checkTimes = () => {
     const pacificTime = new Date().toLocaleString("en-US", {
@@ -85,6 +86,12 @@ export default function useTimeChecks() {
     );
     tuesdayMidNight.setHours(0, 0, 0, 0);
 
+    const wednesdayMidNight = new Date(currentTime);
+    wednesdayMidNight.setDate(
+      currentTime.getDate() + ((3 + 7 - currentTime.getDay()) % 7)
+    );
+    wednesdayMidNight.setHours(0, 0, 0, 0);
+
     setIsSundayAfternoon(currentTime >= sundayAfternoon);
     setIsSundayEvening(currentTime >= sundayEvening);
     setIsSundayNight(
@@ -109,6 +116,8 @@ export default function useTimeChecks() {
       setIsSundayNight(false);
       setIsMondayNight(false);
     }
+
+    setIsWednesdayMidnight(currentTime < wednesdayMidNight);
   };
 
   useEffect(() => {
@@ -125,5 +134,6 @@ export default function useTimeChecks() {
     isSundayEvening,
     isSundayNight,
     isMondayNight,
+    isWednesdayMidnight,
   };
 }

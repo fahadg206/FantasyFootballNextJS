@@ -201,6 +201,8 @@ const CardCarousel = ({ leagueID }) => {
       async function fetchData() {
         //console.log(REACT_APP_LEAGUE_ID);
         try {
+          // Waiting for firebase storage to update
+          await new Promise((resolve) => setTimeout(resolve, 5000));
           // Retrieve data from the database based on league_id
           const querySnapshot = await getDocs(
             query(
