@@ -582,7 +582,7 @@ export default function Schedule() {
 
                   <div
                     className={
-                      postGame
+                      postGame || mnfEnd
                         ? `block text-[11px] md:text-[14px] italic`
                         : `hidden`
                     }
@@ -593,7 +593,7 @@ export default function Schedule() {
 
                 {/* TopScorers */}
 
-                {postGame && team1TopScorers}
+                {postGame || mnfEnd ? team1TopScorers : ""}
               </div>
               <div
                 className={
@@ -626,7 +626,7 @@ export default function Schedule() {
 
                   <div
                     className={
-                      postGame
+                      postGame || mnfEnd
                         ? `block text-[11px] md:text-[14px] italic`
                         : `hidden`
                     }
@@ -635,7 +635,7 @@ export default function Schedule() {
                   </div>
                 </div>
                 {/* TopScorers team 2 */}
-                {postGame && team2TopScorers}
+                {postGame || mnfEnd ? team2TopScorers : ""}
               </div>
 
               {(mnfEnd || postGame) && counter <= nflState?.display_week ? (
