@@ -144,10 +144,13 @@ export default function Schedule() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch("http://localhost:3000/api/fetchPlayers", {
-          method: "POST",
-          body: REACT_APP_LEAGUE_ID,
-        });
+        const response = await fetch(
+          "https://www.fantasypulseff.com/api/fetchPlayers",
+          {
+            method: "POST",
+            body: REACT_APP_LEAGUE_ID,
+          }
+        );
         const playersData = await response.json();
         console.log("Got it");
         setPlayersData(playersData);
