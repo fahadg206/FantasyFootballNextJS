@@ -553,7 +553,7 @@ export default function Schedule() {
               {/* 1 styling is for polls, 2 is for postgame players*/}
               <div
                 className={
-                  preGame || liveGame
+                  (preGame || liveGame) && !mnfEnd
                     ? `1 team1 flex justify-between items-center  w-[45vw] xl:w-[25vw] mb-5`
                     : `2 team1 flex justify-around items-center  w-[95vw] xl:w-[60vw] `
                 }
@@ -597,7 +597,7 @@ export default function Schedule() {
               </div>
               <div
                 className={
-                  preGame || liveGame
+                  (preGame || liveGame) && !mnfEnd
                     ? `1 team2 flex justify-between items-center  w-[45vw] xl:w-[25vw] `
                     : `2 team2 flex justify-around items-center  w-[95vw] xl:w-[60vw] `
                 }
