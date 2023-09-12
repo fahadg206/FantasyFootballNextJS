@@ -121,7 +121,7 @@ export default function useTimeChecks() {
   };
 
   useEffect(() => {
-    const interval = setInterval(checkTimes, 1000 * 60); // Check every minute
+    const interval = setInterval(checkTimes, 1000); // Check every second for precision
     checkTimes(); // Check immediately when the component mounts
 
     return () => {
