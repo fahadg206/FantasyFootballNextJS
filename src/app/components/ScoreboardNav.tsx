@@ -475,7 +475,7 @@ export default function ScoreboardNav({ setShowScore }) {
           <div className="border-[1px] border-[#af1222] border-opacity-10 p-[30px] dark:bg-[#0a0a0a] bg-[#e0dfdf] rounded w-[85vw] flex flex-col">
             <div
               className={
-                team2.team_points > team1.team_points && postGame
+                team2.team_points > team1.team_points && (postGame || mnfEnd)
                   ? `team1 flex items-center justify-between mb-2 text-[#adaeaf]`
                   : `team1 flex items-center justify-between mb-2 font-bold`
               }
@@ -507,7 +507,7 @@ export default function ScoreboardNav({ setShowScore }) {
             </div>
             <div
               className={
-                team1.team_points > team2.team_points && postGame
+                team1.team_points > team2.team_points && (postGame || mnfEnd)
                   ? `team2 flex items-center justify-between text-[#adaeaf]`
                   : `team2 flex items-center justify-between font-bold`
               }

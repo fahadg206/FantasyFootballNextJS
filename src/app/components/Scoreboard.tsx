@@ -519,7 +519,7 @@ export default function Scoreboard() {
           <div className="border-r dark:border-[#1a1a1a] border-[#af1222] border-opacity-10 p-2 rounded-md flex flex-col items-start justify-center h-[13vh] w-[10vw]">
             <div
               className={
-                team2.team_points > team1.team_points
+                team2.team_points > team1.team_points && (postGame || mnfEnd)
                   ? `team1 flex justify-between items-center  w-[9vw] mb-1 text-[#adaeaf]`
                   : `team1 flex justify-between items-center  w-[9vw] mb-1 `
               }
@@ -555,7 +555,7 @@ export default function Scoreboard() {
             </div>
             <div
               className={
-                team1.team_points > team2.team_points
+                team1.team_points > team2.team_points && (postGame || mnfEnd)
                   ? `team2 flex justify-between items-center w-[9vw] text-[#adaeaf]`
                   : `team2 flex justify-between items-center w-[9vw] `
               }

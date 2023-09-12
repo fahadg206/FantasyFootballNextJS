@@ -71,7 +71,7 @@ export default async function handler(req, res) {
       openAIApiKey: process.env.OPENAI_API_KEY,
     });
 
-    const question = `{leagueData} give me 3 sports style headlines recapping this weeks matchups, include their star players, who won by comparing their team points, and their record. include a bit of humor and be creative. pick any 3 matchups to cover and make title's funny and creative. I want the information to be in this format exactly headline: 
+    const question = `{leagueData} give me 3 sports style headlines recapping this weeks matchups, include their star players who scored the most points for them, who won by comparing their team points, and their win-loss record. include a bit of humor and be creative. pick any 3 matchups to cover and make title's creative and exciting. I want the information to be in this format exactly headline: 
   "id": "",
   "category": "",
   "title": "",
