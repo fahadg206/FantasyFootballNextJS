@@ -144,13 +144,10 @@ export default function Schedule() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch(
-          "https://www.fantasypulseff.com/api/fetchPlayers",
-          {
-            method: "POST",
-            body: REACT_APP_LEAGUE_ID,
-          }
-        );
+        const response = await fetch("http://localhost:3000/api/fetchPlayers", {
+          method: "POST",
+          body: REACT_APP_LEAGUE_ID,
+        });
         const playersData = await response.json();
         console.log("Got it");
         setPlayersData(playersData);
@@ -458,7 +455,7 @@ export default function Schedule() {
 
                 // Calculate adjusted font size and image size
 
-                let imageSize = scaleFactor * 100;
+                let imageSize = scaleFactor * 80;
                 if (player.pos === "DEF") {
                   imageSize = scaleFactor * 55;
                 }
@@ -466,7 +463,7 @@ export default function Schedule() {
                 return (
                   <li
                     key={index}
-                    className="flex flex-col  items-center justify-center space-x-2 w-[160px] h-[80px] xl:w-[100px] xl:h-[100px]  "
+                    className="flex flex-col  items-center justify-center space-x-2 w-[160px] h-[80px] xl:w-[100px] xl:h-[80px]  "
                   >
                     <Image
                       src={player.avatar}
@@ -509,7 +506,7 @@ export default function Schedule() {
 
                 // Calculate adjusted font size and image size
 
-                let imageSize = scaleFactor * 100;
+                let imageSize = scaleFactor * 80;
                 if (player.pos === "DEF") {
                   imageSize = scaleFactor * 55;
                 }
@@ -517,7 +514,7 @@ export default function Schedule() {
                 return (
                   <li
                     key={index}
-                    className="flex flex-col items-center justify-center space-x-2 w-[160px] h-[80px] xl:w-[100px] xl:h-[100px] "
+                    className="flex flex-col items-center justify-center space-x-2 w-[160px] h-[80px] xl:w-[100px] xl:h-[95px] "
                   >
                     <Image
                       src={player.avatar}
@@ -567,13 +564,13 @@ export default function Schedule() {
                   <div className="flex">
                     {" "}
                     <Image
-                      className="rounded-full mr-2 md:w-[40px] md:h-[40px] "
+                      className="rounded-full mr-2 lg:w-[40px] lg:h-[40px] "
                       src={team1.avatar}
                       alt="avatar"
                       width={30}
                       height={30}
                     />
-                    <div className="text-[12px] md:text-[20px] font-bold flex gap-2 items-center">
+                    <div className="text-[12px] lg:text-[20px] font-bold flex gap-2 items-center">
                       {team1.name.length >= 9
                         ? (team1.name.match(/[A-Z]/g) || []).length > 3
                           ? team1.name.slice(0, 10).toLowerCase()
@@ -611,13 +608,13 @@ export default function Schedule() {
                   <div className="flex">
                     {" "}
                     <Image
-                      className="rounded-full mr-2 md:w-[40px] md:h-[40px]"
+                      className="rounded-full mr-2 lg:w-[40px] lg:h-[40px]"
                       src={team2.avatar}
                       alt="avatar"
                       width={30}
                       height={30}
                     />
-                    <div className="text-[12px] md:text-[20px] font-bold flex gap-2 items-center">
+                    <div className="text-[12px] lg:text-[20px] font-bold flex gap-2 items-center">
                       {team2.name.length >= 9
                         ? (team2.name.match(/[A-Z]/g) || []).length > 3
                           ? team2.name.slice(0, 10).toLowerCase()

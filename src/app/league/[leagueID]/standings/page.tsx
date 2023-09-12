@@ -134,10 +134,9 @@ const Page = () => {
               : "0";
             managerInfo[roster.owner_id].wins = roster.settings.wins;
             managerInfo[roster.owner_id].losses = roster.settings.losses;
-            // if (roster.metadata.streak) {
-            //   managerInfo[roster.owner_id].streak = roster.metadata.streak;
-            // }
-            managerInfo[roster.owner_id].streak = "-";
+            if (roster.metadata.streak) {
+              managerInfo[roster.owner_id].streak = roster.metadata.streak;
+            }
           }
         }
 
