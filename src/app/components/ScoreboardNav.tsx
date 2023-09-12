@@ -270,7 +270,21 @@ export default function ScoreboardNav({ setShowScore }) {
         setScheduleDataFinal(
           matchupMapData.updatedScheduleData as ScheduleData
         );
-        if (wednesdayNight) {
+
+        const currentTime = new Date(); // Assuming this is in the "America/Los_Angeles" time zone
+
+        const wednesdayMidNight = new Date(currentTime);
+        wednesdayMidNight.setDate(
+          currentTime.getDate() + ((3 + 7 - currentTime.getDay()) % 7)
+        );
+        wednesdayMidNight.setHours(0, 0, 0, 0);
+
+        // Check if it's Wednesday midnight
+        const isWednesdayMidnight =
+          currentTime.getDay() === 3 &&
+          currentTime.getHours() === 0 &&
+          currentTime.getMinutes() === 0;
+        if (currentTime < wednesdayMidNight) {
           const previewMapData = await getMatchupMap(
             REACT_APP_LEAGUE_ID,
             week + 1

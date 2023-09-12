@@ -169,10 +169,11 @@ export default function Scoreboard() {
         JSON.stringify(weeklyData)
       );
 
+      console.log("recap", articleMatchupData);
       const previewMatchupData: ScheduleData = JSON.parse(
         JSON.stringify(previewData)
       );
-
+      console.log("preview", previewMatchupData);
       for (const matchupId in articleMatchupData) {
         const matchup = articleMatchupData[matchupId];
 
@@ -303,14 +304,29 @@ export default function Scoreboard() {
         //console.log("being set", matchupMapData.matchupMap);
         setScheduleDataFinal(matchupMapData.updatedScheduleData);
 
-        if (wednesdayNight) {
-          console.log("here");
+        const currentTime = new Date(); // Assuming this is in the "America/Los_Angeles" time zone
+
+        const wednesdayMidNight = new Date(currentTime);
+        wednesdayMidNight.setDate(
+          currentTime.getDate() + ((3 + 7 - currentTime.getDay()) % 7)
+        );
+        wednesdayMidNight.setHours(0, 0, 0, 0);
+
+        // Check if it's Wednesday midnight
+        const isWednesdayMidnight =
+          currentTime.getDay() === 3 &&
+          currentTime.getHours() === 0 &&
+          currentTime.getMinutes() === 0;
+
+        if (currentTime < wednesdayMidNight) {
+          console.log("in if");
           const previewMapData = await getMatchupMap(id, week + 1);
           updateDbStorage(
             matchupMapData.updatedScheduleData,
             previewMapData.updatedScheduleData
           );
         } else {
+          console.log("in else");
           const recapMapData = await getMatchupMap(id, week - 1);
           updateDbStorage(
             recapMapData.updatedScheduleData,
