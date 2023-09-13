@@ -112,10 +112,19 @@ const ScrollingTestimonials = () => {
   const [managerMap, setManagerMap] = useState<ScheduleData>({});
 
   const getLeagueTransactions = async () => {
+    const state = await axios.get(`https://api.sleeper.app/v1/state/nfl`);
+
+    const nflState = state.data;
+    let week = 1;
+    if (nflState.season_type === "regular") {
+      week = nflState.display_week;
+    } else if (nflState.season_type === "post") {
+      week = 18;
+    }
     const response = await axios.get(
       `https://api.sleeper.app/v1/league/${localStorage.getItem(
         "selectedLeagueID"
-      )}/transactions/1`
+      )}/transactions/${week}`
     );
     setLeagueTransactions(response.data);
   };
@@ -200,11 +209,11 @@ const ScrollingTestimonials = () => {
           }
         );
         const playersData = await response.json();
-        console.log("Got it");
+        //console.log("Got it");
         setPlayersData(playersData);
 
         // Process and use the data as needed
-        console.log("WHO, ", playersData["4017"]);
+        //console.log("WHO, ", playersData["4017"]);
         // Additional code that uses playersData goes here
       } catch (error) {
         console.error("Error while fetching players data:", error);

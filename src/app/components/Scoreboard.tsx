@@ -306,27 +306,28 @@ export default function Scoreboard() {
 
         const currentTime = new Date(); // Assuming this is in the "America/Los_Angeles" time zone
 
-        const wednesdayMidNight = new Date(currentTime);
-        wednesdayMidNight.setDate(
+        // Calculate the next Wednesday midnight
+        const nextWednesdayMidnight = new Date(currentTime);
+        nextWednesdayMidnight.setDate(
           currentTime.getDate() + ((3 + 7 - currentTime.getDay()) % 7)
         );
-        wednesdayMidNight.setHours(0, 0, 0, 0);
+        nextWednesdayMidnight.setHours(0, 0, 0, 0);
 
-        // Check if it's Wednesday midnight
-        const isWednesdayMidnight =
-          currentTime.getDay() === 3 &&
-          currentTime.getHours() === 0 &&
-          currentTime.getMinutes() === 0;
+        // Calculate the current Wednesday midnight
+        const currentWednesdayMidnight = new Date(nextWednesdayMidnight);
+        currentWednesdayMidnight.setDate(nextWednesdayMidnight.getDate() - 7);
 
-        if (currentTime < wednesdayMidNight) {
-          console.log("in if");
+        // Check if it's before Wednesday
+        if (currentTime < currentWednesdayMidnight) {
+          console.log("before Wednesday");
+
           const previewMapData = await getMatchupMap(id, week + 1);
           updateDbStorage(
             matchupMapData.updatedScheduleData,
             previewMapData.updatedScheduleData
           );
         } else {
-          console.log("in else");
+          console.log("after Wednesday");
           const recapMapData = await getMatchupMap(id, week - 1);
           updateDbStorage(
             recapMapData.updatedScheduleData,

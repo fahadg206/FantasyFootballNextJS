@@ -582,6 +582,16 @@ const Articles = () => {
             setArticles2(docData.segment2);
           }
 
+          if (!docData.preview) {
+            const data = await fetchDataFromApi(
+              "https://www.fantasypulseff.com/api/fetchPreview"
+            );
+            setPreviewArticle(data);
+            updatePreview(REACT_APP_LEAGUE_ID, data);
+          } else {
+            setPreviewArticle(docData.preview);
+          }
+
           const results = await Promise.all(promises);
 
           results.forEach((data, index) => {
@@ -655,11 +665,12 @@ const Articles = () => {
           //   updateArticle4(REACT_APP_LEAGUE_ID, data4);
           // }
 
-          const [data1, data2] = await Promise.all([
+          const [data1, data2, data3] = await Promise.all([
             fetchDataFromApi("https://www.fantasypulseff.com/api/fetchData"),
             fetchDataFromApi(
               "https://www.fantasypulseff.com/api/fetchSegment2"
             ),
+            fetchDataFromApi("https://www.fantasypulseff.com/api/fetchPreview"),
           ]);
 
           if (data1) {
@@ -669,6 +680,10 @@ const Articles = () => {
           if (data2) {
             setArticles2(data2);
             updateSavage(REACT_APP_LEAGUE_ID, data2);
+          }
+          if (data3) {
+            setPreviewArticle(data3);
+            updatePreview(REACT_APP_LEAGUE_ID, data3);
           }
         }
       } catch (error) {
@@ -785,6 +800,7 @@ const Articles = () => {
             <ArticleDropdown
               title1={articles?.title || ""}
               title2={articles2?.title || ""}
+              title3={previewArticle?.title || ""}
               // title3={articles3?.title || ""}
               // title4={articles4?.title || ""}
               // title1={previewArticle?.title || ""}
