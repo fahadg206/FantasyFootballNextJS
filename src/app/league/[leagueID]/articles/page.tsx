@@ -798,9 +798,9 @@ const Articles = () => {
             className={`sticky flex items-center justify-around top-0 z-50 `}
           >
             <ArticleDropdown
-              title1={articles?.title || ""}
+              title1={previewArticle?.title || ""}
               title2={articles2?.title || ""}
-              title3={previewArticle?.title || ""}
+              title3={articles?.title || ""}
               // title3={articles3?.title || ""}
               // title4={articles4?.title || ""}
               // title1={previewArticle?.title || ""}
@@ -810,20 +810,17 @@ const Articles = () => {
           <div>
             <ShowAuthors thisWeeksAuthors={thisWeeksAuthors} />
           </div>
-          <Element name={articles?.title || ""}>
-            <div className={articles?.title ? "block" : "hidden"}>
+          <Element name={previewArticle?.title}>
+            <div className={previewArticle?.title ? "block" : "hidden"}>
               <ArticleTemplate
-                title={
-                  articles?.title ||
-                  "Our editors are hard at work! Come back soon to see your league's articles"
-                }
-                image={weekly_recap}
+                title={previewArticle?.title || ""}
+                image={weekly_preview}
                 author={"Boogie The Writer"}
                 authorImg={boogie}
                 jobtitle="Fantasy Pulse Senior Staff Writer"
                 date={date || ""}
-                article={articles}
                 name="1"
+                article={previewArticle}
               />
             </div>
           </Element>
@@ -837,6 +834,23 @@ const Articles = () => {
                 jobtitle="Independent Journalist"
                 date={date || ""}
                 article={articles2}
+                name="1"
+              />
+            </div>
+          </Element>
+          <Element name={articles?.title || ""}>
+            <div className={articles?.title ? "block" : "hidden"}>
+              <ArticleTemplate
+                title={
+                  articles?.title ||
+                  "Our editors are hard at work! Come back soon to see your league's articles"
+                }
+                image={weekly_recap}
+                author={"Boogie The Writer"}
+                authorImg={boogie}
+                jobtitle="Fantasy Pulse Senior Staff Writer"
+                date={date || ""}
+                article={articles}
                 name="1"
               />
             </div>
@@ -866,20 +880,6 @@ const Articles = () => {
                 date={date || ""}
                 name="1"
                 article={articles4}
-              />
-            </div>
-          </Element>
-          <Element name={previewArticle?.title}>
-            <div className={previewArticle?.title ? "block" : "hidden"}>
-              <ArticleTemplate
-                title={previewArticle?.title || ""}
-                image={weekly_preview}
-                author={"Boogie The Writer"}
-                authorImg={boogie}
-                jobtitle="Fantasy Pulse Senior Staff Writer"
-                date={date || ""}
-                name="1"
-                article={previewArticle}
               />
             </div>
           </Element>

@@ -14,7 +14,7 @@ const Footer = () => {
       <div className="flex flex-col justify-between h-[38vh] sm:h-full items-center border-t-[1px] border-opacity-20 border-[#af1222] mt-10  rounded-xl">
         <div className="flex flex-wrap h-5 items-center justify-center space-x-4 text-[15px] mt-5">
           <Link href={`/league/${localStorage.getItem("selectedLeagueID")}`}>
-            <div className="hover:bg-[#AF1222] hover:transition  hover:ease-in-out hover:rounded cursor-pointer mb-3">
+            <div className="hover:bg-[#AF1222] hover:transition  hover:ease-in-out hover:rounded cursor-pointer p-1">
               Home
             </div>
           </Link>
@@ -24,7 +24,7 @@ const Footer = () => {
               "selectedLeagueID"
             )}/articles`}
           >
-            <div className="hover:bg-[#AF1222] hover:transition  hover:ease-in-out hover:rounded cursor-pointer mb-3">
+            <div className="hover:bg-[#AF1222] hover:transition  hover:ease-in-out hover:rounded cursor-pointer p-1">
               Articles
             </div>
           </Link>
@@ -32,7 +32,7 @@ const Footer = () => {
           <Link
             href={`/league/${localStorage.getItem("selectedLeagueID")}/rivalry`}
           >
-            <div className="hover:bg-[#AF1222] hover:transition  hover:ease-in-out hover:rounded cursor-pointer mb-3 ">
+            <div className="hover:bg-[#AF1222] hover:transition  hover:ease-in-out hover:rounded cursor-pointer p-1">
               Rivalry
             </div>
           </Link>
@@ -42,7 +42,7 @@ const Footer = () => {
               "selectedLeagueID"
             )}/schedule`}
           >
-            <div className="hover:bg-[#AF1222] hover:transition  hover:ease-in-out hover:rounded cursor-pointer mb-3">
+            <div className="hover:bg-[#AF1222] hover:transition  hover:ease-in-out hover:rounded cursor-pointer p-1 ">
               Schedule
             </div>
           </Link>
@@ -52,7 +52,7 @@ const Footer = () => {
               "selectedLeagueID"
             )}/standings`}
           >
-            <div className="hover:bg-[#AF1222] hover:transition  hover:ease-in-out hover:rounded cursor-pointer">
+            <div className="hover:bg-[#AF1222] hover:transition  hover:ease-in-out hover:rounded cursor-pointer p-1 ">
               Standings
             </div>
           </Link>
@@ -62,7 +62,7 @@ const Footer = () => {
               "selectedLeagueID"
             )}/leaguemanagers`}
           >
-            <div className="hover:bg-[#AF1222] hover:transition  hover:ease-in-out hover:rounded cursor-pointer">
+            <div className="hover:bg-[#AF1222] hover:transition  hover:ease-in-out hover:rounded cursor-pointer p-1 ">
               League Managers
             </div>
           </Link>
@@ -70,13 +70,13 @@ const Footer = () => {
           <Link
             href={`/league/${localStorage.getItem("selectedLeagueID")}/about`}
           >
-            <div className="hover:bg-[#AF1222] hover:transition  hover:ease-in-out hover:rounded cursor-pointer">
+            <div className="hover:bg-[#AF1222] hover:transition  hover:ease-in-out hover:rounded cursor-pointer p-1 ">
               About
             </div>
           </Link>
           <Divider orientation="vertical" />
           <Link href={`https://www.sleeper.com`} target="_blank">
-            <div className="hover:bg-[#AF1222] hover:transition  hover:ease-in-out hover:rounded cursor-pointer my-2">
+            <div className="hover:bg-[#AF1222] hover:transition  hover:ease-in-out hover:rounded cursor-pointer p-1 ">
               Sleeper
             </div>
           </Link>
@@ -84,7 +84,7 @@ const Footer = () => {
           <Link
             href={`/league/${localStorage.getItem("selectedLeagueID")}/report`}
           >
-            <div className="hover:bg-[#AF1222] hover:transition  hover:ease-in-out hover:rounded cursor-pointer p-1">
+            <div className="hover:bg-[#AF1222] hover:transition  hover:ease-in-out hover:rounded cursor-pointer p-1 ">
               Report An Issue
             </div>
           </Link>

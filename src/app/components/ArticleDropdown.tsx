@@ -68,7 +68,7 @@ const StaggeredDropDown = ({
           >
             <Option
               setOpen={setOpen}
-              Icon={FaRankingStar}
+              Icon={GiTeamIdea}
               text={title1.substring(0, 20) + "..."}
             />
           </SmoothLink>
@@ -100,7 +100,7 @@ const StaggeredDropDown = ({
           >
             <Option
               setOpen={setOpen}
-              Icon={GiTeamIdea}
+              Icon={FaRankingStar}
               text={title3?.substring(0, 20) + "..."}
             />
           </SmoothLink>
