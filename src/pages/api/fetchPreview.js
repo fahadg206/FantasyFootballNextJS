@@ -71,11 +71,11 @@ export default async function handler(req, res) {
       openAIApiKey: process.env.OPENAI_API_KEY,
     });
 
-    const question = `{leagueData} Your name is Boogie the writer and you've been getting a lot of heat and criticism for your predictions last week, you're writing this article to silence your critics. Give me an exciting  sports style breakdown article previewing each matchup in this fantasy football league, include their star players based off their projected points, key positional matchups based off of their projected points and your predictions for how it'll turn out, double down on how certain you are this will happen this time and that league members should trust your years of experience and research in the fantasy football world. Make each matchup breakdown creative and exciting. Make sure to include ALL teams and ALL matchups for that week.  include a bit of humor as well. Keep the content within 450 words maximum. The format of the JSON response should strictly adhere to RFC8259 compliance, without any deviations or errors. The JSON structure should match this template:
+    const question = `{leagueData} Your name is Boogie the writer and you've been getting a lot of heat for your predictions last week. Give me an article previewing each matchup in this fantasy football league, include their star players based off their projected points, and your predictions for how it'll turn out, double down on how certain you are this time and that league members should trust your years of experience/research. Make each matchup breakdown creative, funny and exciting. The format of the JSON response should strictly adhere to RFC8259 compliance, without any deviations or errors. The JSON structure should match this template:
   "title": "",
   "paragraph1": "",
   "paragraph2": "",
-  USE however many MORE paragraphs necessary to complete the response and include ALL teams. please Make sure ALL THE matchups IN THE league ARE LISTED in your response. Please ensure that the generated JSON response meets the specified criteria without any syntax issues or inconsistencies.`;
+  USE however many MORE paragraphs necessary to complete the response. Make sure ALL THE matchups IN THE league ARE LISTED. Please ensure that the generated JSON response meets the specified criteria without any syntax issues or inconsistencies.`;
 
     const prompt = PromptTemplate.fromTemplate(question);
     const chainA = new LLMChain({ llm: model, prompt });
