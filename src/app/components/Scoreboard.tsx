@@ -492,7 +492,7 @@ export default function Scoreboard() {
           O/U: {Math.round(team1Proj + team2Proj)}
         </p>
         <p className="w-[9vw] text-center text-[9px] text-[grey]">
-          {team1Proj === team2Proj
+          {Math.round(team1Proj) === Math.round(team2Proj)
             ? "EVEN"
             : team1Proj > team2Proj
             ? team1?.name + " -" + Math.round(team1Proj - team2Proj)
@@ -519,7 +519,7 @@ export default function Scoreboard() {
         className={
           typeof localStorage !== "undefined" &&
           localStorage.getItem("selectedLeagueID")
-            ? `hidden xl:flex flex-wrap  justify-center mb-2 text-[9px] font-bold xl:h-[13vh] xl:w-[10vw] hover:bg-[#c4bfbf] dark:hover:bg-[#1a1a1c] cursor-pointer hover:scale-105 hover:duration-200`
+            ? `hidden xl:flex xl:flex-wrap  justify-center mb-2 text-[9px] font-bold xl:h-[13vh] xl:w-[10vw] hover:bg-[#c4bfbf] dark:hover:bg-[#1a1a1c] cursor-pointer hover:scale-105 hover:duration-200`
             : `hidden`
         }
       >
