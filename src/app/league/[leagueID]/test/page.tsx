@@ -1,11 +1,7 @@
-"use client";
-import React, { useEffect, useState } from "react";
-import ShowAuthors from "../../../components/ShowAuthors";
+import React from "react";
 
-export default function OpenAiTest() {
-  return (
-    <div>
-      <ShowAuthors />
-    </div>
-  );
-}
+const Test = () => {
+  return <div>test</div>;
+};
+
+export default Test;

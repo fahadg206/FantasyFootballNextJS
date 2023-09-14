@@ -57,9 +57,6 @@ export default function useTimeChecks() {
     );
     sundayNight.setHours(21, 30, 0, 0);
 
-    console.log(previousSundayNight);
-    console.log(sundayNight);
-
     // Calculate the previous Monday night
     const previousMondayNight = new Date(currentTime);
     previousMondayNight.setDate(

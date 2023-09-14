@@ -5,6 +5,7 @@ import useMeasure from "react-use-measure";
 import Logo from "../images/Transparent.png";
 import Image from "next/image";
 import { v4 as uuidv4 } from "uuid";
+
 import {
   collection,
   query,
@@ -40,12 +41,12 @@ import { PromptTemplate } from "langchain/prompts";
 import { LLMChain } from "langchain/chains";
 
 interface HeadlineItem {
-  id: number;
-  url: string;
-  category: string;
-  title: string;
-  description: string | number;
-  scorerStyle: boolean;
+  id?: number;
+  url?: string;
+  category?: string;
+  title?: string;
+  description?: string | number;
+  scorerStyle?: boolean;
 }
 
 interface ScheduleData {
@@ -97,7 +98,7 @@ const CardCarousel = ({ leagueID }) => {
   const defaultHeadlines = [
     {
       id: 10,
-      url: "/imgs/computer/mouse.png",
+
       category: "News",
       title: "Our news department is hard at work!!",
       description:
@@ -105,7 +106,7 @@ const CardCarousel = ({ leagueID }) => {
     },
     {
       id: 21,
-      url: "/imgs/computer/keyboard.png",
+
       category: "News",
       title:
         "Article's are being worked on too, check out that page to see if they're done",
@@ -113,11 +114,34 @@ const CardCarousel = ({ leagueID }) => {
     },
     {
       id: 34,
-      url: "/imgs/computer/monitor.png",
+
       category: "Question of the Week",
       title:
         "Have you voted on this weeks question? Scroll down and let us know!",
       description: "We really value your feedback!",
+    },
+  ];
+  const errorHeadlines = [
+    {
+      id: 41,
+      category: "News",
+      title: "Headlines are not supported for your league at the moment. ",
+      description:
+        "Check our Twitter/X for updates or report an issue at the bottom of the page. Thank you for your patience!",
+    },
+    {
+      id: 51,
+      category: "News",
+      title: "Headlines are not supported for your league at the moment. ",
+      description:
+        "Check our Twitter/X for updates or report an issue at the bottom of the page. Thank you for your patience!",
+    },
+    {
+      id: 64,
+      category: "Question of the Week",
+      title: "Headlines are not supported for your league at the moment. ",
+      description:
+        "Check our Twitter/X for updates or report an issue at the bottom of the page. Thank you for your patience!",
     },
   ];
   const [headlines, setHeadlines] = useState(defaultHeadlines);
@@ -226,8 +250,12 @@ const CardCarousel = ({ leagueID }) => {
                   );
 
                   // If data is valid, update headlines state
-                  setHeadlines(data);
-                  updateHeadlines(REACT_APP_LEAGUE_ID, data);
+                  if (data) {
+                    setHeadlines(data);
+                    updateHeadlines(REACT_APP_LEAGUE_ID, data);
+                  } else {
+                    setHeadlines(errorHeadlines);
+                  }
                 } catch (error) {
                   console.error("Error fetching data:", error);
                 }
@@ -318,14 +346,35 @@ const CardCarousel = ({ leagueID }) => {
 
     //console.log("Headlines: ", headlines);
     let topScorer;
+    let over11Starters = false;
     if (userData) {
       //console.log("U", userData);
       const userArray = Object.values(userData);
+      console.log(userArray[0].starters);
+
+      userArray.map((user) => {
+        console.log("User starters length:", user.starters?.length);
+        if (user.starters?.length > 11) {
+          over11Starters = true;
+          console.log("fajad");
+        }
+      });
+
       const sortedUserData = userArray.sort((a, b) => {
         return b.team_points - a.team_points;
       });
       topScorer = sortedUserData[0];
     }
+    console.log(over11Starters);
+
+    let errorText = (
+      <div className=" flex justify-center items-center text-center w-[95vw] xl:w-[60vw] h-[20vh] p-2 mt-6">
+        I'm sorry, but right now, we can't generate headlines for leagues with
+        more than 11 starting fantasy players. 😔 We'll let you know as soon as
+        we fix this issue. In the meantime, feel free to check out the other
+        exciting features on Fantasy Pulse. Thank you for your patience! 🚀😊
+      </div>
+    );
 
     let loadingText = (
       <div
@@ -430,64 +479,68 @@ const CardCarousel = ({ leagueID }) => {
       }
     };
 
-    return (
-      <section className="w-[95vw] xl:w-[60vw]" ref={reference}>
-        <div className="relative overflow-hidden p-4">
-          {/* CARDS */}
-          <div className="mx-auto max-w-6xl">
-            <p className="mb-4 text-lg md:text-xl font-semibold text-center md:text-start">
-              League Buzz :
-              <span className="text-slate-500">
-                {" "}
-                Catch Up on All the Action
-              </span>
-            </p>
-            <motion.div
-              animate={{
-                x: offset,
-              }}
-              className="flex"
-            >
-              <Card
-                key={uuidv4()}
-                title={topScorer?.name}
-                description={topScorer?.team_points}
-                url={topScorer?.avatar}
-                scorerStyle={true}
-                category="Top Scorer of the Week"
-              />
-              {headlines.map((item) => {
-                return <Card key={item.id} {...item} />;
-              })}
-            </motion.div>
-          </div>
+    if (over11Starters) {
+      return errorText;
+    } else {
+      return (
+        <section className="w-[95vw] xl:w-[60vw]" ref={reference}>
+          <div className="relative overflow-hidden p-4">
+            {/* CARDS */}
+            <div className="mx-auto max-w-6xl">
+              <p className="mb-4 text-lg md:text-xl font-semibold text-center md:text-start">
+                League Buzz :
+                <span className="text-slate-500">
+                  {" "}
+                  Catch Up on All the Action
+                </span>
+              </p>
+              <motion.div
+                animate={{
+                  x: offset,
+                }}
+                className="flex"
+              >
+                <Card
+                  key={uuidv4()}
+                  title={topScorer?.name}
+                  description={topScorer?.team_points}
+                  url={topScorer?.avatar}
+                  scorerStyle={true}
+                  category="Top Scorer of the Week"
+                />
+                {headlines.map((item) => {
+                  return <Card key={item.id} {...item} />;
+                })}
+              </motion.div>
+            </div>
 
-          {/* BUTTONS */}
-          <>
-            <motion.button
-              initial={false}
-              animate={{
-                x: CAN_SHIFT_LEFT ? "0%" : "-100%",
-              }}
-              className="absolute left-0 top-[60%] z-30 rounded-r-xl bg-slate-100/30 p-3 pl-2 text-4xl text-black dark:text-white backdrop-blur-sm transition-[padding] hover:pl-3 opacity-40"
-              onClick={shiftLeft}
-            >
-              <FiChevronLeft />
-            </motion.button>
-            <motion.button
-              initial={false}
-              animate={{
-                x: CAN_SHIFT_RIGHT ? "0%" : "100%",
-              }}
-              className="absolute right-0 top-[60%] z-30 rounded-l-xl bg-slate-100/30 p-3 pr-2 text-4xl text-black dark:text-white backdrop-blur-sm transition-[padding] hover:pr-3 opacity-40 "
-              onClick={shiftRight}
-            >
-              <FiChevronRight />
-            </motion.button>
-          </>
-        </div>
-      </section>
-    );
+            {/* BUTTONS */}
+            <>
+              <motion.button
+                initial={false}
+                animate={{
+                  x: CAN_SHIFT_LEFT ? "0%" : "-100%",
+                }}
+                className="absolute left-0 top-[60%] z-30 rounded-r-xl bg-slate-100/30 p-3 pl-2 text-4xl text-black dark:text-white backdrop-blur-sm transition-[padding] hover:pl-3 opacity-40"
+                onClick={shiftLeft}
+              >
+                <FiChevronLeft />
+              </motion.button>
+              <motion.button
+                initial={false}
+                animate={{
+                  x: CAN_SHIFT_RIGHT ? "0%" : "100%",
+                }}
+                className="absolute right-0 top-[60%] z-30 rounded-l-xl bg-slate-100/30 p-3 pr-2 text-4xl text-black dark:text-white backdrop-blur-sm transition-[padding] hover:pr-3 opacity-40 "
+                onClick={shiftRight}
+              >
+                <FiChevronRight />
+              </motion.button>
+            </>
+          </div>
+        </section>
+      );
+    }
   }
 };
 

@@ -379,6 +379,7 @@ export default function Scoreboard() {
       localStorage.removeItem("selectedLeagueID");
       localStorage.removeItem("selectedLeagueName");
       localStorage.removeItem("usernameSubmitted");
+      localStorage.removeItem("progressValue");
       router.refresh();
     }
   } else {
@@ -491,7 +492,9 @@ export default function Scoreboard() {
           O/U: {Math.round(team1Proj + team2Proj)}
         </p>
         <p className="w-[9vw] text-center text-[9px] text-[grey]">
-          {team1Proj > team2Proj
+          {team1Proj === team2Proj
+            ? "EVEN"
+            : team1Proj > team2Proj
             ? team1?.name + " -" + Math.round(team1Proj - team2Proj)
             : team2?.name + " -" + Math.round(team2Proj - team1Proj)}
         </p>

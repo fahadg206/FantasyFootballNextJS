@@ -357,6 +357,7 @@ function NavBar(props: MyProps) {
       localStorage.removeItem("selectedLeagueID");
       localStorage.removeItem("selectedLeagueName");
       localStorage.removeItem("usernameSubmitted");
+      localStorage.removeItem("progressValue");
       router.refresh();
     }
   }

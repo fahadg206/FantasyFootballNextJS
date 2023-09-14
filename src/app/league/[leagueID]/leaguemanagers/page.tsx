@@ -313,7 +313,7 @@ export default function Page() {
       <motion.div
         initial={{ translateX: reverse ? "-100%" : "0%" }}
         animate={{ translateX: reverse ? "0%" : "-100%" }}
-        transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
+        transition={{ duration: 100, repeat: Infinity, ease: "linear" }}
         className="flex gap-4 px-2"
       >
         {children}

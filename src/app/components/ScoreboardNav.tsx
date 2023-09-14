@@ -454,7 +454,9 @@ export default function ScoreboardNav({ setShowScore }) {
     const overUnderText = (
       <div className="flex items-center justify-around mt-5">
         <p className="flex-shrink-0 w-[9vw] text-center text-[12px] font-bold dark:text-[#949494]  ">
-          {team1Proj > team2Proj
+          {team1Proj === team2Proj
+            ? "EVEN"
+            : team1Proj > team2Proj
             ? team1?.name + " -" + Math.round(team1Proj - team2Proj)
             : team2?.name + " -" + Math.round(team2Proj - team1Proj)}
         </p>

@@ -15,6 +15,8 @@ import weekly_preview from "../../../images/weekly_preview.jpg";
 import predictions from "../../../images/predictions.jpg";
 import hamsa from "../../../images/hamsa.png";
 import axios from "axios";
+
+import ArticleProgressSpinner from "../../../components/ArticleProgressSpinner";
 import {
   collection,
   query,
@@ -725,12 +727,12 @@ const Articles = () => {
     console.log(matchupMap);
 
     const messages = [
-      "Articles can take up to 1-2 minutes to generate! Feel free to check out the rest of Fantasy Pulse and come back!",
+      "Articles can take up to a few minutes to generate! Feel free to check out the rest of Fantasy Pulse and come back!",
       "Our editors are hard at work crafting the perfect fantasy football analysis for your league!",
       "Drafting the perfect fantasy football articles... because even our servers need a mock draft or two!",
       "Sit tight and visualize your fantasy football glory - it's on its way!",
       "Drafting fantasy football articles is like picking a kicker in the first round—unconventional, but we promise it'll be worth the wait!",
-      "Articles can take up to 1-2 minutes to generate! Feel free to check out the rest of Fantasy Pulse and come back!",
+      "Articles can take up to a few minutes to generate! Feel free to check out the rest of Fantasy Pulse and come back!",
     ];
 
     const [messageIndex, setMessageIndex] = useState(0);
@@ -738,35 +740,30 @@ const Articles = () => {
     useEffect(() => {
       const interval = setInterval(() => {
         setMessageIndex((prevIndex) => (prevIndex + 1) % messages.length);
-      }, 8000); // Change the message every 8 seconds (adjust as needed)
+      }, 6000); // Change the message every 8 seconds (adjust as needed)
 
       return () => {
         clearInterval(interval);
       };
     }, []);
 
-    if (loading && matchupMap.size < 7) {
+    let over11Starters = false;
+
+    Array.from(matchupMap).map(([matchupID, matchupData]) => {
+      const team1 = matchupData[0];
+      const team2 = matchupData[1];
+      console.log(team1, team2);
+
+      if (team1.starters?.length > 11 || team2.starters?.length > 11) {
+        over11Starters = true;
+      }
+    });
+    if (loading && matchupMap.size < 7 && !over11Starters) {
       return (
         <div
           role="status"
           className=" h-[60vh] flex justify-center items-center p-2"
         >
-          <svg
-            aria-hidden="true"
-            className="w-8 h-8 mr-2 text-black animate-spin dark:text-gray-600 fill-[#af1222]"
-            viewBox="0 0 100 101"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M100 50.5908C100 78.2051 77.6142 100.591 50 100.591C22.3858 100.591 0 78.2051 0 50.5908C0 22.9766 22.3858 0.59082 50 0.59082C77.6142 0.59082 100 22.9766 100 50.5908ZM9.08144 50.5908C9.08144 73.1895 27.4013 91.5094 50 91.5094C72.5987 91.5094 90.9186 73.1895 90.9186 50.5908C90.9186 27.9921 72.5987 9.67226 50 9.67226C27.4013 9.67226 9.08144 27.9921 9.08144 50.5908Z"
-              fill="currentColor"
-            />
-            <path
-              d="M93.9676 39.0409C96.393 38.4038 97.8624 35.9116 97.0079 33.5539C95.2932 28.8227 92.871 24.3692 89.8167 20.348C85.8452 15.1192 80.8826 10.7238 75.2124 7.41289C69.5422 4.10194 63.2754 1.94025 56.7698 1.05124C51.7666 0.367541 46.6976 0.446843 41.7345 1.27873C39.2613 1.69328 37.8130 4.19778 38.4501 6.62326C39.0873 9.04874 41.5694 10.4717 44.0505 10.1071C47.8511 9.54855 51.7191 9.52689 55.5402 10.0491C60.8642 10.7766 65.9928 12.5457 70.6331 15.2552C75.2735 17.9648 79.3347 21.5619 82.5849 25.841C84.9175 28.9121 86.7997 32.2913 88.1811 35.8758C89.083 38.2158 91.5421 39.6781 93.9676 39.0409Z"
-              fill="currentFill"
-            />
-          </svg>
           <span className="flex flex-col justify-center items-center text-center">
             <p className="flex items-center gap-2 font-bold mb-3">
               <AiFillWarning size={30} className="text-[#af1222]" /> PLEASE DO
@@ -776,6 +773,9 @@ const Articles = () => {
             <p className="text-[13px] sm:text-[16px]">
               {messages[messageIndex]}
             </p>
+            <div className="mt-5">
+              <ArticleProgressSpinner />
+            </div>
           </span>
         </div>
       );
@@ -783,12 +783,14 @@ const Articles = () => {
 
     const thisWeeksAuthors: string[] = ["Boogie The Writer"];
 
-    if (matchupMap.size > 6) {
+    if (matchupMap.size > 6 || over11Starters) {
       return (
         <div className=" flex justify-center items-center text-center w-[95vw] xl:w-[60vw] h-[60vh]">
-          Sorry but we cannot generate articles for leagues that have over 12
-          members as of now! We'll update you when resolve this issue. Feel free
-          to check out the rest of Fantasy Pulse! Thanks for understanding.
+          Apologies, but at the moment, we're unable to generate articles for
+          leagues that exceed either 12 league members or 11 starting fantasy
+          players. We'll notify you once we've addressed this matter. In the
+          meantime, please explore the other features available on Fantasy
+          Pulse. Thank you for your understanding.
         </div>
       );
     } else {
