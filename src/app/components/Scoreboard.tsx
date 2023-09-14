@@ -169,11 +169,11 @@ export default function Scoreboard() {
         JSON.stringify(weeklyData)
       );
 
-      console.log("recap", articleMatchupData);
+      // console.log("recap", articleMatchupData);
       const previewMatchupData: ScheduleData = JSON.parse(
         JSON.stringify(previewData)
       );
-      console.log("preview", previewMatchupData);
+      // console.log("preview", previewMatchupData);
       for (const matchupId in articleMatchupData) {
         const matchup = articleMatchupData[matchupId];
 
@@ -319,15 +319,12 @@ export default function Scoreboard() {
 
         // Check if it's before Wednesday
         if (currentTime < currentWednesdayMidnight) {
-          console.log("before Wednesday");
-
           const previewMapData = await getMatchupMap(id, week + 1);
           updateDbStorage(
             matchupMapData.updatedScheduleData,
             previewMapData.updatedScheduleData
           );
         } else {
-          console.log("after Wednesday");
           const recapMapData = await getMatchupMap(id, week - 1);
           updateDbStorage(
             recapMapData.updatedScheduleData,

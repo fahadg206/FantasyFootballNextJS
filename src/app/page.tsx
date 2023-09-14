@@ -42,8 +42,8 @@ export default function Home() {
     }
   }
 
-  console.log(selectedSeason);
-  console.log(usernameSubmitted);
+  // console.log(selectedSeason);
+  // console.log(usernameSubmitted);
   const onStorageCleared = () => {
     localStorage.removeItem("selectedLeagueID");
     localStorage.removeItem("selectedLeagueName");

@@ -350,13 +350,10 @@ const CardCarousel = ({ leagueID }) => {
     if (userData) {
       //console.log("U", userData);
       const userArray = Object.values(userData);
-      console.log(userArray[0].starters);
 
       userArray.map((user) => {
-        console.log("User starters length:", user.starters?.length);
         if (user.starters?.length > 11) {
           over11Starters = true;
-          console.log("fajad");
         }
       });
 

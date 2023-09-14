@@ -687,6 +687,8 @@ const Articles = () => {
             setPreviewArticle(data3);
             updatePreview(REACT_APP_LEAGUE_ID, data3);
           }
+          // Setting loading to false after all 3 articles are generated
+          setLoading(false);
         }
       } catch (error) {
         console.error("Error:", error);
