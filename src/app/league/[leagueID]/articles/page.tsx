@@ -477,11 +477,8 @@ const Articles = () => {
       // Convert hours to non-military format
       const hours12 = hours % 12 || 12;
 
-      // Format the time zone offset
-      const timeZoneOffset = currentDate.getTimezoneOffset();
-      const timeZoneOffsetHours = Math.abs(Math.floor(timeZoneOffset / 60));
-      const timeZoneOffsetMinutes = Math.abs(timeZoneOffset % 60);
-      const timeZoneAbbreviation = timeZoneOffset >= 0 ? "EST" : "EDT"; // Eastern Time (ET)
+      // Always set timezone abbreviation to "EST" (Eastern Standard Time)
+      const timeZoneAbbreviation = "EST";
 
       // Create the formatted string
       const formattedDate = `${month} ${day}, ${year} ${hours12}:${
@@ -572,6 +569,7 @@ const Articles = () => {
             updateRecap(REACT_APP_LEAGUE_ID, data);
           } else {
             setArticles(docData.articles);
+            setLoading(false);
           }
 
           if (!docData.segment2) {
@@ -582,6 +580,7 @@ const Articles = () => {
             updateSavage(REACT_APP_LEAGUE_ID, data);
           } else {
             setArticles2(docData.segment2);
+            setLoading(false);
           }
 
           if (!docData.preview) {
@@ -592,6 +591,7 @@ const Articles = () => {
             updatePreview(REACT_APP_LEAGUE_ID, data);
           } else {
             setPreviewArticle(docData.preview);
+            setLoading(false);
           }
 
           const results = await Promise.all(promises);
