@@ -901,7 +901,7 @@ const Articles = () => {
           </Element>
           {articles && (
             <SmoothLink
-              to={articles.title || ""}
+              to={previewArticle?.title || ""}
               activeClass="active"
               spy={true}
               smooth={true}
