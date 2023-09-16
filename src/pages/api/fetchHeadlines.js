@@ -71,12 +71,12 @@ export default async function handler(req, res) {
       openAIApiKey: process.env.OPENAI_API_KEY,
     });
 
-    const question = `{leagueData} give me 3 sports style headlines recapping this weeks matchups, pick any 3 matchups to cover and make title's creative and exciting. include their star players on their team who scored the most points for them, their win-loss record and who won by comparing their team points in that specific matchup, who ever had more team points in that matchup won the game, please ensure accuracy when stating who won and who lost. include a bit of humor and be creative. I want the information to be in this format exactly headline: 
+    const question = `{leagueData} give me 3 sports style headlines recapping this weeks matchups, pick any 3 matchups to cover and make title's creative and exciting. include their star players on their team who scored the most points for them, their win-loss record , streak if it's notable and who won by comparing their team points vs their opponents team points in that specific matchup, who ever had more team points in that matchup won the game, please ensure accuracy when stating who won and who lost. include a bit of humor and be creative with the titles and descriptions. I want the information to be in this format exactly headline: 
   "id": "",
   "category": "",
   "title": "",
   "description": ""
- keep description short to one sentence give me the response in valid JSON array format. Please ensure that the generated JSON response meets the specified criteria without any syntax issues or inconsistencies.`;
+ keep description concise but exciting. give me the response in valid JSON array format. Please ensure that the generated JSON response meets the specified criteria without any syntax issues or inconsistencies.`;
     console.log(question);
 
     const prompt = PromptTemplate.fromTemplate(question);

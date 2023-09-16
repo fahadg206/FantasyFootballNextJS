@@ -156,43 +156,42 @@ export default function Scoreboard() {
     isWednesdayMidnight,
   ]);
 
-  function updateDbStorage(
-    weeklyData: ScheduleData,
-    previewData: ScheduleData
-  ) {
+  function updateDbStorage(weeklyData: any, previewData: ScheduleData) {
     if (leagueID) {
       const storageRef = ref(storage, `files/${leagueID}.txt`);
 
       //Uncomment to upload textfile to firebase storage
 
-      const articleMatchupData: ScheduleData = JSON.parse(
-        JSON.stringify(weeklyData)
-      );
+      // const articleMatchupData: ScheduleData = JSON.parse(
+      //   JSON.stringify(weeklyData)
+      // );
 
       // console.log("recap", articleMatchupData);
       const previewMatchupData: ScheduleData = JSON.parse(
         JSON.stringify(previewData)
       );
       // console.log("preview", previewMatchupData);
-      for (const matchupId in articleMatchupData) {
-        const matchup = articleMatchupData[matchupId];
+      for (const matchupId in weeklyData) {
+        let matchup = weeklyData[matchupId];
 
-        // Delete properties from the matchup object
-        delete matchup.starters;
-        delete matchup.starters_points;
-        delete matchup.players;
-        delete matchup.players_points;
-        delete matchup.roster_id;
-        delete matchup.user_id;
-        delete matchup.avatar;
+        matchup.forEach((team) => {
+          // Delete properties from the matchup object
+          delete team.starters;
+          delete team.starters_points;
+          delete team.players;
+          delete team.players_points;
+          delete team.roster_id;
+          delete team.user_id;
+          delete team.avatar;
 
-        // Check if starters_full_data exists before iterating over it
-        if (matchup.starters_full_data) {
-          for (const starter of matchup.starters_full_data) {
-            delete starter.avatar;
-            delete starter.proj;
+          // Check if starters_full_data exists before iterating over it
+          if (team.starters_full_data) {
+            for (const starter of team.starters_full_data) {
+              delete starter.avatar;
+              delete starter.proj;
+            }
           }
-        }
+        });
       }
 
       for (const matchupId in previewMatchupData) {
@@ -218,7 +217,7 @@ export default function Scoreboard() {
 
       //console.log("data ", articleMatchupData);
 
-      const textContent = JSON.stringify(Object.values(articleMatchupData));
+      const textContent = JSON.stringify(weeklyData);
       const previewTextContent = JSON.stringify(
         Object.values(previewMatchupData)
       );
@@ -274,6 +273,14 @@ export default function Scoreboard() {
       });
   }
 
+  function mapToObject(map) {
+    const obj = {};
+    for (let [key, value] of map) {
+      obj[key] = value;
+    }
+    return obj;
+  }
+
   useEffect(() => {
     async function fetchMatchupData() {
       try {
@@ -300,7 +307,14 @@ export default function Scoreboard() {
         //console.log("ID", id);
 
         const matchupMapData = await getMatchupMap(id, week);
+        const matchupMapDataCopy = await getMatchupMap(id, week);
+
+        const matchupObj = mapToObject(matchupMapDataCopy.matchupMap);
+
+        //console.log("Matchups: ", matchupObj);
+
         setMatchupMap(matchupMapData.matchupMap);
+
         //console.log("being set", matchupMapData.matchupMap);
         setScheduleDataFinal(matchupMapData.updatedScheduleData);
 
@@ -320,16 +334,12 @@ export default function Scoreboard() {
         // Check if it's before Wednesday
         if (currentTime < currentWednesdayMidnight) {
           const previewMapData = await getMatchupMap(id, week + 1);
-          updateDbStorage(
-            matchupMapData.updatedScheduleData,
-            previewMapData.updatedScheduleData
-          );
+          updateDbStorage(matchupObj, previewMapData.updatedScheduleData);
         } else {
-          const recapMapData = await getMatchupMap(id, week - 1);
-          updateDbStorage(
-            recapMapData.updatedScheduleData,
-            matchupMapData.updatedScheduleData
-          );
+          const matchupMapDataCopy = await getMatchupMap(id, week - 1);
+
+          const matchupObj = mapToObject(matchupMapDataCopy.matchupMap);
+          updateDbStorage(matchupObj, matchupMapData.updatedScheduleData);
         }
 
         //setting each matchup into Map with key being matchup_id and value being two teams with corresponding matchup_id
@@ -395,38 +405,40 @@ export default function Scoreboard() {
     let team1Proj = 0.0;
     let team2Proj = 0.0;
 
-    if (team1?.starters) {
-      for (const currPlayer of team1.starters) {
-        if (playersData[currPlayer]) {
-          const playerData = playersData && playersData[currPlayer];
-          if (
-            playerData &&
-            playerData.wi &&
-            weekString !== undefined && // Check if weekString is defined
-            typeof weekString === "string" && // Check if weekString is a string
-            playerData.wi[weekString] &&
-            playerData.wi[weekString]?.p !== undefined
-          ) {
-            if (playerData.wi[weekString].p)
-              team1Proj += parseFloat(playerData.wi[weekString].p || "0");
+    if (playersData) {
+      if (team1?.starters) {
+        for (const currPlayer of team1.starters) {
+          if (playersData[currPlayer]) {
+            const playerData = playersData && playersData[currPlayer];
+            if (
+              playerData &&
+              playerData.wi &&
+              weekString !== undefined && // Check if weekString is defined
+              typeof weekString === "string" && // Check if weekString is a string
+              playerData.wi[weekString] &&
+              playerData.wi[weekString]?.p !== undefined
+            ) {
+              if (playerData.wi[weekString].p)
+                team1Proj += parseFloat(playerData.wi[weekString].p || "0");
+            }
           }
         }
       }
-    }
 
-    if (team2?.starters) {
-      for (const currPlayer of team2.starters) {
-        if (playersData[currPlayer]) {
-          const playerData = playersData && playersData[currPlayer];
-          if (
-            playerData &&
-            playerData.wi &&
-            weekString !== undefined && // Check if weekString is defined
-            typeof weekString === "string" && // Check if weekString is a string
-            playerData.wi[weekString] &&
-            playerData.wi[weekString]?.p !== undefined
-          ) {
-            team2Proj += parseFloat(playerData.wi[weekString].p || "0");
+      if (team2?.starters) {
+        for (const currPlayer of team2.starters) {
+          if (playersData[currPlayer]) {
+            const playerData = playersData && playersData[currPlayer];
+            if (
+              playerData &&
+              playerData.wi &&
+              weekString !== undefined && // Check if weekString is defined
+              typeof weekString === "string" && // Check if weekString is a string
+              playerData.wi[weekString] &&
+              playerData.wi[weekString]?.p !== undefined
+            ) {
+              team2Proj += parseFloat(playerData.wi[weekString].p || "0");
+            }
           }
         }
       }

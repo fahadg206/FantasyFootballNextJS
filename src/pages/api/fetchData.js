@@ -51,6 +51,17 @@ const updateWeeklyInfo = async (REACT_APP_LEAGUE_ID, articles) => {
   }
 };
 
+function countWords(inputString) {
+  // Use regular expression to split the string by spaces and punctuation
+  const words = inputString.split(/\s+|\b/);
+
+  // Filter out empty strings and punctuation
+  const filteredWords = words.filter((word) => word.trim() !== "");
+
+  // Return the count of words
+  return filteredWords.length;
+}
+
 export default async function handler(req, res) {
   console.log("here");
   // console.log("what was passed in ", req.body);
@@ -61,6 +72,8 @@ export default async function handler(req, res) {
   const response = await fetch(url);
   const fileContent = await response.text();
   const newFile = JSON.stringify(fileContent).replace(/\//g, "");
+  const wordCount = countWords(newFile);
+  console.log(`Word count: ${wordCount}`);
 
   try {
     console.log("Here");
@@ -71,7 +84,21 @@ export default async function handler(req, res) {
       openAIApiKey: process.env.OPENAI_API_KEY,
     });
 
-    const question = `using a funny and exciting style of writing give me a sports breakdown recapping all the league's matchups, include the scores, who won by comparing their team_points to their opponent's team_points and their star players include a bit of humor as well. it should be 450 words max. Make sure to include all league matchups.The JSON structure should match this template:
+    let question;
+
+    if (wordCount > 2600) {
+      question = `using a funny and exciting style of writing, give me a very concise sports breakdown recapping all the league's matchups, include the scores, who won by comparing their team_points to their opponent's team_points and their star players include a bit of humor as well. it should be 450 words max. Make sure to include all league matchups.The JSON structure should match this template:
+  "title": "",
+  "paragraph1": "",
+  "paragraph2": "",
+  "paragraph3": "",
+  "paragraph4": "",
+  "paragraph5": "",
+  "paragraph6": "",
+  "paragraph7": ""
+Please ensure that the generated JSON response meets the specified criteria without any syntax issues or inconsistencies. Make each matchup breakdown short and concise. {leagueData} `;
+    } else {
+      question = `using a funny and exciting style of writing give me a sports breakdown recapping all the league's matchups, include the scores, who won by comparing their team_points to their opponent's team_points and their star players include a bit of humor as well. it should be 450 words max. Make sure to include all league matchups.The JSON structure should match this template:
   "title": "",
   "paragraph1": "",
   "paragraph2": "",
@@ -81,6 +108,7 @@ export default async function handler(req, res) {
   "paragraph6": "",
   "paragraph7": ""
 Please ensure that the generated JSON response meets the specified criteria without any syntax issues or inconsistencies. {leagueData} `;
+    }
 
     const prompt = PromptTemplate.fromTemplate(question);
     const chainA = new LLMChain({ llm: model, prompt });

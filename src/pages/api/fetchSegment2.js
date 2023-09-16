@@ -51,6 +51,17 @@ const updateWeeklyInfo = async (REACT_APP_LEAGUE_ID, articles) => {
   }
 };
 
+function countWords(inputString) {
+  // Use regular expression to split the string by spaces and punctuation
+  const words = inputString.split(/\s+|\b/);
+
+  // Filter out empty strings and punctuation
+  const filteredWords = words.filter((word) => word.trim() !== "");
+
+  // Return the count of words
+  return filteredWords.length;
+}
+
 export default async function handler(req, res) {
   console.log("here");
   // console.log("what was passed in ", req.body);
@@ -61,6 +72,8 @@ export default async function handler(req, res) {
   const response = await fetch(url);
   const fileContent = await response.text();
   const newFile = JSON.stringify(fileContent).replace(/\//g, "");
+  const wordCount = countWords(newFile);
+  console.log(`Word count: ${wordCount}`);
 
   try {
     console.log("Here");
