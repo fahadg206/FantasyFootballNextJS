@@ -76,7 +76,7 @@ export default async function handler(req, res) {
   "category": "",
   "title": "",
   "description": ""
- keep description concise but exciting. give me the response in valid JSON array format. Please ensure that the generated JSON response meets the specified criteria without any syntax issues or inconsistencies.`;
+ keep response concise and exciting. give me the response in valid JSON array format. Please ensure that the generated JSON response meets the specified criteria without any syntax issues or inconsistencies.`;
     console.log(question);
 
     const prompt = PromptTemplate.fromTemplate(question);
