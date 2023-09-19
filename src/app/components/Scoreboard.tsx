@@ -331,11 +331,15 @@ export default function Scoreboard() {
         const currentWednesdayMidnight = new Date(nextWednesdayMidnight);
         currentWednesdayMidnight.setDate(nextWednesdayMidnight.getDate() - 7);
 
+        //console.log("CUrr week", nextWednesdayMidnight);
+
         // Check if it's before Wednesday
-        if (currentTime < currentWednesdayMidnight) {
+        if (currentTime < nextWednesdayMidnight) {
+          //console.log("if");
           const previewMapData = await getMatchupMap(id, week + 1);
           updateDbStorage(matchupObj, previewMapData.updatedScheduleData);
         } else {
+          // console.log("else");
           const matchupMapDataCopy = await getMatchupMap(id, week - 1);
 
           const matchupObj = mapToObject(matchupMapDataCopy.matchupMap);
