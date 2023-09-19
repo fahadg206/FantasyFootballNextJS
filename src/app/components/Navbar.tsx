@@ -21,6 +21,7 @@ import {
   FaFootballBall,
   FaSearch,
 } from "react-icons/fa";
+import { RiTwitterFill } from "react-icons/ri";
 
 import { BsArrowLeftCircleFill } from "react-icons/bs";
 
@@ -147,6 +148,18 @@ function NavBar(props: MyProps) {
                 <RiTeamFill />
               </NavItem>
               <p className="ml-2">League Managers</p>
+            </div>
+          </Link>
+          <Link target={"_blank"} href={`https://twitter.com/fantasypulseff`}>
+            <div className="flex items-center w-[90px]">
+              <NavItem
+                selected={selected === 6}
+                id={6}
+                setSelected={setSelected}
+              >
+                <RiTwitterFill />
+              </NavItem>
+              <p className="ml-2">X/Twitter</p>
             </div>
           </Link>
         </div>
@@ -300,6 +313,16 @@ function NavBar(props: MyProps) {
                 >
                   <span className="text-[18px]  flex items-center  xl:text-[14px]">
                     <RiTeamFill size={18} className="mr-1 " /> League Managers
+                  </span>
+                </Link>
+              </li>
+              <li className="pb-6  text-center   hover:bg-[#AF1222]  hover:transition  hover:ease-in-out hover:rounded ">
+                <Link
+                  href={`https://twitter.com/fantasypulseff`}
+                  onClick={() => setNavbar(!navbar)}
+                >
+                  <span className="text-[18px]  flex items-center  xl:text-[14px]">
+                    <RiTwitterFill size={18} className="mr-1 " /> X/Twitter
                   </span>
                 </Link>
               </li>
