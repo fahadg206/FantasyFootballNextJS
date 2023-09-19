@@ -6,6 +6,7 @@ import Image from "next/image";
 import getMatchupData from "../libs/getMatchupData";
 import { useRouter } from "next/navigation";
 import { ReactNode } from "react";
+import { user } from "@nextui-org/react";
 
 interface ScheduleData {
   [userId: string]: {
@@ -49,6 +50,8 @@ const ScrollingTeamLogos = () => {
 
     fetchData();
   }, []);
+
+  console.log(userData);
 
   const userDataArray = Object.values(userData || {});
 

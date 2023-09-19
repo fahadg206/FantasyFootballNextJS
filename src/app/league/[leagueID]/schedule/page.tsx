@@ -203,7 +203,7 @@ export default function Schedule() {
           setCounter(!nflState.display_week ? 1 : nflState.display_week);
           initialize = true;
         }
-        console.log(nflState.display_week);
+        //console.log(nflState.display_week);
         setNflState(nflState);
         const matchupMapDataPoll = await getMatchupMap(
           REACT_APP_LEAGUE_ID,
@@ -381,8 +381,8 @@ export default function Schedule() {
       preGame = false;
       liveGame = false;
     }
-    console.log(nflState?.display_week < counter);
-    console.log(postGame);
+    //console.log(nflState?.display_week < counter);
+    //console.log(postGame);
 
     let overUnderText = (
       <div

@@ -11,6 +11,7 @@ import {
   limit,
 } from "firebase/firestore/lite";
 import { AiFillAlert } from "react-icons/ai";
+import Image from "next/image";
 
 interface VoteInfo {
   title: string;
@@ -18,29 +19,61 @@ interface VoteInfo {
   color: string;
 }
 
+interface PlayerVoteInfo {
+  playerName?: string;
+  avatar?: string;
+  matchup?: string;
+  votes?: number;
+  color?: string;
+}
+
 interface OptionsProps {
-  votes: VoteInfo[];
-  setVotes: React.Dispatch<React.SetStateAction<VoteInfo[]>>;
+  votes: PlayerVoteInfo[];
+  setVotes: React.Dispatch<React.SetStateAction<PlayerVoteInfo[]>>;
 }
 
 interface BarsProps {
-  votes: VoteInfo[];
+  votes: PlayerVoteInfo[];
 }
 
+// [
+//   {
+//     title: "Articles Page",
+//     votes: 0,
+//     color: "bg-[#af1222]",
+//   },
+//   {
+//     title: "Rivarly Page",
+//     votes: 0,
+//     color: "bg-[#1a1a1a]",
+//   },
+//   {
+//     title: "League Managers Page",
+//     votes: 0,
+//     color: "bg-[#e45263]",
+//   },
+// ]
+
 const BarPoll = () => {
-  const [votes, setVotes] = useState<VoteInfo[]>([
+  const [votes, setVotes] = useState<PlayerVoteInfo[]>([
     {
-      title: "Articles Page",
+      playerName: "Deshaun Watson",
+      avatar: "https://sleepercdn.com/content/nfl/players/thumb/4017.jpg",
+      matchup: "vs. Titans",
       votes: 0,
       color: "bg-[#af1222]",
     },
     {
-      title: "Rivarly Page",
+      playerName: "Justin Fields",
+      avatar: "https://sleepercdn.com/content/nfl/players/thumb/7591.jpg",
+      matchup: "@ Chiefs",
       votes: 0,
       color: "bg-[#1a1a1a]",
     },
     {
-      title: "League Managers Page",
+      playerName: "Tua Tagovailoa",
+      avatar: "https://sleepercdn.com/content/nfl/players/thumb/6768.jpg",
+      matchup: "vs. Broncos",
       votes: 0,
       color: "bg-[#e45263]",
     },
@@ -58,7 +91,7 @@ const BarPoll = () => {
 
 const Options: React.FC<OptionsProps> = ({ votes, setVotes }) => {
   const [voted, setVoted] = useState(false);
-  const addVotes = async (newVotes: VoteInfo[]) => {
+  const addVotes = async (newVotes: PlayerVoteInfo[]) => {
     try {
       const voteInfo = collection(db, "Home Poll");
       const queryRef = query(voteInfo, where("id", "==", "homepoll"));
@@ -89,15 +122,15 @@ const Options: React.FC<OptionsProps> = ({ votes, setVotes }) => {
 
   const totalVotes = votes.reduce((acc, cv) => (acc += cv.votes), 0);
 
-  const handleIncrementVote = async (vote: VoteInfo) => {
+  const handleIncrementVote = async (vote: PlayerVoteInfo) => {
     const newVote = { ...vote, votes: vote.votes + 1 };
     const newVotes = (prevVotes) =>
-      prevVotes.map((v) => (v.title === newVote.title ? newVote : v));
+      prevVotes.map((v) => (v.playerName === newVote.playerName ? newVote : v));
 
     addVotes(newVotes(votes));
 
     setVotes((prevVotes) =>
-      prevVotes.map((v) => (v.title === newVote.title ? newVote : v))
+      prevVotes.map((v) => (v.playerName === newVote.playerName ? newVote : v))
     );
   };
 
@@ -131,10 +164,16 @@ const Options: React.FC<OptionsProps> = ({ votes, setVotes }) => {
   return (
     <div className="col-span-1 py-12">
       <h3 className="mb-6 text-2xl font-semibold  text-center">
-        What is your favorite page from Fantasy Pulse so far?
+        Which QB has a bounce back fantasy performance for Week 3?
       </h3>
-      <div className={voted ? `hidden` : `block mb-6 space-y-2 text-center`}>
-        {votes.map((vote: VoteInfo) => {
+      <div
+        className={
+          voted
+            ? `hidden`
+            : ` mb-6 space-y-2 text-center flex flex-col items-center `
+        }
+      >
+        {votes.map((vote: PlayerVoteInfo) => {
           return (
             <motion.button
               whileHover={{ scale: 1.015 }}
@@ -143,10 +182,20 @@ const Options: React.FC<OptionsProps> = ({ votes, setVotes }) => {
                 handleIncrementVote(vote);
                 setVoted(true);
               }}
-              key={vote.title}
-              className={`w-[80%] rounded-xl ${vote.color} text-white text-center py-2 font-medium `}
+              key={vote.playerName}
+              className={`w-[80%] rounded-xl ${vote.color} text-white text-center py-2 font-medium flex justify-around items-center`}
             >
-              {vote.title}
+              <Image
+                src={vote.avatar}
+                alt="player"
+                width={60}
+                height={60}
+                className="rounded-full"
+              />{" "}
+              {vote.playerName}
+              <p className="text-[11px] italic text-[#e8dede] ">
+                {vote.matchup}
+              </p>
             </motion.button>
           );
         })}
@@ -178,7 +227,7 @@ const Bars: React.FC<BarsProps> = ({ votes }) => {
           ? ((vote.votes / totalVotes) * 100).toFixed(2)
           : 0;
         return (
-          <div key={vote.title} className="col-span-1">
+          <div key={vote.playerName} className="col-span-1">
             <div className="relative flex h-full w-full items-end overflow-hidden rounded-2xl bg-gradient-to-b from-slate-700 to-slate-800">
               <motion.span
                 animate={{ height: `${height}%` }}
@@ -186,7 +235,7 @@ const Bars: React.FC<BarsProps> = ({ votes }) => {
                 transition={{ type: "spring" }}
               />
               <span className="absolute bottom-0 left-[50%] mt-2 inline-block w-full -translate-x-[50%] p-2 text-center text-sm text-slate-50">
-                <b>{vote.title}</b>
+                <b>{vote.playerName}</b>
                 <br></br>
                 <span className="text-xs ">{vote.votes} votes</span>
               </span>
