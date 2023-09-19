@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from "react";
 import ArticleTemplate from "../../../components/ArticleTemplate";
 import imran from "../../../images/scary_imran.png";
+import overreaction from "../../../images/over_reaction.jpg";
 import steve from "../../../images/finger.jpg";
 import boogie from "../../../images/boogie.png";
 import pulseDr from "../../../images/pulsecheck.jpg";
@@ -306,7 +307,7 @@ const Articles = () => {
       }
     };
 
-    const updateArticle3 = async (REACT_APP_LEAGUE_ID, articles) => {
+    const updateOverreaction = async (REACT_APP_LEAGUE_ID, articles) => {
       const currentDate = new Date();
       const weeklyInfoCollectionRef = collection(db, "Weekly Articles");
       const queryRef = query(
@@ -572,27 +573,38 @@ const Articles = () => {
             setLoading(false);
           }
 
-          if (!docData.segment2) {
+          if (!docData.overreaction) {
             const data = await fetchDataFromApi(
-              "https://www.fantasypulseff.com/api/fetchSegment2"
+              "https://www.fantasypulseff.com/api/fetchOverreaction"
             );
-            setArticles2(data);
-            updateSavage(REACT_APP_LEAGUE_ID, data);
+            setArticles3(data);
+            updateOverreaction(REACT_APP_LEAGUE_ID, data);
           } else {
-            setArticles2(docData.segment2);
+            setArticles3(docData.overreaction);
             setLoading(false);
           }
 
-          if (!docData.preview) {
-            const data = await fetchDataFromApi(
-              "https://www.fantasypulseff.com/api/fetchPreview"
-            );
-            setPreviewArticle(data);
-            updatePreview(REACT_APP_LEAGUE_ID, data);
-          } else {
-            setPreviewArticle(docData.preview);
-            setLoading(false);
-          }
+          // if (!docData.segment2) {
+          //   const data = await fetchDataFromApi(
+          //     "https://www.fantasypulseff.com/api/fetchSegment2"
+          //   );
+          //   setArticles2(data);
+          //   updateSavage(REACT_APP_LEAGUE_ID, data);
+          // } else {
+          //   setArticles2(docData.segment2);
+          //   setLoading(false);
+          // }
+
+          // if (!docData.preview) {
+          //   const data = await fetchDataFromApi(
+          //     "https://www.fantasypulseff.com/api/fetchPreview"
+          //   );
+          //   setPreviewArticle(data);
+          //   updatePreview(REACT_APP_LEAGUE_ID, data);
+          // } else {
+          //   setPreviewArticle(docData.preview);
+          //   setLoading(false);
+          // }
 
           const results = await Promise.all(promises);
 
@@ -667,12 +679,11 @@ const Articles = () => {
           //   updateArticle4(REACT_APP_LEAGUE_ID, data4);
           // }
 
-          const [data1, data2, data3] = await Promise.all([
+          const [data1, data2] = await Promise.all([
             fetchDataFromApi("https://www.fantasypulseff.com/api/fetchData"),
             fetchDataFromApi(
-              "https://www.fantasypulseff.com/api/fetchSegment2"
+              "https://www.fantasypulseff.com/api/fetchOverreaction"
             ),
-            fetchDataFromApi("https://www.fantasypulseff.com/api/fetchPreview"),
           ]);
 
           if (data1) {
@@ -680,13 +691,13 @@ const Articles = () => {
             updateRecap(REACT_APP_LEAGUE_ID, data1);
           }
           if (data2) {
-            setArticles2(data2);
-            updateSavage(REACT_APP_LEAGUE_ID, data2);
+            setArticles3(data2);
+            updateOverreaction(REACT_APP_LEAGUE_ID, data2);
           }
-          if (data3) {
-            setPreviewArticle(data3);
-            updatePreview(REACT_APP_LEAGUE_ID, data3);
-          }
+          // if (data3) {
+          //   setPreviewArticle(data3);
+          //   updatePreview(REACT_APP_LEAGUE_ID, data3);
+          // }
           // Setting loading to false after all 3 articles are generated
           setLoading(false);
         }
@@ -756,7 +767,7 @@ const Articles = () => {
       const team2 = matchupData[1];
       console.log(team1, team2);
 
-      if (team1.starters?.length > 11 || team2.starters?.length > 11) {
+      if (team1.starters?.length > 13 || team2.starters?.length > 13) {
         over11Starters = true;
       }
     });
@@ -802,9 +813,9 @@ const Articles = () => {
             className={`sticky flex items-center justify-around top-0 z-50 `}
           >
             <ArticleDropdown
-              title1={previewArticle?.title || ""}
-              title2={articles2?.title || ""}
-              title3={articles?.title || ""}
+              title1={articles?.title || ""}
+              title2={articles3?.title || ""}
+              // title3={articles?.title || ""}
               // title3={articles3?.title || ""}
               // title4={articles4?.title || ""}
               // title1={previewArticle?.title || ""}
@@ -863,7 +874,7 @@ const Articles = () => {
             <div className={articles3?.title ? "block" : "hidden"}>
               <ArticleTemplate
                 title={articles3?.title || ""}
-                image={imran}
+                image={overreaction}
                 author={"Joe Glazer"}
                 authorImg={glazer}
                 jobtitle="Fantasy Pulse Insider"
@@ -903,7 +914,7 @@ const Articles = () => {
           </Element>
           {articles && (
             <SmoothLink
-              to={previewArticle?.title || ""}
+              to={articles?.title || ""}
               activeClass="active"
               spy={true}
               smooth={true}

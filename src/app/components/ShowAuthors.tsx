@@ -50,24 +50,24 @@ const ShowAuthors = ({ thisWeeksAuthors }: { thisWeeksAuthors: string[] }) => {
     //   likes: 0,
     //   dislikes: 0,
     // },
-    {
-      name: "Savage Steve",
-      title: "Independent Journalist",
-      about:
-        " Savage Steve is an unapologetically bold and independent journalist known for his razor-sharp wit and no-holds-barred approach when it comes to critiquing fantasy football teams and their managers. With a knack for delivering humorous and sarcastic commentary, he fearlessly calls out the flaws of these teams in a way that leaves readers both entertained and in stitches. Savage Steve's unique style provides a refreshing and comedic take on the world of fantasy sports, sparing no one from his clever criticism.",
-      image: steve,
-      likes: 0,
-      dislikes: 0,
-    },
     // {
-    //   name: "Joe Glazer",
-    //   title: "Fantasy Pulse Insider",
+    //   name: "Savage Steve",
+    //   title: "Independent Journalist",
     //   about:
-    //     "Joe Glazer, the Fantasy Pulse Insider, is renowned for his unbridled optimism and unwavering positivity. He consistently emphasizes the strengths and successes of fantasy league managers, focusing on their impressive records, offensive prowess, and adaptability in the league. Joe's infectious enthusiasm and relentless positivity create an uplifting and encouraging atmosphere for fantasy sports fans, always highlighting the bright side of the game.",
-    //   image: glazer,
+    //     " Savage Steve is an unapologetically bold and independent journalist known for his razor-sharp wit and no-holds-barred approach when it comes to critiquing fantasy football teams and their managers. With a knack for delivering humorous and sarcastic commentary, he fearlessly calls out the flaws of these teams in a way that leaves readers both entertained and in stitches. Savage Steve's unique style provides a refreshing and comedic take on the world of fantasy sports, sparing no one from his clever criticism.",
+    //   image: steve,
     //   likes: 0,
     //   dislikes: 0,
     // },
+    {
+      name: "Joe Glazer",
+      title: "Fantasy Pulse Insider",
+      about:
+        "Joe Glazer, the Fantasy Pulse Insider, is renowned for his unbridled optimism and unwavering positivity. He consistently emphasizes the strengths and successes of fantasy league managers, focusing on their impressive records, offensive prowess, and adaptability in the league. Joe's infectious enthusiasm and relentless positivity create an uplifting and encouraging atmosphere for fantasy sports fans, always highlighting the bright side of the game.",
+      image: glazer,
+      likes: 0,
+      dislikes: 0,
+    },
     // {
     //   name: "Greg Roberts",
     //   title: "Fantasy Pulse Medical Director",

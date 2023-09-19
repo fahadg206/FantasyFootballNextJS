@@ -84,7 +84,7 @@ const StaggeredDropDown = ({
           >
             <Option
               setOpen={setOpen}
-              Icon={FaFaceSadCry}
+              Icon={GiDonut}
               text={title2.substring(0, 20) + "..."}
             />
           </SmoothLink>
