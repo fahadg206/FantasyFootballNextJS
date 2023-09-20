@@ -9,6 +9,8 @@ import { useSelectedManager } from "../../../context/SelectedManagerContext";
 import { useRouter } from "next/navigation";
 import { Spinner } from "@nextui-org/react";
 import { BsDot } from "react-icons/bs";
+import helmet from "../../../images/helmet2.png";
+import useTimeChecks from "../../../libs/getTimes";
 
 interface ScheduleData {
   [userId: string]: {
@@ -66,6 +68,10 @@ export default function Page() {
   const [selectedManagerMatchups, setSelectedManagerMatchups] = useState<
     Map<string, ManagerMatchup[]>
   >(new Map());
+  const [mnfEnd, setMnfEnd] = useState(false);
+  const [morningSlateEnd, setMorningSlateEnd] = useState(false);
+  const [afternoonSlateEnd, setAfternoonSlateEnd] = useState(false);
+  const [snfEnd, setSnfEnd] = useState(false);
   const { selectedManagerr } = useSelectedManager();
 
   const [selectedManagerData, setSelectedManagerData] = useState();
@@ -220,6 +226,7 @@ export default function Page() {
         setLoading(true);
         for (let i = 1; i < 15; i++) {
           const weekMatchupMap = await fetchDataForWeek(i);
+
           // Handle additional processing or state updates if needed
         }
         setLoading(false);
@@ -271,6 +278,24 @@ export default function Page() {
 
     fetchData();
   }, []);
+
+  const {
+    isSundayAfternoon,
+    isSundayEvening,
+    isSundayNight,
+    isMondayNight,
+    isWednesdayMidnight,
+  } = useTimeChecks();
+
+  useEffect(() => {
+    setMnfEnd(isMondayNight);
+  }, [
+    isMondayNight,
+    isSundayNight,
+    isSundayEvening,
+    isSundayAfternoon,
+    isWednesdayMidnight,
+  ]);
 
   if (loading) {
     return (
@@ -362,7 +387,12 @@ export default function Page() {
               }
             >
               <Image
-                src={opponent.avatar}
+                src={
+                  opponent.avatar ===
+                  "https://sleepercdn.com/avatars/thumbs/null"
+                    ? helmet
+                    : opponent.avatar
+                }
                 alt="avatar"
                 width={30}
                 height={30}

@@ -171,10 +171,10 @@ const Options = ({
   };
 
   if (parseInt(localStorage.getItem("currentWeek")) < nflWeek) {
-    localStorage.removeItem(`${league_id} ${matchup_id} userVoted`);
+    localStorage.clear();
     setTimeout(() => {
       localStorage.removeItem("currentWeek");
-    }, 2000);
+    }, 3000);
   }
 
   const getVotes = async () => {
