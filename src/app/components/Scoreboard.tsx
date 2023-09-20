@@ -334,12 +334,16 @@ export default function Scoreboard() {
         //console.log("CUrr week", nextWednesdayMidnight);
 
         // Check if it's before Wednesday
-        if (currentTime < nextWednesdayMidnight) {
-          //console.log("if");
+        if (
+          currentTime < currentWednesdayMidnight
+            ? currentTime < currentWednesdayMidnight
+            : currentTime < nextWednesdayMidnight
+        ) {
+          console.log("if");
           const previewMapData = await getMatchupMap(id, week + 1);
           updateDbStorage(matchupObj, previewMapData.updatedScheduleData);
         } else {
-          // console.log("else");
+          console.log("else");
           const matchupMapDataCopy = await getMatchupMap(id, week - 1);
 
           const matchupObj = mapToObject(matchupMapDataCopy.matchupMap);

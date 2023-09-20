@@ -79,6 +79,13 @@ interface TabProps {
   selectedManager: string;
 }
 
+interface NflState {
+  season: string;
+  display_week: number;
+  season_type: string;
+  // Add other properties as needed
+}
+
 const TabsFeatures = () => {
   const [selected, setSelected] = useState(0);
   const [selectedManager, setSelectedManager] = useState<string | null>(null);
@@ -105,9 +112,39 @@ const TabsFeatures = () => {
     }
   };
 
+  const getNflState = async (): Promise<NflState> => {
+    try {
+      const res: AxiosResponse<NflState> = await axios.get<NflState>(
+        `https://api.sleeper.app/v1/state/nfl`
+      );
+
+      const data: NflState = res.data;
+
+      if (res.status === 200) {
+        //console.log("Here's the nfl Data:", data);
+      } else {
+        // Handle other status codes or error cases
+      }
+      return data;
+    } catch (err) {
+      console.error(err);
+      // Handle the error case here, return an appropriate value, or throw an error
+      throw new Error("Failed to get NFL state");
+    }
+  };
+
   const fetchData = async () => {
     try {
       const rostersData = await getRoster();
+
+      const nflState: NflState = await getNflState();
+
+      let week = 1;
+      if (nflState.season_type === "regular") {
+        week = nflState.display_week;
+      } else if (nflState.season_type === "post") {
+        week = 18;
+      }
       const newManagerInfo: ManagerInfo = {};
 
       // Update the newManagerInfo map with roster data
@@ -127,7 +164,7 @@ const TabsFeatures = () => {
       //console.log(newManagerInfo);
       setManagerInfo(newManagerInfo);
 
-      const matchupMapData = await getMatchupMap(REACT_APP_LEAGUE_ID, 1);
+      const matchupMapData = await getMatchupMap(REACT_APP_LEAGUE_ID, week);
       setUserData(matchupMapData.updatedScheduleData as ScheduleData);
       setMatchupMap(matchupMapData.matchupMap);
       setSelectedManager(localStorage.getItem("selectedManager"));
@@ -157,7 +194,7 @@ const TabsFeatures = () => {
         setPlayersData(playersData);
 
         // Process and use the data as needed
-        console.log("WHO, ", playersData["4017"]);
+        //console.log("WHO, ", playersData["4017"]);
         // Additional code that uses playersData goes here
       } catch (error) {
         console.error("Error while fetching players data:", error);
