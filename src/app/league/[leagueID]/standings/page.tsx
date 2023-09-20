@@ -9,6 +9,7 @@ import Logo from "../../../images/Transparent.png";
 import { FiAward, FiChevronDown, FiChevronUp } from "react-icons/fi";
 import axios from "axios";
 import { useRouter } from "next/navigation";
+import helmet from "../../../images/helmet2.png";
 
 interface ManagerInfo {
   [userId: string]: {
@@ -109,7 +110,9 @@ const Page = () => {
         // Update the managerInfo map with user data
         for (const user of usersWithRoster) {
           managerInfo[user.user_id] = {
-            avatar: `https://sleepercdn.com/avatars/thumbs/${user.avatar}`,
+            avatar: user.avatar
+              ? `https://sleepercdn.com/avatars/thumbs/${user.avatar}`
+              : helmet,
             name: user.display_name,
             user_id: user.user_id,
           };

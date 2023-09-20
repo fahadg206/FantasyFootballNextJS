@@ -76,7 +76,7 @@ interface Starter {
 }
 
 const CARD_WIDTH = 350;
-const CARD_HEIGHT = 350;
+const CARD_HEIGHT = 380;
 const MARGIN = 20;
 const CARD_SIZE = CARD_WIDTH + MARGIN;
 
