@@ -595,16 +595,16 @@ const Articles = () => {
           //   setLoading(false);
           // }
 
-          // if (!docData.preview) {
-          //   const data = await fetchDataFromApi(
-          //     "https://www.fantasypulseff.com/api/fetchPreview"
-          //   );
-          //   setPreviewArticle(data);
-          //   updatePreview(REACT_APP_LEAGUE_ID, data);
-          // } else {
-          //   setPreviewArticle(docData.preview);
-          //   setLoading(false);
-          // }
+          if (!docData.preview) {
+            const data = await fetchDataFromApi(
+              "https://www.fantasypulseff.com/api/fetchPreview"
+            );
+            setPreviewArticle(data);
+            updatePreview(REACT_APP_LEAGUE_ID, data);
+          } else {
+            setPreviewArticle(docData.preview);
+            setLoading(false);
+          }
 
           const results = await Promise.all(promises);
 
@@ -679,11 +679,12 @@ const Articles = () => {
           //   updateArticle4(REACT_APP_LEAGUE_ID, data4);
           // }
 
-          const [data1, data2] = await Promise.all([
+          const [data1, data2, data3] = await Promise.all([
             fetchDataFromApi("https://www.fantasypulseff.com/api/fetchData"),
             fetchDataFromApi(
               "https://www.fantasypulseff.com/api/fetchOverreaction"
             ),
+            fetchDataFromApi("https://www.fantasypulseff.com/api/fetchPreview"),
           ]);
 
           if (data1) {
@@ -694,10 +695,10 @@ const Articles = () => {
             setArticles3(data2);
             updateOverreaction(REACT_APP_LEAGUE_ID, data2);
           }
-          // if (data3) {
-          //   setPreviewArticle(data3);
-          //   updatePreview(REACT_APP_LEAGUE_ID, data3);
-          // }
+          if (data3) {
+            setPreviewArticle(data3);
+            updatePreview(REACT_APP_LEAGUE_ID, data3);
+          }
           // Setting loading to false after all 3 articles are generated
           setLoading(false);
         }
@@ -813,8 +814,9 @@ const Articles = () => {
             className={`sticky flex items-center justify-around top-0 z-50 `}
           >
             <ArticleDropdown
-              title1={articles?.title || ""}
-              title2={articles3?.title || ""}
+              title1={previewArticle?.title || ""}
+              title2={articles?.title || ""}
+              title3={articles3?.title || ""}
               // title3={articles?.title || ""}
               // title3={articles3?.title || ""}
               // title4={articles4?.title || ""}
@@ -914,7 +916,7 @@ const Articles = () => {
           </Element>
           {articles && (
             <SmoothLink
-              to={articles?.title || ""}
+              to={previewArticle?.title || ""}
               activeClass="active"
               spy={true}
               smooth={true}
