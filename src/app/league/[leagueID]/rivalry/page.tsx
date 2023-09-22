@@ -1095,7 +1095,7 @@ const Matchups = () => {
                                           <p className=" font-bold text-[10px]">
                                             {playerPoints}
                                           </p>
-                                          <p className=" text-[8px] md:text-[10px] font-bold italic">
+                                          <p className=" text-[8px] font-bold italic">
                                             {(() => {
                                               const player =
                                                 playersData[starter.toString()];
