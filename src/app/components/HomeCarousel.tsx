@@ -329,7 +329,7 @@ const CardCarousel = ({ leagueID }) => {
       // Add or update the document based on whether it already exists
       if (!querySnapshot.empty) {
         // Document exists, update it
-        console.log("in if");
+        //console.log("in if");
         querySnapshot.forEach(async (doc) => {
           await updateDoc(doc.ref, {
             headlines: headlines,
