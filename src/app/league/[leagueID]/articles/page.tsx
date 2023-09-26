@@ -361,7 +361,7 @@ const Articles = () => {
       }
     };
 
-    const UpdatePulseCheck = async (REACT_APP_LEAGUE_ID, articles) => {
+    const updatePulseCheck = async (REACT_APP_LEAGUE_ID, articles) => {
       const currentDate = new Date();
       const weeklyInfoCollectionRef = collection(db, "Weekly Articles");
       const queryRef = query(
@@ -600,9 +600,9 @@ const Articles = () => {
               "https://www.fantasypulseff.com/api/fetchPulseCheck"
             );
             setPulseCheck(data);
-            UpdatePulseCheck(REACT_APP_LEAGUE_ID, data);
+            updatePulseCheck(REACT_APP_LEAGUE_ID, data);
           } else {
-            setPulseCheck(docData.preview);
+            setPulseCheck(docData.pulse_check);
             setLoading(false);
           }
 
@@ -704,7 +704,7 @@ const Articles = () => {
           }
           if (data2) {
             setPulseCheck(data2);
-            UpdatePulseCheck(REACT_APP_LEAGUE_ID, data2);
+            updatePulseCheck(REACT_APP_LEAGUE_ID, data2);
           }
           if (data3) {
             setPreviewArticle(data3);
