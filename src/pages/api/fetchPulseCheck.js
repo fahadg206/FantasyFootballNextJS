@@ -71,7 +71,7 @@ export default async function handler(req, res) {
       openAIApiKey: process.env.OPENAI_API_KEY,
     });
 
-    const question = `Using this league's data write an article thats titled Pulse Check: Teams Under Duress, the article should give out "pulse checks" for each teams situation and what their chances of making the playoffs are, "Steady Pulse" for average chance, "Strong Pulse" for strong chance, "Weak Pulse" for slightly below average chance, "Flatlined" for low chance. Don't  mention the pulses categories in the explanation. Give a pulse check for every team, and group all the teams by their pulse category, each category should be one paragraph. Keep the content within 450 words maximum. The format of the JSON response should strictly adhere to RFC8259 compliance, without any deviations or errors. The JSON structure should match this template:
+    const question = `Using this league's data write an article thats titled Pulse Check: Teams Under Duress, the article should give out "pulse checks" for each teams situation and what their chances of making the playoffs are, "Steady Pulse" for average chance, "Strong Pulse" for strong chance, "Weak Pulse" for slightly below average chance, "Flatlined" for low chance. Give a breif breakdown for the teams in each category. Don't  mention the pulses categories in the explanation. Give a pulse check for every team, and group all the teams by their pulse category, each category should be one paragraph. Keep the content within 450 words maximum. The format of the JSON response should strictly adhere to RFC8259 compliance, without any deviations or errors. The JSON structure should match this template:
   "title": "",
   "paragraph1": "",
   "paragraph2": "",
@@ -87,16 +87,16 @@ Please ensure that the generated JSON response meets the specified criteria with
     const apiResponse = await chainA.call({ leagueData: newFile });
 
     console.log("Headlines API ", apiResponse.text);
-    const cleanUp = await model.call([
-      new SystemMessage(
-        "Turn the following string into valid JSON format that strictly adhere to RFC8259 compliance, if it already is in a valid JSON format then give me the string as the response, without any other information from you"
-      ),
-      new HumanMessage(apiResponse.text),
-    ]);
+    // const cleanUp = await model.call([
+    //   new SystemMessage(
+    //     "Turn the following string into valid JSON format that strictly adhere to RFC8259 compliance, if it already is in a valid JSON format then give me the string as the response, without any other information from you"
+    //   ),
+    //   new HumanMessage(apiResponse.text),
+    // ]);
 
     //updateWeeklyInfo(REACT_APP_LEAGUE_ID, cleanUp.content);
 
-    return res.status(200).json(JSON.parse(cleanUp.content));
+    return res.status(200).json(JSON.parse(apiResponse.text));
   } catch (error) {
     console.error("Unexpected error:", error);
     return res.status(500).json({ error: "An error occurred" });
