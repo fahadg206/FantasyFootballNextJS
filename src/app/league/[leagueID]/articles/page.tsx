@@ -290,11 +290,11 @@ const Articles = () => {
             });
           }
         });
-        console.log("updating article 1");
+        //console.log("updating article 1");
       } else {
         //setDate(currentDate.toISOString());
 
-        console.log("adding article 1");
+        //console.log("adding article 1");
         // Document does not exist, add a new one
         if (!articles.error) {
           await addDoc(weeklyInfoCollectionRef, {
@@ -303,7 +303,7 @@ const Articles = () => {
           });
         }
 
-        console.log("Date that was generated: ", currentDate.toISOString());
+        // console.log("Date that was generated: ", currentDate.toISOString());
       }
     };
 
@@ -624,14 +624,11 @@ const Articles = () => {
             //   setArticles4(data);
             //   updateArticle4(REACT_APP_LEAGUE_ID, data);
             // }
-
-            console.log("what we are working with ", data);
-
+            //console.log("what we are working with ", data);
             // if (index === 0) {
             //   setPreviewArticle(data);
             //   updatePreview(REACT_APP_LEAGUE_ID, data);
             // }
-
             // if (index === 0) {
             //   setPlayoffsArticle(data);
             //   updatePlayoffPredictions(REACT_APP_LEAGUE_ID, data);
@@ -738,7 +735,7 @@ const Articles = () => {
       loaded = true;
     }
 
-    console.log(matchupMap);
+    //console.log(matchupMap);
 
     const messages = [
       "Articles can take up to a few minutes to generate! Feel free to check out the rest of Fantasy Pulse and come back!",
@@ -766,7 +763,7 @@ const Articles = () => {
     Array.from(matchupMap).map(([matchupID, matchupData]) => {
       const team1 = matchupData[0];
       const team2 = matchupData[1];
-      console.log(team1, team2);
+      //console.log(team1, team2);
 
       if (team1.starters?.length > 13 || team2.starters?.length > 13) {
         over11Starters = true;

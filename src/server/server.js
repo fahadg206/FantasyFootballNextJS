@@ -23,7 +23,7 @@ let players = new Map();
 let processedPlayers;
 
 function GET() {
-  console.log("Called server");
+  //console.log("Called server");
 
   return axios
     .get("https://api.sleeper.app/v1/state/nfl")
@@ -52,7 +52,7 @@ function GET() {
               const leagueData = leagueDataRes.data;
               const playoffs = playoffsRes.data;
 
-              console.log("Here's the state of the nfl: ", nflState);
+              //console.log("Here's the state of the nfl: ", nflState);
               let year = nflState.league_season;
               const regularSeasonLength =
                 leagueData.settings.playoff_week_start - 1;
@@ -176,7 +176,7 @@ module.exports = async (req, res) => {
 async function initializeData() {
   try {
     await GET();
-    console.log("Data loaded successfully!");
+    //console.log("Data loaded successfully!");
   } catch (error) {
     console.error("Error while fetching data:", error);
   }

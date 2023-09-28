@@ -22,7 +22,7 @@ interface WeeklyData {
 }
 
 export async function GET(): Promise<Record<string, any>> {
-  console.log("Called server");
+  //console.log("Called server");
 
   const nflStateRes = await axios
     .get("https://api.sleeper.app/v1/state/nfl")
@@ -51,7 +51,7 @@ export async function GET(): Promise<Record<string, any>> {
   const leagueData = leagueDataRes.data;
   const playoffs = playoffsRes.data;
 
-  console.log("Here's the state of the nfl: ", nflState);
+  //console.log("Here's the state of the nfl: ", nflState);
   let year = nflState.league_season;
   const regularSeasonLength = leagueData.settings.playoff_week_start - 1;
   const playoffLength = playoffs.pop().r;

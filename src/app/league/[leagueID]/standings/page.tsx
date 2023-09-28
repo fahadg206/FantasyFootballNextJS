@@ -51,7 +51,7 @@ const Page = () => {
   const selectedLeagueID = localStorage.getItem("selectedLeagueID");
   const router = useRouter();
 
-  console.log("selectedLeagueID:", selectedLeagueID);
+  //console.log("selectedLeagueID:", selectedLeagueID);
 
   if (typeof localStorage !== "undefined") {
     if (
@@ -94,7 +94,7 @@ const Page = () => {
         const usersData = await getUsers();
 
         const rostersData = await getRoster();
-        console.log(rostersData);
+        //console.log(rostersData);
 
         // Filter users with no roster id (They don't have a team)
         const usersWithRoster = usersData.filter((user) =>
@@ -103,10 +103,10 @@ const Page = () => {
 
         // Create a new map to store the updated schedule data
         const managerInfo: ManagerInfo = {};
-        console.log(
-          "useEffect triggered with selectedLeagueID:",
-          selectedLeagueID
-        );
+        // console.log(
+        //   "useEffect triggered with selectedLeagueID:",
+        //   selectedLeagueID
+        // );
         // Update the managerInfo map with user data
         for (const user of usersWithRoster) {
           managerInfo[user.user_id] = {
@@ -147,7 +147,7 @@ const Page = () => {
         setManagerInfo(managerInfo);
         const teamArray = Object.entries(managerInfo);
         //const sortByWins = [...teamArray].sort((a, b) => b[1].wins - a[1].wins);
-        console.log(teamArray);
+        //console.log(teamArray);
         const sortedTeamData = Object.entries(managerInfo)
 
           .sort((a, b) => {
@@ -176,8 +176,8 @@ const Page = () => {
     fetchData();
   }, [selectedLeagueID]);
 
-  console.log("sorted", sortedTeamDataFinal);
-  console.log(managerInfo);
+  //console.log("sorted", sortedTeamDataFinal);
+  //console.log(managerInfo);
 
   const Table = () => {
     return (
@@ -218,7 +218,7 @@ const Page = () => {
       </div>
     );
   };
-  console.log(sortedTeamDataFinal);
+  //console.log(sortedTeamDataFinal);
 
   const TableRows: React.FC<{ user: ManagerInfo[string]; index: number }> = ({
     user,

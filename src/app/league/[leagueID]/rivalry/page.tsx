@@ -547,11 +547,11 @@ const Matchups = () => {
           }
         );
         const playersData = await response.json();
-        console.log("Got it");
+        //console.log("Got it");
         setPlayersData(playersData);
 
         // Process and use the data as needed
-        console.log("WHO, ", playersData["4017"]);
+        //console.log("WHO, ", playersData["4017"]);
         // Additional code that uses playersData goes here
       } catch (error) {
         console.error("Error while fetching players data:", error);
@@ -592,13 +592,13 @@ const Matchups = () => {
             rivals.add(rivalryData);
 
             setRivalry(rivals);
-            console.log("Selected users Rivalry Data: ", rivalryData);
+            //console.log("Selected users Rivalry Data: ", rivalryData);
           })
           .catch((error) => {
             console.error("Error occurred while getting rivalry data:", error);
           });
       } else {
-        console.log("Could not get user info for both users.");
+        //console.log("Could not get user info for both users.");
       }
     };
 
@@ -708,7 +708,7 @@ const Matchups = () => {
   const slate =
     rivalsMap.get("Rival") && rivalsMap.get("Rival")?.matchups[weekCount];
 
-  console.log(rivalsMap.get("Rival"));
+  //console.log(rivalsMap.get("Rival"));
 
   const colorObj: { [key: string]: string } = {
     QB: "text-[10px]  p-1 rounded-xl bg-[#DE3449] font-bold  text-center ",
@@ -753,13 +753,13 @@ const Matchups = () => {
         playerData.wi[weekString]?.p !== undefined
       ) {
         team2Proj += parseFloat(playerData.wi[weekString].p || "0");
-        console.log(team2Proj);
+        //console.log(team2Proj);
       }
     }
   }
 
   if (playersData["4046"]) {
-    console.log(playersData["4046"].wi[1]);
+    //console.log(playersData["4046"].wi[1]);
   }
 
   // if (playersData["4018"]) {

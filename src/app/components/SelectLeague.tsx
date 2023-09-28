@@ -145,7 +145,7 @@ export default function Page(props: myProps) {
         <button
           onClick={() => {
             //setSelectedLeagueContext(league);
-            console.log(props.selectedSeason);
+            //console.log(props.selectedSeason);
 
             localStorage.setItem("selectedLeagueID", "982124415926300672");
             localStorage.setItem("selectedLeagueName", "Dynasty League");

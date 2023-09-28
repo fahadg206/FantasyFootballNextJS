@@ -36,7 +36,7 @@ const updateWeeklyInfo = async (REACT_APP_LEAGUE_ID, articles) => {
   // Add or update the document based on whether it already exists
   if (!querySnapshot.empty) {
     // Document exists, update it
-    console.log("in if");
+    //console.log("in if");
     querySnapshot.forEach(async (doc) => {
       await updateDoc(doc.ref, {
         pulse_check: articles,
@@ -52,7 +52,7 @@ const updateWeeklyInfo = async (REACT_APP_LEAGUE_ID, articles) => {
 };
 
 export default async function handler(req, res) {
-  console.log("here");
+  //console.log("here");
   // console.log("what was passed in ", req.body);
   const REACT_APP_LEAGUE_ID = req.body;
   const readingRef = ref(storage, `files/${REACT_APP_LEAGUE_ID}.txt`);
@@ -63,8 +63,8 @@ export default async function handler(req, res) {
   const newFile = JSON.stringify(fileContent).replace(/\//g, "");
 
   try {
-    console.log("Here");
-    console.info(process.env.OPENAI_API_KEY);
+    //console.log("Here");
+    //console.info(process.env.OPENAI_API_KEY);
     const model = new ChatOpenAI({
       temperature: 0.9,
       model: "gpt-4",
@@ -86,7 +86,7 @@ Please ensure that the generated JSON response meets the specified criteria with
     const chainA = new LLMChain({ llm: model, prompt });
     const apiResponse = await chainA.call({ leagueData: newFile });
 
-    console.log("Headlines API ", apiResponse.text);
+    //console.log("Headlines API ", apiResponse.text);
     const cleanUp = await model.call([
       new SystemMessage(
         "Turn the following string into valid JSON format that strictly adhere to RFC8259 compliance, if it already is in a valid JSON format then give me the string as the response, without any other information from you"
@@ -113,7 +113,7 @@ Please ensure that the generated JSON response meets the specified criteria with
     );
 
     if (!querySnapshot.empty) {
-      console.log("No documents found in 'Article Info' collection");
+      //console.log("No documents found in 'Article Info' collection");
       return res.status(404).json({ error: "No documents found" });
     }
   } catch (error) {

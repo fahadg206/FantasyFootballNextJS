@@ -241,7 +241,7 @@ export default function Scoreboard() {
               newContent.length > 3 &&
               (!existingContent || existingContent !== newContent)
             ) {
-              console.log("newcontent", newContent);
+              //console.log("newcontent", newContent);
               // If existingContent is empty or different from new content, upload the new content
               uploadNewContent(newContent, readingRef);
             } else {
@@ -257,7 +257,7 @@ export default function Scoreboard() {
           // Handle the case when the object (file) is not found in storage
           uploadNewContent(newContent, readingRef);
         } else {
-          console.error("Error getting download URL:", error);
+          //console.error("Error getting download URL:", error);
         }
       });
   }
@@ -266,7 +266,7 @@ export default function Scoreboard() {
   function uploadNewContent(content: any, storageRef: any) {
     uploadString(storageRef, content, "raw")
       .then(() => {
-        console.log("Text file uploaded to Firebase Cloud Storage.");
+        //console.log("Text file uploaded to Firebase Cloud Storage.");
       })
       .catch((error) => {
         console.error("Error uploading text file:", error);
@@ -339,11 +339,11 @@ export default function Scoreboard() {
             ? currentTime < currentWednesdayMidnight
             : currentTime < nextWednesdayMidnight
         ) {
-          console.log("if");
+          //console.log("if");
           const previewMapData = await getMatchupMap(id, week + 1);
           updateDbStorage(matchupObj, previewMapData.updatedScheduleData);
         } else {
-          console.log("else");
+          //console.log("else");
           const matchupMapDataCopy = await getMatchupMap(id, week - 1);
 
           const matchupObj = mapToObject(matchupMapDataCopy.matchupMap);
@@ -398,7 +398,7 @@ export default function Scoreboard() {
       router.refresh();
     }
   } else {
-    console.log("error with local storage");
+    //console.log("error with local storage");
     // Handle the situation where localStorage is not available
     // You can log an error, use alternative storage methods, or perform other actions
   }

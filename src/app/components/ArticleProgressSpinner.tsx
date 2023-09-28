@@ -32,7 +32,7 @@ export default function App() {
     }
   }, [value]);
 
-  console.log(articlesReady);
+  //console.log(articlesReady);
 
   return (
     <div className="flex flex-col items-center justify-center gap-y-4">

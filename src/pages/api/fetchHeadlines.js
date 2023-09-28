@@ -36,7 +36,7 @@ const updateWeeklyInfo = async (REACT_APP_LEAGUE_ID, headlines) => {
   // Add or update the document based on whether it already exists
   if (!querySnapshot.empty) {
     // Document exists, update it
-    console.log("in if");
+    //console.log("in if");
     querySnapshot.forEach(async (doc) => {
       await updateDoc(doc.ref, {
         headlines: headlines,
@@ -52,7 +52,7 @@ const updateWeeklyInfo = async (REACT_APP_LEAGUE_ID, headlines) => {
 };
 
 export default async function handler(req, res) {
-  console.log("here");
+  //console.log("here");
   // console.log("what was passed in ", req.body);
   const REACT_APP_LEAGUE_ID = req.body;
   const readingRef = ref(storage, `files/${REACT_APP_LEAGUE_ID}.txt`);
@@ -63,8 +63,8 @@ export default async function handler(req, res) {
   const newFile = JSON.stringify(fileContent).replace(/\//g, "");
 
   try {
-    console.log("Here");
-    console.info(process.env.OPENAI_API_KEY);
+    //console.log("Here");
+    //console.info(process.env.OPENAI_API_KEY);
     const model = new ChatOpenAI({
       temperature: 0.9,
       model: "gpt-4",
@@ -77,7 +77,7 @@ export default async function handler(req, res) {
   "title": "",
   "description": ""
  keep response concise and exciting. give me the response in valid JSON array format. Please ensure that the generated JSON response meets the specified criteria without any syntax issues or inconsistencies.`;
-    console.log(question);
+    //console.log(question);
 
     const prompt = PromptTemplate.fromTemplate(question);
     const chainA = new LLMChain({ llm: model, prompt });
@@ -99,7 +99,7 @@ export default async function handler(req, res) {
     // ]);
 
     //updateWeeklyInfo(REACT_APP_LEAGUE_ID, apiResponse.text);
-    console.log(apiResponse.text);
+    //console.log(apiResponse.text);
 
     return res.status(200).json(JSON.parse(apiResponse.text));
   } catch (error) {

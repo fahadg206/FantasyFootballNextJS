@@ -51,7 +51,7 @@ const ScrollingTeamLogos = () => {
     fetchData();
   }, []);
 
-  console.log(userData);
+  //console.log(userData);
 
   const userDataArray = Object.values(userData || {});
 

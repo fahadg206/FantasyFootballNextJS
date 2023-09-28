@@ -36,7 +36,7 @@ interface WeeklyData {
 }
 
 export async function GET(): Promise<Record<string, any>> {
-  console.log("Called server");
+  //console.log("Called server");
 
   const nflStateRes = await axios
     .get("https://api.sleeper.app/v1/state/nfl")
@@ -65,7 +65,7 @@ export async function GET(): Promise<Record<string, any>> {
   const leagueData = leagueDataRes.data;
   const playoffs = playoffsRes.data;
 
-  console.log("Here's the state of the nfl: ", nflState);
+  //console.log("Here's the state of the nfl: ", nflState);
   let year = nflState.league_season;
   const regularSeasonLength = leagueData.settings.playoff_week_start - 1;
   const playoffLength = playoffs.pop().r;
@@ -184,7 +184,7 @@ app.use(cors({ origin: "http://localhost:3000" }));
 async function initializeData() {
   try {
     await GET();
-    console.log("Data loaded successfully!");
+    //console.log("Data loaded successfully!");
   } catch (error) {
     console.error("Error while fetching data:", error);
   }
@@ -193,12 +193,12 @@ async function initializeData() {
 // Create an endpoint to access the players map data
 app.get("/api/players", (req, res) => {
   // Return the players map as JSON
-  console.log("inside endpoint");
+  //console.log("inside endpoint");
   res.json(Array.from(players.entries()));
 });
 
 // Start the server and initialize data
 app.listen(port, () => {
-  console.log(`Server is running on http://localhost:${port}`);
+  //console.log(`Server is running on http://localhost:${port}`);
   initializeData();
 });

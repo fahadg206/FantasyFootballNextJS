@@ -48,7 +48,7 @@ export default function Home() {
         <div className="w-screen flex justify-center mt-3  md:mt-0 items-center md:ml-2  md:block md:w-[0vw]">
           <Button
             onPress={() => {
-              console.log(input);
+              //console.log(input);
               setVisible(true);
             }}
             css={{

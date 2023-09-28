@@ -36,7 +36,7 @@ let currentUser; // Declare currentUser variable
 signInAnonymously(auth)
   .then((userCredential) => {
     currentUser = userCredential.user;
-    console.log("Anonymous user ID: ", currentUser.uid);
+    //console.log("Anonymous user ID: ", currentUser.uid);
     // Perform actions after successful login
   })
   .catch((error) => {

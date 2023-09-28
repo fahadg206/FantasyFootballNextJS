@@ -78,7 +78,7 @@ const ShowAuthors = ({ thisWeeksAuthors }: { thisWeeksAuthors: string[] }) => {
     //   dislikes: 0,
     // },
   ];
-  console.log(thisWeeksAuthors);
+  //console.log(thisWeeksAuthors);
   return (
     <div>
       <Button

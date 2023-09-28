@@ -265,11 +265,11 @@ export default function Page() {
           }
         );
         const playersData = await response.json();
-        console.log("Got it");
+        //console.log("Got it");
         setPlayersData(playersData);
 
         // Process and use the data as needed
-        console.log("WHO, ", playersData["4017"]);
+        //console.log("WHO, ", playersData["4017"]);
         // Additional code that uses playersData goes here
       } catch (error) {
         console.error("Error while fetching players data:", error);

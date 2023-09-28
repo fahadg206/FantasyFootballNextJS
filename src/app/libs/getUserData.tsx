@@ -251,7 +251,7 @@ export default async function getUserData(league_id: any, week: number) {
 
     //Uncomment to upload textfile to firebase storage
 
-    console.log("Updated Data: ", updatedScheduleData);
+    //console.log("Updated Data: ", updatedScheduleData);
 
     const articleMatchupData: ScheduleData = JSON.parse(
       JSON.stringify(updatedScheduleData)
@@ -276,7 +276,7 @@ export default async function getUserData(league_id: any, week: number) {
     // Upload the text content as a text file to Firebase Cloud Storage
     uploadString(storageRef, textContent, "raw")
       .then(() => {
-        console.log("Text file uploaded to Firebase Cloud Storage.");
+        //console.log("Text file uploaded to Firebase Cloud Storage.");
       })
       .catch((error) => {
         console.error("Error uploading text file:", error);
@@ -288,10 +288,10 @@ export default async function getUserData(league_id: any, week: number) {
           fetch(url)
             .then((response) => response.text())
             .then((fileContent) => {
-              console.log(
-                "Text file content from Firebase Cloud Storage:",
-                fileContent
-              );
+              // console.log(
+              //   "Text file content from Firebase Cloud Storage:",
+              //   fileContent
+              // );
             })
             .catch((error) => {
               console.error("Error fetching text file content:", url);

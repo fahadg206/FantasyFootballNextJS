@@ -362,7 +362,7 @@ const CardCarousel = ({ leagueID }) => {
       });
       topScorer = sortedUserData[0];
     }
-    console.log(over11Starters);
+    //console.log(over11Starters);
 
     let errorText = (
       <div className=" flex justify-center items-center text-center w-[95vw] xl:w-[60vw] h-[20vh] p-2 mt-6">
@@ -462,7 +462,7 @@ const CardCarousel = ({ leagueID }) => {
       // Add or update the document based on whether it already exists
       if (!querySnapshot.empty) {
         // Document exists, update it
-        console.log("in if");
+        //console.log("in if");
         querySnapshot.forEach(async (doc) => {
           await updateDoc(doc.ref, {
             headlines: headlines,

@@ -92,7 +92,7 @@ const Options = ({
   const leagueID = localStorage.getItem("selectedLeagueID");
 
   const addVotes = async (votes) => {
-    console.log(votes);
+    //console.log(votes);
     try {
       const voteInfo = collection(db, "Matchup Polls");
       const queryRef = query(voteInfo, where("league_id", "==", leagueID));
@@ -120,10 +120,10 @@ const Options = ({
             matchups: updatedMatchups,
           });
 
-          console.log(
-            "Votes updated successfully for existing matchup",
-            matchup_id
-          );
+          // console.log(
+          //   "Votes updated successfully for existing matchup",
+          //   matchup_id
+          // );
         } else {
           // if matchup doesn't exist then add this new matchup to the existing ones and then pass the new updated array into matchups key
           // Add a new matchup
@@ -134,7 +134,7 @@ const Options = ({
             matchups: updatedMatchups,
           });
 
-          console.log("New matchup added successfully with votes", votes);
+          //console.log("New matchup added successfully with votes", votes);
         }
       } else {
         // Document does not exist, so initialize the array with the first matchup that was voted on by any user.
@@ -143,7 +143,7 @@ const Options = ({
           matchups: [{ matchup_id: matchup_id, votes: votes }],
         });
 
-        console.log("New document created with matchup and votes", votes);
+        //console.log("New document created with matchup and votes", votes);
       }
     } catch (error) {
       console.error("Error adding or updating matchup:", error);
@@ -167,7 +167,7 @@ const Options = ({
     setUserVoted(true);
     localStorage.setItem(`${league_id} ${matchup_id} userVoted`, userVoted);
     localStorage.setItem("currentWeek", nflWeek);
-    console.log(votes);
+    //console.log(votes);
   };
 
   if (parseInt(localStorage.getItem("currentWeek")) < nflWeek) {
@@ -212,7 +212,7 @@ const Options = ({
               setWinningTeamName("DRAW");
             }
           } else {
-            console.log("Matchup not found.");
+            //console.log("Matchup not found.");
           }
         });
       } else {

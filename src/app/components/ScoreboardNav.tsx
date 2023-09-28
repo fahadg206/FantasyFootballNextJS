@@ -243,7 +243,7 @@ export default function ScoreboardNav({ setShowScore }) {
   function uploadNewContent(content: any, storageRef: any) {
     uploadString(storageRef, content, "raw")
       .then(() => {
-        console.log("Text file uploaded to Firebase Cloud Storage.");
+        //console.log("Text file uploaded to Firebase Cloud Storage.");
       })
       .catch((error) => {
         console.error("Error uploading text file:", error);
@@ -337,7 +337,7 @@ export default function ScoreboardNav({ setShowScore }) {
           }
         );
         const playersData = await response.json();
-        console.log("Got it");
+        //console.log("Got it");
         setPlayersData(playersData);
 
         // Process and use the data as needed
