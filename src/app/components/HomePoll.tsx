@@ -57,23 +57,23 @@ interface BarsProps {
 const BarPoll = () => {
   const [votes, setVotes] = useState<PlayerVoteInfo[]>([
     {
-      playerName: "Deshaun Watson",
-      avatar: "https://sleepercdn.com/content/nfl/players/thumb/4017.jpg",
-      matchup: "vs. Titans",
+      playerName: "Ja'Marr Chase",
+      avatar: "https://sleepercdn.com/content/nfl/players/thumb/7564.jpg",
+      matchup: "@ Titans",
       votes: 0,
       color: "bg-[#af1222]",
     },
     {
-      playerName: "Justin Fields",
-      avatar: "https://sleepercdn.com/content/nfl/players/thumb/7591.jpg",
-      matchup: "@ Chiefs",
+      playerName: "Justin Jefferson",
+      avatar: "https://sleepercdn.com/content/nfl/players/thumb/6794.jpg",
+      matchup: "@ Panthers",
       votes: 0,
       color: "bg-[#1a1a1a]",
     },
     {
-      playerName: "Tua Tagovailoa",
-      avatar: "https://sleepercdn.com/content/nfl/players/thumb/6768.jpg",
-      matchup: "vs. Broncos",
+      playerName: "Tyreek Hill",
+      avatar: "https://sleepercdn.com/content/nfl/players/thumb/3321.jpg",
+      matchup: "@ Bills",
       votes: 0,
       color: "bg-[#e45263]",
     },
@@ -164,7 +164,7 @@ const Options: React.FC<OptionsProps> = ({ votes, setVotes }) => {
   return (
     <div className="col-span-1 py-12">
       <h3 className="mb-6 text-2xl font-semibold  text-center">
-        Which QB has a bounce back fantasy performance for Week 3?
+        Which WR will have the most EXPLOSIVE fantasy performance in Week 4?
       </h3>
       <div
         className={
