@@ -116,7 +116,7 @@ const Articles = () => {
     date: "", // Initialize date
   });
 
-  const [articles4, setArticles4] = useState<Article>({
+  const [pulseCheck, setPulseCheck] = useState<Article>({
     title: "",
     paragraph1: "",
     paragraph2: "",
@@ -361,7 +361,7 @@ const Articles = () => {
       }
     };
 
-    const updateArticle4 = async (REACT_APP_LEAGUE_ID, articles) => {
+    const updatePulseCheck = async (REACT_APP_LEAGUE_ID, articles) => {
       const currentDate = new Date();
       const weeklyInfoCollectionRef = collection(db, "Weekly Articles");
       const queryRef = query(
@@ -573,16 +573,16 @@ const Articles = () => {
             setLoading(false);
           }
 
-          if (!docData.overreaction) {
-            const data = await fetchDataFromApi(
-              "https://www.fantasypulseff.com/api/fetchOverreaction"
-            );
-            setArticles3(data);
-            updateOverreaction(REACT_APP_LEAGUE_ID, data);
-          } else {
-            setArticles3(docData.overreaction);
-            setLoading(false);
-          }
+          // if (!docData.overreaction) {
+          //   const data = await fetchDataFromApi(
+          //     "https://www.fantasypulseff.com/api/fetchOverreaction"
+          //   );
+          //   setArticles3(data);
+          //   updateOverreaction(REACT_APP_LEAGUE_ID, data);
+          // } else {
+          //   setArticles3(docData.overreaction);
+          //   setLoading(false);
+          // }
 
           // if (!docData.segment2) {
           //   const data = await fetchDataFromApi(
@@ -594,6 +594,17 @@ const Articles = () => {
           //   setArticles2(docData.segment2);
           //   setLoading(false);
           // }
+
+          if (!docData.pulse_check) {
+            const data = await fetchDataFromApi(
+              "https://www.fantasypulseff.com/api/fetchPulseCheck"
+            );
+            setPulseCheck(data);
+            updatePulseCheck(REACT_APP_LEAGUE_ID, data);
+          } else {
+            setPulseCheck(docData.pulse_check);
+            setLoading(false);
+          }
 
           if (!docData.preview) {
             const data = await fetchDataFromApi(
@@ -679,7 +690,7 @@ const Articles = () => {
           const [data1, data2, data3] = await Promise.all([
             fetchDataFromApi("https://www.fantasypulseff.com/api/fetchData"),
             fetchDataFromApi(
-              "https://www.fantasypulseff.com/api/fetchOverreaction"
+              "https://www.fantasypulseff.com/api/fetchPulseCheck"
             ),
             fetchDataFromApi("https://www.fantasypulseff.com/api/fetchPreview"),
           ]);
@@ -689,8 +700,8 @@ const Articles = () => {
             updateRecap(REACT_APP_LEAGUE_ID, data1);
           }
           if (data2) {
-            setArticles3(data2);
-            updateOverreaction(REACT_APP_LEAGUE_ID, data2);
+            setPulseCheck(data2);
+            updatePulseCheck(REACT_APP_LEAGUE_ID, data2);
           }
           if (data3) {
             setPreviewArticle(data3);
@@ -711,24 +722,24 @@ const Articles = () => {
           !articles.title ||
           !articles2.title ||
           !articles3.title ||
-          !articles4.title
+          !pulseCheck.title
         ) {
           await fetchData();
         }
       };
 
       fetchDataIfNeeded();
-    }, [articles4]);
+    }, [pulseCheck]);
 
     if (
       articles &&
       articles2 &&
       articles3 &&
-      articles4 &&
+      pulseCheck &&
       articles.title &&
       articles2.title &&
       articles3.title &&
-      articles4.title &&
+      pulseCheck.title &&
       loaded === false
     ) {
       router.refresh();
@@ -813,7 +824,7 @@ const Articles = () => {
             <ArticleDropdown
               title1={previewArticle?.title || ""}
               title2={articles?.title || ""}
-              title3={articles3?.title || ""}
+              title3={pulseCheck?.title || ""}
               // title3={articles?.title || ""}
               // title3={articles3?.title || ""}
               // title4={articles4?.title || ""}
@@ -883,17 +894,17 @@ const Articles = () => {
               />
             </div>
           </Element>
-          <Element name={articles4?.title}>
-            <div className={articles4?.title ? "block" : "hidden"}>
+          <Element name={pulseCheck?.title}>
+            <div className={pulseCheck?.title ? "block" : "hidden"}>
               <ArticleTemplate
-                title={articles4?.title || ""}
+                title={pulseCheck?.title || ""}
                 image={PulseCheck}
                 author={"Greg Roberts"}
                 authorImg={pulseDr}
                 jobtitle="Fantasy Pulse Medical Director"
                 date={date || ""}
                 name="1"
-                article={articles4}
+                article={pulseCheck}
               />
             </div>
           </Element>

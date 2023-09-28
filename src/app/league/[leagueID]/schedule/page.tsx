@@ -550,7 +550,7 @@ export default function Schedule() {
           <div
             className={
               counter === nflState?.display_week
-                ? `border border-black  dark:border-[#1a1a1a] rounded w-[95vw] xl:w-[60vw] flex items-center justify-center md:h-[20vw] xl:h-[15vw]`
+                ? `border border-black  dark:border-[#1a1a1a] rounded w-[95vw] xl:w-[60vw] flex items-center justify-center md:h-[26vw] xl:h-[17vw]`
                 : `border border-black  dark:border-[#1a1a1a] rounded w-[95vw] xl:w-[60vw] flex items-center justify-center h-[25vh] md:h-[25vw] xl:h-[17vw]`
             }
           >

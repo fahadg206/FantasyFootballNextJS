@@ -59,24 +59,24 @@ const ShowAuthors = ({ thisWeeksAuthors }: { thisWeeksAuthors: string[] }) => {
     //   likes: 0,
     //   dislikes: 0,
     // },
-    {
-      name: "Joe Glazer",
-      title: "Fantasy Pulse Insider",
-      about:
-        "Joe Glazer, the Fantasy Pulse Insider, is renowned for his unbridled optimism and unwavering positivity. He consistently emphasizes the strengths and successes of fantasy league managers, focusing on their impressive records, offensive prowess, and adaptability in the league. Joe's infectious enthusiasm and relentless positivity create an uplifting and encouraging atmosphere for fantasy sports fans, always highlighting the bright side of the game.",
-      image: glazer,
-      likes: 0,
-      dislikes: 0,
-    },
     // {
-    //   name: "Greg Roberts",
-    //   title: "Fantasy Pulse Medical Director",
+    //   name: "Joe Glazer",
+    //   title: "Fantasy Pulse Insider",
     //   about:
-    //     "Greg Roberts, the Fantasy Pulse Medical Director, is renowned for his weekly 'Pulse Check' assessments, where he evaluates the state of league managers and their teams with clinical precision. With categories like 'Steady Pulse', 'Weak Pulse', 'Flatlined', and 'Strong Pulse', Greg provides a thorough examination of each team's playoff prospects. His expertise in diagnosing the health of fantasy football teams adds a unique and analytical dimension to the world of fantasy sports, helping managers make informed decisions to improve their standings.",
-    //   image: pulseDr,
+    //     "Joe Glazer, the Fantasy Pulse Insider, is renowned for his unbridled optimism and unwavering positivity. He consistently emphasizes the strengths and successes of fantasy league managers, focusing on their impressive records, offensive prowess, and adaptability in the league. Joe's infectious enthusiasm and relentless positivity create an uplifting and encouraging atmosphere for fantasy sports fans, always highlighting the bright side of the game.",
+    //   image: glazer,
     //   likes: 0,
     //   dislikes: 0,
     // },
+    {
+      name: "Greg Roberts",
+      title: "Fantasy Pulse Medical Director",
+      about:
+        "Greg Roberts, the Fantasy Pulse Medical Director, is renowned for his weekly 'Pulse Check' assessments, where he evaluates the state of league managers and their teams with clinical precision. With categories like 'Steady Pulse', 'Weak Pulse', 'Flatlined', and 'Strong Pulse', Greg provides a thorough examination of each team's playoff prospects. His expertise in diagnosing the health of fantasy football teams adds a unique and analytical dimension to the world of fantasy sports, helping managers make informed decisions to improve their standings.",
+      image: pulseDr,
+      likes: 0,
+      dislikes: 0,
+    },
   ];
   //console.log(thisWeeksAuthors);
   return (
