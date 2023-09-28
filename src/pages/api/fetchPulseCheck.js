@@ -86,23 +86,13 @@ Please ensure that the generated JSON response meets the specified criteria with
     const chainA = new LLMChain({ llm: model, prompt });
     const apiResponse = await chainA.call({ leagueData: newFile });
 
-<<<<<<< HEAD
     //console.log("Headlines API ", apiResponse.text);
-    const cleanUp = await model.call([
-      new SystemMessage(
-        "Turn the following string into valid JSON format that strictly adhere to RFC8259 compliance, if it already is in a valid JSON format then give me the string as the response, without any other information from you"
-      ),
-      new HumanMessage(apiResponse.text),
-    ]);
-=======
-    console.log("Headlines API ", apiResponse.text);
     // const cleanUp = await model.call([
     //   new SystemMessage(
     //     "Turn the following string into valid JSON format that strictly adhere to RFC8259 compliance, if it already is in a valid JSON format then give me the string as the response, without any other information from you"
     //   ),
     //   new HumanMessage(apiResponse.text),
     // ]);
->>>>>>> 0334f62d7d5c33f3fb5f5b7da6d695fdc8daf26b
 
     //updateWeeklyInfo(REACT_APP_LEAGUE_ID, cleanUp.content);
 
