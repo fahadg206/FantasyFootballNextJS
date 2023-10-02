@@ -90,7 +90,7 @@ const StaggeredDropDown = ({
           </SmoothLink>
           <SmoothLink
             className={!title3 ? `hidden` : `block`}
-            to={title3}
+            to={title3 || ""}
             activeClass="active"
             spy={true}
             delay={100}
@@ -106,7 +106,7 @@ const StaggeredDropDown = ({
           </SmoothLink>
           <SmoothLink
             className={!title4 ? `hidden` : `block`}
-            to={title4}
+            to={title4 || ""}
             activeClass="active"
             spy={true}
             delay={100}
@@ -126,7 +126,15 @@ const StaggeredDropDown = ({
   );
 };
 
-const Option = ({ text, Icon, setOpen }) => {
+const Option = ({
+  text,
+  Icon,
+  setOpen,
+}: {
+  text: string;
+  Icon: React.ElementType;
+  setOpen: React.Dispatch<React.SetStateAction<boolean>>;
+}) => {
   return (
     <motion.li
       variants={itemVariants}

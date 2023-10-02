@@ -75,6 +75,13 @@ interface Starter {
   proj?: string;
 }
 
+interface ApiResponse {
+  // Define the properties you expect in the API response
+  // For example:
+  data: any;
+  // Add more properties as needed
+}
+
 const CARD_WIDTH = 350;
 const CARD_HEIGHT = 380;
 const MARGIN = 20;
@@ -194,7 +201,7 @@ const CardCarousel = ({ leagueID }) => {
 
     useEffect(() => {}, [leagueID]);
 
-    const fetchDataFromApi = async (endpoint, retryCount = 3) => {
+    const fetchDataFromApi = async (endpoint: string, retryCount = 3) => {
       try {
         const response = await fetch(endpoint, {
           method: "POST",

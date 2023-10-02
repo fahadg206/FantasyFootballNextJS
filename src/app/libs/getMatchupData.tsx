@@ -60,7 +60,7 @@ interface MatchupMapData {
   name: string;
   roster_id?: string;
   user_id?: string;
-  starters?: string[];
+  starters?: string[] | undefined;
   team_points?: string;
   opponent?: string;
   matchup_id?: string;
@@ -148,8 +148,10 @@ export default async function getMatchupData(league_id: any, week: number) {
       const scheduleData = await getSchedule();
 
       // Filter users with no roster id (They don't have a team)
-      const usersWithRoster = usersData.filter((user) =>
-        rostersData.some((roster) => roster.owner_id === user.user_id)
+      const usersWithRoster = usersData.filter((user: { user_id: string }) =>
+        rostersData.some(
+          (roster: { owner_id: string }) => roster.owner_id === user.user_id
+        )
       );
 
       // Update the scheduleData map with user data
@@ -198,7 +200,7 @@ export default async function getMatchupData(league_id: any, week: number) {
             updatedScheduleData[userId].starters_full_data = [{}];
           }
           if (updatedScheduleData[userId]?.starters) {
-            for (const starter of updatedScheduleData[userId].starters) {
+            for (const starter of updatedScheduleData[userId]?.starters || []) {
               if (starter != "0" && playersData[starter]) {
                 const starter_data = {
                   fn: playersData[starter].fn,
@@ -207,7 +209,10 @@ export default async function getMatchupData(league_id: any, week: number) {
                     playersData[starter.toString()].pos == "DEF"
                       ? `https://sleepercdn.com/images/team_logos/nfl/${starter.toLowerCase()}.png`
                       : `https://sleepercdn.com/content/nfl/players/thumb/${starter}.jpg`,
-                  points: updatedScheduleData[userId].players_points[starter],
+                  points:
+                    updatedScheduleData[userId]?.players_points?.[
+                      parseInt(starter)
+                    ] || "0",
                   pos: playersData[starter].pos,
                   proj: playersData[starter].wi[week.toString()].p,
                 };
@@ -219,7 +224,7 @@ export default async function getMatchupData(league_id: any, week: number) {
                     }
                   )
                 ) {
-                  updatedScheduleData[userId].starters_full_data.push(
+                  updatedScheduleData[userId]?.starters_full_data?.push(
                     starter_data
                   ); // Push starter_data to the array
                 } else {
@@ -232,7 +237,9 @@ export default async function getMatchupData(league_id: any, week: number) {
                           ? `https://sleepercdn.com/images/team_logos/nfl/${starter.toLowerCase()}.png`
                           : `https://sleepercdn.com/content/nfl/players/thumb/${starter}.jpg`,
                       points:
-                        updatedScheduleData[userId].players_points[starter],
+                        updatedScheduleData[userId]?.players_points?.[
+                          parseInt(starter)
+                        ] || "0",
                       pos: playersData[starter].pos,
                       proj: playersData[starter].wi[week.toString()].p,
                     },
@@ -292,6 +299,7 @@ export default async function getMatchupData(league_id: any, week: number) {
       return [];
     }
   }
+  console.log(updatedScheduleData);
 
   const playersData = await fetchPlayersData();
 
