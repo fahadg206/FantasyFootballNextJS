@@ -69,21 +69,21 @@ And much more! Fantasy Pulse is your one-stop solution for an enhanced fantasy f
 
 Fantasy Pulse is powered by a stack of modern technologies to provide you with the best experience. Here are the key technologies we use:
 
-- **Artificial Intelligence (AI):** Leveraging AI to enhance user experience and deliver tailored content.
+- **OpenAI:** Leveraging AI to enhance user experience and deliver tailored content.
 
-- **Next.js:** A powerful React framework for building efficient and scalable web applications.
+- **Next.js**
 
-- **Firebase:** Firebase provides a comprehensive suite of tools for app development, including authentication and real-time database capabilities.
+- **Firebase**
 
-- **Express.js:** A Node.js web application framework for building robust and scalable server-side applications.
+- **Express.js** 
 
-- **MongoDB:** A NoSQL database for storing and managing data efficiently.
+- **MongoDB** 
 
-- **TypeScript:** Enhancing code quality and maintainability with TypeScript's static typing.
+- **TypeScript**
 
-- **Node.js:** A server-side runtime environment for building fast and scalable applications.
+- **Node.js**
 
-- **Tailwind CSS:** A utility-first CSS framework that helps streamline design and development.
+- **Tailwind CSS** 
 
 These technologies come together to create the seamless and feature-rich experience you'll find on Fantasy Pulse.
 
