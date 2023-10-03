@@ -35,7 +35,7 @@ let players = new Map();
 let processedPlayers;
 
 function GET(leagueID) {
-  //console.log("Called server");
+  console.log("Called server");
 
   return axios
     .get("https://api.sleeper.app/v1/state/nfl")
@@ -64,7 +64,7 @@ function GET(leagueID) {
               const leagueData = leagueDataRes.data;
               const playoffs = playoffsRes.data;
 
-              //console.log("Here's the state of the nfl: ", nflState);
+              console.log("Here's the state of the nfl: ", nflState);
               let year = nflState.league_season;
               const regularSeasonLength =
                 leagueData.settings.playoff_week_start - 1;
@@ -191,15 +191,15 @@ const calculateProjection = (projectedStats, scoreSettings) => {
 
 export default async function handler(req, res) {
   // console.log("What we got", req.body);
-  //console.log("I got calleddd");
+  console.log("I got calleddd");
 
   try {
     await client.connect();
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
-    // console.log(
-    //   "Pinged your deployment. You successfully connected to MongoDB!"
-    // );
+    console.log(
+      "Pinged your deployment. You successfully connected to MongoDB!"
+    );
 
     // Access the database and collection
     const db = client.db("fantasypulse");
@@ -213,7 +213,7 @@ export default async function handler(req, res) {
     // Check if the document already exists
     const existingDocument = await collection.findOne(filter);
 
-    if (true) {
+    if (!existingDocument) {
       // No data in the database, fetch and insert processed players
       const processedPlayers = await GET(req.body);
 
@@ -232,11 +232,11 @@ export default async function handler(req, res) {
       });
 
       if (result.upsertedCount === 1) {
-        //console.log("Document inserted.");
+        console.log("Document inserted.");
       } else if (result.matchedCount === 1) {
-        //console.log("Document updated.");
+        console.log("Document updated.");
       } else {
-        //console.log("No document inserted or updated.");
+        console.log("No document inserted or updated.");
       }
 
       // Return the response after processing

@@ -700,7 +700,7 @@ const Articles = () => {
             updateRecap(REACT_APP_LEAGUE_ID, data1);
           }
           if (data2) {
-            setPulseCheck(data2);
+            setArticles2(data2);
             updateSavage(REACT_APP_LEAGUE_ID, data2);
           }
           if (data3) {
