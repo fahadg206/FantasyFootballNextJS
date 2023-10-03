@@ -213,7 +213,7 @@ export default async function handler(req, res) {
     // Check if the document already exists
     const existingDocument = await collection.findOne(filter);
 
-    if (!existingDocument) {
+    if (true) {
       // No data in the database, fetch and insert processed players
       const processedPlayers = await GET(req.body);
 

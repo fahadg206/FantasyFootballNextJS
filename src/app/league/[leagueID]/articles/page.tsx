@@ -584,27 +584,27 @@ const Articles = () => {
           //   setLoading(false);
           // }
 
-          // if (!docData.segment2) {
-          //   const data = await fetchDataFromApi(
-          //     "https://www.fantasypulseff.com/api/fetchSegment2"
-          //   );
-          //   setArticles2(data);
-          //   updateSavage(REACT_APP_LEAGUE_ID, data);
-          // } else {
-          //   setArticles2(docData.segment2);
-          //   setLoading(false);
-          // }
-
-          if (!docData.pulse_check) {
+          if (!docData.segment2) {
             const data = await fetchDataFromApi(
-              "https://www.fantasypulseff.com/api/fetchPulseCheck"
+              "https://www.fantasypulseff.com/api/fetchSegment2"
             );
-            setPulseCheck(data);
-            updatePulseCheck(REACT_APP_LEAGUE_ID, data);
+            setArticles2(data);
+            updateSavage(REACT_APP_LEAGUE_ID, data);
           } else {
-            setPulseCheck(docData.pulse_check);
+            setArticles2(docData.segment2);
             setLoading(false);
           }
+
+          // if (!docData.pulse_check) {
+          //   const data = await fetchDataFromApi(
+          //     "https://www.fantasypulseff.com/api/fetchPulseCheck"
+          //   );
+          //   setPulseCheck(data);
+          //   updatePulseCheck(REACT_APP_LEAGUE_ID, data);
+          // } else {
+          //   setPulseCheck(docData.pulse_check);
+          //   setLoading(false);
+          // }
 
           if (!docData.preview) {
             const data = await fetchDataFromApi(
@@ -690,7 +690,7 @@ const Articles = () => {
           const [data1, data2, data3] = await Promise.all([
             fetchDataFromApi("https://www.fantasypulseff.com/api/fetchData"),
             fetchDataFromApi(
-              "https://www.fantasypulseff.com/api/fetchPulseCheck"
+              "https://www.fantasypulseff.com/api/fetchSegment2"
             ),
             fetchDataFromApi("https://www.fantasypulseff.com/api/fetchPreview"),
           ]);
@@ -701,7 +701,7 @@ const Articles = () => {
           }
           if (data2) {
             setPulseCheck(data2);
-            updatePulseCheck(REACT_APP_LEAGUE_ID, data2);
+            updateSavage(REACT_APP_LEAGUE_ID, data2);
           }
           if (data3) {
             setPreviewArticle(data3);
@@ -824,7 +824,7 @@ const Articles = () => {
             <ArticleDropdown
               title1={previewArticle?.title || ""}
               title2={articles?.title || ""}
-              title3={pulseCheck?.title || ""}
+              title3={articles2?.title || ""}
               // title3={articles?.title || ""}
               // title3={articles3?.title || ""}
               // title4={articles4?.title || ""}
