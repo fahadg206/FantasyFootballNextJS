@@ -57,22 +57,22 @@ interface BarsProps {
 const BarPoll = () => {
   const [votes, setVotes] = useState<PlayerVoteInfo[]>([
     {
-      playerName: "Ja'Marr Chase",
-      avatar: "https://sleepercdn.com/content/nfl/players/thumb/7564.jpg",
+      playerName: "Christian McCaffrey",
+      avatar: "https://sleepercdn.com/content/nfl/players/thumb/4034.jpg",
       matchup: "@ Titans",
       votes: 0,
       color: "bg-[#af1222]",
     },
     {
-      playerName: "Justin Jefferson",
-      avatar: "https://sleepercdn.com/content/nfl/players/thumb/6794.jpg",
+      playerName: "Josh Allen",
+      avatar: "https://sleepercdn.com/content/nfl/players/thumb/4984.jpg",
       matchup: "@ Panthers",
       votes: 0,
       color: "bg-[#1a1a1a]",
     },
     {
-      playerName: "Tyreek Hill",
-      avatar: "https://sleepercdn.com/content/nfl/players/thumb/3321.jpg",
+      playerName: "Tua Tagovailoa",
+      avatar: "https://sleepercdn.com/content/nfl/players/thumb/6768.jpg",
       matchup: "@ Bills",
       votes: 0,
       color: "bg-[#e45263]",
@@ -164,7 +164,7 @@ const Options: React.FC<OptionsProps> = ({ votes, setVotes }) => {
   return (
     <div className="col-span-1 py-12">
       <h3 className="mb-6 text-2xl font-semibold  text-center">
-        Which WR will have the most EXPLOSIVE fantasy performance in Week 4?
+        Who is your MVP front-runner so far through 4 weeks of action?
       </h3>
       <div
         className={
@@ -193,9 +193,9 @@ const Options: React.FC<OptionsProps> = ({ votes, setVotes }) => {
                 className="rounded-full"
               />{" "}
               {vote.playerName}
-              <p className="text-[11px] italic text-[#e8dede] ">
+              {/* <p className="text-[11px] italic text-[#e8dede] ">
                 {vote.matchup}
-              </p>
+              </p> */}
             </motion.button>
           );
         })}
