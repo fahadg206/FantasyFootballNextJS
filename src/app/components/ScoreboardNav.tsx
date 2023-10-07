@@ -305,12 +305,6 @@ export default function ScoreboardNav({ setShowScore }) {
         //     : currentTime < nextWednesdayMidnight
         // ) {
         if (nflState.display_week !== nflState.week) {
-          const previewMapData = await getMatchupMap(
-            REACT_APP_LEAGUE_ID,
-            week + 1
-          );
-          updateDbStorage(matchupObj, previewMapData.updatedScheduleData);
-        } else {
           const matchupMapDataCopy = await getMatchupMap(
             REACT_APP_LEAGUE_ID,
             week - 1
@@ -318,6 +312,12 @@ export default function ScoreboardNav({ setShowScore }) {
 
           const matchupObj = mapToObject(matchupMapDataCopy.matchupMap);
           updateDbStorage(matchupObj, matchupMapData.updatedScheduleData);
+        } else {
+          const previewMapData = await getMatchupMap(
+            REACT_APP_LEAGUE_ID,
+            week + 1
+          );
+          updateDbStorage(matchupObj, previewMapData.updatedScheduleData);
         }
       } catch (error) {
         console.error("Error fetching matchup data:", error);
