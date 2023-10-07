@@ -348,16 +348,16 @@ export default function Scoreboard() {
         // ) {
 
         if (nflState.display_week !== nflState.week) {
+          //console.log("if");
+          const previewMapData = await getMatchupMap(id, week + 1);
+          updateDbStorage(matchupObj, previewMapData.updatedScheduleData);
+          console.log(currentTime < currentWednesdayMidnight);
+        } else {
+          //console.log("else");
           const matchupMapDataCopy = await getMatchupMap(id, week - 1);
 
           const matchupObj = mapToObject(matchupMapDataCopy.matchupMap);
           updateDbStorage(matchupObj, matchupMapData.updatedScheduleData);
-          //console.log("if");
-        } else {
-          //console.log("else");
-          const previewMapData = await getMatchupMap(id, week + 1);
-          updateDbStorage(matchupObj, previewMapData.updatedScheduleData);
-          console.log(currentTime < currentWednesdayMidnight);
         }
 
         //setting each matchup into Map with key being matchup_id and value being two teams with corresponding matchup_id
