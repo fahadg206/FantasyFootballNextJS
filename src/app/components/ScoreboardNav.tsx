@@ -299,11 +299,12 @@ export default function ScoreboardNav({ setShowScore }) {
         currentWednesdayMidnight.setDate(nextWednesdayMidnight.getDate() - 7);
 
         // Check if it's before Wednesday
-        if (
-          currentTime < currentWednesdayMidnight
-            ? currentTime < currentWednesdayMidnight
-            : currentTime < nextWednesdayMidnight
-        ) {
+        // if (
+        //   currentTime < currentWednesdayMidnight
+        //     ? currentTime < currentWednesdayMidnight
+        //     : currentTime < nextWednesdayMidnight
+        // ) {
+        if (nflState.display_week !== nflState.week) {
           const previewMapData = await getMatchupMap(
             REACT_APP_LEAGUE_ID,
             week + 1

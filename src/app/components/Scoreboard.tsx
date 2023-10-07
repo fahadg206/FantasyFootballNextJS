@@ -331,17 +331,27 @@ export default function Scoreboard() {
         const currentWednesdayMidnight = new Date(nextWednesdayMidnight);
         currentWednesdayMidnight.setDate(nextWednesdayMidnight.getDate() - 7);
 
+        // Calculate the next Tuesday midnight
+        const nextTuesdayMidnight = new Date(currentTime);
+        nextTuesdayMidnight.setDate(
+          currentTime.getDate() + ((2 + 7 - currentTime.getDay()) % 7)
+        );
+        nextTuesdayMidnight.setHours(0, 0, 0, 0);
+
         //console.log("CUrr week", nextWednesdayMidnight);
 
         // Check if it's before Wednesday
-        if (
-          currentTime < currentWednesdayMidnight
-            ? currentTime < currentWednesdayMidnight
-            : currentTime < nextWednesdayMidnight
-        ) {
+        // if (
+        //   currentTime < currentWednesdayMidnight
+        //     ? currentTime < currentWednesdayMidnight
+        //     : currentTime < nextWednesdayMidnight
+        // ) {
+
+        if (nflState.display_week !== nflState.week) {
           //console.log("if");
           const previewMapData = await getMatchupMap(id, week + 1);
           updateDbStorage(matchupObj, previewMapData.updatedScheduleData);
+          console.log(currentTime < currentWednesdayMidnight);
         } else {
           //console.log("else");
           const matchupMapDataCopy = await getMatchupMap(id, week - 1);
