@@ -183,7 +183,9 @@ export default function Home() {
             usernameCleared={cleared}
           />
         </div>
-        <Popover />
+        <div className="mt-3">
+          <Popover />
+        </div>
       </div>
     </div>
   );

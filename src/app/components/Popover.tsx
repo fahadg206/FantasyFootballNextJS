@@ -12,7 +12,7 @@ export default function App() {
   const backdrops = ["opaque", "blur", "transparent"];
 
   const content = (
-    <PopoverContent className="w-[95vw] xl:w-[60vw]  overflow-y-scroll">
+    <PopoverContent className="w-[95vw] xl:w-[60vw]  overflow-y-scroll text-[13px] md:text-[15px]">
       {(titleProps) => (
         <div className="px-1 py-2 w-full">
           <div>
@@ -36,7 +36,7 @@ export default function App() {
               className="text-small font-bold text-foreground w-full"
               {...titleProps}
             >
-              Now for the fun stuff! How does Fantasy Pulse work?
+              Now for the fun stuff! What does Fantasy Pulse offer?
             </p>
             <div className="mt-2 flex flex-col gap-2 w-full">
               <p className="w-full">
@@ -76,27 +76,9 @@ export default function App() {
                     app on your mobile device or visit the website.
                   </p>
                   <p>
-                    - Sign Up or Log In: Create an account if you're new or log
-                    in if you already have one.
-                  </p>
-
-                  <p>
-                    - Start a League: Click on "Start a League" and follow the
-                    easy setup process. You can choose the league type, set up
-                    your draft, and invite your friends to join.
-                  </p>
-
-                  <p>
-                    - Draft Your Team: In your league, you and your friends will
-                    take turns drafting NFL players to your teams. The draft is
-                    one of the most exciting parts of fantasy football, so make
-                    sure to have fun!
-                  </p>
-
-                  <p>
-                    - Set Your Lineup: Each week, you'll need to select your
-                    starting lineup from your roster of players. Make strategic
-                    choices to maximize your team's points.
+                    - Create an account if you're new or log in if you already
+                    have one. Make a league or join one with friends. Draft your
+                    players and set your lineups!
                   </p>
                   <p>
                     - Finally, come back to Fantasy Pulse, login with your
