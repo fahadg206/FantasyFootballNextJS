@@ -10,6 +10,7 @@ import Logo from "./images/Transparent.png";
 import Image from "next/image";
 import SelectLeague from "./components/SelectLeague";
 import { useRouter } from "next/navigation";
+import Popover from "./components/Popover";
 
 export default function Home() {
   const options = ["2023"];
@@ -182,6 +183,7 @@ export default function Home() {
             usernameCleared={cleared}
           />
         </div>
+        <Popover />
       </div>
     </div>
   );
