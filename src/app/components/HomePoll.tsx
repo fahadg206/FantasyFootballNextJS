@@ -57,23 +57,23 @@ interface BarsProps {
 const BarPoll = () => {
   const [votes, setVotes] = useState<PlayerVoteInfo[]>([
     {
-      playerName: "Christian McCaffrey",
-      avatar: "https://sleepercdn.com/content/nfl/players/thumb/4034.jpg",
-      matchup: "@ Titans",
+      playerName: "Brock Purdy",
+      avatar: "https://sleepercdn.com/content/nfl/players/thumb/8183.jpg",
+      matchup: "17 of 24 for 252 pass yards, 4 pass TDs",
       votes: 0,
       color: "bg-[#af1222]",
     },
     {
-      playerName: "Josh Allen",
-      avatar: "https://sleepercdn.com/content/nfl/players/thumb/4984.jpg",
-      matchup: "@ Panthers",
+      playerName: "Joe Burrow",
+      avatar: "https://sleepercdn.com/content/nfl/players/thumb/6770.jpg",
+      matchup: "36 of 46 for 317 pass yards, 3 pass TDs",
       votes: 0,
       color: "bg-[#1a1a1a]",
     },
     {
-      playerName: "Tua Tagovailoa",
-      avatar: "https://sleepercdn.com/content/nfl/players/thumb/6768.jpg",
-      matchup: "@ Bills",
+      playerName: "Justin Fields",
+      avatar: "https://sleepercdn.com/content/nfl/players/thumb/7591.jpg",
+      matchup: "15 of 29 for 282 pass yards, 4 pass TDs",
       votes: 0,
       color: "bg-[#e45263]",
     },
@@ -164,7 +164,7 @@ const Options: React.FC<OptionsProps> = ({ votes, setVotes }) => {
   return (
     <div className="col-span-1 py-12">
       <h3 className="mb-6 text-2xl font-semibold  text-center">
-        Who is your MVP front-runner so far through 4 weeks of action?
+        Vote for QB performance of the week!
       </h3>
       <div
         className={
@@ -193,9 +193,9 @@ const Options: React.FC<OptionsProps> = ({ votes, setVotes }) => {
                 className="rounded-full"
               />{" "}
               {vote.playerName}
-              {/* <p className="text-[11px] italic text-[#e8dede] ">
+              <p className="text-[11px] italic text-[#e8dede] mr-2">
                 {vote.matchup}
-              </p> */}
+              </p>
             </motion.button>
           );
         })}
