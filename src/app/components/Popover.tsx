@@ -12,7 +12,7 @@ export default function App() {
   const backdrops = ["opaque", "blur", "transparent"];
 
   const content = (
-    <PopoverContent className="w-[95vw] xl:w-[60vw] h-[60vh] overflow-y-scroll">
+    <PopoverContent className="w-[95vw] xl:w-[60vw]  overflow-y-scroll">
       {(titleProps) => (
         <div className="px-1 py-2 w-full">
           <div>
