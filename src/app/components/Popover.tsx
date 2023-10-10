@@ -12,7 +12,7 @@ export default function App() {
   const backdrops = ["opaque", "blur", "transparent"];
 
   const content = (
-    <PopoverContent className="w-[95vw] xl:w-[60vw]  overflow-y-scroll text-[13px] md:text-[15px]">
+    <PopoverContent className="w-[95vw] xl:w-[60vw] text-[13px] md:text-[15px]">
       {(titleProps) => (
         <div className="px-1 py-2 w-full">
           <div>
@@ -24,8 +24,8 @@ export default function App() {
             </p>
             <div className="mt-2 flex flex-col gap-2 w-full">
               <p className="w-full">
-                Fantasy football is like owning your NFL team, where you draft
-                real players to earn points based on their real-world
+                Fantasy football is like owning your own NFL team, where you
+                draft real players to earn points based on their real-world
                 performance. It's a strategic and fun way to engage with the NFL
                 season.
               </p>
