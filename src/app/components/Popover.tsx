@@ -12,7 +12,7 @@ export default function App() {
   const backdrops = ["opaque", "blur", "transparent"];
 
   const content = (
-    <PopoverContent className="w-[95vw] xl:w-[60vw] text-[13px] md:text-[15px]">
+    <PopoverContent className="w-[95vw] xl:w-[60vw] text-[13px] md:text-[15px] dark:bg-[#0a0a0a] bg-[#e0dfdf] rounded-xl opacity-90">
       {(titleProps) => (
         <div className="px-1 py-2 w-full">
           <div>
