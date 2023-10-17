@@ -57,23 +57,23 @@ interface BarsProps {
 const BarPoll = () => {
   const [votes, setVotes] = useState<PlayerVoteInfo[]>([
     {
-      playerName: "Brock Purdy",
-      avatar: "https://sleepercdn.com/content/nfl/players/thumb/8183.jpg",
-      matchup: "17 of 24 for 252 pass yards, 4 pass TDs",
+      playerName: "Kyren Williams",
+      avatar: "https://sleepercdn.com/content/nfl/players/thumb/8150.jpg",
+      matchup: "158 rush yards on 20 carries, rush TD",
       votes: 0,
       color: "bg-[#af1222]",
     },
     {
-      playerName: "Joe Burrow",
-      avatar: "https://sleepercdn.com/content/nfl/players/thumb/6770.jpg",
-      matchup: "36 of 46 for 317 pass yards, 3 pass TDs",
+      playerName: "Raheem Mostert",
+      avatar: "https://sleepercdn.com/content/nfl/players/thumb/2749.jpg",
+      matchup: "115 rush yards on 17 carries, 2 rush TDs",
       votes: 0,
       color: "bg-[#1a1a1a]",
     },
     {
-      playerName: "Justin Fields",
-      avatar: "https://sleepercdn.com/content/nfl/players/thumb/7591.jpg",
-      matchup: "15 of 29 for 282 pass yards, 4 pass TDs",
+      playerName: "Derrick Henry",
+      avatar: "https://sleepercdn.com/content/nfl/players/thumb/3198.jpg",
+      matchup: "97 rush yards on 12 carries, rush TD",
       votes: 0,
       color: "bg-[#e45263]",
     },
@@ -164,7 +164,7 @@ const Options: React.FC<OptionsProps> = ({ votes, setVotes }) => {
   return (
     <div className="col-span-1 py-12">
       <h3 className="mb-6 text-2xl font-semibold  text-center">
-        Vote for QB performance of the week!
+        Vote for who had the Best Rushing Performance for Week 6!
       </h3>
       <div
         className={
