@@ -32,7 +32,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${inter.className} flex  bg-[#EDEDED] dark:bg-[#000000] from-1a1a1c to-AF1222 text-[#1a1a1c] dark:text-[#EDEDED]  mr-auto  font-[${inter}] w-[100vw] h-screen`}
+        className={`${inter.className} flex bg-[#EDEDED] dark:bg-[#000000] from-1a1a1c to-AF1222 text-[#1a1a1c] dark:text-[#EDEDED]  mr-auto  font-[${inter}] w-[100vw] h-screen`}
       >
         <Providers>
           <NextUIProviders>
