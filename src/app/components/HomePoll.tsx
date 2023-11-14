@@ -57,23 +57,23 @@ interface BarsProps {
 const BarPoll = () => {
   const [votes, setVotes] = useState<PlayerVoteInfo[]>([
     {
-      playerName: "C.J. Stroud",
-      avatar: "https://sleepercdn.com/content/nfl/players/thumb/9758.jpg",
-      matchup: "30 of 42 for 470 pass yards, 5 pass TDs",
+      playerName: "Jaylen Warren",
+      avatar: "https://sleepercdn.com/content/nfl/players/thumb/8228.jpg",
+      matchup: "101 rush yards on 15 carries, rush TD",
       votes: 0,
       color: "bg-[#af1222]",
     },
     {
-      playerName: "Joe Burrow",
-      avatar: "https://sleepercdn.com/content/nfl/players/thumb/6770.jpg",
-      matchup: "31 of 44 for 348 pass yards, 2 pass TDs",
+      playerName: "David Montgomery",
+      avatar: "https://sleepercdn.com/content/nfl/players/thumb/5892.jpg",
+      matchup: "116 rush yards on 12 carries, rush TD",
       votes: 0,
       color: "bg-[#1a1a1a]",
     },
     {
-      playerName: "Dak Prescott",
-      avatar: "https://sleepercdn.com/content/nfl/players/thumb/3294.jpg",
-      matchup: "29 of 44 for 376 pass yards, 3 pass TDs",
+      playerName: "Devin Singletary ",
+      avatar: "https://sleepercdn.com/content/nfl/players/thumb/6130.jpg",
+      matchup: "150 rush yards on 30 carries, rush TD",
       votes: 0,
       color: "bg-[#e45263]",
     },
