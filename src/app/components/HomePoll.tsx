@@ -57,23 +57,23 @@ interface BarsProps {
 const BarPoll = () => {
   const [votes, setVotes] = useState<PlayerVoteInfo[]>([
     {
-      playerName: "Jaylen Warren",
-      avatar: "https://sleepercdn.com/content/nfl/players/thumb/8228.jpg",
-      matchup: "101 rush yards on 15 carries, rush TD",
+      playerName: "Dak Prescott",
+      avatar: "https://sleepercdn.com/content/nfl/players/thumb/3294.jpg",
+      matchup: "22 of 32 for 331 pass yards, 4 pass TDs",
       votes: 0,
       color: "bg-[#af1222]",
     },
     {
-      playerName: "David Montgomery",
-      avatar: "https://sleepercdn.com/content/nfl/players/thumb/5892.jpg",
-      matchup: "116 rush yards on 12 carries, rush TD",
+      playerName: "Trevor Lawrence",
+      avatar: "https://sleepercdn.com/content/nfl/players/thumb/7523.jpg",
+      matchup: "23 of 38 for 364 pass yards, 1 pass TD",
       votes: 0,
       color: "bg-[#1a1a1a]",
     },
     {
-      playerName: "Devin Singletary ",
-      avatar: "https://sleepercdn.com/content/nfl/players/thumb/6130.jpg",
-      matchup: "150 rush yards on 30 carries, rush TD",
+      playerName: "Josh Allen",
+      avatar: "https://sleepercdn.com/content/nfl/players/thumb/4984.jpg",
+      matchup: "29 of 51 for 339 pass yards, 2 pass TDs",
       votes: 0,
       color: "bg-[#e45263]",
     },
@@ -164,7 +164,7 @@ const Options: React.FC<OptionsProps> = ({ votes, setVotes }) => {
   return (
     <div className="col-span-1 py-12">
       <h3 className="mb-6 text-2xl font-semibold  text-center">
-        Vote for who had the Best Ground Game Performance for Week 8!
+        Vote for who had the Best Air Game Performance for Week 12!
       </h3>
       <div
         className={
