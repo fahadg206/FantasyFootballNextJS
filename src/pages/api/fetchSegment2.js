@@ -6,6 +6,7 @@ import {
   getDocs,
   addDoc,
   updateDoc,
+  limit,
 } from "firebase/firestore/lite";
 import { Document } from "langchain/document";
 import dotenv from "dotenv";
@@ -25,25 +26,19 @@ const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
 
 const updateWeeklyInfo = async (REACT_APP_LEAGUE_ID, articles) => {
   articles = await JSON.parse(articles);
-  // Reference to the "Weekly Info" collection
   const weeklyInfoCollectionRef = collection(db, "Weekly Articles");
-  // Use a Query to check if a document with the league_id exists
   const queryRef = query(
     weeklyInfoCollectionRef,
     where("league_id", "==", REACT_APP_LEAGUE_ID)
   );
   const querySnapshot = await getDocs(queryRef);
-  // Add or update the document based on whether it already exists
   if (!querySnapshot.empty) {
-    // Document exists, update it
-    //console.log("in if");
     querySnapshot.forEach(async (doc) => {
       await updateDoc(doc.ref, {
         segment2: articles,
       });
     });
   } else {
-    // Document does not exist, add a new one
     await addDoc(weeklyInfoCollectionRef, {
       league_id: REACT_APP_LEAGUE_ID,
       segment2: articles,
@@ -52,19 +47,12 @@ const updateWeeklyInfo = async (REACT_APP_LEAGUE_ID, articles) => {
 };
 
 function countWords(inputString) {
-  // Use regular expression to split the string by spaces and punctuation
   const words = inputString.split(/\s+|\b/);
-
-  // Filter out empty strings and punctuation
   const filteredWords = words.filter((word) => word.trim() !== "");
-
-  // Return the count of words
   return filteredWords.length;
 }
 
 export default async function handler(req, res) {
-  //console.log("here");
-  // console.log("what was passed in ", req.body);
   const REACT_APP_LEAGUE_ID = req.body;
   const readingRef = ref(storage, `files/${REACT_APP_LEAGUE_ID}.txt`);
   const url = await getDownloadURL(readingRef);
@@ -76,8 +64,6 @@ export default async function handler(req, res) {
   console.log(`Word count: ${wordCount}`);
 
   try {
-    //console.log("Here");
-    //console.info(process.env.OPENAI_API_KEY);
     const model = new ChatOpenAI({
       temperature: 0.9,
       model: "gpt-4-turbo",
@@ -120,7 +106,6 @@ Please ensure that the generated JSON response meets the specified criteria with
   }
 
   try {
-    // Retrieve data from the database based on league_id
     const querySnapshot = await getDocs(
       query(
         collection(db, "Weekly Info"),
@@ -130,7 +115,6 @@ Please ensure that the generated JSON response meets the specified criteria with
     );
 
     if (!querySnapshot.empty) {
-      //console.log("No documents found in 'Article Info' collection");
       return res.status(404).json({ error: "No documents found" });
     }
   } catch (error) {
