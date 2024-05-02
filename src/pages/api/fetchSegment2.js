@@ -80,7 +80,7 @@ export default async function handler(req, res) {
     //console.info(process.env.OPENAI_API_KEY);
     const model = new ChatOpenAI({
       temperature: 0.9,
-      model: "gpt-4",
+      model: "gpt-4-turbo",
       openAIApiKey: process.env.OPENAI_API_KEY,
     });
 
@@ -97,19 +97,23 @@ Please ensure that the generated JSON response meets the specified criteria with
 
     const prompt = PromptTemplate.fromTemplate(question);
     const chainA = new LLMChain({ llm: model, prompt });
+
+    res.setHeader("Content-Type", "application/json");
+    res.write("[");
+
     const apiResponse = await chainA.call({ leagueData: newFile });
+    const responseData = JSON.parse(apiResponse.text);
+    for (let i = 0; i < responseData.length; i++) {
+      if (i > 0) {
+        res.write(",");
+      }
+      res.write(JSON.stringify(responseData[i]));
+    }
 
-    //console.log("Headlines API ", apiResponse.text);
-    const cleanUp = await model.call([
-      new SystemMessage(
-        "Turn the following string into valid JSON format that strictly adhere to RFC8259 compliance, if it already is in a valid JSON format then give me the string as the response, without any other information from you"
-      ),
-      new HumanMessage(apiResponse.text),
-    ]);
+    res.write("]");
+    res.end();
 
-    //updateWeeklyInfo(REACT_APP_LEAGUE_ID, cleanUp.content);
-
-    return res.status(200).json(JSON.parse(cleanUp.content));
+    await updateWeeklyInfo(REACT_APP_LEAGUE_ID, apiResponse.text);
   } catch (error) {
     console.error("Unexpected error:", error);
     return res.status(500).json({ error: "An error occurred" });

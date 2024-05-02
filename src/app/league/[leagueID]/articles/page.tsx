@@ -567,7 +567,7 @@ const Articles = () => {
               "https://www.fantasypulseff.com/api/fetchData"
             );
             setArticles(data);
-            updateRecap(REACT_APP_LEAGUE_ID, data);
+            //updateRecap(REACT_APP_LEAGUE_ID, data);
           } else {
             setArticles(docData.articles);
             setLoading(false);
@@ -589,7 +589,7 @@ const Articles = () => {
               "https://www.fantasypulseff.com/api/fetchSegment2"
             );
             setArticles2(data);
-            updateSavage(REACT_APP_LEAGUE_ID, data);
+            //updateSavage(REACT_APP_LEAGUE_ID, data);
           } else {
             setArticles2(docData.segment2);
             setLoading(false);
@@ -610,8 +610,8 @@ const Articles = () => {
             const data = await fetchDataFromApi(
               "https://www.fantasypulseff.com/api/fetchPreview"
             );
-            setPreviewArticle(data);
-            updatePreview(REACT_APP_LEAGUE_ID, data);
+            //setPreviewArticle(data);
+            //updatePreview(REACT_APP_LEAGUE_ID, data);
           } else {
             setPreviewArticle(docData.preview);
             setLoading(false);

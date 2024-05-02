@@ -6,6 +6,7 @@ import {
   getDocs,
   addDoc,
   updateDoc,
+  limit, // Import the limit function
 } from "firebase/firestore/lite";
 import { Document } from "langchain/document";
 import dotenv from "dotenv";
@@ -25,6 +26,8 @@ const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
 
 const updateWeeklyInfo = async (REACT_APP_LEAGUE_ID, articles) => {
   articles = await JSON.parse(articles);
+  console.log("updating db");
+  console.log(articles);
   // Reference to the "Weekly Info" collection
   const weeklyInfoCollectionRef = collection(db, "Weekly Articles");
   // Use a Query to check if a document with the league_id exists
@@ -39,7 +42,7 @@ const updateWeeklyInfo = async (REACT_APP_LEAGUE_ID, articles) => {
     //console.log("in if");
     querySnapshot.forEach(async (doc) => {
       await updateDoc(doc.ref, {
-        preview: articles,
+        preview: articles[0],
       });
     });
   } else {
@@ -81,7 +84,7 @@ export default async function handler(req, res) {
     //console.info(process.env.OPENAI_API_KEY);
     const model = new ChatOpenAI({
       temperature: 0.9,
-      model: "gpt-4",
+      model: "gpt-4-turbo",
       openAIApiKey: process.env.OPENAI_API_KEY,
     });
 
@@ -89,34 +92,45 @@ export default async function handler(req, res) {
 
     if (wordCount > 2600) {
       //console.log("if");
-      question = `{leagueData} Give me an article previewing each matchup in this fantasy football league and your predictions for how it'll turn out. Make each matchup breakdown creative, funny and exciting while also keeping it concise. The format of the JSON response should strictly adhere to RFC8259 compliance, without any deviations or errors. The JSON structure should match this template:
+      question = `{leagueData} Give me an article previewing each matchup in this fantasy football league and your predictions for how it'll turn out. Make each matchup breakdown creative, funny and exciting while also keeping it concise. The format of the JSON response should strictly adhere to RFC8259 compliance, without any deviations or errors. The JSON generated should be 1 Object and it's structure should match this template:
   "title": "",
   "paragraph1": "",
   "paragraph2": "",
   USE however many MORE paragraphs necessary to complete the response. Make sure ALL THE matchups IN THE league ARE LISTED. no more than 1 sentence per matchup`;
     } else {
-      question = `{leagueData} Your name is Boogie the writer and you've been getting a lot of heat for your predictions last week. Give me an article previewing each matchup in this fantasy football league, include their star players based off their projected points, and your predictions for how it'll turn out, double down on how certain you are this time and that league members should trust your years of experience/research. Make each matchup breakdown creative, funny and exciting. The format of the JSON response should strictly adhere to RFC8259 compliance, without any deviations or errors. The JSON structure should match this template:
+      question = `{leagueData} Your name is Boogie the writer and you've been getting a lot of heat for your predictions last week. Give me an article previewing each matchup in this fantasy football league, include their star players based off their projected points, and your predictions for how it'll turn out, double down on how certain you are this time and that league members should trust your years of experience/research. Make each matchup breakdown creative, funny and exciting. The JSON generated should strictly adhere to RFC8259 compliance, without any deviations or errors. The JSON structure should match this template:
   "title": "",
   "paragraph1": "",
   "paragraph2": "",
-  USE however many MORE paragraphs necessary to complete the response. Make sure ALL THE matchups IN THE league ARE LISTED. Please ensure that the generated JSON response meets the specified criteria without any syntax issues or inconsistencies.`;
+  USE however many MORE paragraphs necessary to complete the response. Make sure ALL THE matchups IN THE league ARE LISTED. Please ensure that the generated JSON only contains 1 title attribute and meets the specified criteria in one array without any syntax issues or inconsistencies.`;
     }
 
     const prompt = PromptTemplate.fromTemplate(question);
     const chainA = new LLMChain({ llm: model, prompt });
+    console.log("Prompt complete");
     const apiResponse = await chainA.call({ leagueData: newFile });
+    console.log("Response complete");
+    console.log(apiResponse.text);
 
-    //console.log("Headlines API ", apiResponse.text);
-    // const cleanUp = await model.call([
-    //   new SystemMessage(
-    //     "Turn the following string into valid JSON format that strictly adhere to RFC8259 compliance, if it already is in a valid JSON format then give me the string as the response, without any other information from you"
-    //   ),
-    //   new HumanMessage(apiResponse.text),
-    // ]);
+    res.setHeader("Content-Type", "application/json");
+    res.write("[");
 
-    // updateWeeklyInfo(REACT_APP_LEAGUE_ID, cleanUp.content);
+    // Stream the response
+    const responseData = JSON.parse(apiResponse.text);
+    for (let i = 0; i < responseData.length; i++) {
+      if (i > 0) {
+        res.write(",");
+      }
+      res.write(JSON.stringify(responseData[i]));
+    }
 
-    return res.status(200).json(JSON.parse(apiResponse.text));
+    res.write("]");
+
+    // End the response
+    res.end();
+
+    // Save data to the database
+    await updateWeeklyInfo(REACT_APP_LEAGUE_ID, apiResponse.text);
   } catch (error) {
     console.error("Unexpected error:", error);
     return res.status(500).json({ error: "An error occurred" });

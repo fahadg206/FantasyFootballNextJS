@@ -6,6 +6,7 @@ import {
   getDocs,
   addDoc,
   updateDoc,
+  limit,
 } from "firebase/firestore/lite";
 import { Document } from "langchain/document";
 import dotenv from "dotenv";
@@ -25,25 +26,21 @@ const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
 
 const updateWeeklyInfo = async (REACT_APP_LEAGUE_ID, articles) => {
   articles = await JSON.parse(articles);
-  // Reference to the "Weekly Info" collection
+  console.log("updating db for recap");
+  console.log(articles);
   const weeklyInfoCollectionRef = collection(db, "Weekly Articles");
-  // Use a Query to check if a document with the league_id exists
   const queryRef = query(
     weeklyInfoCollectionRef,
     where("league_id", "==", REACT_APP_LEAGUE_ID)
   );
   const querySnapshot = await getDocs(queryRef);
-  // Add or update the document based on whether it already exists
   if (!querySnapshot.empty) {
-    // Document exists, update it
-    //console.log("in if");
     querySnapshot.forEach(async (doc) => {
       await updateDoc(doc.ref, {
         articles: articles,
       });
     });
   } else {
-    // Document does not exist, add a new one
     await addDoc(weeklyInfoCollectionRef, {
       league_id: REACT_APP_LEAGUE_ID,
       articles: articles,
@@ -52,19 +49,12 @@ const updateWeeklyInfo = async (REACT_APP_LEAGUE_ID, articles) => {
 };
 
 function countWords(inputString) {
-  // Use regular expression to split the string by spaces and punctuation
   const words = inputString.split(/\s+|\b/);
-
-  // Filter out empty strings and punctuation
   const filteredWords = words.filter((word) => word.trim() !== "");
-
-  // Return the count of words
   return filteredWords.length;
 }
 
 export default async function handler(req, res) {
-  //console.log("here");
-  // console.log("what was passed in ", req.body);
   const REACT_APP_LEAGUE_ID = req.body;
   const readingRef = ref(storage, `files/${REACT_APP_LEAGUE_ID}.txt`);
   const url = await getDownloadURL(readingRef);
@@ -73,14 +63,11 @@ export default async function handler(req, res) {
   const fileContent = await response.text();
   const newFile = JSON.stringify(fileContent).replace(/\//g, "");
   const wordCount = countWords(newFile);
-  //console.log(`Word count: ${wordCount}`);
 
   try {
-    //console.log("Here");
-    //console.info(process.env.OPENAI_API_KEY);
     const model = new ChatOpenAI({
       temperature: 0.9,
-      model: "gpt-4",
+      model: "gpt-4-turbo",
       openAIApiKey: process.env.OPENAI_API_KEY,
     });
 
@@ -114,17 +101,25 @@ Please ensure that the generated JSON response meets the specified criteria with
     const chainA = new LLMChain({ llm: model, prompt });
     const apiResponse = await chainA.call({ leagueData: newFile });
 
-    //console.log("Headlines API ", apiResponse.text);
-    const cleanUp = await model.call([
-      new SystemMessage(
-        "Turn the following string into valid JSON format that strictly adhere to RFC8259 compliance, if it already is in a valid JSON format then give me the string as the response, without any other information from you"
-      ),
-      new HumanMessage(apiResponse.text),
-    ]);
+    // Set response headers for streaming
+    res.setHeader("Content-Type", "application/json");
+    res.write("[");
 
-    //updateWeeklyInfo(REACT_APP_LEAGUE_ID, cleanUp.content);
+    // Stream the JSON response
+    const responseData = JSON.parse(apiResponse.text);
+    for (let i = 0; i < responseData.length; i++) {
+      if (i > 0) {
+        res.write(",");
+      }
+      res.write(JSON.stringify(responseData[i]));
+    }
 
-    return res.status(200).json(JSON.parse(cleanUp.content));
+    // End the streaming
+    res.write("]");
+    res.end();
+
+    // Update the database with the articles
+    await updateWeeklyInfo(REACT_APP_LEAGUE_ID, apiResponse.text);
   } catch (error) {
     console.error("Unexpected error:", error);
     return res.status(500).json({ error: "An error occurred" });
@@ -141,7 +136,6 @@ Please ensure that the generated JSON response meets the specified criteria with
     );
 
     if (!querySnapshot.empty) {
-      //console.log("No documents found in 'Article Info' collection");
       return res.status(404).json({ error: "No documents found" });
     }
   } catch (error) {
