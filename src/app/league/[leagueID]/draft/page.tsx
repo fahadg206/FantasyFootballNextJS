@@ -438,13 +438,16 @@ export default function Draft() {
     draftData: any[]
   ): Promise<any[]> {
     try {
-      const response = await fetch("/api/fetchSummaries", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ REACT_APP_LEAGUE_ID, draftData }),
-      });
+      const response = await fetch(
+        "https://www.fantasypulseff.com/api/fetchSummaries",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ REACT_APP_LEAGUE_ID, draftData }),
+        }
+      );
 
       if (!response.ok) {
         throw new Error("Failed to fetch summaries");
