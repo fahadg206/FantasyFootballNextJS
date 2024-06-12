@@ -390,29 +390,35 @@ export default function Draft() {
 
     while (summaries.length < usersArray.length && attempts < maxAttempts) {
       try {
-        summaries = await fetchSummaries(REACT_APP_LEAGUE_ID, usersArray);
-        if (summaries.length < usersArray.length) {
+        summaries = await fetchSummaries(
+          REACT_APP_LEAGUE_ID,
+          scoring_type,
+          usersArray
+        );
+        if (summaries.length != usersArray.length) {
           attempts++;
-          // Optionally, you can add a delay between retries
           await new Promise((resolve) => setTimeout(resolve, 1000));
         }
       } catch (error) {
         console.error(`Attempt ${attempts + 1} failed:`, error);
         attempts++;
-        // Optionally, you can add a delay between retries
         await new Promise((resolve) => setTimeout(resolve, 1000));
       }
     }
 
     if (summaries.length < usersArray.length) {
       await deleteSummaryCollection(REACT_APP_LEAGUE_ID);
-      summaries = await fetchSummaries(REACT_APP_LEAGUE_ID, usersArray);
+      summaries = await fetchSummaries(
+        REACT_APP_LEAGUE_ID,
+        scoring_type,
+        usersArray
+      );
     }
 
     usersArray.forEach((user, index) => {
       if (users[user.user_id]) {
         users[user.user_id].summary =
-          summaries[index].description || "No summary available.";
+          summaries[index]?.description || "No summary available.";
       }
     });
 
@@ -435,6 +441,7 @@ export default function Draft() {
 
   async function fetchSummaries(
     REACT_APP_LEAGUE_ID: string,
+    scoring_type: string,
     draftData: any[]
   ): Promise<any[]> {
     try {
@@ -445,7 +452,11 @@ export default function Draft() {
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ REACT_APP_LEAGUE_ID, draftData }),
+          body: JSON.stringify({
+            REACT_APP_LEAGUE_ID,
+            scoring_type,
+            draftData,
+          }),
         }
       );
 

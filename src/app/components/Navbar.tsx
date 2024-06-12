@@ -157,7 +157,7 @@ function NavBar(props: MyProps) {
             <div className="flex items-center w-[90px]">
               <NavItem
                 selected={selected === 6}
-                id={5}
+                id={6}
                 setSelected={setSelected}
               >
                 <FaClipboardList />
@@ -169,7 +169,7 @@ function NavBar(props: MyProps) {
             <div className="flex items-center w-[90px]">
               <NavItem
                 selected={selected === 7}
-                id={6}
+                id={7}
                 setSelected={setSelected}
               >
                 <RiTwitterFill />

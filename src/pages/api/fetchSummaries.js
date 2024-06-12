@@ -16,22 +16,22 @@ dotenv.config();
 
 const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
 
-const PROMPT_TEMPLATE = `Given the draft data: {draftData}, generate a creative and funny summary of how the draft went for each fantasy manager. Make sure to include ALL fantasy managers.
-    The summary should include in any order:
-    - Key picks, highlighting their best picks and what round they took them in, and critiquing their worst picks in a funny and humorous way.
-    - Their fantasy football draft strategy and team building and any other trends you might've noticed like the positions they selected to create that.
-    - Fun facts or humorous observations about their draft or about their team or team name, make this funny, unique, creative and entertaining.
-    
-    Provide the response in the following JSON format for each user:
-    
-        "id": "<User's ID>",
-        "category": "Summary",
-        "title": "<User's name> Summary",
-        "description": "<An exciting, humorous, sports style and entertaining summary that isn't too boiler plate, get creative!>"
-    
-    Ensure that the generated JSON response meets the specified criteria without any syntax issues or inconsistencies. Make sure to include ALL fantasy managers. Provide the response in a valid JSON array format.`;
+const PROMPT_TEMPLATE = `Given the fantasy football draft data: {draftData}, and the scoring type: {scoringType}, generate a creative and funny summary of how the draft went for each fantasy manager. Make sure to include ALL fantasy managers.
+      The summary should include in any order:
+      - Key picks, highlighting their best picks and what round they took them in, and providing any insight if there might be areas of concern
+      - Their fantasy football draft strategy and team building and any other trends you might've noticed like the positions they selected to create that.
+      - Fun facts or humorous observations about their draft or about their team or team name, make this funny, unique, creative and entertaining.
+      
+      Provide the response in the following JSON format for each user:
+      
+          "id": "<User's ID>",
+          "category": "Summary",
+          "title": "<User's name> Summary",
+          "description": "<An exciting, humorous, sports style and entertaining summary that isn't too boiler plate, get creative!>"
+      
+      Ensure that the generated JSON response meets the specified criteria without any syntax issues or inconsistencies. Make sure to include ALL fantasy managers. Provide the response in a valid JSON array format.`;
 
-const generateSummaries = async (draftData) => {
+const generateSummaries = async (draftData, scoringType) => {
   const model = new ChatOpenAI({
     temperature: 0.9,
     model: "gpt-4",
@@ -71,6 +71,7 @@ const generateSummaries = async (draftData) => {
     try {
       apiResponse = await chain.call({
         draftData: JSON.stringify(chunk),
+        scoringType: scoringType,
       });
       console.log("API response text:", apiResponse.text);
 
@@ -113,7 +114,7 @@ const updateSummariesInDB = async (REACT_APP_LEAGUE_ID, summaries) => {
 };
 
 export default async function handler(req, res) {
-  const { REACT_APP_LEAGUE_ID, draftData } = req.body;
+  const { REACT_APP_LEAGUE_ID, scoringType, draftData } = req.body;
 
   const summariesCollectionRef = collection(db, "Draft Summaries");
   const queryRef = query(
@@ -128,7 +129,7 @@ export default async function handler(req, res) {
       return res.status(200).json(summariesDoc.data().summaries);
     }
 
-    const summaries = await generateSummaries(draftData);
+    const summaries = await generateSummaries(draftData, scoringType);
     await updateSummariesInDB(REACT_APP_LEAGUE_ID, summaries);
     return res.status(200).json(summaries);
   } catch (error) {

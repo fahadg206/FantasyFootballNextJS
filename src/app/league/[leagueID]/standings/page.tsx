@@ -51,8 +51,6 @@ const Page = () => {
   const selectedLeagueID = localStorage.getItem("selectedLeagueID");
   const router = useRouter();
 
-  //console.log("selectedLeagueID:", selectedLeagueID);
-
   if (typeof localStorage !== "undefined") {
     if (
       localStorage.getItem("selectedLeagueID") === null ||
@@ -92,22 +90,14 @@ const Page = () => {
     const fetchData = async () => {
       try {
         const usersData = await getUsers();
-
         const rostersData = await getRoster();
-        //console.log(rostersData);
 
-        // Filter users with no roster id (They don't have a team)
         const usersWithRoster = usersData.filter((user) =>
           rostersData.some((roster) => roster.owner_id === user.user_id)
         );
 
-        // Create a new map to store the updated schedule data
         const managerInfo: ManagerInfo = {};
-        // console.log(
-        //   "useEffect triggered with selectedLeagueID:",
-        //   selectedLeagueID
-        // );
-        // Update the managerInfo map with user data
+
         for (const user of usersWithRoster) {
           managerInfo[user.user_id] = {
             avatar: user.avatar
@@ -118,47 +108,36 @@ const Page = () => {
           };
         }
 
-        // Update the managerInfo map with roster data
         for (const roster of rostersData) {
           if (managerInfo[roster.owner_id]) {
             managerInfo[roster.owner_id].roster_id = roster.roster_id;
-
             managerInfo[roster.owner_id].starters = roster.starters;
             managerInfo[roster.owner_id].team_points_for_dec =
               roster.settings.fpts_decimal;
             managerInfo[roster.owner_id].team_points_for = roster.settings.fpts;
-
             managerInfo[roster.owner_id].team_points_against_dec =
               roster.settings.fpts_against_decimal;
-
-            managerInfo[roster.owner_id].team_points_against = roster.settings
-              .fpts_against
-              ? roster.settings.fpts_against
-              : "0";
+            managerInfo[roster.owner_id].team_points_against =
+              roster.settings.fpts_against || "0";
             managerInfo[roster.owner_id].wins = roster.settings.wins;
             managerInfo[roster.owner_id].losses = roster.settings.losses;
-            if (roster.metadata.streak) {
+
+            if (roster.metadata && roster.metadata.streak) {
               managerInfo[roster.owner_id].streak = roster.metadata.streak;
             }
           }
         }
 
-        // Set the updated scheduleData map to state
         setManagerInfo(managerInfo);
         const teamArray = Object.entries(managerInfo);
-        //const sortByWins = [...teamArray].sort((a, b) => b[1].wins - a[1].wins);
-        //console.log(teamArray);
-        const sortedTeamData = Object.entries(managerInfo)
-
+        const sortedTeamData = teamArray
           .sort((a, b) => {
             const bPoints =
               (parseFloat(b[1].team_points_for || "0") || 0) +
               (parseFloat(b[1].team_points_for_dec || "0") || 0) / 100;
-
             const aPoints =
               (parseFloat(a[1].team_points_for || "0") || 0) +
               (parseFloat(a[1].team_points_for_dec || "0") || 0) / 100;
-
             return bPoints - aPoints;
           })
           .sort((a, b) => {
@@ -175,9 +154,6 @@ const Page = () => {
 
     fetchData();
   }, [selectedLeagueID]);
-
-  //console.log("sorted", sortedTeamDataFinal);
-  //console.log(managerInfo);
 
   const Table = () => {
     return (
@@ -218,14 +194,12 @@ const Page = () => {
       </div>
     );
   };
-  //console.log(sortedTeamDataFinal);
 
   const TableRows: React.FC<{ user: ManagerInfo[string]; index: number }> = ({
     user,
     index,
   }) => {
     const rankOrdinal = numberToOrdinal(index + 1);
-    //const maxRankOrdinal = numberToOrdinal(user.maxRank);
 
     return (
       <motion.tr

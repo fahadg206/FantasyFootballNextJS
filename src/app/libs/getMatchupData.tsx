@@ -1,22 +1,8 @@
 import React, { useEffect, useState } from "react";
-import Imran from "../images/scary_imran.png";
-import Image from "next/image";
 import axios from "axios";
-import { Spinner } from "@nextui-org/react";
-import { db, storage } from "../firebase";
-import { ref, uploadString, getDownloadURL } from "firebase/storage";
-import {
-  getFirestore,
-  collection,
-  getDocs,
-  addDoc,
-  updateDoc,
-  query,
-  where,
-} from "firebase/firestore/lite";
-import { QuerySnapshot, onSnapshot, doc } from "firebase/firestore";
-import logo from "../images/helmet2.png";
+import Image from "next/image";
 import { StaticImageData } from "next/image";
+import logo from "../images/helmet2.png";
 
 interface WeeklyInformation {
   [league_id: string]: {
@@ -80,7 +66,6 @@ export default async function getMatchupData(league_id: any, week: number) {
 
   const weeklyInfo: WeeklyInformation = {};
 
-  //const [scheduleDataFinal, setScheduleDataFinal] = useState<ScheduleData>({});
   const REACT_APP_LEAGUE_ID = league_id;
 
   const getSchedule = async () => {
@@ -140,21 +125,21 @@ export default async function getMatchupData(league_id: any, week: number) {
 
     return true;
   }
+
   const updatedScheduleData: ScheduleData = {};
+
   const fetchData = async (playersData: any) => {
     try {
       const usersData = await getUsers();
       const rostersData = await getRoster();
       const scheduleData = await getSchedule();
 
-      // Filter users with no roster id (They don't have a team)
       const usersWithRoster = usersData.filter((user: { user_id: string }) =>
         rostersData.some(
           (roster: { owner_id: string }) => roster.owner_id === user.user_id
         )
       );
 
-      // Update the scheduleData map with user data
       for (const user of usersWithRoster) {
         updatedScheduleData[user.user_id] = {
           avatar: user.avatar
@@ -165,20 +150,17 @@ export default async function getMatchupData(league_id: any, week: number) {
         };
       }
 
-      // Update the scheduleData map with roster data
       for (const roster of rostersData) {
-        //console.log(roster);
         if (updatedScheduleData[roster.owner_id]) {
           updatedScheduleData[roster.owner_id].roster_id = roster.roster_id;
           updatedScheduleData[roster.owner_id].wins = roster.settings.wins;
           updatedScheduleData[roster.owner_id].losses = roster.settings.losses;
-          updatedScheduleData[roster.owner_id].streak = roster.metadata.streak;
+          updatedScheduleData[roster.owner_id].streak =
+            roster.metadata?.streak || "N/A";
         }
       }
 
       for (const matchup of scheduleData) {
-        // console.log("matchup", matchup);
-        // console.log("roster", roster);
         for (const userId in updatedScheduleData) {
           if (updatedScheduleData[userId].roster_id === matchup.roster_id) {
             updatedScheduleData[userId].matchup_id = matchup.matchup_id;
@@ -191,8 +173,6 @@ export default async function getMatchupData(league_id: any, week: number) {
           }
         }
       }
-
-      //Error
 
       for (const userId in updatedScheduleData) {
         if (updatedScheduleData.hasOwnProperty(userId)) {
@@ -220,13 +200,13 @@ export default async function getMatchupData(league_id: any, week: number) {
                   updatedScheduleData[userId]?.starters_full_data &&
                   !updatedScheduleData[userId]?.starters_full_data?.some(
                     (item) => {
-                      return areObjectsEqual(item, starter_data); // Compare each item to starter_data
+                      return areObjectsEqual(item, starter_data);
                     }
                   )
                 ) {
                   updatedScheduleData[userId]?.starters_full_data?.push(
                     starter_data
-                  ); // Push starter_data to the array
+                  );
                 } else {
                   updatedScheduleData[userId].starters_full_data = [
                     {
@@ -252,7 +232,6 @@ export default async function getMatchupData(league_id: any, week: number) {
       }
 
       for (const userId in updatedScheduleData) {
-        //console.log(updatedScheduleData[userId].matchup_id);
         const userData = updatedScheduleData[userId];
         if (userData.matchup_id) {
           if (!matchupMap.has(userData.matchup_id)) {
@@ -269,15 +248,9 @@ export default async function getMatchupData(league_id: any, week: number) {
           }
         }
       }
-
-      // Set the updated scheduleData map to state
-      //setScheduleDataFinal(updatedScheduleData);
     } catch (error) {
       console.error("Error fetching data:", error);
     }
-    //console.log("testing projections", updatedScheduleData);
-    //console.log("culprit", matchupMap);
-
     return { matchupMap, updatedScheduleData };
   };
 
@@ -291,18 +264,14 @@ export default async function getMatchupData(league_id: any, week: number) {
         }
       );
       const playersData = await response.json();
-      // Process and use the data as needed
-
       return playersData;
     } catch (error) {
       console.error("Error while fetching players data:", error);
       return [];
     }
   }
-  console.table(updatedScheduleData);
 
   const playersData = await fetchPlayersData();
-
   const response = await fetchData(playersData);
 
   return response;

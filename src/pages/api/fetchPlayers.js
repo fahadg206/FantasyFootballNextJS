@@ -2,7 +2,7 @@ import axios from "axios";
 import fetch from "node-fetch";
 import { MongoClient, ServerApiVersion } from "mongodb";
 
-const password = process.env.MONGO_PASSWORD || "kabofahad123";
+const password = process.env.MONGO_PASSWORD;
 const uri = `mongodb+srv://fantasypulseff:${password}@fantasypulsecluster.wj4o9kr.mongodb.net/?retryWrites=true&w=majority`;
 
 let client;
