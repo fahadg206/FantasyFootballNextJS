@@ -4,8 +4,8 @@ module.exports = {
   darkMode: ["class"],
   plugins: [nextui()],
   content: [
-    "./pages/**/*.{ts,tsx}",
-    "./components/**/*.{ts,tsx}",
+    "./pages/**/*.{ts,tsx,js}",
+    "./components/**/*.{ts,tsx,js}",
     "./app/**/*.{ts,tsx}",
     "./src/**/*.{ts,tsx}",
     "./node_modules/@nextui-org/theme/dist/**/*.{js,ts,jsx,tsx}",

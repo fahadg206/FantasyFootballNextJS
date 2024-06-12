@@ -20,6 +20,7 @@ import {
   FaCalendarAlt,
   FaFootballBall,
   FaSearch,
+  FaClipboardList,
 } from "react-icons/fa";
 import { RiTwitterFill } from "react-icons/ri";
 
@@ -150,10 +151,24 @@ function NavBar(props: MyProps) {
               <p className="ml-2">League Managers</p>
             </div>
           </Link>
-          <Link target={"_blank"} href={`https://twitter.com/fantasypulseff`}>
+          <Link
+            href={`/league/${localStorage.getItem("selectedLeagueID")}/draft`}
+          >
             <div className="flex items-center w-[90px]">
               <NavItem
                 selected={selected === 6}
+                id={5}
+                setSelected={setSelected}
+              >
+                <FaClipboardList />
+              </NavItem>
+              <p className="ml-2">Draft</p>
+            </div>
+          </Link>
+          <Link target={"_blank"} href={`https://twitter.com/fantasypulseff`}>
+            <div className="flex items-center w-[90px]">
+              <NavItem
+                selected={selected === 7}
                 id={6}
                 setSelected={setSelected}
               >
@@ -313,6 +328,18 @@ function NavBar(props: MyProps) {
                 >
                   <span className="text-[18px]  flex items-center  xl:text-[14px]">
                     <RiTeamFill size={18} className="mr-1 " /> League Managers
+                  </span>
+                </Link>
+              </li>
+              <li className="pb-6  text-center   hover:bg-[#AF1222]  hover:transition  hover:ease-in-out hover:rounded ">
+                <Link
+                  href={`/league/${localStorage.getItem(
+                    "selectedLeagueID"
+                  )}/draft`}
+                  onClick={() => setNavbar(!navbar)}
+                >
+                  <span className="text-[18px]  flex items-center  xl:text-[14px]">
+                    <FaClipboardList size={18} className="mr-1 " /> Draft
                   </span>
                 </Link>
               </li>

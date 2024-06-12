@@ -13,7 +13,7 @@ import { useRouter } from "next/navigation";
 import Popover from "./components/Popover";
 
 export default function Home() {
-  const options = ["2023"];
+  const options = ["2023", "2024"];
   /* SAVING USERNAME INPUT INTO LOCALSTORAGE. CLEARING LOCAL STORAGE IF EMPTY. PASSING USERNAME AND YEAR SELECTED TO PROPS  */
   const [text, setText] = useState("");
   const [usernameSubmitted, setUsernameSubmitted] = useState(false);

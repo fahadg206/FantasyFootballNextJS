@@ -1,23 +1,23 @@
 import axios from "axios";
 import fetch from "node-fetch";
+import { MongoClient, ServerApiVersion } from "mongodb";
 
-const password = process.env.MONGO_PASSWORD;
-
-const { MongoClient, ServerApiVersion } = require("mongodb");
+const password = process.env.MONGO_PASSWORD || "kabofahad123";
 const uri = `mongodb+srv://fantasypulseff:${password}@fantasypulsecluster.wj4o9kr.mongodb.net/?retryWrites=true&w=majority`;
 
-// Create a MongoClient with a MongoClientOptions object to set the Stable API version
-const client = new MongoClient(uri, {
-  serverApi: {
-    version: ServerApiVersion.v1,
-    strict: true,
-    deprecationErrors: true,
-  },
-});
+let client;
+let clientPromise;
 
-async function run() {}
-
-run().catch(console.dir);
+if (!client) {
+  client = new MongoClient(uri, {
+    serverApi: {
+      version: ServerApiVersion.v1,
+      strict: true,
+      deprecationErrors: true,
+    },
+  });
+  clientPromise = client.connect();
+}
 
 const round = (num) => {
   if (typeof num === "string") {
@@ -75,6 +75,12 @@ function GET(leagueID) {
                 fetch("https://api.sleeper.app/v1/players/nfl"),
               ];
 
+              resPromises.push(
+                fetch(
+                  `https://api.sleeper.app/projections/nfl/${year}/?season_type=regular&position[]=DB&position[]=DEF&position[]=DL&position[]=FLEX&position[]=IDP_FLEX&position[]=K&position[]=LB&position[]=QB&position[]=RB&position[]=REC_FLEX&position[]=SUPER_FLEX&position[]=TE&position[]=WR&position[]=WRRB_FLEX&order_by=ppr`
+                )
+              );
+
               for (let week = 1; week <= fullSeasonLength + 3; week++) {
                 resPromises.push(
                   fetch(
@@ -92,12 +98,20 @@ function GET(leagueID) {
                 });
 
                 return waitForAll(...resJSONs).then((weeklyData) => {
+                  const playerStats = weeklyData[1];
+                  // weeklyData.shift();
+                  // weeklyData.shift();
+
                   const playerData = weeklyData.shift();
+
+                  //console.log(playerStats);
                   const scoringSettings = leagueData.scoring_settings;
+                  console.log("Format ,", leagueData.type);
 
                   processedPlayers = computePlayers(
                     playerData,
                     weeklyData,
+                    playerStats,
                     scoringSettings
                   );
                   // Filter players based on position
@@ -131,11 +145,23 @@ function GET(leagueID) {
     });
 }
 
-function computePlayers(playerData, weeklyData, scoringSettings) {
+function computePlayers(playerData, weeklyData, playerStats, scoringSettings) {
   const computedPlayers = {};
+
+  const playerIndex = playerStats.reduce((index, player) => {
+    index[player.player_id] = player;
+    return index;
+  }, {});
+
+  //console.log("TESTING ADP, ", playerInfo);
 
   for (const id in playerData) {
     const projPlayer = playerData[id];
+    if (projPlayer.first_name == "Amon-Ra") {
+      //console.log("PLAYER, ", projPlayer);
+      // console.log("TEST ", playerStats[1]);
+      //console.log("Weekly ", weeklyData[1].player.player_id["7547"]);
+    }
 
     const player = {
       fn: projPlayer.first_name,
@@ -143,6 +169,7 @@ function computePlayers(playerData, weeklyData, scoringSettings) {
       pos: projPlayer.position,
       t: projPlayer.team ? projPlayer.team : "",
       wi: projPlayer.team ? {} : "",
+      adp: "",
       is:
         projPlayer.team && projPlayer.injury_status
           ? projPlayer.injury_status
@@ -162,6 +189,13 @@ function computePlayers(playerData, weeklyData, scoringSettings) {
   for (let week = 1; week <= weeklyData.length; week++) {
     for (const player of weeklyData[week - 1]) {
       const id = player.player_id;
+      computedPlayers[id].adp = playerIndex[id].stats;
+
+      if (id == "7547") {
+        //console.log("Found him");
+        //console.log(player);
+        console.log(computedPlayers[id].adp);
+      }
 
       if (!computedPlayers[id].wi) continue;
 
@@ -176,7 +210,7 @@ function computePlayers(playerData, weeklyData, scoringSettings) {
   // console.log("Called player");
   // console.log(computedPlayers["4017"].wi[1]);
   // console.log(computedPlayers["4017"].pos);
-  // console.log(computedPlayers["4017"].fn);
+  //console.log(computedPlayers["4017"].adp);
   return computedPlayers;
 }
 
@@ -190,17 +224,10 @@ const calculateProjection = (projectedStats, scoreSettings) => {
 };
 
 export default async function handler(req, res) {
-  // console.log("What we got", req.body);
   console.log("I got calleddd");
 
   try {
-    await client.connect();
-    // Send a ping to confirm a successful connection
-    await client.db("admin").command({ ping: 1 });
-    console.log(
-      "Pinged your deployment. You successfully connected to MongoDB!"
-    );
-
+    await clientPromise; // Ensure the client is connected
     // Access the database and collection
     const db = client.db("fantasypulse");
     const collection = db.collection("players");
@@ -210,14 +237,19 @@ export default async function handler(req, res) {
     // Define a filter to check if the document already exists based on the id field
     const filter = { id: playerArrayId };
 
-    // Check if the document already exists
-    const existingDocument = await collection.findOne(filter);
+    // Check the last update time
+    const lastUpdate = await collection.findOne({ id: "lastUpdate" });
+    const now = new Date();
+    const lastUpdateDate = lastUpdate ? new Date(lastUpdate.date) : new Date(0);
+    const isSameDay = now.toDateString() === lastUpdateDate.toDateString();
 
-    if (!existingDocument) {
-      // No data in the database, fetch and insert processed players
+    if (isSameDay) {
+      // Data already exists in the database and was updated today, return the existing data
+      const existingDocument = await collection.findOne(filter);
+      res.status(200).json(existingDocument.players);
+    } else {
+      // No data in the database or it was not updated today, fetch and insert processed players
       const processedPlayers = await GET(req.body);
-
-      //filter here
 
       const playerArray = { id: playerArrayId, players: processedPlayers };
 
@@ -239,17 +271,18 @@ export default async function handler(req, res) {
         console.log("No document inserted or updated.");
       }
 
+      // Update the last update time
+      await collection.updateOne(
+        { id: "lastUpdate" },
+        { $set: { date: now.toISOString() } },
+        { upsert: true }
+      );
+
       // Return the response after processing
       return res.status(200).json(processedPlayers);
-    } else {
-      // Data already exists in the database, return the existing data
-      res.status(200).json(existingDocument.players);
     }
   } catch (error) {
     console.error("Error:", error);
     return res.status(500).json({ error: "Internal Server Error" });
-  } finally {
-    // Close the client connection in the finally block
-    //await client.close();
   }
 }

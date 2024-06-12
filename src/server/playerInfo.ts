@@ -148,7 +148,7 @@ export function computePlayers(
   // console.log("Called player");
   // console.log(computedPlayers["4017"].wi[1]);
   // console.log(computedPlayers["4017"].pos);
-  // console.log(computedPlayers["4017"].fn);
+  console.log("TEST ", computedPlayers["4017"].fn);
   return computedPlayers;
 }
 
