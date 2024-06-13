@@ -381,38 +381,19 @@ export default function Draft() {
         value: pick.value,
         round: pick.round,
       })),
-      projectedRecord: user.projectedRecord, // Include projectedRecord in the data sent to fetchSummaries
+      projectedRecord: user.projectedRecord,
     }));
 
-    let summaries = [];
-    let attempts = 0;
-    const maxAttempts = 3;
-
-    while (summaries.length < usersArray.length && attempts < maxAttempts) {
-      try {
-        summaries = await fetchSummaries(
-          REACT_APP_LEAGUE_ID,
-          scoring_type,
-          usersArray
-        );
-        if (summaries.length != usersArray.length) {
-          attempts++;
-          await new Promise((resolve) => setTimeout(resolve, 1000));
-        }
-      } catch (error) {
-        console.error(`Attempt ${attempts + 1} failed:`, error);
-        attempts++;
-        await new Promise((resolve) => setTimeout(resolve, 1000));
-      }
-    }
-
-    if (summaries.length < usersArray.length) {
-      await deleteSummaryCollection(REACT_APP_LEAGUE_ID);
-      summaries = await fetchSummaries(
+    let summaries;
+    try {
+      summaries = await fetchSummariesWithRetries(
         REACT_APP_LEAGUE_ID,
         scoring_type,
         usersArray
       );
+    } catch (error) {
+      console.error("Failed to fetch summaries after retries:", error);
+      throw error;
     }
 
     usersArray.forEach((user, index) => {
@@ -425,17 +406,33 @@ export default function Draft() {
     return { users: Object.values(users), maxRounds };
   }
 
-  async function deleteSummaryCollection(leagueId: string) {
-    try {
-      await fetch("/api/deleteSummaryCollection", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ leagueId }),
-      });
-    } catch (error) {
-      console.error("Error deleting summary collection:", error);
+  async function fetchSummariesWithRetries(
+    REACT_APP_LEAGUE_ID: string,
+    scoring_type: string,
+    draftData: any[],
+    maxRetries = 3,
+    retryDelay = 1000
+  ): Promise<any[]> {
+    for (let attempt = 1; attempt <= maxRetries; attempt++) {
+      try {
+        const summaries = await fetchSummaries(
+          REACT_APP_LEAGUE_ID,
+          scoring_type,
+          draftData
+        );
+        return summaries;
+      } catch (error) {
+        if (attempt < maxRetries) {
+          console.warn(
+            `Attempt ${attempt} failed, retrying in ${retryDelay}ms...`
+          );
+          await new Promise((resolve) => setTimeout(resolve, retryDelay));
+          retryDelay *= 2; // Exponential backoff
+        } else {
+          console.error("Max retries reached. Failed to fetch summaries.");
+          throw new Error("Failed to fetch after retries");
+        }
+      }
     }
   }
 
@@ -468,12 +465,21 @@ export default function Draft() {
       return data;
     } catch (error) {
       console.error("Error fetching summaries:", error);
-      return draftData.map(() => ({
-        id: "",
-        category: "Error",
-        title: "Failed to generate summary",
-        description: "There was an error generating the summary for this user.",
-      }));
+      throw error;
+    }
+  }
+
+  async function deleteSummaryCollection(leagueId: string) {
+    try {
+      await fetch("/api/deleteSummaryCollection", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ leagueId }),
+      });
+    } catch (error) {
+      console.error("Error deleting summary collection:", error);
     }
   }
 
