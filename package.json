@@ -9,7 +9,9 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@nextui-org/progress": "^2.0.31",
     "@nextui-org/react": "^2.1.7",
+    "@nextui-org/system": "^2.2.2",
     "@types/node": "20.4.1",
     "@types/react": "18.2.14",
     "@types/react-dom": "18.2.6",
@@ -17,6 +19,7 @@
     "ai": "^2.2.11",
     "autoprefixer": "10.4.14",
     "axios": "^1.4.0",
+    "certifi": "^14.5.15",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.0.0",
     "d3-dsv": "^2.0.0",
@@ -35,6 +38,7 @@
     "mammoth": "^1.6.0",
     "mongodb": "^5.8.1",
     "next": "13.4.9",
+    "next-nprogress-bar": "^2.3.12",
     "next-themes": "^0.2.1",
     "pdf-parse": "^1.1.1",
     "postcss": "8.4.25",

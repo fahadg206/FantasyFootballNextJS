@@ -194,7 +194,7 @@ function computePlayers(playerData, weeklyData, playerStats, scoringSettings) {
       if (id == "7547") {
         //console.log("Found him");
         //console.log(player);
-        console.log(computedPlayers[id].adp);
+        //console.log(computedPlayers[id].adp);
       }
 
       if (!computedPlayers[id].wi) continue;

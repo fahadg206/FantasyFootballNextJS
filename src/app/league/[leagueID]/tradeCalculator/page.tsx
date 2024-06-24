@@ -59,6 +59,13 @@ const TradeCalculator = () => {
   const [team2Players, setTeam2Players] = useState([]);
   const [team1Trade, setTeam1Trade] = useState([]);
   const [team2Trade, setTeam2Trade] = useState([]);
+  const [tradeStatus, setTradeStatus] = useState("");
+  const [team1Total, setTeam1Total] = useState(0);
+  const [team2Total, setTeam2Total] = useState(0);
+  const [valueAdjustmentSide, setValueAdjustmentSide] = useState(0);
+  const [valueToEvenTrade, setValueToEvenTrade] = useState(0);
+  const acceptanceVariance = 5;
+  const acceptanceBufferAmount = 1000;
 
   const REACT_APP_LEAGUE_ID =
     localStorage.getItem("selectedLeagueID") || "1003413138751987712";
@@ -86,6 +93,10 @@ const TradeCalculator = () => {
     }
   }, [selected, selected2]);
 
+  useEffect(() => {
+    calculateTradeStatus();
+  }, [team1Trade, team2Trade]);
+
   const fetchUsers = async () => {
     try {
       const users_response = await axios.get(
@@ -105,7 +116,7 @@ const TradeCalculator = () => {
         headers: {
           "Content-Type": "application/json",
         },
-        body: REACT_APP_LEAGUE_ID,
+        body: JSON.stringify({ leagueId: REACT_APP_LEAGUE_ID }),
       });
       const data = await playersResponse.json();
       setPlayersData(data);
@@ -161,11 +172,29 @@ const TradeCalculator = () => {
     }));
   };
 
-  const handlePlayerClick = (team, playerId) => {
+  const fetchPlayerValue = async (sleeperId) => {
+    try {
+      const response = await fetch("/api/fetchPlayerValues", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ sleeperId }),
+      });
+      const data = await response.json();
+      return data.value;
+    } catch (error) {
+      console.error("Error fetching player value:", error);
+      return null;
+    }
+  };
+
+  const handlePlayerClick = async (team, playerId) => {
     const player = playersData[playerId];
     if (!player) return;
 
-    const playerWithId = { ...player, id: playerId };
+    const playerValue = await fetchPlayerValue(playerId);
+    const playerWithId = { ...player, id: playerId, value: playerValue };
 
     if (team === 1) {
       setTeam1Trade([...team1Trade, playerWithId]);
@@ -179,23 +208,76 @@ const TradeCalculator = () => {
   const handlePlayerRemove = (team, playerId) => {
     if (team === 1) {
       const removedPlayer = team1Trade.find((player) => player.id === playerId);
-      setTeam1Trade(team1Trade.filter((player) => player.id !== playerId));
-      setTeam1Players([...team1Players, removedPlayer.id]);
+      if (removedPlayer) {
+        setTeam1Trade(team1Trade.filter((player) => player.id !== playerId));
+        setTeam1Players([...team1Players, removedPlayer.id]);
+      }
     } else {
       const removedPlayer = team2Trade.find((player) => player.id === playerId);
-      setTeam2Trade(team2Trade.filter((player) => player.id !== playerId));
-      setTeam2Players([...team2Players, removedPlayer.id]);
+      if (removedPlayer) {
+        setTeam2Trade(team2Trade.filter((player) => player.id !== playerId));
+        setTeam2Players([...team2Players, removedPlayer.id]);
+      }
     }
   };
 
-  const clearTrade = () => {
-    setTeam1Trade([]);
-    setTeam2Trade([]);
+  const clearTrade = (team) => {
+    if (team === 1) {
+      setTeam1Players([
+        ...team1Players,
+        ...team1Trade.map((player) => player.id),
+      ]);
+      setTeam1Trade([]);
+    } else {
+      setTeam2Players([
+        ...team2Players,
+        ...team2Trade.map((player) => player.id),
+      ]);
+      setTeam2Trade([]);
+    }
   };
 
   const getTeamColor = (team) => teamColors[team] || "#333";
   const getTeamLogo = (team) =>
     `https://sleepercdn.com/images/team_logos/nfl/${team.toLowerCase()}.png`;
+
+  const calculateTradeStatus = () => {
+    if (team1Trade.length === 0 && team2Trade.length === 0) {
+      setTradeStatus("");
+      return;
+    }
+
+    const team1TotalValue = team1Trade.reduce(
+      (total, player) => total + (player.value || 0),
+      0
+    );
+    const team2TotalValue = team2Trade.reduce(
+      (total, player) => total + (player.value || 0),
+      0
+    );
+
+    setTeam1Total(team1TotalValue);
+    setTeam2Total(team2TotalValue);
+
+    const difference = Math.abs(team1TotalValue - team2TotalValue);
+
+    const calculatedValueToEvenTrade =
+      valueAdjustmentSide === 1
+        ? Math.abs(team1TotalValue + valueAdjustmentSide - team2TotalValue)
+        : Math.abs(team2TotalValue + valueAdjustmentSide - team1TotalValue);
+
+    setValueToEvenTrade(calculatedValueToEvenTrade);
+
+    if (calculatedValueToEvenTrade <= acceptanceBufferAmount) {
+      setTradeStatus({ text: "Fair trade", color: "text-green-500" });
+    } else if (difference <= acceptanceBufferAmount) {
+      setTradeStatus({ text: "Almost fair", color: "text-yellow-500" });
+    } else if (difference <= acceptanceBufferAmount * 2) {
+      setTradeStatus({ text: "Unfair", color: "text-orange-500" });
+    } else {
+      setTradeStatus({ text: "Highway Robbery", color: "text-red-500" });
+    }
+  };
 
   const renderPlayer = (playerId, team) => {
     const player = playersData[playerId];
@@ -207,7 +289,7 @@ const TradeCalculator = () => {
     return (
       <div
         key={playerId}
-        className="relative p-4 rounded-lg cursor-pointer"
+        className="relative p-2 rounded-lg cursor-pointer"
         style={{ backgroundColor: teamColor }}
         onClick={() => handlePlayerClick(team, playerId)}
       >
@@ -217,18 +299,20 @@ const TradeCalculator = () => {
             alt={player.team}
             layout="fill"
             objectFit="cover"
+            className="opacity-20"
           />
         </div>
-        <div className="relative flex items-center space-x-4">
+        <div className="relative flex items-center space-x-2">
           <img
             src={`https://sleepercdn.com/content/nfl/players/thumb/${playerId}.jpg`}
             alt={player.fn}
-            className="w-16 h-16 rounded-full"
+            className="w-10 h-10 rounded-full"
           />
-          <div>
-            <h3 className="text-lg font-bold">{player.fn}</h3>
-            <p>{player.pos}</p>
-            <p>{player.t}</p>
+          <div className="text-white">
+            <h3 className="text-sm font-bold">{player.fn}</h3>
+            <p className="text-xs">{player.pos}</p>
+            <p className="text-xs">{player.t}</p>
+            <p className="text-xs">Value: {player.value}</p>
           </div>
         </div>
       </div>
@@ -285,9 +369,14 @@ const TradeCalculator = () => {
     const teamName = user ? user.userName : "";
     const teamAvatar = user ? (user.avatar ? user.avatar : logo) : logo;
 
+    const totalValue = tradePlayers.reduce(
+      (total, player) => total + (player.value || 0),
+      0
+    );
+
     return (
-      <div className="w-full lg:w-1/2 bg-gray-700 p-4 rounded-lg mb-4 lg:mb-0">
-        <div className="flex justify-between items-center mb-4">
+      <div className="w-full lg:w-1/2 bg-[#e0dfdf] dark:bg-[#1a1a1a] p-2 rounded-lg mb-4 lg:mb-0">
+        <div className="flex justify-between items-center mb-2">
           <div className="flex items-center space-x-2">
             <Image
               src={teamAvatar}
@@ -296,20 +385,21 @@ const TradeCalculator = () => {
               height={40}
               className="rounded-full"
             />
-            <h2 className="text-xl font-bold">{teamName}</h2>
+            <h2 className="text-lg font-bold">{teamName}</h2>
+            <span className="text-sm font-bold">Total Value: {totalValue}</span>
           </div>
           <Button
             className="text-red-500 bg-transparent hover:bg-transparent border-none p-0"
-            onClick={clearTrade}
+            onClick={() => clearTrade(team === selected ? 1 : 2)}
           >
             Clear
           </Button>
         </div>
-        <div className="grid grid-cols-1 gap-4">
+        <div className="grid grid-cols-1 gap-2">
           {tradePlayers.map((player) => (
             <div
               key={player.id}
-              className="relative p-4 rounded-lg flex group"
+              className="relative p-2 rounded-lg flex group"
               style={{ backgroundColor: getTeamColor(player.t) }}
             >
               <div className="absolute inset-0 opacity-50 z-10">
@@ -317,40 +407,77 @@ const TradeCalculator = () => {
                   src={getTeamLogo(player.t)}
                   alt={player.team}
                   layout="intrinsic"
-                  width={106}
-                  height={106}
+                  width={80}
+                  height={80}
                   objectFit="contain"
-                  className="transform translate-x-9"
+                  className="transform translate-x-6"
                 />
               </div>
               <div className="absolute inset-0 bg-gradient-to-l from-black to-transparent opacity-30 rounded-lg z-20"></div>
               <Image
                 src={`https://sleepercdn.com/content/nfl/players/thumb/${player.id}.jpg`}
                 alt={player.fn}
-                height={50}
-                width={110}
-                className="h-22 transform translate y-4 -m-4 z-30"
+                height={40}
+                width={80}
+                className="h-16 transform translate-y-4 -m-4 z-30"
               />
-              <div className="flex flex-col items-end justify-center ml-auto text-right z-40">
-                <h3 className="text-lg font-bold">
+              <div className="flex flex-col items-end justify-center ml-auto text-right z-40  text-gray-200">
+                <h3 className="text-sm font-bold">
                   {player.fn} {player.ln}
                 </h3>
-                <div className="text-sm">
+                <div className="text-xs">
                   <span>{player.pos} - </span>
                   <span>{player.t}</span>
                 </div>
-                <div className="flex justify-end space-x-2 text-xs text-gray-200 mt-1">
-                  Value: 1738
+                <div className="flex justify-end space-x-1 text-xs text-gray-200 mt-1">
+                  Value: {player.value}
                 </div>
               </div>
               <FaTrash
-                className="absolute top-2 right-2 text-gray-500 opacity-0 group-hover:opacity-100 cursor-pointer"
-                onClick={() =>
-                  handlePlayerRemove(team === selected ? 1 : 2, player.id)
-                }
+                className="absolute top-1 right-1 text-gray-500 cursor-pointer z-50 opacity-40 hover:opacity-100 transition-opacity duration-200"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handlePlayerRemove(team === selected ? 1 : 2, player.id);
+                }}
               />
             </div>
           ))}
+        </div>
+      </div>
+    );
+  };
+
+  const renderTradeScale = () => {
+    const total = team1Total + team2Total;
+    const team1Percentage = ((team1Total / total) * 100).toFixed(2);
+    const team2Percentage = ((team2Total / total) * 100).toFixed(2);
+
+    return (
+      <div className="w-full mt-4">
+        <div className="flex justify-between items-center mb-2">
+          <Image
+            src={selectedUser?.avatar ? selectedUser.avatar : logo}
+            alt={selectedUser?.userName}
+            width={30}
+            height={30}
+            className="rounded-full"
+          />
+          <span className="text-xs">{team1Percentage}%</span>
+          <TradeBalance
+            team1Percentage={parseFloat(team1Percentage)}
+            team2Percentage={parseFloat(team2Percentage)}
+          />
+          <span className="text-xs">{team2Percentage}%</span>
+          <Image
+            src={selectedUser2?.avatar ? selectedUser2.avatar : logo}
+            alt={selectedUser2?.userName}
+            width={30}
+            height={30}
+            className="rounded-full"
+          />
+        </div>
+        <div className="text-center text-lg font-bold mt-2">
+          <span className={`${tradeStatus.color}`}>{tradeStatus.text}</span>
         </div>
       </div>
     );
@@ -360,57 +487,61 @@ const TradeCalculator = () => {
   const selectedUser2 = users.find((user) => user.managerID === selected2);
 
   const selectedText = selectedUser ? (
-    <div className="flex items-center bg-[rgb(224,223,223)] dark:bg-[#1a1a1a] border-r border-b dark:border-[#1a1a1a] border-[#af1222] border-[1px] text-[15px] w-[180px] font-bold border-opacity-20 rounded-[10px] p-2">
+    <div className="flex items-center justify-center bg-[rgb(224,223,223)] dark:bg-[#2a2a2a] border-r border-b dark:border-[#2a2a2a] border-[#af1222] border-[1px] text-[13px] w-[150px] font-bold border-opacity-20 rounded-[8px] p-2">
       <Image
         src={selectedUser.avatar ? selectedUser.avatar : logo}
         alt="avatar"
-        width={25}
-        height={25}
+        width={20}
+        height={20}
         className="rounded-full mr-1"
       />
       {selectedUser.userName}
     </div>
   ) : (
-    <div className="bg-[rgb(224,223,223)] dark:bg-[#1a1a1a] border-r border-b dark:border-[#1a1a1a] border-[#af1222] text-center border-[1px] text-[15px] w-[180px] font-bold border-opacity-20 rounded-[10px] p-2">
+    <div className="flex items-center justify-center bg-[rgb(224,223,223)] dark:bg-[#2a2a2a] border-r border-b  border-[#af1222] dark:border-[rgb(224,223,223)] text-center border-[1px] text-[13px] w-[150px] font-bold border-opacity-20 rounded-[8px] p-2">
       Select Team
     </div>
   );
 
   const selectedText2 = selectedUser2 ? (
-    <div className="flex items-center bg-[rgb(224,223,223)] dark:bg-[#1a1a1a] border-r border-b dark:border-[#1a1a1a] border-[#af1222] border-[1px] text-[15px] w-[180px] font-bold border-opacity-20 rounded-[10px] p-2">
+    <div className="flex items-center justify-center bg-[rgb(224,223,223)] dark:bg-[#2a2a2a] border-r border-b dark:border-[#2a2a2a] border-[#af1222] border-[1px] text-[13px] w-[150px] font-bold border-opacity-20 rounded-[8px] p-2">
       <Image
         src={selectedUser2.avatar ? selectedUser2.avatar : logo}
         alt="avatar"
-        width={25}
-        height={25}
+        width={20}
+        height={20}
         className="rounded-full mr-1"
       />
       {selectedUser2.userName}
     </div>
   ) : (
-    <div className="bg-[rgb(224,223,223)] dark:bg-[#1a1a1a] border-r border-b dark:border-[#1a1a1a] border-[#af1222] text-center border-[1px] text-[15px] w-[180px] font-bold border-opacity-20 rounded-[10px] p-2">
+    <div className="flex items-center justify-center bg-[rgb(224,223,223)] dark:bg-[#2a2a2a] border-r border-b  border-[#af1222] dark:border-[rgb(224,223,223)] text-center border-[1px] text-[13px] w-[150px] font-bold border-opacity-20 rounded-[8px] p-2">
       Select Team
     </div>
   );
 
   return (
-    <div className="md:w-[60vw] min-w-full min-h-screen bg-gray-900 text-white p-4">
-      <div className="bg-gray-800 rounded-lg shadow-lg">
-        <div className="flex justify-between items-center p-4 bg-gray-700 rounded-t-lg">
-          <h1 className="text-2xl font-bold">Trade Calculator</h1>
-          <div className="text-green-500 text-lg font-semibold">SUCCESS</div>
+    <div className="md:w-[60vw] min-w-full min-h-screen bg-[#EDEDED] dark:bg-black p-4">
+      <div className="bg-[#e0dfdf] dark:bg-[#1a1a1a] rounded-lg shadow-lg">
+        <div className="flex flex-col lg:flex-row justify-between items-center p-4 bg-[#e0dfdf] dark:bg-[#1a1a1a] rounded-t-lg">
+          <h1 className="text-xl font-bold">Trade Calculator</h1>
+          {team1Trade.length > 0 || team2Trade.length > 0 ? (
+            <div className={`${tradeStatus.color} text-sm font-semibold`}>
+              {tradeStatus.text}
+            </div>
+          ) : null}
         </div>
         <div className="flex flex-col lg:flex-row p-4 space-y-4 lg:space-y-0 lg:space-x-4">
           <Dropdown className="w-full lg:w-1/2">
             <DropdownTrigger>
-              <Button className="w-full">{selectedText}</Button>
+              <Button className="w-full ">{selectedText}</Button>
             </DropdownTrigger>
             <DropdownMenu
               aria-label="Teams"
               selectionMode="single"
               selectedKeys={selected}
               onSelectionChange={handleSelectionChange}
-              className="max-h-48 overflow-y-auto bg-black bg-opacity-80"
+              className="max-h-48 overflow-y-auto bg-black bg-opacity-80 text-gray-200"
             >
               {users
                 .filter((user) => user.managerID !== selected2)
@@ -439,7 +570,7 @@ const TradeCalculator = () => {
               selectionMode="single"
               selectedKeys={selected2}
               onSelectionChange={handleSelectionChange2}
-              className="max-h-48 overflow-y-auto bg-black bg-opacity-80"
+              className="max-h-48 overflow-y-auto bg-black bg-opacity-80  text-gray-200"
             >
               {users
                 .filter((user) => user.managerID !== selected)
@@ -489,12 +620,32 @@ const TradeCalculator = () => {
           )}
         </div>
         {selected !== "Select Team" && selected2 !== "Select Team" && (
-          <div className="flex flex-col lg:flex-row p-4 space-y-4 lg:space-y-0 lg:space-x-4">
-            {renderTrade(team1Trade, selected)}
-            {renderTrade(team2Trade, selected2)}
-          </div>
+          <>
+            <div className="flex flex-col lg:flex-row p-4 space-y-4 lg:space-y-0 lg:space-x-4">
+              {renderTrade(team1Trade, selected)}
+              {renderTrade(team2Trade, selected2)}
+            </div>
+            {team1Trade.length > 0 || team2Trade.length > 0
+              ? renderTradeScale()
+              : null}
+          </>
         )}
       </div>
+    </div>
+  );
+};
+
+const TradeBalance = ({ team1Percentage, team2Percentage }) => {
+  return (
+    <div className="relative w-full h-4 bg-gray-300 rounded-full overflow-hidden">
+      <div
+        className="absolute top-0 left-0 h-full bg-blue-500 transition-all duration-300"
+        style={{ width: `${team1Percentage}%` }}
+      ></div>
+      <div
+        className="absolute top-0 right-0 h-full bg-red-500 transition-all duration-300"
+        style={{ width: `${team2Percentage}%` }}
+      ></div>
     </div>
   );
 };

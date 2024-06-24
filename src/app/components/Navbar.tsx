@@ -22,6 +22,7 @@ import {
   FaSearch,
   FaClipboardList,
 } from "react-icons/fa";
+import { GiScales } from "react-icons/gi";
 import { RiTwitterFill } from "react-icons/ri";
 
 import { BsArrowLeftCircleFill } from "react-icons/bs";
@@ -33,6 +34,7 @@ import SelectedLeagueContext from "../context/SelectedLeagueContext";
 import ScoreboardNav from "./ScoreboardNav";
 import Router from "next/router";
 import Themechanger from "./ThemeChanger";
+import { LuScale } from "react-icons/lu";
 
 interface MyProps {
   leagueID: string;
@@ -152,11 +154,27 @@ function NavBar(props: MyProps) {
             </div>
           </Link>
           <Link
-            href={`/league/${localStorage.getItem("selectedLeagueID")}/draft`}
+            href={`/league/${localStorage.getItem(
+              "selectedLeagueID"
+            )}/tradeCalculator`}
           >
             <div className="flex items-center w-[90px]">
               <NavItem
                 selected={selected === 6}
+                id={6}
+                setSelected={setSelected}
+              >
+                <LuScale />
+              </NavItem>
+              <p className="ml-2">Trade Calculator</p>
+            </div>
+          </Link>
+          <Link
+            href={`/league/${localStorage.getItem("selectedLeagueID")}/draft`}
+          >
+            <div className="flex items-center w-[90px]">
+              <NavItem
+                selected={selected === 7}
                 id={6}
                 setSelected={setSelected}
               >
@@ -168,7 +186,7 @@ function NavBar(props: MyProps) {
           <Link target={"_blank"} href={`https://twitter.com/fantasypulseff`}>
             <div className="flex items-center w-[90px]">
               <NavItem
-                selected={selected === 7}
+                selected={selected === 8}
                 id={7}
                 setSelected={setSelected}
               >
@@ -340,6 +358,18 @@ function NavBar(props: MyProps) {
                 >
                   <span className="text-[18px]  flex items-center  xl:text-[14px]">
                     <FaClipboardList size={18} className="mr-1 " /> Draft
+                  </span>
+                </Link>
+              </li>
+              <li className="pb-6  text-center   hover:bg-[#AF1222]  hover:transition  hover:ease-in-out hover:rounded ">
+                <Link
+                  href={`/league/${localStorage.getItem(
+                    "selectedLeagueID"
+                  )}/tradeCalculator`}
+                  onClick={() => setNavbar(!navbar)}
+                >
+                  <span className="text-[18px]  flex items-center  xl:text-[14px]">
+                    <GiScales size={18} className="mr-1 " /> Trade Calculator
                   </span>
                 </Link>
               </li>
