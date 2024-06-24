@@ -14,7 +14,7 @@ import { FaSearch, FaPlus, FaTrash } from "react-icons/fa";
 import logo from "../../../images/helmet2.png";
 import { useRouter } from "next/navigation";
 
-const teamColors = {
+const teamColors: { [key: string]: string } = {
   BAL: "#241773",
   ATL: "#000000",
   DEN: "#FB4F14",
@@ -50,21 +50,52 @@ const teamColors = {
   FA: "",
 };
 
-const TradeCalculator = () => {
-  const [selected, setSelected] = useState("Select Team");
-  const [selected2, setSelected2] = useState("Select Team");
-  const [users, setUsers] = useState([]);
-  const [playersData, setPlayersData] = useState({});
-  const [team1Players, setTeam1Players] = useState([]);
-  const [team2Players, setTeam2Players] = useState([]);
-  const [team1Trade, setTeam1Trade] = useState([]);
-  const [team2Trade, setTeam2Trade] = useState([]);
-  const [tradeStatus, setTradeStatus] = useState("");
-  const [team1Total, setTeam1Total] = useState(0);
-  const [team2Total, setTeam2Total] = useState(0);
-  const [valueAdjustmentSide, setValueAdjustmentSide] = useState(0);
-  const [valueToEvenTrade, setValueToEvenTrade] = useState(0);
-  const acceptanceVariance = 5;
+const getPositionColor = (position: string): string => {
+  switch (position) {
+    case "QB":
+      return "text-red-500";
+    case "WR":
+      return "text-blue-500";
+    case "RB":
+      return "text-green-500";
+    case "TE":
+      return "text-yellow-500";
+    default:
+      return "text-gray-600";
+  }
+};
+
+interface User {
+  managerID: string;
+  userName: string;
+  avatar: string;
+}
+
+interface Player {
+  id: string;
+  fn: string;
+  ln: string;
+  pos: string;
+  t: string;
+  value: number;
+}
+
+const TradeCalculator: React.FC = () => {
+  const [selected, setSelected] = useState<string>("Select Team");
+  const [selected2, setSelected2] = useState<string>("Select Team");
+  const [users, setUsers] = useState<User[]>([]);
+  const [playersData, setPlayersData] = useState<{ [key: string]: Player }>({});
+  const [team1Players, setTeam1Players] = useState<string[]>([]);
+  const [team2Players, setTeam2Players] = useState<string[]>([]);
+  const [team1Trade, setTeam1Trade] = useState<Player[]>([]);
+  const [team2Trade, setTeam2Trade] = useState<Player[]>([]);
+  const [tradeStatus, setTradeStatus] = useState<
+    { text: string; color: string } | string
+  >("");
+  const [team1Total, setTeam1Total] = useState<number>(0);
+  const [team2Total, setTeam2Total] = useState<number>(0);
+  const [valueAdjustmentSide, setValueAdjustmentSide] = useState<number>(0);
+  const [valueToEvenTrade, setValueToEvenTrade] = useState<number>(0);
   const acceptanceBufferAmount = 1000;
 
   const REACT_APP_LEAGUE_ID =
@@ -99,10 +130,10 @@ const TradeCalculator = () => {
 
   const fetchUsers = async () => {
     try {
-      const users_response = await axios.get(
+      const usersResponse = await axios.get(
         `https://api.sleeper.app/v1/league/${REACT_APP_LEAGUE_ID}/users`
       );
-      const usersData = processUsers(users_response.data);
+      const usersData = processUsers(usersResponse.data);
       setUsers(usersData);
     } catch (error) {
       console.error("Error fetching users:", error);
@@ -127,13 +158,15 @@ const TradeCalculator = () => {
 
   const fetchTeamsData = async () => {
     try {
-      const rosters_response = await axios.get(
+      const rostersResponse = await axios.get(
         `https://api.sleeper.app/v1/league/${REACT_APP_LEAGUE_ID}/rosters`
       );
-      const rosters = rosters_response.data;
+      const rosters = rostersResponse.data;
 
-      const team1 = rosters.find((roster) => roster.owner_id === selected);
-      const team2 = rosters.find((roster) => roster.owner_id === selected2);
+      const team1 = rosters.find((roster: any) => roster.owner_id === selected);
+      const team2 = rosters.find(
+        (roster: any) => roster.owner_id === selected2
+      );
 
       if (team1) {
         setTeam1Players(team1.players);
@@ -146,7 +179,7 @@ const TradeCalculator = () => {
     }
   };
 
-  const handleSelectionChange = (selection) => {
+  const handleSelectionChange = (selection: any) => {
     if (selection.currentKey !== selected2) {
       setSelected(selection.currentKey);
       setTeam1Trade([]);
@@ -154,7 +187,7 @@ const TradeCalculator = () => {
     }
   };
 
-  const handleSelectionChange2 = (selection) => {
+  const handleSelectionChange2 = (selection: any) => {
     if (selection.currentKey !== selected) {
       setSelected2(selection.currentKey);
       setTeam1Trade([]);
@@ -162,7 +195,7 @@ const TradeCalculator = () => {
     }
   };
 
-  const processUsers = (rawUsers) => {
+  const processUsers = (rawUsers: any[]): User[] => {
     return rawUsers.map((user) => ({
       managerID: user.user_id,
       userName: user.display_name,
@@ -172,7 +205,9 @@ const TradeCalculator = () => {
     }));
   };
 
-  const fetchPlayerValue = async (sleeperId) => {
+  const fetchPlayerValue = async (
+    sleeperId: string
+  ): Promise<number | null> => {
     try {
       const response = await fetch("/api/fetchPlayerValues", {
         method: "POST",
@@ -189,7 +224,7 @@ const TradeCalculator = () => {
     }
   };
 
-  const handlePlayerClick = async (team, playerId) => {
+  const handlePlayerClick = async (team: number, playerId: string) => {
     const player = playersData[playerId];
     if (!player) return;
 
@@ -205,7 +240,7 @@ const TradeCalculator = () => {
     }
   };
 
-  const handlePlayerRemove = (team, playerId) => {
+  const handlePlayerRemove = (team: number, playerId: string) => {
     if (team === 1) {
       const removedPlayer = team1Trade.find((player) => player.id === playerId);
       if (removedPlayer) {
@@ -221,7 +256,7 @@ const TradeCalculator = () => {
     }
   };
 
-  const clearTrade = (team) => {
+  const clearTrade = (team: number) => {
     if (team === 1) {
       setTeam1Players([
         ...team1Players,
@@ -237,8 +272,8 @@ const TradeCalculator = () => {
     }
   };
 
-  const getTeamColor = (team) => teamColors[team] || "#333";
-  const getTeamLogo = (team) =>
+  const getTeamColor = (team: string): string => teamColors[team] || "#333";
+  const getTeamLogo = (team: string): string =>
     `https://sleepercdn.com/images/team_logos/nfl/${team.toLowerCase()}.png`;
 
   const calculateTradeStatus = () => {
@@ -279,7 +314,7 @@ const TradeCalculator = () => {
     }
   };
 
-  const renderPlayer = (playerId, team) => {
+  const renderPlayer = (playerId: string, team: number) => {
     const player = playersData[playerId];
     if (!player) return null;
 
@@ -319,7 +354,11 @@ const TradeCalculator = () => {
     );
   };
 
-  const renderTeamDropdown = (teamPlayers, teamName, team) => (
+  const renderTeamDropdown = (
+    teamPlayers: string[],
+    teamName: string,
+    team: number
+  ) => (
     <Dropdown className="w-full mb-4 lg:mb-0">
       <DropdownTrigger>
         <Button className="w-full">
@@ -333,7 +372,7 @@ const TradeCalculator = () => {
         onSelectionChange={(selection) =>
           handlePlayerClick(team, selection.currentKey)
         }
-        className="max-h-48 overflow-y-auto bg-black bg-opacity-80"
+        className="max-h-48 overflow-y-auto bg-black bg-opacity-80 text-gray-200"
       >
         {teamPlayers.map((playerId) => {
           const player = playersData[playerId];
@@ -354,7 +393,11 @@ const TradeCalculator = () => {
                   className="rounded-full"
                 />
                 <span className="truncate">
-                  {player.fn.charAt(0)}. {player.ln} - {player.pos}
+                  {player.fn.charAt(0)}. {player.ln}{" "}
+                  <span className={getPositionColor(player.pos)}>
+                    {" "}
+                    - {player.pos}
+                  </span>
                 </span>
               </div>
             </DropdownItem>
@@ -364,7 +407,7 @@ const TradeCalculator = () => {
     </Dropdown>
   );
 
-  const renderTrade = (tradePlayers, team) => {
+  const renderTrade = (tradePlayers: Player[], team: string) => {
     const user = users.find((u) => u.managerID === team);
     const teamName = user ? user.userName : "";
     const teamAvatar = user ? (user.avatar ? user.avatar : logo) : logo;
@@ -375,18 +418,20 @@ const TradeCalculator = () => {
     );
 
     return (
-      <div className="w-full lg:w-1/2 bg-[#e0dfdf] dark:bg-[#1a1a1a] p-2 rounded-lg mb-4 lg:mb-0">
+      <div className="w-full lg:w-1/2 bg-[#d1d1d1] dark:bg-[#2a2a2a] p-2 rounded-lg mb-4 lg:mb-0">
         <div className="flex justify-between items-center mb-2">
           <div className="flex items-center space-x-2">
             <Image
               src={teamAvatar}
               alt={teamName}
-              width={40}
-              height={40}
+              width={60}
+              height={60}
               className="rounded-full"
             />
-            <h2 className="text-lg font-bold">{teamName}</h2>
-            <span className="text-sm font-bold">Total Value: {totalValue}</span>
+            <div>
+              <h2 className="text-lg font-bold">{teamName}</h2>
+              <span className="text-sm">Total Value: {totalValue}</span>
+            </div>
           </div>
           <Button
             className="text-red-500 bg-transparent hover:bg-transparent border-none p-0"
@@ -407,8 +452,8 @@ const TradeCalculator = () => {
                   src={getTeamLogo(player.t)}
                   alt={player.team}
                   layout="intrinsic"
-                  width={80}
-                  height={80}
+                  width={75}
+                  height={75}
                   objectFit="contain"
                   className="transform translate-x-6"
                 />
@@ -421,7 +466,7 @@ const TradeCalculator = () => {
                 width={80}
                 className="h-16 transform translate-y-4 -m-4 z-30"
               />
-              <div className="flex flex-col items-end justify-center ml-auto text-right z-40  text-gray-200">
+              <div className="flex flex-col items-end justify-center ml-auto text-right z-40 text-gray-200">
                 <h3 className="text-sm font-bold">
                   {player.fn} {player.ln}
                 </h3>
@@ -458,8 +503,8 @@ const TradeCalculator = () => {
           <Image
             src={selectedUser?.avatar ? selectedUser.avatar : logo}
             alt={selectedUser?.userName}
-            width={30}
-            height={30}
+            width={40}
+            height={40}
             className="rounded-full"
           />
           <span className="text-xs">{team1Percentage}%</span>
@@ -471,8 +516,8 @@ const TradeCalculator = () => {
           <Image
             src={selectedUser2?.avatar ? selectedUser2.avatar : logo}
             alt={selectedUser2?.userName}
-            width={30}
-            height={30}
+            width={40}
+            height={40}
             className="rounded-full"
           />
         </div>
@@ -491,8 +536,8 @@ const TradeCalculator = () => {
       <Image
         src={selectedUser.avatar ? selectedUser.avatar : logo}
         alt="avatar"
-        width={20}
-        height={20}
+        width={30}
+        height={30}
         className="rounded-full mr-1"
       />
       {selectedUser.userName}
@@ -508,8 +553,8 @@ const TradeCalculator = () => {
       <Image
         src={selectedUser2.avatar ? selectedUser2.avatar : logo}
         alt="avatar"
-        width={20}
-        height={20}
+        width={30}
+        height={30}
         className="rounded-full mr-1"
       />
       {selectedUser2.userName}
@@ -523,7 +568,7 @@ const TradeCalculator = () => {
   return (
     <div className="md:w-[60vw] min-w-full min-h-screen bg-[#EDEDED] dark:bg-black p-4">
       <div className="bg-[#e0dfdf] dark:bg-[#1a1a1a] rounded-lg shadow-lg">
-        <div className="flex flex-col lg:flex-row justify-between items-center p-4 bg-[#e0dfdf] dark:bg-[#1a1a1a] rounded-t-lg">
+        <div className="flex flex-col lg:flex-row justify-between items-center p-4 bg-[#d1d1d1] dark:bg-[#2a2a2a] rounded-t-lg">
           <h1 className="text-xl font-bold">Trade Calculator</h1>
           {team1Trade.length > 0 || team2Trade.length > 0 ? (
             <div className={`${tradeStatus.color} text-sm font-semibold`}>
@@ -570,7 +615,7 @@ const TradeCalculator = () => {
               selectionMode="single"
               selectedKeys={selected2}
               onSelectionChange={handleSelectionChange2}
-              className="max-h-48 overflow-y-auto bg-black bg-opacity-80  text-gray-200"
+              className="max-h-48 overflow-y-auto bg-black bg-opacity-80 text-gray-200"
             >
               {users
                 .filter((user) => user.managerID !== selected)
@@ -608,12 +653,12 @@ const TradeCalculator = () => {
             <>
               {renderTeamDropdown(
                 team1Players,
-                selectedUser.userName + "'s team",
+                selectedUser?.userName + "'s team",
                 1
               )}
               {renderTeamDropdown(
                 team2Players,
-                selectedUser2.userName + "'s team",
+                selectedUser2?.userName + "'s team",
                 2
               )}
             </>
@@ -635,7 +680,15 @@ const TradeCalculator = () => {
   );
 };
 
-const TradeBalance = ({ team1Percentage, team2Percentage }) => {
+interface TradeBalanceProps {
+  team1Percentage: number;
+  team2Percentage: number;
+}
+
+const TradeBalance: React.FC<TradeBalanceProps> = ({
+  team1Percentage,
+  team2Percentage,
+}) => {
   return (
     <div className="relative w-full h-4 bg-gray-300 rounded-full overflow-hidden">
       <div
