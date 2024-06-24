@@ -638,9 +638,7 @@ const TradeCalculator: React.FC = () => {
           <Button
             className="w-full lg:w-auto mt-4 lg:mt-0"
             onClick={fetchTeamsData}
-          >
-            <FaSearch />
-          </Button>
+          ></Button>
         </div>
         <div
           className={`flex flex-col lg:flex-row p-4 space-y-4 lg:space-y-0 lg:space-x-4 ${
