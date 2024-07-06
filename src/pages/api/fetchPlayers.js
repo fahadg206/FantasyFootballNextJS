@@ -112,7 +112,8 @@ function GET(leagueID) {
                     playerData,
                     weeklyData,
                     playerStats,
-                    scoringSettings
+                    scoringSettings,
+                    nflState
                   );
                   // Filter players based on position
                   const filteredPlayers = {};
@@ -145,24 +146,27 @@ function GET(leagueID) {
     });
 }
 
-function computePlayers(playerData, weeklyData, playerStats, scoringSettings) {
+function computePlayers(
+  playerData,
+  weeklyData,
+  playerStats,
+  scoringSettings,
+  nflState
+) {
   const computedPlayers = {};
 
-  const playerIndex = playerStats.reduce((index, player) => {
+  // Ensure playerStats is an array
+  const playerStatsArray = Array.isArray(playerStats)
+    ? playerStats
+    : Object.values(playerStats);
+
+  const playerIndex = playerStatsArray.reduce((index, player) => {
     index[player.player_id] = player;
     return index;
   }, {});
 
-  //console.log("TESTING ADP, ", playerInfo);
-
   for (const id in playerData) {
     const projPlayer = playerData[id];
-    if (projPlayer.first_name == "Amon-Ra") {
-      //console.log("PLAYER, ", projPlayer);
-      // console.log("TEST ", playerStats[1]);
-      //console.log("Weekly ", weeklyData[1].player.player_id["7547"]);
-    }
-
     const player = {
       fn: projPlayer.first_name,
       ln: projPlayer.last_name,
@@ -182,35 +186,29 @@ function computePlayers(playerData, weeklyData, playerStats, scoringSettings) {
     if (projPlayer.team && projPlayer.injury_status) {
       player.is = projPlayer.injury_status;
     }
-
     computedPlayers[id] = player;
   }
 
   for (let week = 1; week <= weeklyData.length; week++) {
     for (const player of weeklyData[week - 1]) {
       const id = player.player_id;
-      computedPlayers[id].adp = playerIndex[id].stats;
-
-      if (id == "7547") {
-        //console.log("Found him");
-        //console.log(player);
-        //console.log(computedPlayers[id].adp);
-      }
-
+      computedPlayers[id].adp = playerIndex[id]?.stats || {};
       if (!computedPlayers[id].wi) continue;
-
-      computedPlayers[id].wi[week] = {
-        p: calculateProjection(player.stats, scoringSettings),
-        o: player.opponent,
-      };
+      if (nflState.season_type == "off") {
+        computedPlayers[id].wi[week - 1] = {
+          p: calculateProjection(player.stats, scoringSettings),
+          o: player.opponent,
+        };
+      } else {
+        computedPlayers[id].wi[week] = {
+          p: calculateProjection(player.stats, scoringSettings),
+          o: player.opponent,
+        };
+      }
     }
   }
 
   computedPlayers["OAK"] = computedPlayers["LV"];
-  // console.log("Called player");
-  // console.log(computedPlayers["4017"].wi[1]);
-  // console.log(computedPlayers["4017"].pos);
-  //console.log(computedPlayers["4017"].adp);
   return computedPlayers;
 }
 
@@ -249,7 +247,7 @@ export default async function handler(req, res) {
       res.status(200).json(existingDocument.players);
     } else {
       // No data in the database or it was not updated today, fetch and insert processed players
-      const processedPlayers = await GET(req.body);
+      const processedPlayers = await GET(req.body.leagueId);
 
       const playerArray = { id: playerArrayId, players: processedPlayers };
 

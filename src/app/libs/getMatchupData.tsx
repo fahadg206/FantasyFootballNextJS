@@ -16,6 +16,7 @@ interface ScheduleData {
     name: string;
     roster_id?: string;
     user_id?: string;
+    opponent_id?: string;
     starters?: string[];
     starters_points?: string[];
     players?: string[];
@@ -46,6 +47,7 @@ interface MatchupMapData {
   name: string;
   roster_id?: string;
   user_id?: string;
+  opponent_id?: string;
   starters?: string[] | undefined;
   team_points?: string;
   opponent?: string;
@@ -241,8 +243,10 @@ export default async function getMatchupData(league_id: any, week: number) {
             if (matchupData && matchupData.length > 0) {
               const firstPlayer = matchupData[0];
               firstPlayer.opponent = userData.name;
+              firstPlayer.opponent_id = userData.user_id;
               matchupMap.set(userData.matchup_id, [firstPlayer]);
               userData.opponent = firstPlayer.name;
+              userData.opponent_id = userData.user_id;
               matchupMap.get(userData.matchup_id)?.push(userData);
             }
           }
