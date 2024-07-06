@@ -49,7 +49,7 @@ interface TeamData {
 
 type SortedTeamData = [string, TeamData][];
 
-const Page = () => {
+const Page: React.FC = () => {
   const [managerInfo, setManagerInfo] = useState<ManagerInfo>({});
   const [sortedTeamDataFinal, setSortedTeamDataFinal] =
     useState<SortedTeamData>([]);
@@ -195,7 +195,7 @@ const Page = () => {
         }
 
         // Get matchups data for each week until the playoffs start
-        const matchupData = {};
+        const matchupData: { [key: number]: any } = {};
         for (let week = 1; week < playoffStartWeek; week++) {
           const data = await fetchMatchupData(week);
           matchupData[week] = data.updatedScheduleData;
@@ -204,7 +204,7 @@ const Page = () => {
         console.log("Manager Info after fetching matchups:", managerInfo);
 
         const teamArray = Object.entries(managerInfo);
-        const sortedTeamData = teamArray
+        let sortedTeamData = teamArray
           .sort((a, b) => {
             const bPoints =
               (parseFloat(b[1].team_points_for || "0") || 0) +
@@ -239,7 +239,7 @@ const Page = () => {
 
         // Sort by playoff odds if all records are 0-0
         if (allZeroRecord) {
-          sortedTeamData.sort(
+          sortedTeamData = sortedTeamData.sort(
             (a, b) =>
               (updatedManagerInfo[b[0]].playoffOdds || 0) -
               (updatedManagerInfo[a[0]].playoffOdds || 0)
@@ -267,7 +267,7 @@ const Page = () => {
     const calculateWinProbability = (
       teamProjection: number,
       opponentProjection: number
-    ) => {
+    ): number => {
       const randomFactor = Math.random();
       return teamProjection * randomFactor > opponentProjection
         ? 1
@@ -386,7 +386,7 @@ const Page = () => {
     starters: string[],
     week: number,
     p_data: any
-  ) => {
+  ): number => {
     let teamProjection = 0;
     starters.forEach((playerId) => {
       const playerData = p_data && p_data[playerId];
@@ -562,7 +562,7 @@ const Page = () => {
 
 export default Page;
 
-const numberToOrdinal = (n: number) => {
+const numberToOrdinal = (n: number): string => {
   let ord = "th";
 
   if (n % 10 === 1 && n % 100 !== 11) {
