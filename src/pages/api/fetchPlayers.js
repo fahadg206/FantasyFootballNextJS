@@ -1,13 +1,16 @@
+// Import necessary modules
 import axios from "axios";
 import fetch from "node-fetch";
 import { MongoClient, ServerApiVersion } from "mongodb";
 
+// Get MongoDB password from environment variables
 const password = process.env.MONGO_PASSWORD;
 const uri = `mongodb+srv://fantasypulseff:${password}@fantasypulsecluster.wj4o9kr.mongodb.net/?retryWrites=true&w=majority`;
 
 let client;
 let clientPromise;
 
+// Initialize MongoDB client
 if (!client) {
   client = new MongoClient(uri, {
     serverApi: {
@@ -19,6 +22,7 @@ if (!client) {
   clientPromise = client.connect();
 }
 
+// Round function for numbers
 const round = (num) => {
   if (typeof num === "string") {
     num = parseFloat(num);
@@ -26,6 +30,7 @@ const round = (num) => {
   return (Math.round((num + Number.EPSILON) * 100) / 100).toFixed(2);
 };
 
+// Wait for all promises to resolve
 async function waitForAll(...ps) {
   const promises = ps.map((p) => (p instanceof Response ? p.json() : p));
   return Promise.all(promises);
@@ -34,20 +39,21 @@ async function waitForAll(...ps) {
 let players = new Map();
 let processedPlayers;
 
+// Function to get data from Sleeper API
 function GET(leagueID) {
   console.log("Called server");
 
   return axios
     .get("https://api.sleeper.app/v1/state/nfl")
     .catch((err) => {
-      console.error(err);
+      console.error("Error fetching NFL state:", err);
       throw err;
     })
     .then((nflStateRes) => {
       return axios
         .get(`https://api.sleeper.app/v1/league/${leagueID}`)
         .catch((err) => {
-          console.error(err);
+          console.error("Error fetching league data:", err);
           throw err;
         })
         .then((leagueDataRes) => {
@@ -56,7 +62,7 @@ function GET(leagueID) {
               `https://api.sleeper.app/v1/league/${leagueID}/winners_bracket`
             )
             .catch((err) => {
-              console.error(err);
+              console.error("Error fetching playoffs data:", err);
               throw err;
             })
             .then((playoffsRes) => {
@@ -92,19 +98,16 @@ function GET(leagueID) {
               return waitForAll(...resPromises).then((responses) => {
                 const resJSONs = responses.map((res) => {
                   if (!res.ok) {
-                    // throw error(500, "No luck");
+                    console.error("Error in response:", res);
+                    throw new Error("Failed to fetch data from Sleeper API");
                   }
                   return res.json();
                 });
 
                 return waitForAll(...resJSONs).then((weeklyData) => {
                   const playerStats = weeklyData[1];
-                  // weeklyData.shift();
-                  // weeklyData.shift();
-
                   const playerData = weeklyData.shift();
 
-                  //console.log(playerStats);
                   const scoringSettings = leagueData.scoring_settings;
                   console.log("Format ,", leagueData.type);
 
@@ -115,7 +118,7 @@ function GET(leagueID) {
                     scoringSettings,
                     nflState
                   );
-                  // Filter players based on position
+
                   const filteredPlayers = {};
                   for (const playerId in processedPlayers) {
                     const player = processedPlayers[playerId];
@@ -136,8 +139,6 @@ function GET(leagueID) {
 
                   players = playerMap;
 
-                  //console.log(playerMap.get("4017"));
-
                   return filteredPlayers;
                 });
               });
@@ -146,6 +147,7 @@ function GET(leagueID) {
     });
 }
 
+// Function to compute players' data
 function computePlayers(
   playerData,
   weeklyData,
@@ -155,7 +157,6 @@ function computePlayers(
 ) {
   const computedPlayers = {};
 
-  // Ensure playerStats is an array
   const playerStatsArray = Array.isArray(playerStats)
     ? playerStats
     : Object.values(playerStats);
@@ -212,6 +213,7 @@ function computePlayers(
   return computedPlayers;
 }
 
+// Function to calculate projection
 const calculateProjection = (projectedStats, scoreSettings) => {
   let score = 0;
   for (const stat in projectedStats) {
@@ -222,7 +224,7 @@ const calculateProjection = (projectedStats, scoreSettings) => {
 };
 
 export default async function handler(req, res) {
-  console.log("I got calleddd");
+  console.log("I got called");
 
   try {
     await clientPromise; // Ensure the client is connected
@@ -232,31 +234,25 @@ export default async function handler(req, res) {
 
     const playerArrayId = "week 1";
 
-    // Define a filter to check if the document already exists based on the id field
     const filter = { id: playerArrayId };
 
-    // Check the last update time
     const lastUpdate = await collection.findOne({ id: "lastUpdate" });
     const now = new Date();
     const lastUpdateDate = lastUpdate ? new Date(lastUpdate.date) : new Date(0);
     const isSameDay = now.toDateString() === lastUpdateDate.toDateString();
 
-    if (!isSameDay) {
-      // Data already exists in the database and was updated today, return the existing data
+    if (isSameDay) {
       const existingDocument = await collection.findOne(filter);
       res.status(200).json(existingDocument.players);
     } else {
-      // No data in the database or it was not updated today, fetch and insert processed players
       const processedPlayers = await GET(req.body.leagueId);
 
       const playerArray = { id: playerArrayId, players: processedPlayers };
 
-      // Define an update operation with the "upsert" option
       const updateOperation = {
-        $set: playerArray, // This will update the fields of the existing document or insert a new one if not found
+        $set: playerArray,
       };
 
-      // Perform the upsert operation
       const result = await collection.updateOne(filter, updateOperation, {
         upsert: true,
       });
@@ -269,14 +265,12 @@ export default async function handler(req, res) {
         console.log("No document inserted or updated.");
       }
 
-      // Update the last update time
       await collection.updateOne(
         { id: "lastUpdate" },
         { $set: { date: now.toISOString() } },
         { upsert: true }
       );
 
-      // Return the response after processing
       return res.status(200).json(processedPlayers);
     }
   } catch (error) {
