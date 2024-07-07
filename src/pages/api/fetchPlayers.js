@@ -241,7 +241,7 @@ export default async function handler(req, res) {
     const lastUpdateDate = lastUpdate ? new Date(lastUpdate.date) : new Date(0);
     const isSameDay = now.toDateString() === lastUpdateDate.toDateString();
 
-    if (isSameDay) {
+    if (!isSameDay) {
       // Data already exists in the database and was updated today, return the existing data
       const existingDocument = await collection.findOne(filter);
       res.status(200).json(existingDocument.players);
