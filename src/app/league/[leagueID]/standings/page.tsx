@@ -138,16 +138,13 @@ const Page = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const playersResponse = await fetch(
-          "http://localhost:3000/api/fetchPlayers",
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ leagueId: REACT_APP_LEAGUE_ID }),
-          }
-        );
+        const playersResponse = await fetch("/api/fetchPlayers", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ leagueId: REACT_APP_LEAGUE_ID }),
+        });
         const p_data = await playersResponse.json();
         console.log("Projections: ,", p_data["4984"]);
         setPlayersData(p_data);
