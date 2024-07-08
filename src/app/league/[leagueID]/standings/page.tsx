@@ -53,7 +53,6 @@ const Page = () => {
   const [managerInfo, setManagerInfo] = useState<ManagerInfo>({});
   const [sortedTeamDataFinal, setSortedTeamDataFinal] =
     useState<SortedTeamData>([]);
-  const [showPlayoffOdds, setShowPlayoffOdds] = useState(false);
   const [cachedSimulations, setCachedSimulations] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [loadingMessage, setLoadingMessage] = useState("Loading Standings");
@@ -248,6 +247,7 @@ const Page = () => {
         setLoading(false);
       } catch (error) {
         console.error("Error fetching data:", error);
+        setLoading(false);
       }
     };
 

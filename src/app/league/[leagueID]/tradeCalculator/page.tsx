@@ -10,7 +10,7 @@ import {
 } from "@nextui-org/react";
 import { Button } from "@nextui-org/react";
 import Image from "next/image";
-import { FaSearch, FaPlus, FaTrash } from "react-icons/fa";
+import { FaSearch, FaPlus, FaTrash, FaStar } from "react-icons/fa";
 import logo from "../../../images/helmet2.png";
 import { useRouter } from "next/navigation";
 
@@ -97,6 +97,7 @@ const TradeCalculator: React.FC = () => {
   const [valueAdjustmentSide, setValueAdjustmentSide] = useState<number>(0);
   const [valueToEvenTrade, setValueToEvenTrade] = useState<number>(0);
   const acceptanceBufferAmount = 1000;
+  const [scoringType, setScoringType] = useState<string>("");
 
   const REACT_APP_LEAGUE_ID =
     localStorage.getItem("selectedLeagueID") || "1003413138751987712";
@@ -116,6 +117,7 @@ const TradeCalculator: React.FC = () => {
   useEffect(() => {
     fetchUsers();
     fetchPlayersData();
+    fetchScoringType();
   }, []);
 
   useEffect(() => {
@@ -127,6 +129,19 @@ const TradeCalculator: React.FC = () => {
   useEffect(() => {
     calculateTradeStatus();
   }, [team1Trade, team2Trade]);
+
+  const fetchScoringType = async () => {
+    try {
+      const drafts = await axios.get(
+        `https://api.sleeper.app/v1/league/${REACT_APP_LEAGUE_ID}/drafts`
+      );
+      const drafts_response = drafts.data;
+      const scoring_type = drafts_response[0]?.metadata?.scoring_type || "";
+      setScoringType(scoring_type);
+    } catch (error) {
+      console.error("Error fetching scoring type:", error);
+    }
+  };
 
   const fetchUsers = async () => {
     try {
@@ -214,7 +229,7 @@ const TradeCalculator: React.FC = () => {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ sleeperId }),
+        body: JSON.stringify({ sleeperId, scoringType }),
       });
       const data = await response.json();
       return data.value;
@@ -228,7 +243,7 @@ const TradeCalculator: React.FC = () => {
     const player = playersData[playerId];
     if (!player) return;
 
-    const playerValue = await fetchPlayerValue(playerId);
+    const playerValue = (await fetchPlayerValue(playerId)) || 500;
     const playerWithId = { ...player, id: playerId, value: playerValue };
 
     if (team === 1) {
@@ -314,6 +329,38 @@ const TradeCalculator: React.FC = () => {
     }
   };
 
+  const renderStars = (value: number) => {
+    const fullStars = Math.floor(value / 2000);
+    const halfStar = value % 2000 >= 1000;
+    const quarterStar = value % 1000 >= 500;
+
+    return (
+      <div className="flex items-center space-x-1">
+        {Array.from({ length: fullStars }, (_, i) => (
+          <FaStar key={i} className="text-yellow-500" />
+        ))}
+        {halfStar && (
+          <div className="relative">
+            <FaStar className="text-yellow-500 opacity-50" />
+            <FaStar
+              className="absolute top-0 left-0 text-yellow-500"
+              style={{ clipPath: "inset(0 50% 0 0)" }}
+            />
+          </div>
+        )}
+        {!halfStar && quarterStar && (
+          <div className="relative">
+            <FaStar className="text-yellow-500 opacity-50" />
+            <FaStar
+              className="absolute top-0 left-0 text-yellow-500"
+              style={{ clipPath: "inset(0 75% 0 0)" }}
+            />
+          </div>
+        )}
+      </div>
+    );
+  };
+
   const renderPlayer = (playerId: string, team: number) => {
     const player = playersData[playerId];
     if (!player) return null;
@@ -343,11 +390,11 @@ const TradeCalculator: React.FC = () => {
             alt={player.fn}
             className="w-10 h-10 rounded-full"
           />
-          <div className="text-white">
+          <div className="text-white space-y-1">
             <h3 className="text-sm font-bold">{player.fn}</h3>
             <p className="text-xs">{player.pos}</p>
             <p className="text-xs">{player.t}</p>
-            <p className="text-xs">Value: {player.value}</p>
+            <div className="flex">{renderStars(player.value)}</div>
           </div>
         </div>
       </div>
@@ -412,11 +459,6 @@ const TradeCalculator: React.FC = () => {
     const teamName = user ? user.userName : "";
     const teamAvatar = user ? (user.avatar ? user.avatar : logo) : logo;
 
-    const totalValue = tradePlayers.reduce(
-      (total, player) => total + (player.value || 0),
-      0
-    );
-
     return (
       <div className="w-full lg:w-1/2 bg-[#d1d1d1] dark:bg-[#2a2a2a] p-2 rounded-lg mb-4 lg:mb-0">
         <div className="flex justify-between items-center mb-2">
@@ -430,7 +472,6 @@ const TradeCalculator: React.FC = () => {
             />
             <div>
               <h2 className="text-lg font-bold">{teamName}</h2>
-              <span className="text-sm">Total Value: {totalValue}</span>
             </div>
           </div>
           <Button
@@ -466,7 +507,7 @@ const TradeCalculator: React.FC = () => {
                 width={80}
                 className="h-16 transform translate-y-4 -m-4 z-30"
               />
-              <div className="flex flex-col items-end justify-center ml-auto text-right z-40 text-gray-200">
+              <div className="flex flex-col items-end justify-center ml-auto text-right z-40 text-gray-200 space-y-1">
                 <h3 className="text-sm font-bold">
                   {player.fn} {player.ln}
                 </h3>
@@ -474,9 +515,7 @@ const TradeCalculator: React.FC = () => {
                   <span>{player.pos} - </span>
                   <span>{player.t}</span>
                 </div>
-                <div className="flex justify-end space-x-1 text-xs text-gray-200 mt-1">
-                  Value: {player.value}
-                </div>
+                <div className="flex">{renderStars(player.value)}</div>
               </div>
               <FaTrash
                 className="absolute top-1 right-1 text-gray-500 cursor-pointer z-50 opacity-40 hover:opacity-100 transition-opacity duration-200"

@@ -8,3 +8,28 @@
  GREY: #1A1A1A
 
 */
+
+/* Custom styles for fractional stars */
+.half-star::before {
+  @apply relative inline-block text-yellow-500;
+  content: "\f005";
+  font-family: "Font Awesome 5 Free";
+  font-weight: 900;
+  position: absolute;
+  width: 50%;
+  overflow: hidden;
+}
+
+.quarter-star::before {
+  @apply relative inline-block text-yellow-500;
+  content: "\f005";
+  font-family: "Font Awesome 5 Free";
+  font-weight: 900;
+  position: absolute;
+  width: 25%;
+  overflow: hidden;
+}
+
+.three-quarter-star::before {
+  @apply relative inline-block text-yellow-500;
+}
