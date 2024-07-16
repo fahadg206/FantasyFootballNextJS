@@ -18,7 +18,7 @@ module.exports = module.exports = {
     // Looks like backward compatibility approach.
   },
   images: {
-    domains: ["sleepercdn.com"],
+    domains: ["sleepercdn.com", "img.freepik.com"],
   },
   env: {
     OPENAI_API_KEY: process.env.OPENAI_API_KEY,

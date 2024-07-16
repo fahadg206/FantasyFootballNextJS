@@ -10,7 +10,6 @@ import {
   updateDoc,
   limit,
 } from "firebase/firestore/lite";
-import { AiFillAlert } from "react-icons/ai";
 import Image from "next/image";
 
 interface VoteInfo {
@@ -36,25 +35,7 @@ interface BarsProps {
   votes: PlayerVoteInfo[];
 }
 
-// [
-//   {
-//     title: "Articles Page",
-//     votes: 0,
-//     color: "bg-[#af1222]",
-//   },
-//   {
-//     title: "Rivarly Page",
-//     votes: 0,
-//     color: "bg-[#1a1a1a]",
-//   },
-//   {
-//     title: "League Managers Page",
-//     votes: 0,
-//     color: "bg-[#e45263]",
-//   },
-// ]
-
-const BarPoll = () => {
+const HomePoll = () => {
   const [votes, setVotes] = useState<PlayerVoteInfo[]>([
     {
       playerName: "Dak Prescott",
@@ -80,8 +61,8 @@ const BarPoll = () => {
   ]);
 
   return (
-    <section className=" px-4 mb-10  w-[100vw] xl:w-[60vw]">
-      <div className="mx-auto grid max-w-4xl grid-cols-1  md:grid-cols-[1fr_400px] md:gap-12 border-y-[1px] border-[#af1222] border-opacity-20 p-2 rounded-xl">
+    <section className="w-full px-4 mb-10 lg:transform lg:scale-75 lg:origin-top-left">
+      <div className="mx-auto grid max-w-full grid-cols-1 p-2 rounded-xl">
         <Options votes={votes} setVotes={setVotes} />
         <Bars votes={votes} />
       </div>
@@ -91,6 +72,7 @@ const BarPoll = () => {
 
 const Options: React.FC<OptionsProps> = ({ votes, setVotes }) => {
   const [voted, setVoted] = useState(false);
+
   const addVotes = async (newVotes: PlayerVoteInfo[]) => {
     try {
       const voteInfo = collection(db, "Home Poll");
@@ -98,23 +80,18 @@ const Options: React.FC<OptionsProps> = ({ votes, setVotes }) => {
 
       const querySnapshot = await getDocs(queryRef);
 
-      // Add or update the document based on whether it already exists
       if (!querySnapshot.empty) {
-        // Document exists, update it
         querySnapshot.forEach(async (doc) => {
           await updateDoc(doc.ref, {
-            votes: newVotes, // Use the updated local newVotes array
+            votes: newVotes,
           });
         });
       } else {
-        // Document does not exist, add a new one
         await addDoc(voteInfo, {
-          votes: newVotes, // Use the updated local newVotes array
+          votes: newVotes,
           id: "homepoll",
         });
       }
-
-      //console.log("Votes added to the database successfully");
     } catch (error) {
       console.error("Error adding votes to the database:", error);
     }
@@ -132,6 +109,7 @@ const Options: React.FC<OptionsProps> = ({ votes, setVotes }) => {
     setVotes((prevVotes) =>
       prevVotes.map((v) => (v.playerName === newVote.playerName ? newVote : v))
     );
+    setVoted(true);
   };
 
   const getVotes = async () => {
@@ -145,66 +123,54 @@ const Options: React.FC<OptionsProps> = ({ votes, setVotes }) => {
         querySnapshot.forEach((doc) => {
           const docData = doc.data();
           setVotes(docData.votes);
-          //console.log("votes returned", docData.votes);
         });
-      } else {
-        //console.log("votes do not exist");
       }
     } catch (error) {
-      console.error("Error adding votes to the database:", error);
+      console.error("Error getting votes from the database:", error);
     }
   };
 
   useEffect(() => {
-    getVotes(); // Fetch votes from the database when the component mounts
-  }, []); // Empty dependency array to trigger the effect once
-
-  // Rest of your component code
+    getVotes();
+  }, []);
 
   return (
-    <div className="col-span-1 py-12">
-      <h3 className="mb-6 text-2xl font-semibold  text-center">
+    <div className="col-span-1 py-4">
+      <h3 className="mb-2 text-lg font-semibold text-center">
         Vote for who had the Best Air Game Performance for Week 12!
       </h3>
       <div
         className={
-          voted
-            ? `hidden`
-            : ` mb-6 space-y-2 text-center flex flex-col items-center `
+          voted ? `hidden` : `space-y-2 text-center flex flex-col items-center`
         }
       >
-        {votes.map((vote: PlayerVoteInfo) => {
-          return (
-            <motion.button
-              whileHover={{ scale: 1.015 }}
-              whileTap={{ scale: 0.985 }}
-              onClick={() => {
-                handleIncrementVote(vote);
-                setVoted(true);
-              }}
-              key={vote.playerName}
-              className={`w-[80%] rounded-xl ${vote.color} text-white text-center py-2 font-medium flex justify-around items-center`}
-            >
-              <Image
-                src={vote.avatar}
-                alt="player"
-                width={60}
-                height={60}
-                className="rounded-full"
-              />{" "}
+        {votes.map((vote: PlayerVoteInfo) => (
+          <motion.button
+            whileHover={{ scale: 1.015 }}
+            whileTap={{ scale: 0.985 }}
+            onClick={() => handleIncrementVote(vote)}
+            key={vote.playerName}
+            className={`w-[80%] max-w-xs rounded-xl ${vote.color} text-white py-2 font-medium flex justify-between items-center`}
+          >
+            <Image
+              src={vote.avatar}
+              alt="player"
+              width={40}
+              height={40}
+              className="rounded-full"
+            />
+            <span className="ml-2 flex-1 text-left text-sm">
               {vote.playerName}
-              <p className="text-[11px] italic text-[#e8dede] mr-2">
-                {vote.matchup}
-              </p>
-            </motion.button>
-          );
-        })}
+            </span>
+            <p className="text-xs italic text-[#e8dede]">{vote.matchup}</p>
+          </motion.button>
+        ))}
       </div>
-      <div className="flex flex-col items-center justify-center">
-        <span className="mb-2 italic text-black dark:text-slate-400 text-center">
+      <div className="flex flex-col items-center justify-center mt-2">
+        <span className="italic text-black dark:text-slate-400 text-sm">
           {totalVotes} votes
         </span>
-        <p className={voted ? `block italic text-[14px]` : `hidden`}>
+        <p className={voted ? `block italic text-[12px] mt-2` : `hidden`}>
           Thanks for voting!
         </p>
       </div>
@@ -217,7 +183,7 @@ const Bars: React.FC<BarsProps> = ({ votes }) => {
 
   return (
     <div
-      className="col-span-1 grid min-h-[200px] gap-2"
+      className="col-span-1 grid min-h-[150px] gap-1 mt-4 w-[80%] max-w-xs mx-auto"
       style={{
         gridTemplateColumns: `repeat(${votes.length}, minmax(0, 1fr))`,
       }}
@@ -247,4 +213,4 @@ const Bars: React.FC<BarsProps> = ({ votes }) => {
   );
 };
 
-export default BarPoll;
+export default HomePoll;
