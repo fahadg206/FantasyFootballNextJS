@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import { useRouter, useSearchParams } from "next/navigation"; // Add useSearchParams
 import ArticleTemplate from "../../../components/ArticleTemplate";
 import imran from "../../../images/scary_imran.png";
 import overreaction from "../../../images/over_reaction.jpg";
@@ -27,10 +28,8 @@ import {
   updateDoc,
   limit,
 } from "firebase/firestore/lite";
-import { useRouter } from "next/navigation";
 import {
   Link as SmoothLink,
-  Button,
   Element,
   Events,
   animateScroll as scroll,
@@ -156,6 +155,8 @@ const Articles = () => {
   });
 
   const router = useRouter();
+  const searchParams = useSearchParams(); // Use useSearchParams hook
+  const scrollTo = searchParams.get("scrollTo"); // Get scrollTo query parameter
   const REACT_APP_LEAGUE_ID: string | null =
     localStorage.getItem("selectedLeagueID");
   const leagueStatus: string | null = localStorage.getItem("leagueStatus");
@@ -731,6 +732,15 @@ const Articles = () => {
       fetchDataIfNeeded();
     }, [pulseCheck]);
 
+    useEffect(() => {
+      if (scrollTo) {
+        const element = document.getElementById(scrollTo);
+        if (element) {
+          element.scrollIntoView({ behavior: "smooth" });
+        }
+      }
+    }, [scrollTo]);
+
     if (
       articles &&
       articles2 &&
@@ -844,7 +854,7 @@ const Articles = () => {
                 authorImg={boogie}
                 jobtitle="Fantasy Pulse Senior Staff Writer"
                 date={date || ""}
-                name="1"
+                name="Weekly Preview" // Ensure this matches the link value
                 article={previewArticle}
               />
             </div>
@@ -859,7 +869,7 @@ const Articles = () => {
                 jobtitle="Independent Journalist"
                 date={date || ""}
                 article={articles2}
-                name="1"
+                name="Weekly Recap" // Ensure this matches the link value
               />
             </div>
           </Element>
@@ -876,7 +886,7 @@ const Articles = () => {
                 jobtitle="Fantasy Pulse Senior Staff Writer"
                 date={date || ""}
                 article={articles}
-                name="1"
+                name="Weekly Recap" // Ensure this matches the link value
               />
             </div>
           </Element>
@@ -890,7 +900,7 @@ const Articles = () => {
                 jobtitle="Fantasy Pulse Insider"
                 date={date || ""}
                 article={articles3}
-                name="1"
+                name="Predictions" // Ensure this matches the link value
               />
             </div>
           </Element>
@@ -903,7 +913,7 @@ const Articles = () => {
                 authorImg={pulseDr}
                 jobtitle="Fantasy Pulse Medical Director"
                 date={date || ""}
-                name="1"
+                name="Pulse Check" // Ensure this matches the link value
                 article={pulseCheck}
               />
             </div>
@@ -918,7 +928,7 @@ const Articles = () => {
                 jobtitle="Head of Media Department"
                 date={date || ""}
                 article={playoffsArticle}
-                name="1"
+                name="Playoff Predictions" // Ensure this matches the link value
               />
             </div>
           </Element>

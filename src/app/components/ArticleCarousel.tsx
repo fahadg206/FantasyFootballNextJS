@@ -2,10 +2,7 @@ import { motion } from "framer-motion";
 import React, { useState, useEffect } from "react";
 import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
 import useMeasure from "react-use-measure";
-import Image from "next/image";
-import { v4 as uuidv4 } from "uuid";
-import axios from "axios";
-import { useRouter } from "next/navigation";
+import Link from "next/link";
 import weekly_preview_img from "../images/weekly_preview.jpg";
 import weekly_recap_img from "../images/week_recap.png";
 import predictions_img from "../images/predictions.jpg";
@@ -26,6 +23,7 @@ interface ArticleItem {
   imageUrl: string;
   description: string;
   timeAgo: string;
+  link: string; // Add a link field for navigation
 }
 
 const weekly_preview = weekly_preview_img.src as unknown as string;
@@ -39,6 +37,7 @@ const defaultArticles: ArticleItem[] = [
     imageUrl: weekly_preview,
     description: "Our top picks for the upcoming week.",
     timeAgo: "1 day ago",
+    link: "Weekly Preview",
   },
   {
     id: 2,
@@ -46,6 +45,7 @@ const defaultArticles: ArticleItem[] = [
     imageUrl: weekly_recap,
     description: "Highlights from the past week.",
     timeAgo: "2 days ago",
+    link: "Weekly Recap",
   },
   {
     id: 3,
@@ -53,6 +53,7 @@ const defaultArticles: ArticleItem[] = [
     imageUrl: predictions,
     description: "Our predictions for the next games.",
     timeAgo: "3 days ago",
+    link: "Predictions",
   },
 ];
 
@@ -63,7 +64,6 @@ const ArticleCarousel = ({ leagueID }: { leagueID: string }) => {
   const [loading, setLoading] = useState(true);
   const [leagueStatus, setLeagueStatus] = useState<string | null>(null);
   const [isMounted, setIsMounted] = useState(false);
-  const router = useRouter();
 
   useEffect(() => {
     setIsMounted(true);
@@ -76,7 +76,7 @@ const ArticleCarousel = ({ leagueID }: { leagueID: string }) => {
     if (isMounted) {
       const selectedLeagueID = localStorage.getItem("selectedLeagueID");
       if (!selectedLeagueID) {
-        router.push("/");
+        window.location.href = "/";
       }
     }
   }, [isMounted]);
@@ -130,27 +130,37 @@ const ArticleCarousel = ({ leagueID }: { leagueID: string }) => {
     title,
     description,
     timeAgo,
+    link, // Add link to ArticleCard props
   }: ArticleItem) => {
     return (
-      <div
-        className="relative shrink-0 cursor-pointer rounded-2xl bg-white shadow-md transition-all hover:scale-[1.015] hover:shadow-xl"
-        style={{
-          width: ARTICLE_WIDTH,
-          height: ARTICLE_HEIGHT,
-          marginRight: ARTICLE_MARGIN,
-          backgroundImage: `url(${imageUrl})`,
-          backgroundPosition: "center",
-          backgroundSize: "cover",
-        }}
+      <Link
+        href={`/league/${localStorage.getItem(
+          "selectedLeagueID"
+        )}/articles?scrollTo=${link}`}
+        scroll={false}
       >
-        <div className="absolute inset-0 z-20 rounded-2xl bg-gradient-to-t from-black/90 via-black/60 to-black/0 p-6 text-white transition-[backdrop-filter] hover:backdrop-blur-sm flex flex-col justify-end">
-          <span className="text-xs font-semibold uppercase text-[#e45263]">
-            {timeAgo}
-          </span>
-          <p className="my-2 text-xl font-bold ">{title}</p>
-          <p className="text-[13px] text-slate-300 ">{description}</p>
+        {" "}
+        {/* Wrap the card with Link */}
+        <div
+          className="relative shrink-0 cursor-pointer rounded-2xl bg-white shadow-md transition-all hover:scale-[1.015] hover:shadow-xl"
+          style={{
+            width: ARTICLE_WIDTH,
+            height: ARTICLE_HEIGHT,
+            marginRight: ARTICLE_MARGIN,
+            backgroundImage: `url(${imageUrl})`,
+            backgroundPosition: "center",
+            backgroundSize: "cover",
+          }}
+        >
+          <div className="absolute inset-0 z-20 rounded-2xl bg-gradient-to-t from-black/90 via-black/60 to-black/0 p-6 text-white transition-[backdrop-filter] hover:backdrop-blur-sm flex flex-col justify-end">
+            <span className="text-xs font-semibold uppercase text-[#e45263]">
+              {timeAgo}
+            </span>
+            <p className="my-2 text-xl font-bold ">{title}</p>
+            <p className="text-[13px] text-slate-300 ">{description}</p>
+          </div>
         </div>
-      </div>
+      </Link>
     );
   };
 
