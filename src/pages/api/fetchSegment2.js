@@ -60,6 +60,7 @@ export default async function handler(req, res) {
   const response = await fetch(url);
   const fileContent = await response.text();
   const newFile = JSON.stringify(fileContent).replace(/\//g, "");
+  console.log("File for segment 2: ", newFile);
   const wordCount = countWords(newFile);
   console.log(`Word count: ${wordCount}`);
 
@@ -70,7 +71,9 @@ export default async function handler(req, res) {
       openAIApiKey: process.env.OPENAI_API_KEY,
     });
 
-    const question = `{leagueData} Give me an article where you're sarcasticly and comedically making fun of 6 random teams from this league's data, critique their questionable decisions, their team names, starters, & points. Do not include win or loss results. Make title short and creative. Keep the content within 450 words maximum. The format of the JSON response should strictly adhere to RFC8259 compliance, without any deviations or errors. The JSON structure should match this template:
+    const question = `{leagueData} Give me an article where you're sarcasticly and comedically making fun of 6 random teams from this league's data, critique their questionable decisions, their team names, starters, & points. Do not include win or loss results. Make title short and creative. 
+    the description should be exciting and hook the readers to read the rest of the article. Keep the content within 450 words maximum. The format of the JSON response should strictly adhere to RFC8259 compliance, without any deviations or errors. The JSON structure should match this template:
+  "description": "",
   "title": "",
   "paragraph1": "",
   "paragraph2": "",

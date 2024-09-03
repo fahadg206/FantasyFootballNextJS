@@ -6,152 +6,187 @@ import {
   getDocs,
   addDoc,
   updateDoc,
-  limit, // Import the limit function
 } from "firebase/firestore/lite";
-import { Document } from "langchain/document";
 import dotenv from "dotenv";
-import { FaissStore } from "langchain/vectorstores/faiss";
-import { OpenAIEmbeddings } from "langchain/embeddings/openai";
 import { ChatOpenAI } from "langchain/chat_models/openai";
-import { RetrievalQAChain } from "langchain/chains";
-import { SystemMessage } from "langchain/schema";
-import { HumanMessage } from "langchain/schema";
 import { PromptTemplate } from "langchain/prompts";
 import { LLMChain } from "langchain/chains";
-
 import { db, storage } from "../../app/firebase";
+import { serverTimestamp } from "firebase/firestore/lite";
+import { Readable } from "stream";
 
 dotenv.config();
 const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
+const MAX_TOKENS = 8192; // GPT-4 turbo token limit
 
-const updateWeeklyInfo = async (REACT_APP_LEAGUE_ID, articles) => {
-  articles = await JSON.parse(articles);
-  console.log("updating db");
-  console.log(articles);
-  // Reference to the "Weekly Info" collection
+const updateWeeklyInfo = async (leagueId, articles) => {
   const weeklyInfoCollectionRef = collection(db, "Weekly Articles");
-  // Use a Query to check if a document with the league_id exists
+
   const queryRef = query(
     weeklyInfoCollectionRef,
-    where("league_id", "==", REACT_APP_LEAGUE_ID)
+    where("league_id", "==", leagueId)
   );
   const querySnapshot = await getDocs(queryRef);
-  // Add or update the document based on whether it already exists
+
+  const dataToUpdate = {
+    preview: articles[0], // Directly using the parsed JSON object
+    timestamp: serverTimestamp(),
+    type: "preview",
+  };
+
   if (!querySnapshot.empty) {
-    // Document exists, update it
-    //console.log("in if");
     querySnapshot.forEach(async (doc) => {
-      await updateDoc(doc.ref, {
-        preview: articles[0],
-      });
+      await updateDoc(doc.ref, dataToUpdate);
     });
   } else {
-    // Document does not exist, add a new one
     await addDoc(weeklyInfoCollectionRef, {
-      league_id: REACT_APP_LEAGUE_ID,
+      league_id: leagueId,
       preview: articles,
+      timestamp: serverTimestamp(),
+      type: "preview",
     });
   }
 };
 
-function countWords(inputString) {
-  // Use regular expression to split the string by spaces and punctuation
-  const words = inputString.split(/\s+|\b/);
-
-  // Filter out empty strings and punctuation
-  const filteredWords = words.filter((word) => word.trim() !== "");
-
-  // Return the count of words
-  return filteredWords.length;
+function countTokens(inputString) {
+  return inputString.split(/\s+|\b/).filter((word) => word.trim() !== "")
+    .length;
 }
 
 export default async function handler(req, res) {
-  //console.log("here");
-  // console.log("what was passed in ", req.body);
   const REACT_APP_LEAGUE_ID = req.body;
-  const readingRef = ref(storage, `files/${REACT_APP_LEAGUE_ID}_preview.txt`);
-  const url = await getDownloadURL(readingRef);
-
-  const response = await fetch(url);
-  const fileContent = await response.text();
-  const newFile = JSON.stringify(fileContent).replace(/\//g, "");
-
-  const wordCount = countWords(newFile);
-  //console.log(`Word count: ${wordCount}`);
+  const MAX_TOKENS = 8192;
 
   try {
-    console.log("Here");
-    //console.info(process.env.OPENAI_API_KEY);
+    if (!REACT_APP_LEAGUE_ID) {
+      return res.status(400).json({ error: "league_id is required" });
+    }
+
+    const readingRef = ref(storage, `files/${REACT_APP_LEAGUE_ID}_preview.txt`);
+    const url = await getDownloadURL(readingRef);
+
+    const response = await fetch(url);
+    const fileContent = await response.text();
+    const leagueData = JSON.stringify(fileContent).replace(/\//g, "");
+    const tokenCount = countTokens(leagueData);
+
     const model = new ChatOpenAI({
       temperature: 0.9,
       model: "gpt-4-turbo",
       openAIApiKey: process.env.OPENAI_API_KEY,
     });
 
-    let question;
-
-    if (wordCount > 2600) {
-      //console.log("if");
-      question = `{leagueData} Give me an article previewing each matchup in this fantasy football league and your predictions for how it'll turn out. Make each matchup breakdown creative, funny and exciting while also keeping it concise. The format of the JSON response should strictly adhere to RFC8259 compliance, without any deviations or errors. The JSON generated should be 1 Object and it's structure should match this template:
-  "title": "",
-  "paragraph1": "",
-  "paragraph2": "",
-  USE however many MORE paragraphs necessary to complete the response. Make sure ALL THE matchups IN THE league ARE LISTED. no more than 1 sentence per matchup`;
+    let promptTemplate;
+    if (tokenCount > MAX_TOKENS) {
+      promptTemplate = `
+        Here is the league data: {leagueData}
+        Give me an article previewing each matchup in this fantasy football league and your predictions for how it'll turn out. 
+        Make each matchup breakdown creative, funny, and exciting while also keeping it concise. 
+        Provide an exciting one sentence description/preview of what the article will entail that will hook the readers to read the rest of the article.
+        The format of the JSON response should strictly adhere to RFC8259 compliance, without any deviations or errors. The JSON structure should match this template:
+        "description": "",
+        "title": "",
+        "paragraph1": "",
+        "paragraph2": "",
+        "paragraph3": "",
+        "paragraph4": "",
+        "paragraph5": "",
+        "paragraph6": "",
+        "paragraph7": ""
+      Please ensure that the generated JSON response meets the specified criteria without any syntax issues or inconsistencies.  
+      `;
     } else {
-      question = `{leagueData} Your name is Boogie the writer and you've been getting a lot of heat for your predictions last week. Give me an article previewing each matchup in this fantasy football league, include their star players based off their projected points, and your predictions for how it'll turn out, double down on how certain you are this time and that league members should trust your years of experience/research. Make each matchup breakdown creative, funny and exciting. The JSON generated should strictly adhere to RFC8259 compliance, without any deviations or errors. The JSON structure should match this template:
-  "title": "",
-  "paragraph1": "",
-  "paragraph2": "",
-  USE however many MORE paragraphs necessary to complete the response. Make sure ALL THE matchups IN THE league ARE LISTED. Please ensure that the generated JSON only contains 1 title attribute and meets the specified criteria in one array without any syntax issues or inconsistencies.`;
+      promptTemplate = `
+        Here is the league data: {leagueData}
+        Your name is Boogie the writer and you've been getting a lot of heat for your predictions last week. 
+        Give me an article previewing each matchup in this fantasy football league, include their star players based off their projected points, 
+        and your predictions for how it'll turn out, double down on how certain you are this time and that league members should trust your years of experience/research.
+        Make each matchup breakdown creative, funny, and exciting. Provide an exciting one sentence description/preview of what the article will entail that will hook the readers to read the rest of the article.
+        The format of the JSON response should strictly adhere to RFC8259 compliance, without any deviations or errors. The JSON structure should match this template:
+        "description": "",
+        "title": "",
+        "paragraph1": "",
+        "paragraph2": "",
+        "paragraph3": "",
+        "paragraph4": "",
+        "paragraph5": "",
+        "paragraph6": "",
+        "paragraph7": ""
+      Please ensure that the generated JSON response meets the specified criteria without any syntax issues or inconsistencies. 
+      `;
     }
 
-    const prompt = PromptTemplate.fromTemplate(question);
-    const chainA = new LLMChain({ llm: model, prompt });
-    console.log("Prompt complete");
-    const apiResponse = await chainA.call({ leagueData: newFile });
-    console.log("Response complete");
-    console.log(apiResponse.text);
+    const prompt = new PromptTemplate({
+      inputVariables: ["leagueData"],
+      template: promptTemplate,
+    });
+
+    const chainA = new LLMChain({
+      llm: model,
+      prompt: prompt,
+    });
 
     res.setHeader("Content-Type", "application/json");
-    res.write("[");
 
-    // Stream the response
-    const responseData = JSON.parse(apiResponse.text);
-    for (let i = 0; i < responseData.length; i++) {
-      if (i > 0) {
-        res.write(",");
+    const stream = new Readable({
+      read() {}, // Required but not used
+    });
+
+    stream.pipe(res);
+
+    let chunks = [];
+    let currentChunk = "";
+    let currentTokens = 0;
+    let allResponses = [];
+
+    for (const word of leagueData.split(" ")) {
+      if (currentTokens + word.length < MAX_TOKENS) {
+        currentChunk += word + " ";
+        currentTokens += word.length + 1;
+      } else {
+        chunks.push(currentChunk.trim());
+        currentChunk = word + " ";
+        currentTokens = word.length + 1;
       }
-      res.write(JSON.stringify(responseData[i]));
     }
 
-    res.write("]");
+    if (currentChunk) {
+      chunks.push(currentChunk.trim());
+    }
 
-    // End the response
-    res.end();
+    stream.push("[");
+    let firstChunk = true;
 
-    // Save data to the database
-    await updateWeeklyInfo(REACT_APP_LEAGUE_ID, apiResponse.text);
+    for (const chunk of chunks) {
+      const apiResponse = await chainA.call({ leagueData: chunk });
+      let responseData;
+      try {
+        responseData = JSON.parse(apiResponse.text);
+        if (!Array.isArray(responseData)) {
+          responseData = [responseData];
+        }
+        allResponses.push(...responseData);
+
+        responseData.forEach((data, index) => {
+          if (index > 0 || !firstChunk) stream.push(",");
+          stream.push(JSON.stringify(data));
+          firstChunk = false;
+        });
+      } catch (parseError) {
+        console.error("JSON parse error:", parseError);
+        res.status(500).json({ error: "Failed to parse response JSON" });
+        return;
+      }
+    }
+
+    stream.push("]");
+    stream.push(null); // End the stream
+
+    await updateWeeklyInfo(REACT_APP_LEAGUE_ID, allResponses);
   } catch (error) {
     console.error("Unexpected error:", error);
-    return res.status(500).json({ error: "An error occurred" });
-  }
-
-  try {
-    // Retrieve data from the database based on league_id
-    const querySnapshot = await getDocs(
-      query(
-        collection(db, "Weekly Info"),
-        where("league_id", "==", REACT_APP_LEAGUE_ID),
-        limit(1)
-      )
-    );
-
-    if (!querySnapshot.empty) {
-      //console.log("No documents found in 'Article Info' collection");
-      return res.status(404).json({ error: "No documents found" });
+    if (!res.headersSent) {
+      res.status(500).json({ error: "An error occurred" });
     }
-  } catch (error) {
-    console.error("Error:", error);
-    return res.status(500).json({ error: "An error occurred" });
   }
 }

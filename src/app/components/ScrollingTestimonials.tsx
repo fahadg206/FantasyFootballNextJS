@@ -110,34 +110,43 @@ const ScrollingTestimonials = () => {
   const [playersData, setPlayersData] = useState([]);
   const [rosters, setRosters] = useState([]);
   const [managerMap, setManagerMap] = useState<ScheduleData>({});
+  const [REACT_APP_LEAGUE_ID, setREACT_APP_LEAGUE_ID] = useState<string | null>(
+    null
+  );
+
+  useEffect(() => {
+    if (typeof localStorage !== "undefined") {
+      const selectedLeagueID = localStorage.getItem("selectedLeagueID");
+      setREACT_APP_LEAGUE_ID(selectedLeagueID);
+    }
+  }, []);
 
   const getLeagueTransactions = async () => {
-    const state = await axios.get(`https://api.sleeper.app/v1/state/nfl`);
+    if (REACT_APP_LEAGUE_ID) {
+      const state = await axios.get(`https://api.sleeper.app/v1/state/nfl`);
 
-    const nflState = state.data;
-    let week = 1;
-    if (nflState.season_type === "regular") {
-      week = nflState.display_week;
-    } else if (nflState.season_type === "post") {
-      week = 18;
+      const nflState = state.data;
+      let week = 1;
+      if (nflState.season_type === "regular") {
+        week = nflState.display_week;
+      } else if (nflState.season_type === "post") {
+        week = 18;
+      }
+      const response = await axios.get(
+        `https://api.sleeper.app/v1/league/${REACT_APP_LEAGUE_ID}/transactions/${week}`
+      );
+      setLeagueTransactions(response.data);
     }
-    const response = await axios.get(
-      `https://api.sleeper.app/v1/league/${localStorage.getItem(
-        "selectedLeagueID"
-      )}/transactions/${week}`
-    );
-    setLeagueTransactions(response.data);
   };
 
   const getUsers = async () => {
     try {
-      const response = await axios.get<any>(
-        `https://api.sleeper.app/v1/league/${localStorage.getItem(
-          "selectedLeagueID"
-        )}/users`
-      );
-
-      return response.data;
+      if (REACT_APP_LEAGUE_ID) {
+        const response = await axios.get<any>(
+          `https://api.sleeper.app/v1/league/${REACT_APP_LEAGUE_ID}/users`
+        );
+        return response.data;
+      }
     } catch (err) {
       console.error(err);
       throw new Error("Failed to get users");
@@ -146,20 +155,17 @@ const ScrollingTestimonials = () => {
 
   const getRosters = async () => {
     try {
-      const response = await axios.get<any>(
-        `https://api.sleeper.app/v1/league/${localStorage.getItem(
-          "selectedLeagueID"
-        )}/rosters`
-      );
-
-      return response.data;
+      if (REACT_APP_LEAGUE_ID) {
+        const response = await axios.get<any>(
+          `https://api.sleeper.app/v1/league/${REACT_APP_LEAGUE_ID}/rosters`
+        );
+        return response.data;
+      }
     } catch (err) {
       console.error(err);
       throw new Error("Failed to get rosters");
     }
   };
-  //console.log("league transactions", leagueTransactions);
-  //console.log("rosters", rosters);
 
   useEffect(() => {
     getLeagueTransactions();
@@ -188,40 +194,39 @@ const ScrollingTestimonials = () => {
         }
 
         setManagerMap(managerMap);
-
-        // Set the updated scheduleData map to state
       } catch (error) {
         console.error("Error fetching data:", error);
       }
     };
 
-    fetchData();
-  }, [localStorage.getItem("selectedLeagueID")]);
+    if (REACT_APP_LEAGUE_ID) {
+      fetchData();
+    }
+  }, [REACT_APP_LEAGUE_ID]);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch(
-          "https://www.fantasypulseff.com/api/fetchPlayers",
-          {
+        if (REACT_APP_LEAGUE_ID) {
+          const playersResponse = await fetch("/api/fetchPlayers", {
             method: "POST",
-            body: localStorage.getItem("selectedLeagueID"),
-          }
-        );
-        const playersData = await response.json();
-        //console.log("Got it");
-        setPlayersData(playersData);
-
-        // Process and use the data as needed
-        //console.log("WHO, ", playersData["4017"]);
-        // Additional code that uses playersData goes here
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ leagueId: REACT_APP_LEAGUE_ID }),
+          });
+          const playersData = await playersResponse.json();
+          setPlayersData(playersData);
+        }
       } catch (error) {
         console.error("Error while fetching players data:", error);
       }
     };
 
-    fetchData();
-  }, []);
+    if (REACT_APP_LEAGUE_ID) {
+      fetchData();
+    }
+  }, [REACT_APP_LEAGUE_ID]);
 
   return (
     <div className="w-[95vw] xl:w-[60vw]">
@@ -251,18 +256,6 @@ const ScrollingTestimonials = () => {
             duration={500}
           />
         </div>
-
-        {/* <div className="flex items-center mb-4">
-          <TestimonialList list={leagueTransactions} duration={125} reverse />
-          <TestimonialList list={leagueTransactions} duration={125} reverse />
-          <TestimonialList list={leagueTransactions} duration={125} reverse />
-        </div>
-        <div className="flex items-center">
-          <TestimonialList list={leagueTransactions} duration={275} />
-          <TestimonialList list={leagueTransactions} duration={275} />
-          <TestimonialList list={leagueTransactions} duration={275} />
-        </div> */}
-
         <div className="absolute top-0 bottom-0 right-0 w-24 z-10 " />
       </div>
     </div>
@@ -302,19 +295,7 @@ const TestimonialList = ({
       className="flex gap-4 px-2"
     >
       {list.map((transaction) => {
-        // console.log("TYPE: ", transaction.type);
-        // console.log("Transaction: ", transaction);
         if (transaction.status === "complete" && transaction.type === "trade") {
-          //players added
-          // const addsKeys = transaction.adds
-          //   ? Object.keys(transaction.adds)
-          //   : [];
-
-          // //roster Ids of manager that recieved
-          // const addsValues = transaction.adds
-          //   ? Object.values(transaction.adds)
-          //   : [];
-
           for (const manager in managerMap) {
             for (const rosterId of transaction.consenter_ids) {
               if (!tradeInfoObj[manager]) {
@@ -329,7 +310,6 @@ const TestimonialList = ({
                     user_id: managerMap[manager].user_id,
                   };
 
-                  //checking to see if duplicates of newManagerData exists
                   if (
                     tradeInfoObj[transaction.transaction_id] &&
                     !tradeInfoObj[transaction.transaction_id].some((item) =>
@@ -343,13 +323,6 @@ const TestimonialList = ({
                     tradeInfoObj[transaction.transaction_id] = [newManagerData];
                   }
                 }
-
-                // tradeInfoObj[transaction.transaction_id].name =
-                //   managerMap[manager].name;
-                // tradeInfoObj[transaction.transaction_id].avatar =
-                //   managerMap[manager].avatar;
-                // tradeInfoObj[transaction.transaction_id].roster_id =
-                //   managerMap[manager].roster_id;
               }
             }
           }
@@ -363,7 +336,6 @@ const TestimonialList = ({
                   } else {
                     manager.players_recieved = [key];
                   }
-                  //manager.players_recieved= key;
                 }
               });
             }
@@ -377,7 +349,6 @@ const TestimonialList = ({
                   } else {
                     manager.players_sent = [key];
                   }
-                  //manager.players_recieved= key;
                 }
               });
             }
@@ -387,8 +358,6 @@ const TestimonialList = ({
               if (transaction.draft_picks) {
                 manager.draft_picks = transaction.draft_picks;
               }
-
-              //manager.players_recieved= key;
             });
           }
         }
@@ -483,26 +452,15 @@ const TestimonialList = ({
             }
           }
         }
-        // console.log("trade info", tradeInfoObj);
-        // console.log("waiver info", waiverInfoObj);
-
-        //looping through draft picks
-
-        //if(tradeInfoObj[transaction.transaction_id][0].draft_picks && tradeInfoObj[transaction.transaction_id][0].)
 
         if (
           tradeInfoObj[transaction.transaction_id] &&
           tradeInfoObj[transaction.transaction_id][0].draft_picks
         ) {
-          //console.log(tradeInfoObj[transaction.transaction_id][0]);
           const draftPicks =
             tradeInfoObj[transaction.transaction_id][0].draft_picks || [];
 
-          //draft pick trades UI
           for (const draftPick of draftPicks) {
-            //console.log("all picks", draftPicks);
-            //console.log("individual pick", draftPick);
-            //loop through each manager to link draft picks to right owner
             tradeInfoObj[transaction.transaction_id].forEach((manager) => {
               if (manager.roster_id === draftPick.owner_id) {
                 if (
@@ -523,7 +481,6 @@ const TestimonialList = ({
                 }
               }
               if (manager.roster_id === draftPick.previous_owner_id) {
-                //console.log("traded");
                 if (
                   manager.draft_picks_sent &&
                   manager.draft_picks_sent?.length > 0
@@ -545,18 +502,7 @@ const TestimonialList = ({
           }
         }
 
-        if (tradeInfoObj[transaction.transaction_id]) {
-          //console.log(tradeInfoObj[transaction.transaction_id]);
-        }
-
-        //players trade UI
-
         if (tradeInfoObj.hasOwnProperty(transaction.transaction_id)) {
-          // if (
-          //   tradeInfoObj[transaction.transaction_id] &&
-          //   !tradeInfoObj[transaction.transaction_id][0].draft_picks
-          // ) {
-          // }
           if (tradeInfoObj[transaction.transaction_id]) {
             const teams = tradeInfoObj[transaction.transaction_id];
             let team1, team2, team3;
@@ -941,11 +887,6 @@ const TestimonialList = ({
                     </div>
                   </div>
                 </div>
-
-                {/* <Image
-                src={scaryimran}
-                className="w-[60px] h-[60px] object-cover"
-              /> */}
 
                 <span className="text-3xl absolute top-2 right-2 text-white dark:text-[black]">
                   <IoPulseSharp />

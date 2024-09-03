@@ -123,6 +123,7 @@ export default function Scoreboard() {
   if (typeof localStorage !== "undefined") {
     initialSelectedLeagueID = localStorage.getItem("selectedLeagueID") || "";
   }
+  const REACT_APP_LEAGUE_ID = localStorage.getItem("selectedLeagueID");
 
   const [leagueID, setLeagueID] = useState("");
   const router = useRouter();
@@ -376,14 +377,14 @@ export default function Scoreboard() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch(
-          "https://www.fantasypulseff.com/api/fetchPlayers",
-          {
-            method: "POST",
-            body: leagueID,
-          }
-        );
-        const playersData = await response.json();
+        const playersResponse = await fetch("/api/fetchPlayers", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ leagueId: REACT_APP_LEAGUE_ID }),
+        });
+        const playersData = await playersResponse.json();
 
         // console.log("Got it");
         setPlayersData(playersData);

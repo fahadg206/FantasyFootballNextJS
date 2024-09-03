@@ -2,14 +2,19 @@ import { motion } from "framer-motion";
 import React, { useState, useEffect } from "react";
 import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
 import useMeasure from "react-use-measure";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { collection, query, where, getDocs } from "firebase/firestore/lite";
+import { db } from "../firebase"; // Adjust this import path to match your project structure
 import weekly_preview_img from "../images/weekly_preview.jpg";
 import weekly_recap_img from "../images/week_recap.png";
 import predictions_img from "../images/predictions.jpg";
+import welcome from "../images/welcome_season2.jpg";
+import savage_img from "../images/boo.png";
 
-const ARTICLE_WIDTH = 240; // Scaled down
-const ARTICLE_HEIGHT = 416; // Scaled down
-const ARTICLE_MARGIN = 12; // Scaled down
+const ARTICLE_WIDTH = 240;
+const ARTICLE_HEIGHT = 416;
+const ARTICLE_MARGIN = 12;
 const ARTICLE_SIZE = ARTICLE_WIDTH + ARTICLE_MARGIN;
 
 const BREAKPOINTS = {
@@ -60,20 +65,13 @@ const defaultArticles: ArticleItem[] = [
 const ArticleCarousel = ({ leagueID }: { leagueID: string }) => {
   const [articleReference, { width: articleWidth }] = useMeasure();
   const [articleOffset, setArticleOffset] = useState(0);
-  const [articles, setArticles] = useState<ArticleItem[]>(defaultArticles);
+  const [articles, setArticles] = useState<ArticleItem[]>([]);
   const [loading, setLoading] = useState(true);
-  const [leagueStatus, setLeagueStatus] = useState<string | null>(null);
   const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
     setIsMounted(true);
-    if (typeof window !== "undefined") {
-      setLeagueStatus(localStorage.getItem("leagueStatus"));
-    }
-  }, []);
-
-  useEffect(() => {
-    if (isMounted) {
+    if (isMounted && typeof window !== "undefined") {
       const selectedLeagueID = localStorage.getItem("selectedLeagueID");
       if (!selectedLeagueID) {
         window.location.href = "/";
@@ -81,29 +79,109 @@ const ArticleCarousel = ({ leagueID }: { leagueID: string }) => {
     }
   }, [isMounted]);
 
-  const fetchDataFromApi = async (endpoint: string, retryCount = 3) => {
+  const calculateTimeAgo = (dateString: string) => {
+    const date = new Date(dateString);
+    const now = new Date();
+    const diffInMs = now.getTime() - date.getTime();
+
+    const diffInSeconds = Math.floor(diffInMs / 1000);
+    const diffInMinutes = Math.floor(diffInMs / (1000 * 60));
+    const diffInHours = Math.floor(diffInMs / (1000 * 60 * 60));
+    const diffInDays = Math.floor(diffInMs / (1000 * 60 * 60 * 24));
+
+    if (diffInSeconds < 60) return "Moments ago";
+    if (diffInMinutes < 60)
+      return `${diffInMinutes} minute${diffInMinutes !== 1 ? "s" : ""} ago`;
+    if (diffInHours < 24)
+      return `${diffInHours} hour${diffInHours !== 1 ? "s" : ""} ago`;
+    if (diffInDays === 0) return "Today";
+    if (diffInDays === 1) return "1 day ago";
+    return `${diffInDays} days ago`;
+  };
+
+  const fetchArticles = async () => {
     try {
-      const response = await fetch(endpoint, {
-        method: "POST",
-        body: leagueID,
-      });
+      const weeklyInfoCollectionRef = collection(db, "Weekly Articles");
+      const queryRef = query(
+        weeklyInfoCollectionRef,
+        where("league_id", "==", leagueID)
+      );
+      const querySnapshot = await getDocs(queryRef);
 
-      if (!response.ok) {
-        throw new Error("Failed to fetch data");
+      if (!querySnapshot.empty) {
+        const doc = querySnapshot.docs[0]; // Assuming there's only one matching document
+        const docData = doc.data();
+
+        const fetchedArticles: ArticleItem[] = [
+          {
+            id: 1,
+            title: "Welcome to Season 2!",
+            imageUrl: welcome.src as string,
+            description:
+              "Read more about the exciting things we have in store!",
+            timeAgo: calculateTimeAgo(docData.date),
+          },
+          {
+            id: 2,
+            title: docData.playoff_predictions.title,
+            imageUrl: predictions_img.src as string,
+            description:
+              docData.playoff_predictions.description ||
+              "Our predictions and way too early power rankings.",
+            timeAgo: calculateTimeAgo(docData.date),
+          },
+          {
+            id: 3,
+            title: docData.preview.title,
+            imageUrl: weekly_preview_img.src as string,
+            description:
+              docData.preview.description ||
+              "Our top picks for the upcoming week.",
+            timeAgo: calculateTimeAgo(docData.date),
+          },
+        ];
+
+        setArticles(fetchedArticles);
+        setLoading(false);
+      } else {
+        // Fallback to default articles if no data is found
+        setArticles([
+          {
+            id: 1,
+            title: "Season 2 Kicksoff!",
+            imageUrl: welcome.src as string,
+            description:
+              "Read more about the exciting things we have in store!",
+            timeAgo: "1 day ago",
+          },
+          {
+            id: 2,
+            title: "Predictions",
+            imageUrl: predictions_img.src as string,
+            description: "Our predictions for the next games.",
+            timeAgo: "2 days ago",
+          },
+          {
+            id: 3,
+            title: "Weekly Preview",
+            imageUrl: weekly_preview_img.src as string,
+            description: "Our top picks for the upcoming week.",
+            timeAgo: "3 days ago",
+          },
+        ]);
+        setLoading(false);
       }
-
-      const data = await response.json();
-      return data;
     } catch (error) {
-      console.error("Error fetching data:", error);
-
-      if (retryCount > 0) {
-        return fetchDataFromApi(endpoint, retryCount - 1);
-      }
-
-      return null;
+      console.error("Error fetching articles:", error);
+      setLoading(false);
     }
   };
+
+  useEffect(() => {
+    if (isMounted && leagueID) {
+      fetchArticles();
+    }
+  }, [isMounted, leagueID]);
 
   const ARTICLE_CARD_BUFFER =
     articleWidth > BREAKPOINTS.lg ? 3 : articleWidth > BREAKPOINTS.sm ? 2 : 1;
@@ -134,13 +212,9 @@ const ArticleCarousel = ({ leagueID }: { leagueID: string }) => {
   }: ArticleItem) => {
     return (
       <Link
-        href={`/league/${localStorage.getItem(
-          "selectedLeagueID"
-        )}/articles?scrollTo=${link}`}
+        href={`/league/${localStorage.getItem("selectedLeagueID")}/articles`}
         scroll={false}
       >
-        {" "}
-        {/* Wrap the card with Link */}
         <div
           className="relative shrink-0 cursor-pointer rounded-2xl bg-white shadow-md transition-all hover:scale-[1.015] hover:shadow-xl"
           style={{
@@ -156,17 +230,12 @@ const ArticleCarousel = ({ leagueID }: { leagueID: string }) => {
             <span className="text-xs font-semibold uppercase text-[#e45263]">
               {timeAgo}
             </span>
-            <p className="my-2 text-xl font-bold ">{title}</p>
+            <p className="my-2 text-lg font-bold">{title}</p>
             <p className="text-[13px] text-slate-300 ">{description}</p>
           </div>
         </div>
       </Link>
     );
-  };
-
-  const scaledStyle = {
-    transform: "scale(0.75)", // Change the scale value as needed
-    transformOrigin: "top left",
   };
 
   return (
@@ -176,11 +245,7 @@ const ArticleCarousel = ({ leagueID }: { leagueID: string }) => {
           <p className="mb-4 text-lg md:text-xl font-semibold text-center md:text-start">
             Featured Stories
           </p>
-          <motion.div
-            style={scaledStyle}
-            animate={{ x: articleOffset }}
-            className="flex"
-          >
+          <motion.div animate={{ x: articleOffset }} className="flex">
             {articles.map((item) => {
               return <ArticleCard key={item.id} {...item} />;
             })}
@@ -190,9 +255,7 @@ const ArticleCarousel = ({ leagueID }: { leagueID: string }) => {
           {CAN_SHIFT_LEFT_ARTICLES && (
             <motion.button
               initial={false}
-              animate={{
-                x: CAN_SHIFT_LEFT_ARTICLES ? "0%" : "-100%",
-              }}
+              animate={{ x: CAN_SHIFT_LEFT_ARTICLES ? "0%" : "-100%" }}
               className="absolute left-0 top-[60%] z-30 rounded-r-xl bg-slate-100/30 p-3 pl-2 text-4xl text-black dark:text-white backdrop-blur-sm transition-[padding] hover:pl-3 opacity-40"
               onClick={shiftLeftArticles}
             >
@@ -202,9 +265,7 @@ const ArticleCarousel = ({ leagueID }: { leagueID: string }) => {
           {CAN_SHIFT_RIGHT_ARTICLES && (
             <motion.button
               initial={false}
-              animate={{
-                x: CAN_SHIFT_RIGHT_ARTICLES ? "0%" : "100%",
-              }}
+              animate={{ x: CAN_SHIFT_RIGHT_ARTICLES ? "0%" : "100%" }}
               className="absolute right-0 top-[60%] z-30 rounded-l-xl bg-slate-100/30 p-3 pr-2 text-4xl text-black dark:text-white backdrop-blur-sm transition-[padding] hover:pr-3 opacity-40"
               onClick={shiftRightArticles}
             >

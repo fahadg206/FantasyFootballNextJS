@@ -330,14 +330,14 @@ export default function ScoreboardNav({ setShowScore }) {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch(
-          "https://www.fantasypulseff.com/api/fetchPlayers",
-          {
-            method: "POST",
-            body: REACT_APP_LEAGUE_ID,
-          }
-        );
-        const playersData = await response.json();
+        const playersResponse = await fetch("/api/fetchPlayers", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ leagueId: REACT_APP_LEAGUE_ID }),
+        });
+        const playersData = await playersResponse.json();
         //console.log("Got it");
         setPlayersData(playersData);
 

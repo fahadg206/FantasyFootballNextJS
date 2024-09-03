@@ -80,9 +80,12 @@ export default function Draft() {
   useEffect(() => {
     async function fetchInitialData() {
       try {
+        console.log("Fetching league data...");
         const leagueResponse = await axios.get(
           `https://api.sleeper.app/v1/league/${REACT_APP_LEAGUE_ID}`
         );
+        console.log("League data:", leagueResponse.data);
+
         const totalRosters = leagueResponse.data.total_rosters;
         const rosterPositions = leagueResponse.data.roster_positions;
 
@@ -94,8 +97,10 @@ export default function Draft() {
           body: JSON.stringify({ leagueId: REACT_APP_LEAGUE_ID }),
         });
         const playersData = await playersResponse.json();
+        console.log("Players data:", playersData);
 
         const weeklyMatchups = await fetchWeeklyMatchups(REACT_APP_LEAGUE_ID);
+        console.log("Weekly matchups:", weeklyMatchups);
 
         const drafts = await axios.get(
           `https://api.sleeper.app/v1/league/${REACT_APP_LEAGUE_ID}/drafts`
@@ -108,11 +113,11 @@ export default function Draft() {
           `https://api.sleeper.app/v1/draft/${draft_id}/picks`
         );
         const picks: Pick[] = response.data;
+        console.log("Draft picks:", picks);
 
         const users_response = await axios.get(
           `https://api.sleeper.app/v1/league/${REACT_APP_LEAGUE_ID}/users`
         );
-
         const rosters_response = await axios.get(
           `https://api.sleeper.app/v1/league/${REACT_APP_LEAGUE_ID}/rosters`
         );
@@ -122,6 +127,8 @@ export default function Draft() {
         const rosterToUserMap = createRosterToUserMap(rosters, league_managers);
 
         const sortedPicks = sortPicksByOrder(picks);
+        const playerProjections = await fetchPlayerProjections(); // Fetch player projections
+
         const { users, maxRounds } = await processDraftData(
           sortedPicks,
           league_managers,
@@ -131,7 +138,7 @@ export default function Draft() {
           scoring_type,
           totalRosters,
           rosterPositions,
-          REACT_APP_LEAGUE_ID
+          playerProjections
         );
         setDraftData(users);
         setMaxRounds(maxRounds);
@@ -146,6 +153,54 @@ export default function Draft() {
 
     fetchInitialData();
   }, [REACT_APP_LEAGUE_ID]);
+
+  async function fetchPlayerProjections() {
+    try {
+      const response = await axios.get("/api/fetchPlayerProjections"); // Replace with your actual API endpoint
+      const data = response.data;
+
+      // Verify the data structure
+      console.log("Player projections data:", data);
+
+      return data;
+    } catch (error) {
+      console.error("Error fetching player projections:", error);
+      return {}; // Return an empty object if there's an error
+    }
+  }
+
+  async function fetchSummaries(
+    REACT_APP_LEAGUE_ID: string,
+    scoring_type: string,
+    draftData: any[]
+  ): Promise<any[]> {
+    try {
+      const response = await fetch(
+        "https://www.fantasypulseff.com/api/fetchSummaries",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            REACT_APP_LEAGUE_ID,
+            scoring_type,
+            draftData,
+          }),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to fetch summaries");
+      }
+
+      const data = await response.json();
+      return data;
+    } catch (error) {
+      console.error("Error fetching summaries:", error);
+      throw error;
+    }
+  }
 
   function createRosterToUserMap(
     rosters: Roster[],
@@ -203,10 +258,29 @@ export default function Draft() {
     }
   }
 
+  function calculatePlayerValue(pick: Pick, playerProjections: any): number {
+    const projection = playerProjections[pick.player_id]?.wi?.[0]?.p;
+    const rank = projection ? projection.rank : 0;
+
+    // Ensure both pick.pick_no and rank are numbers
+    if (isNaN(rank) || isNaN(pick.pick_no)) {
+      console.error("Invalid rank or pick number:", {
+        rank,
+        pick_no: pick.pick_no,
+      });
+      return 0; // Default to 0 if invalid
+    }
+
+    return pick.pick_no - rank;
+  }
+
   function calculatePositionalNeeds(
     draftedPlayers: Player[],
     rosterPositions: string[]
   ): number {
+    const positionWeights = { QB: 2, RB: 1.5, WR: 1.5, TE: 1 }; // Example weights
+    let positionalNeeds = 0;
+
     const positionCounts = rosterPositions.reduce((acc, pos) => {
       acc[pos] = 0;
       return acc;
@@ -218,15 +292,30 @@ export default function Draft() {
       }
     });
 
-    let positionalNeeds = 0;
-    Object.keys(positionCounts).forEach((position) => {
-      const required = rosterPositions.filter((pos) => pos === position).length;
-      if (positionCounts[position] < required) {
-        positionalNeeds += required - positionCounts[position];
+    rosterPositions.forEach((position) => {
+      const draftedCount = positionCounts[position] || 0;
+      const requiredCount = rosterPositions.filter(
+        (pos) => pos === position
+      ).length;
+      const deficit = requiredCount - draftedCount;
+      if (deficit > 0) {
+        positionalNeeds += deficit * (positionWeights[position] || 1);
       }
     });
 
     return positionalNeeds;
+  }
+
+  function calculateTeamSynergy(
+    draftedPlayers: Player[],
+    playerProjections: any
+  ): number {
+    let synergyScore = 0;
+    draftedPlayers.forEach((player) => {
+      const projection = playerProjections[player.player_id];
+      synergyScore += projection ? projection.projectedPoints : 0; // Adjust for stacking, bye weeks, etc.
+    });
+    return synergyScore;
   }
 
   function calculateBestValuePicks(
@@ -252,7 +341,7 @@ export default function Draft() {
     scoring_type: string,
     totalRosters: number,
     rosterPositions: string[],
-    REACT_APP_LEAGUE_ID: string
+    playerProjections: any
   ): Promise<{ users: User[]; maxRounds: number }> {
     const users: { [key: string]: User } = {};
     let maxRounds = 0;
@@ -264,27 +353,38 @@ export default function Draft() {
     }, {} as { [key: string]: Manager });
 
     picks.forEach((pick) => {
-      const { picked_by, metadata, round, pick_no, player_id } = pick;
+      // Ensure pick_no is a valid number and greater than 0
+      const pickNo =
+        pick.pick_no > 0
+          ? pick.pick_no
+          : calculateFallbackPickNo(pick, rosterToUserMap);
+
+      // Check if the round is defined in the pick data
+      const round = pick.round || 1; // Default to 1 if round is not defined
+
       const player: Player = {
-        player: metadata.first_name + " " + metadata.last_name,
-        player_id: player_id,
-        team: metadata.team,
-        position: metadata.position,
-        round,
-        pick: ((pick_no - 1) % Object.keys(rosterToUserMap).length) + 1,
-        value:
-          playersData[player_id] && playersData[player_id].adp[adpField]
-            ? pick_no - playersData[player_id].adp[adpField]
-            : 0,
-        playerImage: `https://sleepercdn.com/content/nfl/players/thumb/${player_id}.jpg`,
+        player: `${pick.metadata.first_name} ${pick.metadata.last_name}`,
+        player_id: pick.player_id,
+        team: pick.metadata.team,
+        position: pick.metadata.position,
+        round, // Use the round value from pick or the default
+        pick: pickNo,
+        value: calculatePlayerValue(
+          { ...pick, pick_no: pickNo },
+          playerProjections
+        ),
+        playerImage: `https://sleepercdn.com/content/nfl/players/thumb/${pick.player_id}.jpg`,
       };
 
-      if (!users[picked_by]) {
-        users[picked_by] = {
-          user: managers_map[picked_by]?.display_name || metadata.username,
+      if (!users[pick.picked_by]) {
+        users[pick.picked_by] = {
+          user:
+            managers_map[pick.picked_by]?.display_name ||
+            pick.metadata.username,
           avatar:
-            `https://sleepercdn.com/avatars/thumbs/${managers_map[picked_by]?.avatar}` ||
-            "",
+            `https://sleepercdn.com/avatars/thumbs/${
+              managers_map[pick.picked_by]?.avatar
+            }` || "",
           picks: [],
           bestValuePicks: [],
           draftGrade: "",
@@ -295,10 +395,20 @@ export default function Draft() {
         };
       }
 
-      users[picked_by].picks.push(player);
+      users[pick.picked_by].picks.push(player); // Always display the pick
+
+      // Only include picks from rounds 1-15 in the grade calculation
+      if (round <= 15) {
+        if (!users[pick.picked_by].bestValuePicks) {
+          users[pick.picked_by].bestValuePicks = [];
+        }
+        users[pick.picked_by].bestValuePicks.push(player);
+      }
+
       if (round > maxRounds) maxRounds = round;
     });
 
+    // Calculate weekly points and projected wins
     for (let week = 1; week <= 14; week++) {
       weeklyMatchups[week].forEach((matchup) => {
         const { roster_id, starters, starters_points } = matchup;
@@ -307,15 +417,7 @@ export default function Draft() {
 
         let weeklyPoints = 0;
         starters.forEach((player_id: string, index: number) => {
-          if (
-            playersData[player_id] &&
-            playersData[player_id].wi &&
-            playersData[player_id].wi[week]
-          ) {
-            weeklyPoints += parseFloat(playersData[player_id].wi[week].p || 0);
-          } else {
-            weeklyPoints += parseFloat(starters_points[index] || 0);
-          }
+          weeklyPoints += parseFloat(starters_points[index] || 0);
         });
 
         users[user_id].weeklyPoints.push(weeklyPoints);
@@ -342,25 +444,27 @@ export default function Draft() {
       });
     }
 
+    // Calculate final draft grade based on picks within rounds 1-15
     for (const user_id in users) {
       const projectedWins = users[user_id].projectedWins;
       const projectedRecord = `${projectedWins}-${14 - projectedWins}`;
       users[user_id].projectedRecord = projectedRecord;
 
       const positionalNeeds = calculatePositionalNeeds(
-        users[user_id].picks,
+        users[user_id].bestValuePicks, // Only picks from rounds 1-15
         rosterPositions
       );
       users[user_id].draftGrade = getDraftGrade(
-        users[user_id].picks,
+        users[user_id].bestValuePicks, // Only picks from rounds 1-15
         totalRosters,
         projectedWins,
         positionalNeeds,
-        scoring_type
+        scoring_type,
+        playerProjections
       );
 
       users[user_id].bestValuePicks = calculateBestValuePicks(
-        users[user_id].picks,
+        users[user_id].bestValuePicks, // Only picks from rounds 1-15
         adpField
       );
     }
@@ -436,83 +540,61 @@ export default function Draft() {
     }
   }
 
-  async function fetchSummaries(
-    REACT_APP_LEAGUE_ID: string,
-    scoring_type: string,
-    draftData: any[]
-  ): Promise<any[]> {
-    try {
-      const response = await fetch(
-        "https://www.fantasypulseff.com/api/fetchSummaries",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            REACT_APP_LEAGUE_ID,
-            scoring_type,
-            draftData,
-          }),
-        }
-      );
-
-      if (!response.ok) {
-        throw new Error("Failed to fetch summaries");
-      }
-
-      const data = await response.json();
-      return data;
-    } catch (error) {
-      console.error("Error fetching summaries:", error);
-      throw error;
-    }
-  }
-
-  async function deleteSummaryCollection(leagueId: string) {
-    try {
-      await fetch("/api/deleteSummaryCollection", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ leagueId }),
-      });
-    } catch (error) {
-      console.error("Error deleting summary collection:", error);
-    }
-  }
-
   function getDraftGrade(
     picks: Player[],
     totalRosters: number,
     projectedWins: number,
     positionalNeeds: number,
-    scoring_type: string
+    scoring_type: string,
+    playerProjections: any
   ): string {
-    const draftValue = picks.reduce((sum, pick) => sum + pick.value, 0);
+    const draftValue = picks.reduce(
+      (sum, pick) => sum + calculatePlayerValue(pick, playerProjections),
+      0
+    );
+    const teamSynergy = calculateTeamSynergy(picks, playerProjections);
 
-    let adjustedDraftValue = draftValue * 2;
+    let adjustedDraftValue =
+      draftValue * 2 + teamSynergy - positionalNeeds * 10;
 
     if (!scoring_type.includes("dynasty")) {
       adjustedDraftValue += projectedWins * totalRosters * 6;
       adjustedDraftValue -= (14 - projectedWins) * totalRosters * 6;
     }
 
-    adjustedDraftValue -= positionalNeeds * 10;
+    // Adding more weight to the projected record
+    const winLossRatio = projectedWins / 14;
+    if (winLossRatio >= 0.7) {
+      adjustedDraftValue += totalRosters * 20; // Significant boost for a great projected record
+    } else if (winLossRatio >= 0.5) {
+      adjustedDraftValue += totalRosters * 10; // Moderate boost for a good projected record
+    } else if (winLossRatio < 0.4) {
+      adjustedDraftValue -= totalRosters * 35; // Penalize for a poor projected record
+    }
 
+    // Debugging to check adjustedDraftValue
+    console.log(
+      "User draft value with projected record adjustment:",
+      adjustedDraftValue
+    );
+
+    return calculateGrade(adjustedDraftValue, totalRosters);
+  }
+
+  function calculateGrade(adjustedDraftValue: number, totalRosters: number) {
+    // Adjusted grading ranges based on typical values of adjustedDraftValue
     const gradeRanges = [
-      { grade: "A+", min: -totalRosters * 20, max: 0 },
-      { grade: "A", min: -totalRosters * 40, max: -totalRosters * 20 - 1 },
-      { grade: "A-", min: -totalRosters * 60, max: -totalRosters * 40 - 1 },
-      { grade: "B+", min: -totalRosters * 80, max: -totalRosters * 60 - 1 },
-      { grade: "B", min: -totalRosters * 100, max: -totalRosters * 80 - 1 },
-      { grade: "B-", min: -totalRosters * 120, max: -totalRosters * 100 - 1 },
-      { grade: "C+", min: -totalRosters * 140, max: -totalRosters * 120 - 1 },
-      { grade: "C", min: -totalRosters * 160, max: -totalRosters * 140 - 1 },
-      { grade: "C-", min: -totalRosters * 180, max: -totalRosters * 160 - 1 },
-      { grade: "D", min: -totalRosters * 200, max: -totalRosters * 180 - 1 },
-      { grade: "F", min: -Infinity, max: -totalRosters * 200 - 1 },
+      { grade: "A+", min: totalRosters * 60, max: Infinity },
+      { grade: "A", min: totalRosters * 40, max: totalRosters * 60 - 1 },
+      { grade: "A-", min: totalRosters * 20, max: totalRosters * 40 - 1 },
+      { grade: "B+", min: 0, max: totalRosters * 20 - 1 },
+      { grade: "B", min: -totalRosters * 20, max: -1 },
+      { grade: "B-", min: -totalRosters * 40, max: -totalRosters * 20 - 1 },
+      { grade: "C+", min: -totalRosters * 60, max: -totalRosters * 40 - 1 },
+      { grade: "C", min: -totalRosters * 80, max: -totalRosters * 60 - 1 },
+      { grade: "C-", min: -totalRosters * 100, max: -totalRosters * 80 - 1 },
+      { grade: "D", min: -totalRosters * 120, max: -totalRosters * 100 - 1 },
+      { grade: "F", min: -Infinity, max: -totalRosters * 120 - 1 },
     ];
 
     for (const range of gradeRanges) {
@@ -733,5 +815,19 @@ export default function Draft() {
         </div>
       </main>
     </div>
+  );
+}
+
+function calculateFallbackPickNo(
+  pick: Pick,
+  rosterToUserMap: { [key: number]: string }
+): number {
+  // Calculate a fallback pick number if it's missing
+  const userRosters = Object.keys(rosterToUserMap).length;
+  const round = pick.round || 1; // Default round to 1 if not defined
+  return (
+    (round - 1) * userRosters +
+    Object.keys(rosterToUserMap).indexOf(pick.picked_by) +
+    1
   );
 }

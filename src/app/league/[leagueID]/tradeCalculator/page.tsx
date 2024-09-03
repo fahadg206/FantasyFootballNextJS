@@ -99,8 +99,7 @@ const TradeCalculator: React.FC = () => {
   const acceptanceBufferAmount = 1000;
   const [scoringType, setScoringType] = useState<string>("");
 
-  const REACT_APP_LEAGUE_ID =
-    localStorage.getItem("selectedLeagueID") || "1003413138751987712";
+  const REACT_APP_LEAGUE_ID = localStorage.getItem("selectedLeagueID");
 
   const router = useRouter();
 

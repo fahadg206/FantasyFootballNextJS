@@ -1,17 +1,14 @@
 "use client";
 
-import React from "react";
+import React, { useState, useEffect } from "react";
+import Image from "next/image";
 import { FaSearch } from "react-icons/fa";
 import { Button } from "@nextui-org/button";
-import { Spinner } from "@nextui-org/spinner";
-import { CircularProgress } from "@nextui-org/react";
-import logo from "../../../images/helmet2.png";
 import {
   Dropdown,
   DropdownMenu,
   DropdownItem,
   DropdownTrigger,
-  useDropdown,
 } from "@nextui-org/dropdown";
 import {
   Modal,
@@ -20,49 +17,32 @@ import {
   ModalBody,
   ModalFooter,
   useDisclosure,
-  useModal,
 } from "@nextui-org/modal";
 import axios, { AxiosResponse } from "axios";
-import { useEffect, useState } from "react";
-import { match } from "assert";
-
-import { M_PLUS_1 } from "next/font/google";
-import Image from "next/image";
-import { BsArrowBarLeft, BsArrowBarRight } from "react-icons/bs";
-import { HiOutlineArrowSmLeft, HiOutlineArrowSmRight } from "react-icons/hi";
-import { ImSad } from "react-icons/im";
-import {
-  getFirestore,
-  collection,
-  getDocs,
-  addDoc,
-  updateDoc,
-  query,
-  where,
-} from "firebase/firestore/lite";
-import MatchupsImg from "../../../images/matchupsImage.png";
+import HeadToHead from "../../../components/HeadToHead"; // Import the HeadToHead component
+import logo from "../../../images/helmet2.png";
 import { db, storage } from "../../../firebase";
 import { useRouter } from "next/navigation";
 import { StaticImageData } from "next/image";
+import { ImSad } from "react-icons/im";
+import MatchupsImg from "../../../images/matchupsImage.png";
+import { HiOutlineArrowSmLeft, HiOutlineArrowSmRight } from "react-icons/hi";
 
 interface NflState {
   season: string;
   display_week: number;
   season_type: string;
-  // Add other properties as needed
 }
 
 interface Manager {
   managerID: string;
   name: string;
-  // Add other properties as needed
 }
 
 interface RivalsManager {
   managerID: string;
   name: string;
   year: string;
-  // Add other properties as needed
 }
 
 interface User {
@@ -70,7 +50,6 @@ interface User {
   rosterID: string;
   userName: string;
   avatar: string | StaticImageData;
-  // Add other properties as needed
 }
 
 interface LeagueData {
@@ -78,15 +57,13 @@ interface LeagueData {
   previous_league_id: string;
   settings: {
     playoff_week_start: number;
-    // Add other properties as needed
   };
-  // Add other properties as needed
 }
 
 interface RivalryMatchup {
   week: number;
   year: string;
-  matchup: any; // Replace 'any' with a custom type if possible
+  matchup: any;
 }
 
 interface Rivalry {
@@ -101,12 +78,6 @@ interface Rivalry {
   ties: number;
   matchups: RivalryMatchup[];
 }
-interface Starter {
-  fn?: string;
-  ln?: string;
-  pos: string;
-  wi: string;
-}
 
 const REACT_APP_LEAGUE_ID: string =
   process.env.REACT_APP_LEAGUE_ID || "872659020144656384";
@@ -116,7 +87,7 @@ const Matchups = () => {
   const [weekCount, setWeekCount] = useState(0);
   const [week, setWeek] = useState<number>();
   const [selected2, setSelected2] = React.useState(new Set(["Select User"]));
-  const [playersData, setPlayersData] = React.useState<Starter[]>([]);
+  const [playersData, setPlayersData] = React.useState<any[]>([]);
   const [users, setUsers] = React.useState(new Set<User>());
   const [users2, setUsers2] = React.useState(new Set<User>());
   const [rivalry, setRivalry] = React.useState(new Set<Rivalry>());
@@ -125,30 +96,17 @@ const Matchups = () => {
   );
 
   const router = useRouter();
+  const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
+  const [isLoading, setIsLoading] = useState(true);
 
-  const REACT_APP_LEAGUE_ID: string | null =
-    localStorage.getItem("selectedLeagueID");
+  const startTimer = () => {
+    setIsLoading(true);
 
-  //  const { setVisible, bindings } = useModal();
-
-  const [input, setInput] = useState("");
-
-  const managers: Manager[] = [];
-
-  const usersDropdown: Set<User> = new Set();
-
-  const usersDropdown2: Set<User> = new Set();
-
-  const rivalsMap: Map<string, Rivalry> = new Map();
-
-  if (typeof localStorage !== "undefined") {
-    if (
-      localStorage.getItem("selectedLeagueID") === null ||
-      localStorage.getItem("selectedLeagueID") === undefined
-    ) {
-      router.push("/");
-    }
-  }
+    // Simulate a 2-second loading animation
+    setTimeout(() => {
+      setIsLoading(false);
+    }, 2000); // 2000 milliseconds (2 seconds)
+  };
 
   const getNflState = async (): Promise<NflState> => {
     try {
@@ -157,16 +115,9 @@ const Matchups = () => {
       );
 
       const data: NflState = res.data;
-
-      if (res.status === 200) {
-        //console.log("Here's the nfl Data:", data);
-      } else {
-        // Handle other status codes or error cases
-      }
       return data;
     } catch (err) {
       console.error(err);
-      // Handle the error case here, return an appropriate value, or throw an error
       throw new Error("Failed to get NFL state");
     }
   };
@@ -178,24 +129,13 @@ const Matchups = () => {
       const res = await axios.get<LeagueData>(
         `https://api.sleeper.app/v1/league/${queryLeagueID}`
       );
-
       const data: LeagueData = res.data;
-
-      if (res.status === 200) {
-        //console.log("Here's the league data:", data);
-      } else {
-        // Handle other status codes or error cases
-      }
-
       return data;
     } catch (err) {
       console.error(err);
-      // Handle the error case here, return an appropriate value, or throw an error
       throw new Error("Failed to get league data");
     }
   };
-
-  // Define the function with type annotations
 
   const getRivalryMatchups = async (
     userOneID: string | undefined,
@@ -205,13 +145,9 @@ const Matchups = () => {
       return Promise.reject(new Error("Invalid user IDs"));
     }
 
-    //console.log("Here are the users!: ", userOneID, userTwoID);
-
     let curLeagueID: string | null = REACT_APP_LEAGUE_ID;
-
     const nflState: NflState = await getNflState();
     const teamManagers: any = await getLeagueTeamManagers();
-    console.log(teamManagers);
 
     let week = 1;
     if (nflState.season_type === "regular") {
@@ -266,7 +202,6 @@ const Matchups = () => {
         continue;
       }
 
-      // pull in all matchup data for the season
       const matchupsPromises: Promise<any>[] = [];
       for (let i = 1; i < leagueData.settings.playoff_week_start; i++) {
         matchupsPromises.push(
@@ -276,18 +211,13 @@ const Matchups = () => {
         );
       }
       const matchupsRes = await Promise.all(matchupsPromises);
-      // convert the json matchup responses
       const matchupsJsonPromises: any[] = [];
       for (const matchupRes of matchupsRes) {
         const data = matchupRes.data;
         matchupsJsonPromises.push(data);
-        if (!matchupRes.ok) {
-          //throw new Error(data);
-        }
       }
       const matchupsData = await Promise.all(matchupsJsonPromises);
 
-      // process all the matchups
       for (let i = 1; i < matchupsData.length + 1; i++) {
         const processed = processRivalryMatchups(
           matchupsData[i - 1],
@@ -346,8 +276,6 @@ const Matchups = () => {
     }
     const matchups: { [key: string]: any[] } = {};
     for (const match of inputMatchups) {
-      // console.log("match rosterID : ", match.roster_id);
-      // console.log("parameter rosterID: ", rosterIDOne);
       if (match.roster_id == rosterIDOne || match.roster_id == rosterIDTwo) {
         if (!matchups[match.matchup_id]) {
           matchups[match.matchup_id] = [];
@@ -362,18 +290,16 @@ const Matchups = () => {
 
     const keys = Object.keys(matchups);
     const matchup = matchups[keys[0]];
-    // if the two teams played each other, there will only be one matchup, or if
-    // there is one matchup that only has half the matchup, then one of the teams wasn't in the league yet
 
     if (keys.length > 1 || matchup.length === 1) {
       return undefined;
     }
-    // make sure that the order matches
+
     if (matchup[0].roster_id === rosterIDTwo) {
       const two = matchup.shift();
       matchup.push(two);
     }
-    return { matchup, week, year: "" }; // Replace 'year: '' ' with the actual year if available
+    return { matchup, week, year: "" };
   };
 
   const getRosterIDFromManagerIDAndYear = (
@@ -382,7 +308,6 @@ const Matchups = () => {
     year: string,
     userName?: string
   ): string | null => {
-    if (!managerID || !year) return null; // Handle null values here
     if (!managerID || !year) return null;
     for (const rosterID in teamManagers.teamManagersMap[year]) {
       if (
@@ -390,11 +315,7 @@ const Matchups = () => {
           managerID
         ) > -1
       ) {
-        // console.log("ManagerID: ", managerID);
-        // console.log("RosterID: ", rosterID);
-        // console.log("Username:", userName);
         if (userName && users.size <= 14) {
-          // The userName is provided and not undefined
           const avatar = teamManagers.teamManagersMap[year][rosterID].team
             .avatar
             ? teamManagers.teamManagersMap[year][rosterID].team.avatar
@@ -402,12 +323,12 @@ const Matchups = () => {
           const userTemp: User = { managerID, rosterID, userName, avatar };
 
           const usersMap = new Map();
-          usersDropdown.forEach((userTemp) => {
+          users.forEach((userTemp) => {
             usersMap.set(userTemp.managerID, userTemp);
           });
           if (!usersMap.has(userTemp.managerID)) {
-            usersDropdown.add(userTemp);
-            setUsers(usersDropdown);
+            users.add(userTemp);
+            setUsers(users);
           }
         }
 
@@ -454,7 +375,6 @@ const Matchups = () => {
             managers: getManagers(roster),
           };
         }
-        //console.log("Team managers: ", teamManagersMap);
       } else {
         console.error("Failed to get league data");
       }
@@ -474,9 +394,7 @@ const Matchups = () => {
         response.currentSeason,
         response.users[key].display_name
       );
-      //console.log(`${key}: ${response.users[key].display_name}`);
     }
-    //console.log("Data prior to function call", response);
     setRivalManagers(response.teamManagersMap);
     return response;
   };
@@ -485,9 +403,11 @@ const Matchups = () => {
     let finalUsers: any = {};
     for (const user of rawUsers) {
       finalUsers[user.user_id] = user;
-      const manager = managers.find((m) => m.managerID === user.user_id);
+      const manager = Array.from(users).find(
+        (m) => m.managerID === user.user_id
+      );
       if (manager) {
-        finalUsers[user.user_id].display_name = manager.name;
+        finalUsers[user.user_id].display_name = manager.userName;
       }
     }
     return finalUsers;
@@ -517,7 +437,6 @@ const Matchups = () => {
         managers.push(coOwner);
       }
     }
-    //console.log("Managers:", managers[0]);
     return managers;
   };
 
@@ -529,98 +448,6 @@ const Matchups = () => {
     () => Array.from(selected2).join(", ").replaceAll("_", " "),
     [selected2]
   );
-
-  if (selected.keys().next().value) {
-    selected2.keys().next().value;
-  }
-
-  const players = ["Kabo", "FG", "Zekeee", "Jefe"];
-
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await fetch(
-          "https://www.fantasypulseff.com/api/fetchPlayers",
-          {
-            method: "POST",
-            body: REACT_APP_LEAGUE_ID,
-          }
-        );
-        const playersData = await response.json();
-        //console.log("Got it");
-        setPlayersData(playersData);
-
-        // Process and use the data as needed
-        //console.log("WHO, ", playersData["4017"]);
-        // Additional code that uses playersData goes here
-      } catch (error) {
-        console.error("Error while fetching players data:", error);
-      }
-    };
-
-    fetchData();
-  }, []);
-  const playersDataObject = {}; // Initialize an empty object to store data as key-value pairs
-
-  // for (let i = 0; i < playersData.length; i++) {
-  //   playersDataObject[i] = playersData[i];
-  // }
-  // addDoc(collection(db, "players"), {
-  //   player: playersDataObject["4017"],
-  // });
-  useEffect(() => {
-    const fetchData = async () => {
-      // Fetch league data and wait for the result
-      const leagueData = await getLeagueTeamManagers();
-
-      // Get the userArray once the league data is available
-      const usersArray: User[] = Array.from(usersDropdown);
-
-      // Find the selection's username within the array
-      const firstUserInfo: User | undefined = usersArray.find(
-        (user) => user.userName === selected.keys().next().value
-      );
-
-      const secondUserInfo: User | undefined = usersArray.find(
-        (user) => user.userName === selected2.keys().next().value
-      );
-
-      if (firstUserInfo && secondUserInfo) {
-        getRivalryMatchups(firstUserInfo.managerID, secondUserInfo.managerID)
-          .then((rivalryData) => {
-            const rivals = new Set<Rivalry>();
-            rivals.add(rivalryData);
-
-            setRivalry(rivals);
-            //console.log("Selected users Rivalry Data: ", rivalryData);
-          })
-          .catch((error) => {
-            console.error("Error occurred while getting rivalry data:", error);
-          });
-      } else {
-        //console.log("Could not get user info for both users.");
-      }
-    };
-
-    fetchData();
-  }, [JSON.stringify(usersDropdown), selected, selected2]);
-
-  rivalry.forEach((rival) => {
-    rivalsMap.set("Rival", rival);
-  });
-
-  // Define callback functions to handle selection changes
-  const handleSelectionChange = (selection: any) => {
-    setSelected(selection);
-  };
-
-  const handleSelectionChange2 = (selection2: any) => {
-    setSelected2(selection2);
-  };
-
-  // console.log("Here's the dropdown: ", users);
-  // console.log("Selection 1: ", selected);
-  // console.log("Selection 2: ", selected2);
 
   const dropdownItems1: any = Array.from(users)
     .map((player) => {
@@ -680,35 +507,44 @@ const Matchups = () => {
     })
     .filter((item) => item !== undefined);
 
-  if (rivalsMap.get("Rival")) {
-    // console.log(
-    //   "Here are the rivals",
-    //   playersData["4017"].wi[
-    //     rivalsMap.get("Rival").matchups[weekCount].week?.toString()
-    //   ].p
-    // );
-  }
-  //console.log("Here are the rivals", rivalsMap.get("Rival"));
-  // const avatarID = rivalsMap
-  //   .get("Rival")
-  //   .matchups[0].matchup[0].starters[0].toString();
+  useEffect(() => {
+    const fetchData = async () => {
+      const leagueData = await getLeagueTeamManagers();
 
-  //console.log("Work ", rivalManagers);
+      const usersArray: User[] = Array.from(users);
 
-  rivalsMap.get("Rival")?.matchups.sort((a, b) => {
-    // Compare years first
-    if (a.year !== b.year) {
-      return Number(a.year) - Number(b.year);
-    } else {
-      // If the years are the same, compare weeks
-      return a.week - b.week;
-    }
+      const firstUserInfo: User | undefined = usersArray.find(
+        (user) => user.userName === selected.keys().next().value
+      );
+
+      const secondUserInfo: User | undefined = usersArray.find(
+        (user) => user.userName === selected2.keys().next().value
+      );
+
+      if (firstUserInfo && secondUserInfo) {
+        getRivalryMatchups(firstUserInfo.managerID, secondUserInfo.managerID)
+          .then((rivalryData) => {
+            const rivals = new Set<Rivalry>();
+            rivals.add(rivalryData);
+
+            setRivalry(rivals);
+          })
+          .catch((error) => {
+            console.error("Error occurred while getting rivalry data:", error);
+          });
+      }
+    };
+
+    fetchData();
+  }, [JSON.stringify(users), selected, selected2]);
+
+  const rivalsMap: Map<string, Rivalry> = new Map();
+  rivalry.forEach((rival) => {
+    rivalsMap.set("Rival", rival);
   });
 
   const slate =
     rivalsMap.get("Rival") && rivalsMap.get("Rival")?.matchups[weekCount];
-
-  //console.log(rivalsMap.get("Rival"));
 
   const colorObj: { [key: string]: string } = {
     QB: "text-[10px]  p-1 rounded-xl bg-[#DE3449] font-bold  text-center ",
@@ -719,8 +555,6 @@ const Matchups = () => {
     K: "text-[10px]  p-1 rounded-xl bg-[#BD66FF] font-bold  text-center ",
   };
 
-  const weekString = slate?.week?.toString();
-
   let team1Proj = 0.0;
   let team2Proj = 0.0;
 
@@ -730,13 +564,11 @@ const Matchups = () => {
       if (
         playerData &&
         playerData.wi &&
-        weekString !== undefined && // Check if weekString is defined
-        typeof weekString === "string" && // Check if weekString is a string
-        playerData.wi[weekString] &&
-        playerData.wi[weekString]?.p !== undefined
+        slate.week !== undefined &&
+        playerData.wi[slate.week] &&
+        playerData.wi[slate.week]?.p !== undefined
       ) {
-        if (playerData.wi[weekString].p)
-          team1Proj += parseFloat(playerData.wi[weekString].p || "0");
+        team1Proj += parseFloat(playerData.wi[slate.week].p || "0");
       }
     }
   }
@@ -747,38 +579,19 @@ const Matchups = () => {
       if (
         playerData &&
         playerData.wi &&
-        weekString !== undefined && // Check if weekString is defined
-        typeof weekString === "string" && // Check if weekString is a string
-        playerData.wi[weekString] &&
-        playerData.wi[weekString]?.p !== undefined
+        slate.week !== undefined &&
+        playerData.wi[slate.week] &&
+        playerData.wi[slate.week]?.p !== undefined
       ) {
-        team2Proj += parseFloat(playerData.wi[weekString].p || "0");
-        //console.log(team2Proj);
+        team2Proj += parseFloat(playerData.wi[slate.week].p || "0");
       }
     }
   }
 
-  if (playersData["4046"]) {
-    //console.log(playersData["4046"].wi[1]);
-  }
-
-  // if (playersData["4018"]) {
-  //   console.log(playersData["4018"].wi["1"].p);
-  // // }
-  // console.log(team1Proj, team2Proj);
-
-  const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
-
-  const [isLoading, setIsLoading] = useState(true);
-
-  const startTimer = () => {
-    setIsLoading(true);
-
-    // Simulate a 5-second loading animation
-    setTimeout(() => {
-      setIsLoading(false);
-    }, 2000); // 5000 milliseconds (5 seconds)
-  };
+  const winsOne = rivalsMap.get("Rival")?.wins.one || 0;
+  const winsTwo = rivalsMap.get("Rival")?.wins.two || 0;
+  const pointsOne = rivalsMap.get("Rival")?.points.one || 0;
+  const pointsTwo = rivalsMap.get("Rival")?.points.two || 0;
 
   let selectedText;
 
@@ -826,9 +639,9 @@ const Matchups = () => {
   });
 
   return (
-    <div className="mt-3 flex flex-col items-center  h-screen w-[95vw] xl:w-[60vw] ">
-      <div className="flex-col flex items-center ml-5 md:flex-row md:justify-center md:items-center md:ml-0  mt-5">
-        <div className=" ">
+    <div className="mt-3 flex flex-col items-center h-screen w-[95vw] xl:w-[60vw]">
+      <div className="flex-col flex items-center ml-5 md:flex-row md:justify-center md:items-center md:ml-0 mt-5">
+        <div>
           <Dropdown className="border-[1px] border-[#af1222] border-opacity-20 bg-[#E1E0E0] dark:bg-[#090909] rounded-xl">
             <DropdownTrigger>
               <Button
@@ -906,13 +719,20 @@ const Matchups = () => {
               scrollBehavior="inside"
             >
               <ModalContent className="flex bg-[#e0dfdf] dark:bg-[#050505] rounded-xl">
-                <ModalHeader className=" flex justify-center">
-                  <p>Rivarly Summary</p>
+                <ModalHeader className="flex justify-center">
+                  <p>Rivalry Summary</p>
                 </ModalHeader>
                 <ModalBody>
                   <div>
                     {rivalsMap.has("Rival") ? (
                       <div>
+                        {/* Add the HeadToHead component here */}
+                        <HeadToHead
+                          winsOne={winsOne}
+                          winsTwo={winsTwo}
+                          pointsOne={pointsOne}
+                          pointsTwo={pointsTwo}
+                        />
                         <div className="text-center mb-10">
                           <div
                             className={

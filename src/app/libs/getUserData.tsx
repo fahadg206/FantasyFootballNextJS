@@ -309,14 +309,14 @@ export default async function getUserData(league_id: any, week: number) {
 
   async function fetchPlayersData() {
     try {
-      const response = await fetch(
-        "https://www.fantasypulseff.com/api/fetchPlayers",
-        {
-          method: "POST",
-          body: REACT_APP_LEAGUE_ID,
-        }
-      );
-      const playersData = await response.json();
+      const playersResponse = await fetch("/api/fetchPlayers", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ leagueId: REACT_APP_LEAGUE_ID }),
+      });
+      const playersData = await playersResponse.json();
       // Process and use the data as needed
 
       return playersData;

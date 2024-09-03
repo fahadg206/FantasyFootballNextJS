@@ -4,8 +4,8 @@ import fetch from "node-fetch";
 import { MongoClient, ServerApiVersion } from "mongodb";
 
 // Get MongoDB password from environment variables
-const password = process.env.MONGO_PASSWORD;
-const uri = `mongodb+srv://fantasypulseff:${password}@fantasypulsecluster.wj4o9kr.mongodb.net/?retryWrites=true&w=majority`;
+const password = process.env.MONGO_PASSWORD || "kabofahad123";
+const uri = `mongodb+srv://fantasypulseff:${"kabofahad123"}@fantasypulsecluster.wj4o9kr.mongodb.net/?retryWrites=true&w=majority`;
 
 let client;
 let clientPromise;
@@ -224,8 +224,6 @@ const calculateProjection = (projectedStats, scoreSettings) => {
 };
 
 export default async function handler(req, res) {
-  console.log("I got called");
-
   try {
     await clientPromise; // Ensure the client is connected
     // Access the database and collection

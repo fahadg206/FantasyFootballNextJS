@@ -33,6 +33,15 @@ const ShowAuthors = ({ thisWeeksAuthors }: { thisWeeksAuthors: string[] }) => {
 
   const authors: Authors[] = [
     {
+      name: "El Jefe",
+      title: "Head of Media Department",
+      about:
+        "El Jefe, the Head of Media Department at FantasyPulse, is a fearless predictor in the world of fantasy sports. More known for his shot creating in 2k, he's also known for relying on his gut instincts and making bold predictions that often leave fans in awe. El Jefe's unorthodox approach to making picks adds an element of excitement and unpredictability for Fantasy Pulse. With his audacious takes, he keeps fans and fellow fantasy enthusiasts on their toes, eager to see if his gut feelings will lead to fantasy glory or surprises.",
+      image: el_jefe,
+      likes: 0,
+      dislikes: 0,
+    },
+    {
       name: "Boogie The Writer",
       title: "Fantasy Pulse Senior Staff Writer",
       about:
@@ -41,24 +50,16 @@ const ShowAuthors = ({ thisWeeksAuthors }: { thisWeeksAuthors: string[] }) => {
       likes: 0,
       dislikes: 0,
     },
+
     // {
-    //   name: "El Jefe",
-    //   title: "Head of Media Department",
+    //   name: "Savage Steve",
+    //   title: "Independent Journalist",
     //   about:
-    //     "El Jefe, the Head of Media Department at FantasyPulse, is a fearless predictor in the world of fantasy sports. More known for his shot creating in 2k, he's also known for relying on his gut instincts and making bold predictions that often leave fans in awe. El Jefe's unorthodox approach to making picks adds an element of excitement and unpredictability for Fantasy Pulse. With his audacious takes, he keeps fans and fellow fantasy enthusiasts on their toes, eager to see if his gut feelings will lead to fantasy glory or surprises.",
-    //   image: el_jefe,
+    //     " Savage Steve is an unapologetically bold and independent journalist known for his razor-sharp wit and no-holds-barred approach when it comes to critiquing fantasy football teams and their managers. With a knack for delivering humorous and sarcastic commentary, he fearlessly calls out the flaws of these teams in a way that leaves readers both entertained and in stitches. Savage Steve's unique style provides a refreshing and comedic take on the world of fantasy sports, sparing no one from his clever criticism.",
+    //   image: steve,
     //   likes: 0,
     //   dislikes: 0,
     // },
-    {
-      name: "Savage Steve",
-      title: "Independent Journalist",
-      about:
-        " Savage Steve is an unapologetically bold and independent journalist known for his razor-sharp wit and no-holds-barred approach when it comes to critiquing fantasy football teams and their managers. With a knack for delivering humorous and sarcastic commentary, he fearlessly calls out the flaws of these teams in a way that leaves readers both entertained and in stitches. Savage Steve's unique style provides a refreshing and comedic take on the world of fantasy sports, sparing no one from his clever criticism.",
-      image: steve,
-      likes: 0,
-      dislikes: 0,
-    },
     // {
     //   name: "Joe Glazer",
     //   title: "Fantasy Pulse Insider",
