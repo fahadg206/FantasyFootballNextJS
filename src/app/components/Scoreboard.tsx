@@ -120,19 +120,23 @@ export default function Scoreboard() {
   let initialSelectedLeagueID = "";
 
   // Check if localStorage is defined before using it
-  if (typeof localStorage !== "undefined") {
+  if (typeof window !== "undefined" && typeof localStorage !== "undefined") {
     initialSelectedLeagueID = localStorage.getItem("selectedLeagueID") || "";
   }
-  const REACT_APP_LEAGUE_ID = localStorage.getItem("selectedLeagueID");
+  const REACT_APP_LEAGUE_ID =
+    typeof window !== "undefined" && typeof localStorage !== "undefined"
+      ? localStorage.getItem("selectedLeagueID")
+      : null;
 
-  const [leagueID, setLeagueID] = useState("");
+  const [leagueID, setLeagueID] = useState(initialSelectedLeagueID);
   const router = useRouter();
+
   useEffect(() => {
-    if (typeof localStorage !== "undefined") {
+    if (typeof window !== "undefined" && typeof localStorage !== "undefined") {
       setLeagueID(localStorage.getItem("selectedLeagueID") || "");
       router.refresh();
     }
-  }, [leagueID, router]);
+  }, [router]);
 
   const {
     isSundayAfternoon,
@@ -229,6 +233,7 @@ export default function Scoreboard() {
       addContentIfDifferent(previewTextContent, previewRef);
     }
   }
+
   function addContentIfDifferent(newContent: any, readingRef: any) {
     // Get the current contents of the file
     //uploadNewContent(newContent, readingRef);
@@ -274,7 +279,7 @@ export default function Scoreboard() {
       });
   }
 
-  function mapToObject(map) {
+  function mapToObject(map: Map<string, any>) {
     const obj = {};
     for (let [key, value] of map) {
       obj[key] = value;
@@ -300,6 +305,7 @@ export default function Scoreboard() {
         let id = null;
 
         if (
+          typeof window !== "undefined" &&
           typeof localStorage !== "undefined" &&
           localStorage.getItem("selectedLeagueID")
         ) {
@@ -369,7 +375,8 @@ export default function Scoreboard() {
 
     fetchMatchupData();
   }, [
-    typeof localStorage !== "undefined" &&
+    typeof window !== "undefined" &&
+      typeof localStorage !== "undefined" &&
       localStorage.getItem("selectedLeagueID"),
     leagueID,
   ]);
@@ -398,21 +405,24 @@ export default function Scoreboard() {
     };
 
     fetchData();
-  }, []);
+  }, [REACT_APP_LEAGUE_ID]);
 
-  if (typeof localStorage !== "undefined") {
-    if (localStorage.getItem("usernameSubmitted") === "false") {
-      localStorage.removeItem("selectedLeagueID");
-      localStorage.removeItem("selectedLeagueName");
-      localStorage.removeItem("usernameSubmitted");
-      localStorage.removeItem("progressValue");
-      router.refresh();
+  useEffect(() => {
+    if (typeof window !== "undefined" && typeof localStorage !== "undefined") {
+      if (localStorage.getItem("usernameSubmitted") === "false") {
+        localStorage.removeItem("selectedLeagueID");
+        localStorage.removeItem("selectedLeagueName");
+        localStorage.removeItem("usernameSubmitted");
+        localStorage.removeItem("progressValue");
+        router.refresh();
+      }
+    } else {
+      //console.log("error with local storage");
+      // Handle the situation where localStorage is not available
+      // You can log an error, use alternative storage methods, or perform other actions
     }
-  } else {
-    //console.log("error with local storage");
-    // Handle the situation where localStorage is not available
-    // You can log an error, use alternative storage methods, or perform other actions
-  }
+  }, [router]);
+
   const weekString = week?.toString();
   //console.log("matchupmap", matchupMap);
   // MATCHUP TEXT
@@ -545,6 +555,7 @@ export default function Scoreboard() {
       <div
         key={matchupID}
         className={
+          typeof window !== "undefined" &&
           typeof localStorage !== "undefined" &&
           localStorage.getItem("selectedLeagueID")
             ? `hidden xl:flex xl:flex-wrap  justify-center mb-2 text-[9px] font-bold xl:h-[13vh] xl:w-[10vw] hover:bg-[#c4bfbf] dark:hover:bg-[#1a1a1c] cursor-pointer hover:scale-105 hover:duration-200`
@@ -650,5 +661,5 @@ export default function Scoreboard() {
     );
   });
 
-  return matchupText;
+  return <>{matchupText}</>;
 }
