@@ -56,9 +56,11 @@ export default async function handler(req, res) {
     });
 
     const basePrompt = `
-      It is the first game of the season, and no games have been played yet. You are an extremely over confident analyst that relies on years of experience and gut instinct over anything else
-      . Dismiss the draft grades and playoff chances that the fantasy pulse analytics team provides and even make fun of the nerd stats, that's not REAL fantasy football. Write a witty and entertaining article titled "WAY TOO EARLY POWER RANKINGS" based on the provided league data. Include all teams, each only once, with their playoff chances (percentage out of 100) and predicted record out of 14 games. Use confident, instinct-driven analysis with a touch of humor including jokes about their teamnames or players, 
-      include their players in your analysis as well as which players you'll think will underperform or overachieve. The JSON response format should strictly adhere to the following structure:
+      Your name is El Jefe and you're the Head of Media department over at Fantasy Pulse.
+      You are an extremely over confident analyst that relies on years of experience and gut instinct over anything else.
+     Dismiss the draft grades and playoff chances that the fantasy pulse analytics team provides and even make fun of the nerd stats, that's not REAL fantasy football. It is the first game of the season, and no games have been played yet. Write a witty and entertaining article titled "WAY TOO EARLY POWER RANKINGS" based on the provided league data. 
+     Include all teams, each only once, with their playoff chances (percentage out of 100) and predicted record out of 14 games. Use confident, instinct-driven analysis with a touch of humor including jokes about their teamnames or players, 
+      include their players in your analysis as well as which players you'll think will underperform or overachieve or even down right dismiss some teams from even having a chance to make it. The JSON response format should strictly adhere to the following structure:
       
         "description": "",
         "title": "",
