@@ -2,7 +2,6 @@ import { motion } from "framer-motion";
 import React, { useState, useEffect } from "react";
 import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
 import useMeasure from "react-use-measure";
-import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { collection, query, where, getDocs } from "firebase/firestore/lite";
 import { db } from "../firebase"; // Adjust this import path to match your project structure
@@ -10,7 +9,6 @@ import weekly_preview_img from "../images/weekly_preview.jpg";
 import weekly_recap_img from "../images/week_recap.png";
 import predictions_img from "../images/predictions.jpg";
 import welcome from "../images/welcome_season2.jpg";
-import savage_img from "../images/boo.png";
 
 const ARTICLE_WIDTH = 240;
 const ARTICLE_HEIGHT = 416;
@@ -28,12 +26,12 @@ interface ArticleItem {
   imageUrl: string;
   description: string;
   timeAgo: string;
-  link: string; // Add a link field for navigation
+  link: string;
 }
 
-const weekly_preview = weekly_preview_img.src as unknown as string;
-const weekly_recap = weekly_recap_img.src as unknown as string;
-const predictions = predictions_img.src as unknown as string;
+const weekly_preview = weekly_preview_img.src as string;
+const weekly_recap = weekly_recap_img.src as string;
+const predictions = predictions_img.src as string;
 
 const defaultArticles: ArticleItem[] = [
   {
@@ -65,7 +63,7 @@ const defaultArticles: ArticleItem[] = [
 const ArticleCarousel = ({ leagueID }: { leagueID: string }) => {
   const [articleReference, { width: articleWidth }] = useMeasure();
   const [articleOffset, setArticleOffset] = useState(0);
-  const [articles, setArticles] = useState<ArticleItem[]>([]);
+  const [articles, setArticles] = useState<ArticleItem[]>(defaultArticles); // Initialize with default articles
   const [loading, setLoading] = useState(true);
   const [isMounted, setIsMounted] = useState(false);
 
@@ -120,55 +118,42 @@ const ArticleCarousel = ({ leagueID }: { leagueID: string }) => {
             description:
               "Read more about the exciting things we have in store!",
             timeAgo: calculateTimeAgo(docData.date),
+            link: "Welcome to Season 2",
           },
           {
             id: 2,
-            title: docData.playoff_predictions.title,
+            title: docData.playoff_predictions?.title || "Predictions",
             imageUrl: predictions_img.src as string,
             description:
-              docData.playoff_predictions.description ||
+              docData.playoff_predictions?.description ||
               "Our predictions and way too early power rankings.",
             timeAgo: calculateTimeAgo(docData.date),
+            link: "Predictions",
           },
           {
             id: 3,
-            title: docData.preview.title,
+            title: docData.preview?.title || "Weekly Preview",
             imageUrl: weekly_preview_img.src as string,
             description:
-              docData.preview.description ||
+              docData.preview?.description ||
               "Our top picks for the upcoming week.",
             timeAgo: calculateTimeAgo(docData.date),
+            link: "Weekly Preview",
           },
         ];
 
-        setArticles(fetchedArticles);
+        // Merge default articles with fetched ones
+        const mergedArticles = defaultArticles.map((defaultArticle, index) => {
+          const fetchedArticle = fetchedArticles[index];
+          // Only overwrite if fetched article has valid data
+          return fetchedArticle?.title ? fetchedArticle : defaultArticle;
+        });
+
+        setArticles(mergedArticles);
         setLoading(false);
       } else {
-        // Fallback to default articles if no data is found
-        setArticles([
-          {
-            id: 1,
-            title: "Season 2 Kicksoff!",
-            imageUrl: welcome.src as string,
-            description:
-              "Read more about the exciting things we have in store!",
-            timeAgo: "1 day ago",
-          },
-          {
-            id: 2,
-            title: "Predictions",
-            imageUrl: predictions_img.src as string,
-            description: "Our predictions for the next games.",
-            timeAgo: "2 days ago",
-          },
-          {
-            id: 3,
-            title: "Weekly Preview",
-            imageUrl: weekly_preview_img.src as string,
-            description: "Our top picks for the upcoming week.",
-            timeAgo: "3 days ago",
-          },
-        ]);
+        // No articles found, use default ones
+        setArticles(defaultArticles);
         setLoading(false);
       }
     } catch (error) {
@@ -208,7 +193,7 @@ const ArticleCarousel = ({ leagueID }: { leagueID: string }) => {
     title,
     description,
     timeAgo,
-    link, // Add link to ArticleCard props
+    link,
   }: ArticleItem) => {
     return (
       <Link
