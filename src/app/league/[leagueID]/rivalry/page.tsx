@@ -79,9 +79,6 @@ interface Rivalry {
   matchups: RivalryMatchup[];
 }
 
-const REACT_APP_LEAGUE_ID: string =
-  process.env.REACT_APP_LEAGUE_ID || "872659020144656384";
-
 const Matchups = () => {
   const [selected, setSelected] = React.useState(new Set(["Select User"]));
   const [weekCount, setWeekCount] = useState(0);
@@ -98,6 +95,17 @@ const Matchups = () => {
   const router = useRouter();
   const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
   const [isLoading, setIsLoading] = useState(true);
+
+  const REACT_APP_LEAGUE_ID = localStorage.getItem("selectedLeagueID");
+
+  if (typeof localStorage !== "undefined") {
+    if (
+      localStorage.getItem("selectedLeagueID") === null ||
+      localStorage.getItem("selectedLeagueID") === undefined
+    ) {
+      router.push("/");
+    }
+  }
 
   const startTimer = () => {
     setIsLoading(true);
@@ -537,6 +545,31 @@ const Matchups = () => {
 
     fetchData();
   }, [JSON.stringify(users), selected, selected2]);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch(
+          "https://www.fantasypulseff.com/api/fetchPlayers",
+          {
+            method: "POST",
+            body: REACT_APP_LEAGUE_ID,
+          }
+        );
+        const playersData = await response.json();
+        //console.log("Got it");
+        setPlayersData(playersData);
+
+        // Process and use the data as needed
+        //console.log("WHO, ", playersData["4017"]);
+        // Additional code that uses playersData goes here
+      } catch (error) {
+        console.error("Error while fetching players data:", error);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   const rivalsMap: Map<string, Rivalry> = new Map();
   rivalry.forEach((rival) => {

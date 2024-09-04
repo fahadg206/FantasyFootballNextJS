@@ -201,7 +201,7 @@ function computePlayers(
           o: player.opponent,
         };
       } else {
-        computedPlayers[id].wi[week] = {
+        computedPlayers[id].wi[week - 1] = {
           p: calculateProjection(player.stats, scoringSettings),
           o: player.opponent,
         };

@@ -38,23 +38,23 @@ interface BarsProps {
 const HomePoll = () => {
   const [votes, setVotes] = useState<PlayerVoteInfo[]>([
     {
-      playerName: "Dak Prescott",
-      avatar: "https://sleepercdn.com/content/nfl/players/thumb/3294.jpg",
-      matchup: "22 of 32 for 331 pass yards, 4 pass TDs",
+      playerName: "Jared Goff",
+      avatar: "https://sleepercdn.com/content/nfl/players/thumb/3163.jpg",
+      matchup: "@ LAR",
       votes: 0,
       color: "bg-[#af1222]",
     },
     {
-      playerName: "Trevor Lawrence",
-      avatar: "https://sleepercdn.com/content/nfl/players/thumb/7523.jpg",
-      matchup: "23 of 38 for 364 pass yards, 1 pass TD",
+      playerName: "Jayden Daniels",
+      avatar: "https://sleepercdn.com/content/nfl/players/thumb/11566.jpg",
+      matchup: "@ TB",
       votes: 0,
       color: "bg-[#1a1a1a]",
     },
     {
-      playerName: "Josh Allen",
-      avatar: "https://sleepercdn.com/content/nfl/players/thumb/4984.jpg",
-      matchup: "29 of 51 for 339 pass yards, 2 pass TDs",
+      playerName: "Tua Tagovailoa",
+      avatar: "https://sleepercdn.com/content/nfl/players/thumb/6768.jpg",
+      matchup: "vs. JAC",
       votes: 0,
       color: "bg-[#e45263]",
     },
@@ -137,7 +137,7 @@ const Options: React.FC<OptionsProps> = ({ votes, setVotes }) => {
   return (
     <div className="col-span-1 py-4">
       <h3 className="mb-2 text-lg font-semibold text-center">
-        Vote for who had the Best Air Game Performance for Week 12!
+        Vote for who would you rather start week 1!
       </h3>
       <div
         className={
@@ -162,7 +162,7 @@ const Options: React.FC<OptionsProps> = ({ votes, setVotes }) => {
             <span className="ml-2 flex-1 text-left text-sm">
               {vote.playerName}
             </span>
-            <p className="text-xs italic text-[#e8dede]">{vote.matchup}</p>
+            <p className="mr-3 text-s italic text-[#e8dede]">{vote.matchup}</p>
           </motion.button>
         ))}
       </div>
