@@ -7,7 +7,7 @@ import { collection, query, where, getDocs } from "firebase/firestore/lite";
 import { db } from "../firebase"; // Adjust this import path to match your project structure
 import weekly_preview_img from "../images/weekly_preview.jpg";
 import weekly_recap_img from "../images/week_recap.png";
-import segment2_img from "../images/segment2.jpg"; // Assuming you have Segment2 image
+import segment2_img from "../images/boo.png"; // Assuming you have Segment2 image
 import welcome from "../images/welcome_season2.jpg";
 
 const ARTICLE_WIDTH = 240;
