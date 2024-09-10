@@ -197,9 +197,7 @@ const ArticleCarousel = ({ leagueID }: { leagueID: string }) => {
   }: ArticleItem) => {
     return (
       <Link
-        href={`/league/${localStorage.getItem(
-          "selectedLeagueID"
-        )}/articles/${link}`}
+        href={`/league/${localStorage.getItem("selectedLeagueID")}/articles`}
         scroll={false}
       >
         <div
