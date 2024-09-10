@@ -7,7 +7,7 @@ import { collection, query, where, getDocs } from "firebase/firestore/lite";
 import { db } from "../firebase"; // Adjust this import path to match your project structure
 import weekly_preview_img from "../images/weekly_preview.jpg";
 import weekly_recap_img from "../images/week_recap.png";
-import predictions_img from "../images/predictions.jpg";
+import segment2_img from "../images/segment2.jpg"; // Assuming you have Segment2 image
 import welcome from "../images/welcome_season2.jpg";
 
 const ARTICLE_WIDTH = 240;
@@ -29,34 +29,42 @@ interface ArticleItem {
   link: string;
 }
 
-const weekly_preview = weekly_preview_img.src as string;
-const weekly_recap = weekly_recap_img.src as string;
-const predictions = predictions_img.src as string;
+const weekly_preview = weekly_preview_img.src as unknown as string;
+const weekly_recap = weekly_recap_img.src as unknown as string;
+const segment2 = segment2_img.src as unknown as string;
 
 const defaultArticles: ArticleItem[] = [
   {
     id: 1,
-    title: "Weekly Preview",
-    imageUrl: weekly_preview,
-    description: "Our top picks for the upcoming week.",
-    timeAgo: "1 day ago",
-    link: "Weekly Preview",
+    title: "Welcome to Season 2!",
+    imageUrl: welcome,
+    description: "Read more about the exciting things we have in store!",
+    timeAgo: "Today",
+    link: "Welcome to Season 2",
   },
   {
     id: 2,
     title: "Weekly Recap",
     imageUrl: weekly_recap,
     description: "Highlights from the past week.",
-    timeAgo: "2 days ago",
+    timeAgo: "1 day ago",
     link: "Weekly Recap",
   },
   {
     id: 3,
-    title: "Predictions",
-    imageUrl: predictions,
-    description: "Our predictions for the next games.",
+    title: "Segment 2",
+    imageUrl: segment2,
+    description: "Our insights and deep dive analysis.",
+    timeAgo: "2 days ago",
+    link: "Segment 2",
+  },
+  {
+    id: 4,
+    title: "Weekly Preview",
+    imageUrl: weekly_preview,
+    description: "Our top picks for the upcoming week.",
     timeAgo: "3 days ago",
-    link: "Predictions",
+    link: "Weekly Preview",
   },
 ];
 
@@ -119,25 +127,37 @@ const ArticleCarousel = ({ leagueID }: { leagueID: string }) => {
               "Read more about the exciting things we have in store!",
             timeAgo: calculateTimeAgo(docData.date),
             link: "Welcome to Season 2",
+            link: "Welcome to Season 2",
           },
           {
             id: 2,
-            title: docData.playoff_predictions?.title || "Predictions",
-            imageUrl: predictions_img.src as string,
+            title: docData.recap?.title || "Weekly Recap",
+            imageUrl: weekly_recap_img.src as string,
             description:
-              docData.playoff_predictions?.description ||
-              "Our predictions and way too early power rankings.",
+              docData.recap?.description || "Highlights from the past week.",
             timeAgo: calculateTimeAgo(docData.date),
-            link: "Predictions",
+            link: "Weekly Recap",
           },
           {
             id: 3,
+            title: docData.segment2?.title || "Segment 2",
+            imageUrl: segment2_img.src as string,
+            description:
+              docData.segment2?.description ||
+              "Our insights and deep dive analysis.",
+            timeAgo: calculateTimeAgo(docData.date),
+            link: "Segment 2",
+          },
+          {
+            id: 4,
             title: docData.preview?.title || "Weekly Preview",
             imageUrl: weekly_preview_img.src as string,
             description:
               docData.preview?.description ||
+              docData.preview?.description ||
               "Our top picks for the upcoming week.",
             timeAgo: calculateTimeAgo(docData.date),
+            link: "Weekly Preview",
             link: "Weekly Preview",
           },
         ];
@@ -152,7 +172,7 @@ const ArticleCarousel = ({ leagueID }: { leagueID: string }) => {
         setArticles(mergedArticles);
         setLoading(false);
       } else {
-        // No articles found, use default ones
+        // Fallback to default articles if no data is found
         setArticles(defaultArticles);
         setLoading(false);
       }
@@ -197,7 +217,9 @@ const ArticleCarousel = ({ leagueID }: { leagueID: string }) => {
   }: ArticleItem) => {
     return (
       <Link
-        href={`/league/${localStorage.getItem("selectedLeagueID")}/articles`}
+        href={`/league/${localStorage.getItem(
+          "selectedLeagueID"
+        )}/articles/${link}`}
         scroll={false}
       >
         <div

@@ -1,14 +1,16 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { useRouter, useSearchParams } from "next/navigation"; // Add useSearchParams
+import { useRouter } from "next/navigation"; // Add useSearchParams
 import ArticleTemplate from "../../../components/ArticleTemplate";
+import steve from "../../../images/finger.jpg";
 import boogie from "../../../images/boogie.png";
 import fahad from "../../../images/fahad.jpg";
 import hamsa from "../../../images/hamsa.png";
 import weekly_preview from "../../../images/weekly_preview.jpg";
 import welcome from "../../../images/welcome_season2.jpg";
-import predictions from "../../../images/predictions.jpg";
+import recap_img from "../../../images/week_recap.png"; // Recap image
+import segment2_img from "../../../images/boo.png"; // Segment2 image
 import ArticleProgressSpinner from "../../../components/ArticleProgressSpinner";
 import {
   collection,
@@ -28,7 +30,8 @@ const Articles = () => {
   const [date, setDate] = useState<string>("");
   const [previewArticle, setPreviewArticle] = useState(null);
   const [welcomeArticle, setWelcomeArticle] = useState(null);
-  const [playoffsArticle, setPlayoffsArticle] = useState(null);
+  const [recapArticle, setRecapArticle] = useState(null); // Recap article
+  const [segment2Article, setSegment2Article] = useState(null); // Segment2 article
 
   const router = useRouter();
   const REACT_APP_LEAGUE_ID = localStorage.getItem("selectedLeagueID");
@@ -108,23 +111,32 @@ const Articles = () => {
         setDate(formattedDate);
       }
 
-      const [previewData, welcomeData, playoffData] = await Promise.all([
-        docData.preview
-          ? Promise.resolve(docData.preview)
-          : fetchDataFromApi("https://www.fantasypulseff.com/api/fetchPreview"),
-        docData.welcome
-          ? Promise.resolve(docData.welcome)
-          : fetchDataFromApi("https://www.fantasypulseff.com/api/fetchWelcome"),
-        docData.playoff_predictions
-          ? Promise.resolve(docData.playoff_predictions)
-          : fetchDataFromApi(
-              "https://www.fantasypulseff.com/api/fetchPlayoffPredictions"
-            ),
-      ]);
+      const [previewData, welcomeData, recapData, segment2Data] =
+        await Promise.all([
+          docData.preview
+            ? Promise.resolve(docData.preview)
+            : fetchDataFromApi(
+                "https://www.fantasypulseff.com/api/fetchPreview"
+              ),
+          docData.welcome
+            ? Promise.resolve(docData.welcome)
+            : fetchDataFromApi(
+                "https://www.fantasypulseff.com/api/fetchWelcome"
+              ),
+          docData.recap
+            ? Promise.resolve(docData.recap)
+            : fetchDataFromApi("https://www.fantasypulseff.com/api/fetchRecap"), // Fetch Recap article
+          docData.segment2
+            ? Promise.resolve(docData.segment2)
+            : fetchDataFromApi(
+                "https://www.fantasypulseff.com/api/fetchSegment2"
+              ), // Fetch Segment2 article
+        ]);
 
       setPreviewArticle(previewData);
       setWelcomeArticle(welcomeData);
-      setPlayoffsArticle(playoffData);
+      setRecapArticle(recapData); // Set Recap article
+      setSegment2Article(segment2Data); // Set Segment2 article
 
       setLoading(false); // Only set loading to false after all data has been set
     } catch (error) {
@@ -162,16 +174,22 @@ const Articles = () => {
       <div className={`sticky flex items-center justify-around top-0 z-50`}>
         <ArticleDropdown
           title1={welcomeArticle?.title || ""}
-          title2={playoffsArticle?.title || ""}
-          title3={previewArticle?.title || ""}
+          title2={recapArticle?.title || ""}
+          title3={segment2Article?.title || ""}
+          title4={previewArticle?.title || ""}
         />
       </div>
       <div>
         <ShowAuthors
-          thisWeeksAuthors={["Boogie The Writer", "El Jefe", "Fahad Guled"]}
+          thisWeeksAuthors={[
+            "Boogie The Writer",
+            "Savage Steve",
+            "Fahad Guled",
+          ]}
         />
       </div>
 
+      {/* Welcome Article */}
       <Element name={welcomeArticle?.title}>
         <div className={welcomeArticle?.title ? "block" : "hidden"}>
           <ArticleTemplate
@@ -187,22 +205,40 @@ const Articles = () => {
         </div>
       </Element>
 
-      <Element name={playoffsArticle?.title || ""}>
-        <div className={playoffsArticle?.title ? "block" : "hidden"}>
+      {/* Recap Article */}
+      <Element name={recapArticle?.title}>
+        <div className={recapArticle?.title ? "block" : "hidden"}>
           <ArticleTemplate
-            title={playoffsArticle?.title || ""}
-            image={predictions}
+            title={recapArticle?.title || ""}
+            image={recap_img}
             author={"El Jefe"}
             authorImg={hamsa}
             jobtitle="Head of Media Department"
             date={date || ""}
-            article={playoffsArticle}
             name="1"
+            article={recapArticle}
           />
         </div>
       </Element>
 
-      <Element name={previewArticle?.title || ""}>
+      {/* Segment2 Article */}
+      <Element name={segment2Article?.title}>
+        <div className={segment2Article?.title ? "block" : "hidden"}>
+          <ArticleTemplate
+            title={segment2Article?.title || ""}
+            image={segment2_img}
+            author={"Savage Steve"}
+            authorImg={steve}
+            jobtitle="Independent Journalist"
+            date={date || ""}
+            name="1"
+            article={segment2Article}
+          />
+        </div>
+      </Element>
+
+      {/* Preview Article */}
+      <Element name={previewArticle?.title}>
         <div className={previewArticle?.title ? "block" : "hidden"}>
           <ArticleTemplate
             title={previewArticle?.title || ""}

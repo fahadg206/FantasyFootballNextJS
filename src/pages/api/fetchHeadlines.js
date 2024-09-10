@@ -71,8 +71,7 @@ export default async function handler(req, res) {
       openAIApiKey: process.env.OPENAI_API_KEY,
     });
 
-    const question = `{leagueData} give me 3 creative exciting and funny sports style headlines previewing this weeks fantasy football matchups, pick any 3 matchups to cover and make title's creative and exciting. Each headline should look like an exciting anticipated sports matchup.
-  include the teams, star players and key matchups in the matchup preview, include a bit of humor and be creative with the titles and descriptions. I want the information to be in this format exactly headline: 
+    const question = `{leagueData} give me 3 creative and funny sports style headlines recapping this weeks matchups, pick any 3 matchups to cover and make title's creative and exciting. include their star players on their team who scored the most points for them, their win-loss record , streak if it's notable and who won by comparing their team points vs their opponents team points in that specific matchup, who ever had more team points in that matchup won the game, please ensure accuracy when stating who won and who lost. include a bit of humor and be creative with the titles and descriptions. I want the information to be in this format exactly headline: 
   "id": "",
   "category": "",
   "title": "",
@@ -99,7 +98,7 @@ export default async function handler(req, res) {
     //   new HumanMessage(apiResponse.text),
     // ]);
 
-    //updateWeeklyInfo(REACT_APP_LEAGUE_ID, apiResponse.text);
+    updateWeeklyInfo(REACT_APP_LEAGUE_ID, apiResponse.text);
     //console.log(apiResponse.text);
 
     return res.status(200).json(JSON.parse(apiResponse.text));
