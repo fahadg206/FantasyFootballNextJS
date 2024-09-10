@@ -36,14 +36,6 @@ const segment2 = segment2_img.src as unknown as string;
 const defaultArticles: ArticleItem[] = [
   {
     id: 1,
-    title: "Welcome to Season 2!",
-    imageUrl: welcome,
-    description: "Read more about the exciting things we have in store!",
-    timeAgo: "Today",
-    link: "Welcome to Season 2",
-  },
-  {
-    id: 2,
     title: "Weekly Recap",
     imageUrl: weekly_recap,
     description: "Highlights from the past week.",
@@ -51,15 +43,15 @@ const defaultArticles: ArticleItem[] = [
     link: "Weekly Recap",
   },
   {
-    id: 3,
-    title: "Segment 2",
+    id: 2,
+    title: "Weekly Woes",
     imageUrl: segment2,
-    description: "Our insights and deep dive analysis.",
+    description: "Breaking down what went wrong.",
     timeAgo: "2 days ago",
     link: "Segment 2",
   },
   {
-    id: 4,
+    id: 3,
     title: "Weekly Preview",
     imageUrl: weekly_preview,
     description: "Our top picks for the upcoming week.",
@@ -121,15 +113,6 @@ const ArticleCarousel = ({ leagueID }: { leagueID: string }) => {
         const fetchedArticles: ArticleItem[] = [
           {
             id: 1,
-            title: "Welcome to Season 2!",
-            imageUrl: welcome.src as string,
-            description:
-              "Read more about the exciting things we have in store!",
-            timeAgo: calculateTimeAgo(docData.date),
-            link: "Welcome to Season 2",
-          },
-          {
-            id: 2,
             title: docData.recap?.title || "Weekly Recap",
             imageUrl: weekly_recap_img.src as string,
             description:
@@ -138,17 +121,16 @@ const ArticleCarousel = ({ leagueID }: { leagueID: string }) => {
             link: "Weekly Recap",
           },
           {
-            id: 3,
-            title: docData.segment2?.title || "Segment 2",
+            id: 2,
+            title: docData.segment2?.title || "Weekly Woes",
             imageUrl: segment2_img.src as string,
             description:
-              docData.segment2?.description ||
-              "Our insights and deep dive analysis.",
+              docData.segment2?.description || "Breaking down what went wrong.",
             timeAgo: calculateTimeAgo(docData.date),
             link: "Segment 2",
           },
           {
-            id: 4,
+            id: 3,
             title: docData.preview?.title || "Weekly Preview",
             imageUrl: weekly_preview_img.src as string,
             description:
