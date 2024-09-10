@@ -373,7 +373,7 @@ const CardCarousel = ({ leagueID }: { leagueID: string }) => {
             <span className="text-xs font-semibold uppercase text-[#e45263]">
               {category}
             </span>
-            <p className="my-2 text-[18px] font-bold ">{title}</p>
+            <p className="my-2 text-[16px] font-bold ">{title}</p>
             <Image
               className={
                 scorerStyle
