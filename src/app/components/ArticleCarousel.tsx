@@ -127,7 +127,6 @@ const ArticleCarousel = ({ leagueID }: { leagueID: string }) => {
               "Read more about the exciting things we have in store!",
             timeAgo: calculateTimeAgo(docData.date),
             link: "Welcome to Season 2",
-            link: "Welcome to Season 2",
           },
           {
             id: 2,
@@ -157,7 +156,6 @@ const ArticleCarousel = ({ leagueID }: { leagueID: string }) => {
               docData.preview?.description ||
               "Our top picks for the upcoming week.",
             timeAgo: calculateTimeAgo(docData.date),
-            link: "Weekly Preview",
             link: "Weekly Preview",
           },
         ];
