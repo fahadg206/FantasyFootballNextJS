@@ -32,9 +32,8 @@ const updateWeeklyInfo = async (leagueId, articles) => {
   const querySnapshot = await getDocs(queryRef);
 
   const dataToUpdate = {
-    articles: articles,
+    recap: articles,
     timestamp: serverTimestamp(), // Add a timestamp field
-    type: "recap", // Add a type field
   };
 
   if (!querySnapshot.empty) {
@@ -44,9 +43,8 @@ const updateWeeklyInfo = async (leagueId, articles) => {
   } else {
     await addDoc(weeklyInfoCollectionRef, {
       league_id: leagueId,
-      articles: articles,
+      recap: articles,
       timestamp: serverTimestamp(), // Add a timestamp field
-      type: "recap", // Add a type field
     });
   }
 };
